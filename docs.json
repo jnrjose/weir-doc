@@ -7,7 +7,7 @@
     "light": "#ffffff",
     "dark": "#0b253f"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/fav_icon_48px@2x.png",
   "navigation": {
     "tabs": [
       {
@@ -76,8 +76,8 @@
     }
   },
   "logo": {
-    "light": "/logo/Weir_Logo_Instagram@2x.png",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/Weir_Logo_Website@2x.png",
+    "dark": "/logo/Weir_Logo_White_Website@2x.png"
   },
   "navbar": {
     "primary": {
