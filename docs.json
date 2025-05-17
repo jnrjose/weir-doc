@@ -80,17 +80,10 @@
     "dark": "/logo/dark.svg"
   },
   "navbar": {
-    "links": [
-      {
-        "type": "button",
-        "label": "Support",
-        "href": "mailto:support@weir.ai"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Support",
+      "href": "https://support@weir.ai"
     }
   },
   "footer": {
