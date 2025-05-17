@@ -3,9 +3,9 @@
   "theme": "almond",
   "name": "Welcome to Weir",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#0d213f",
+    "light": "#ffffff",
+    "dark": "#0b253f"
   },
   "favicon": "/favicon.svg",
   "navigation": {
