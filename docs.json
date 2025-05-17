@@ -82,8 +82,9 @@
   "navbar": {
     "links": [
       {
+        "type": "button",
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@weir.ai"
       }
     ],
     "primary": {
