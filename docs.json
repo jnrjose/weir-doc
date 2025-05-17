@@ -1,6 +1,6 @@
 {
   "$schema": "https://doc-dev.weir.ai/docs.json",
-  "theme": "almond",
+  "theme": "mint",
   "name": "Welcome to Weir",
   "colors": {
     "primary": "#0d213f",
