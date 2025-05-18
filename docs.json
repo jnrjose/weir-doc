@@ -3,9 +3,13 @@
   "theme": "mint",
   "name": "Welcome to Weir",
   "colors": {
-    "primary": "#0d213f",
+    "primary": "#0b253f",
     "light": "#ffffff",
-    "dark": "#0b253f"
+    "dark": "#0b253f",
+    "anchors": {
+			"from": "#0b253f",
+			"to": "#ffffff"
+		}
   },
   "favicon": "/fav_icon_48px@2x.png",
   "navigation": {
