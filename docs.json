@@ -78,26 +78,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://doc.weir.ai",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Website",
-          "href": "https://www.weir.ai/",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://www.weir.ai/blog/",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/Weir_Logo_Website@2x.png",
