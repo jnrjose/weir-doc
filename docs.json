@@ -54,6 +54,26 @@
           }
         ]
       }
+      {
+        "tab": "Integration Guides",
+        "groups": [
+          {
+            "group": "General Best Practices",
+            "pages": [
+              "reference/introduction"
+            ]
+          },
+          {
+            "group": " AI Agent-Driven Integration",
+            "pages": [
+              "reference/endpoint/get",
+              "reference/endpoint/create",
+              "reference/endpoint/delete",
+              "reference/endpoint/webhook"
+            ]
+          }
+        ]
+      }
     ],
     "global": {
       "anchors": [
