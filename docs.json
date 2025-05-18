@@ -6,10 +6,7 @@
     "primary": "#0b253f",
     "light": "#ffffff",
     "dark": "#0b253f",
-    "anchors": {
-			"from": "#0b253f",
-			"to": "#ffffff"
-		}
+    "accent": "#0b253f",
   },
   "favicon": "/fav_icon_48px@2x.png",
   "navigation": {
