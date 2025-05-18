@@ -60,7 +60,11 @@
           {
             "group": "General Best Practices",
             "pages": [
-              "reference/introduction"
+              "integration/auth",
+              "integration/error",
+              "integration/idempotency",
+              "integration/rate-limiting",
+              "integration/logging",
             ]
           },
           {
