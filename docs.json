@@ -104,21 +104,21 @@
     "dark": "/logo/Weir_Logo_White_Website@2x.png"
   },
   "navbar": {
+    "links": [
+      {
+        "label": "Website",
+        "href": "https://weir.ai/"
+      },
+      {
+        "label": "Blog",
+        "href": "https://weir.ai/blog/"
+      } 
+    ],
     "primary": {
       "type": "button",
       "label": "Support",
       "href": "https://support@weir.ai"
-    },
-    "primary": {
-      "type": "link",
-      "label": "Website",
-      "href": "https://weir.ai/"
-    },
-    "primary": {
-      "type": "button",
-      "label": "Blog",
-      "href": "https://weir.ai/blog/"
-    } 
+    }
   },
   "footer": {
     "socials": {
