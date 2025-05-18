@@ -70,7 +70,7 @@
           {
             "group": " AI Agent-Driven Integration",
             "pages": [
-              "reference/endpoint/get",
+              "integration/endpoint-definitions",
               "reference/endpoint/create",
               "reference/endpoint/delete",
               "reference/endpoint/webhook"
@@ -87,8 +87,8 @@
   "navbar": {
     "links": [
       {
-        "label": "Website",
-        "href": "https://weir.ai/"
+        "label": "Changelog",
+        "href": "https://weir.ai/changelogs"
       },
       {
         "label": "Blog",
