@@ -9,6 +9,9 @@
     },
   "favicon": "/fav_icon_48px@2x.png",
   "navigation": {
+    "versions": [
+      {
+        "version": "0.0.0",
     "tabs": [
       {
         "tab": "Gettting Started",
@@ -78,6 +81,8 @@
         ]
       }
     ]
+    }
+    ]
   },
   "logo": {
     "light": "/logo/Weir_Logo_Website@2x.png",
@@ -108,12 +113,3 @@
     }
   }
 }
-  "versions": {
-    "current": "v0.0.1 Alpha 1",
-    "previous": [
-      {
-        "version": "Beta 0",
-        "date": "2023-10-01"
-      }
-    ]
-  }
