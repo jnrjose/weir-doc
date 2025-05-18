@@ -4,8 +4,8 @@
   "name": "Welcome to Weir",
   "colors": {
     "primary": "#0d213f",
-    "light": "#ffffff",
-    "dark": "#0d213f"
+    "light": "#0b253f",
+    "dark": "#ffffff"
   },
   "favicon": "/fav_icon_48px@2x.png",
   "navigation": {
