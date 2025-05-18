@@ -109,13 +109,13 @@
       "label": "Support",
       "href": "https://support@weir.ai"
     },
-    "secondary": {
+    "primary": {
       "type": "link",
       "label": "Website",
       "href": "https://weir.ai/"
     },
-    "secondary": {
-      "type": "link",
+    "primary": {
+      "type": "button",
       "label": "Blog",
       "href": "https://weir.ai/blog/"
     } 
