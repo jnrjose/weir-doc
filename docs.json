@@ -71,9 +71,8 @@
             "group": " AI Agent-Driven Integration",
             "pages": [
               "integration/endpoint-definitions",
-              "reference/endpoint/create",
-              "reference/endpoint/delete",
-              "reference/endpoint/webhook"
+              "integration/error-messages",
+              "integration/prompting"
             ]
           }
         ]
