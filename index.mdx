@@ -1,71 +1,169 @@
 ---
-title: Introduction
-description: "Welcome to Weir"
+title: 'Welcome to the Weir AI API!'
+description: 'Your comprehensive guide to integrating and interacting with the Weir AI platform.'
 ---
 
 <img
   className="block dark:hidden"
   src="/images/image32.png"
-  alt="Hero Light"
+  alt="Welcome to Weir"
 />
 <img
   className="hidden dark:block"
   src="/images/image33.png"
-  alt="Hero Dark"
+  alt="Welcome to Weir"
 />
 
-## Setting up
+# 👋 Welcome to the Weir AI API Documentation!
 
-The first step to world-class documentation is setting up your editing environments.
+Hello, Developer!
 
-<CardGroup cols={2}>
+We're excited to help you unlock the power of Weir AI and integrate its capabilities into your applications and workflows. Whether you're a seasoned API consumer or just starting out, this guide is designed to be your comprehensive resource for understanding and utilizing our API effectively.
+
+## What is Weir AI?
+
+<Note>
+  **Let's Define Weir AI!**
+
+  Please replace this block with a concise 1-2 sentence description of Weir AI.
+  For example: "Weir AI is a platform that enables businesses to manage advanced data analytics and AI-driven insights for optimizing industrial processes."
+</Note>
+
+Our API is the gateway to programmatically interact with the core features and data within the Weir AI ecosystem.
+
+## What Can You Do With This API?
+
+The Weir AI API empowers you to:
+
+* 🚀 **Automate Organization Setup:** Programmatically create and manage your company's profile on the Weir AI platform.
+* 👥 **Manage User Access:** Control how users within your organization interact with Weir AI.
+* 🔗 **Integrate Weir AI features into your existing systems:** Seamlessly connect your applications with Weir AI's functionalities.
+* 💾 **Retrieve and Update Information:** Access and modify data related to your organization and its activities on Weir AI.
+* [✨ **Add other key high-level capabilities here as bullet points.**]
+
+## Who is This Documentation For?
+
+This documentation is for any developer looking to:
+
+* Understand the capabilities of the Weir AI API.
+* Build integrations with the Weir AI platform.
+* Automate tasks related to Weir AI.
+* Troubleshoot API interactions.
+
+<Info>
+  We've aimed to make these guides clear and straightforward, even if you don't have extensive prior experience with APIs.
+</Info>
+
+## Before You Begin: Prerequisites
+
+While we strive for simplicity, a basic understanding of the following will be helpful:
+
+* **HTTP Requests:** Familiarity with concepts like `GET`, `POST`, `PUT`, `DELETE` requests.
+* **JSON:** Our API primarily uses JSON (JavaScript Object Notation) for request and response bodies.
+    ```json
+    {
+      "key": "value",
+      "example": "This is how JSON looks!"
+    }
+    ```
+* **APIs (Application Programming Interfaces):** A general understanding of what APIs are and how they enable software systems to communicate.
+* **Authentication:** Understanding how APIs secure access (we'll cover our specific methods in detail).
+
+<Tip>
+  Don't worry if you're not an expert in all these areas; we'll provide context and examples throughout. Many sections will include copy-pasteable code examples!
+</Tip>
+
+## Navigating These Docs
+
+We've structured this documentation to help you find what you need quickly. Consider these major sections:
+
+<Cards>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    title="Getting Started"
+    icon="rocket"
+    href="/getting-started/authentication" // Example link
   >
-    Get your docs set up locally for easy development
+    Essential first steps, including authentication and understanding our API environment.
   </Card>
   <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
+    title="Core Concepts"
+    icon="book-open"
+    href="/core-concepts/organizations" // Example link
   >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
-
-## Make it yours
-
-Update your docs to your brand and add valuable content for the best user conversion.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
+    Explanations of key entities like "Organizations" and "Users."
   </Card>
   <Card
-    title="Reference APIs"
+    title="API Reference"
     icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    href="/api-reference/overview" // Example link
   >
-    Automatically generate endpoints from an OpenAPI spec
+    Detailed descriptions of every API endpoint.
   </Card>
   <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
+    title="Tutorials & Guides"
+    icon="graduation-cap"
+    href="/tutorials/first-integration" // Example link
   >
-    Build interactive features and designs to guide your users
+    Step-by-step instructions for common use cases.
   </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+</Cards>
+
+Other sections will include:
+* **SDKs (if applicable):** Information on any available Software Development Kits.
+* **Changelog:** Updates and versions of our API.
+* **Support:** How to get help.
+
+{/* Example of a reusable snippet placeholder - Mintlify might use a specific syntax like {{< partial "footer.mdx" >}} */}
+{/* {{> myReusableFooter }} */}
+
+## First Steps: Understanding Core Weir AI Concepts
+
+To effectively use our API, it's important to understand a few fundamental concepts:
+
+### 🏢 Organizations
+
+* An "Organization" represents your company, business, or entity within the Weir AI system.
+* It's the primary container for all your data, users, and configurations on our platform.
+* Organizations can be self-onboarded via the API.
+
+### 👤 Users
+
+* "Users" are individual accounts associated with an Organization.
+* Users have specific roles and permissions.
+* The first user to register and create an Organization typically becomes its initial administrator.
+
+---
+
+## Key API Functionality Overview
+
+Our API is built around REST principles. Here are some main things you'll be able to do:
+
+<Tabs>
+  <Tab title="User Management">
+    * Register new user accounts (`POST /register`).
+    * Retrieve user details.
+    * Update user profiles.
+  </Tab>
+  <Tab title="Organization Management">
+    * Create your organization's profile (`POST /organizations`).
+    * Retrieve your organization's details (`GET /organizations/me`).
+    * Update your organization's information (`PUT /organizations/me`).
+  </Tab>
+  <Tab title="Other Functionalities">
+    * [List other categories like Platform Configuration, Service Agreements, etc.]
+  </Tab>
+</Tabs>
+
+## Example: Creating an Organization
+
+Here's a quick peek at what an API call might look like (more details in the API Reference!):
+
+```bash title="Example: Create Organization (cURL)"
+curl -X POST [https://api.weir.ai/v1/organizations](https://api.weir.ai/v1/organizations) \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "name": "Example Corp",
+        "industry": "Technology",
+        "contactEmail": "admin@example.com"
+      }'
