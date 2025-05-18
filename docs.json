@@ -108,7 +108,17 @@
       "type": "button",
       "label": "Support",
       "href": "https://support@weir.ai"
-    }
+    },
+    "secondary": {
+      "type": "link",
+      "label": "Website",
+      "href": "https://weir.ai/"
+    },
+    "secondary": {
+      "type": "link",
+      "label": "Blog",
+      "href": "https://weir.ai/blog/"
+    } 
   },
   "footer": {
     "socials": {
