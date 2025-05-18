@@ -1,5 +1,5 @@
 {
-  "$schema": "https://doc-dev.weir.ai/docs.json",
+  "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Welcome to Weir",
   "colors": {
