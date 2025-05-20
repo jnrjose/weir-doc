@@ -72,7 +72,7 @@ Your journey starts with becoming a recognized developer within your organizatio
 Within the WEIR AI ecosystem, user roles define permissions and capabilities:
 
 <CardGroup cols={2}>
-  <Card title="Platform Owner (e.g., Sheryl)" icon="Use-plus">
+  <Card title="Platform Owner (e.g., Sheryl)" icon="user-plus">
     Typically an administrator or manager responsible for:
     - Registering the company as an Organization on WEIR AI.
     - Registering specific AdTech platforms (e.g., "Yoyodyne DSP").
@@ -95,7 +95,7 @@ The onboarding process for a developer begins with an email invitation.
   <Step title="Receive Invitation" icon="Mailbox">
     Your Platform Owner will send an invitation to your email address. This email will contain a unique link to join their organization on WEIR AI.
   </Step>
-  <Step title="Click the Invitation Link" icon="Cursor">
+  <Step title="Click the Invitation Link" icon="chain">
     Clicking this link will take you to a WEIR AI page to begin your account creation.
   </Step>
   <Step title="Complete Account Creation" icon="User">
@@ -130,7 +130,7 @@ The onboarding process for a developer begins with an email invitation.
 
 Once your account is created and you log in to the WEIR AI platform, you will typically have access to a developer-focused dashboard or area. The specifics may vary, but generally, you can expect to find:
 
-<Accordion title="Key Dashboard Features" icon="Dashboard">
+<Accordion title="Key Dashboard Features" icon="icon-dashboard">
   - **API Documentation:** Links to this documentation and other developer resources.
   - **Organization Information:** Details about the organization you belong to.
   - **Platform Information (Potentially):** Information about the AdTech platforms registered by your organization that you might be assigned to.
@@ -153,7 +153,7 @@ An API Key is a unique secret token that you must include in your requests to th
   <Card title="Authorization" icon="key">
     It determines what API functionalities your application has permission to access.
   </Card>
-  <Card title="Usage Tracking/Billing" icon="Chart">
+  <Card title="Usage Tracking/Billing" icon="chart-kanban">
     It allows WEIR AI to track API usage for your organization's account.
   </Card>
 </CardGroup>
@@ -214,7 +214,7 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
   <Step title="1. Identify the Endpoint URL" icon="Link">
     This will be the Base URL (see Section 4.2) plus `/mvp/creatives/scan`.
   </Step>
-  <Step title="2. Prepare the Request Body" icon="FileCode">
+  <Step title="2. Prepare the Request Body" icon="code">
     You'll need to provide a JSON payload. For a simple test, this would include a `creative_url` pointing to a publicly accessible image.
     <CodeBlock lang="json">
 {`{
@@ -222,19 +222,19 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
 }`}
     </CodeBlock>
   </Step>
-  <Step title="3. Include the Authorization Header" icon="ShieldLock">
+  <Step title="3. Include the Authorization Header" icon="Shield">
     Add the `Authorization` header with your API key.
     <CodeBlock>
       Authorization: Bearer YOUR_ACTUAL_API_KEY
     </CodeBlock>
   </Step>
-  <Step title="4. Set the Content-Type Header" icon="FileText">
+  <Step title="4. Set the Content-Type Header" icon="file-text-o">
     Specify that you're sending JSON data.
     <CodeBlock>
       Content-Type: application/json
     </CodeBlock>
   </Step>
-  <Step title="5. Make the POST Request" icon="PaperPlane">
+  <Step title="5. Make the POST Request" icon="Paper-Plane">
     Use your preferred HTTP client or tool (e.g., cURL, Postman, or a library in your programming language) to send the request.
     <br />
     Example using cURL:
@@ -248,7 +248,7 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
       }'`}
     </CodeBlock>
   </Step>
-  <Step title="6. Check the Expected Outcome" icon="CheckSquare">
+  <Step title="6. Check the Expected Outcome" icon="square-check">
     <AccordionGroup>
       <Accordion title="✅ Successful Call (HTTP 200 OK)" icon="CheckCircle">
         If your API key is valid and the request is well-formed, you should receive an HTTP 200 OK response. The response body will contain the scan results (either with NIL matches or an empty `matches` array if no Personas were detected).
@@ -263,6 +263,6 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
   </Step>
 </Steps>
 
-<Tip icon="PartyPopper">
+<Tip icon="party-horn">
   Successfully making this first call means your authentication is working, and you're ready to proceed with deeper integration of the WEIR AI API's functionalities!
 </Tip>
