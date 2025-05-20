@@ -95,10 +95,10 @@ The onboarding process for a developer begins with an email invitation.
   <Step title="Receive Invitation" icon="Mailbox">
     Your Platform Owner will send an invitation to your email address. This email will contain a unique link to join their organization on WEIR AI.
   </Step>
-  <Step title="Click the Invitation Link" icon="chain">
+  <Step title="Click the Invitation Link" icon="link">
     Clicking this link will take you to a WEIR AI page to begin your account creation.
   </Step>
-  <Step title="Complete Account Creation" icon="User">
+  <Step title="Complete Account Creation" icon="user">
     - You'll be prompted to complete a simplified account creation form.
     - This typically involves confirming your email (which may be pre-filled), providing your full name, and setting a secure password.
     - The system uses an `invite_token` from the URL to associate you with the correct organization.
@@ -184,11 +184,11 @@ For the MVP (Minimum Viable Product) stage, the API key for your AdTech platform
 Once you have the API key, its security is paramount.
 
 <AccordionGroup>
-  <Accordion title="🚨 DO NOTs for API Key Security" icon="XCircle" defaultOpen={true}>
+  <Accordion title="🚨 DO NOTs for API Key Security" icon="circle-x" defaultOpen={true}>
     - **DO NOT** hardcode API keys directly into your application's source code. This is a major security risk, as keys can be accidentally exposed in version control systems or client-side code.
     - **DO NOT** share API keys insecurely. Avoid sending API keys via email, instant messaging, or other non-secure channels.
   </Accordion>
-  <Accordion title="✅ DOs for API Key Security" icon="CheckCircle" defaultOpen={true}>
+  <Accordion title="✅ DOs for API Key Security" icon="circle-check" defaultOpen={true}>
     - **DO** use environment variables: Store the API key in an environment variable on your server or in your development environment. Your application code can then read the key from this environment variable.
     - **DO** use a secrets management system: For production environments, consider using a dedicated secrets management service (e.g., HashiCorp Vault, AWS Secrets Manager, Google Cloud Secret Manager, Azure Key Vault).
     - **DO** restrict access: Ensure that only authorized personnel and services have access to the API key.
@@ -228,7 +228,7 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
       Authorization: Bearer YOUR_ACTUAL_API_KEY
     </CodeBlock>
   </Step>
-  <Step title="4. Set the Content-Type Header" icon="file-text-o">
+  <Step title="4. Set the Content-Type Header" icon="file-lines">
     Specify that you're sending JSON data.
     <CodeBlock>
       Content-Type: application/json
