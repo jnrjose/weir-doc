@@ -16,7 +16,7 @@ Integrating with the WEIR AI API generally follows a clear path. Understanding t
 Ready to dive into the WEIR AI API? Think of this as your friendly map. Integrating with us is a journey with a few key stops along the way. Let's walk through it together:
 
 <Steps>
-  <Step title="👋 Welcome Aboard! Getting You Set Up" icon="EnvelopeOpen">
+  <Step title="👋 Welcome Aboard! Getting You Set Up" icon="Envelope">
     It all starts with an email invite – your golden ticket to join your organization on the WEIR AI platform. Just click the link, and we'll smoothly guide you through creating your developer account. Easy peasy!
   </Step>
   <Step title="🔑 Getting Your Keys to the Kingdom (API Access)" icon="Key">
@@ -27,7 +27,7 @@ Ready to dive into the WEIR AI API? Think of this as your friendly map. Integrat
     - **Teach Your System to Say "Hello":** You'll need to make sure your API client (that's the part of your code that connects to our API) knows how to properly send the API key in its requests.
     - **Let the Scanning Begin!:** This is where the real fun starts. You'll build the feature in your system that sends ad creative details (like a URL to an image or video) over to our `POST /mvp/creatives/scan` endpoint.
   </Step>
-  <Step title="🔍 Decoding the Results" icon="MagnifyingGlass">
+  <Step title="🔍 Decoding the Results" icon="magnifying-glass">
     After a scan, our API will send back its findings. Your code will need to look at this response to see if any NIL Personas (that's Name, Image, Likeness) popped up and what their licensing story is. This involves a bit of JSON parsing, grabbing important IDs, and understanding any license terms.
   </Step>
   <Step title="🤝 Handling License Decisions (When They Come Up)" icon="Handshake">
@@ -36,7 +36,7 @@ Ready to dive into the WEIR AI API? Think of this as your friendly map. Integrat
   <Step title="⚙️ Keeping Everything Running Smoothly (Error Handling & Logging)" icon="Gear">
     Life happens, and sometimes things don't go exactly as planned. It's always a good idea to build in some solid error handling for your API calls. Think about what to do if there's a network hiccup, an authentication blip, or if a request isn't quite right. And trust us, good logging of your requests and responses will be your best friend when you need to troubleshoot or just keep an eye on how things are flowing.
   </Step>
-  <Step title="🚀 Testing, Testing, 1-2-3... And Go Live!" icon="RocketLaunch">
+  <Step title="🚀 Testing, Testing, 1-2-3... And Go Live!" icon="check">
     Before you introduce your shiny new integration to the world, give it a thorough test drive. Try out all sorts of scenarios: what happens when a NIL match is found? When it isn't? How does it handle different license types? What about those pesky errors? Once you're feeling confident and everything's looking good, it's time to hit the launch button and deploy your solution!
   </Step>
 </Steps>
@@ -73,7 +73,7 @@ Your journey starts with becoming a recognized developer within your organizatio
 Within the WEIR AI ecosystem, user roles define permissions and capabilities:
 
 <CardGroup cols={2}>
-  <Card title="Platform Owner (e.g., Sheryl)" icon="User">
+  <Card title="Platform Owner (e.g., Sheryl)" icon="Use-plus">
     Typically an administrator or manager responsible for:
     - Registering the company as an Organization on WEIR AI.
     - Registering specific AdTech platforms (e.g., "Yoyodyne DSP").
