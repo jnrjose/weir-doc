@@ -187,11 +187,11 @@ For the MVP (Minimum Viable Product) stage, the API key for your AdTech platform
 Once you have the API key, its security is paramount.
 
 <AccordionGroup>
-  <Accordion title="🚨 DO NOTs for API Key Security" icon="XCircle" defaultOpen="true">
+  <Accordion title="🚨 DO NOTs for API Key Security" icon="XCircle" defaultOpen={true}>
     - **DO NOT** hardcode API keys directly into your application's source code. This is a major security risk, as keys can be accidentally exposed in version control systems or client-side code.
     - **DO NOT** share API keys insecurely. Avoid sending API keys via email, instant messaging, or other non-secure channels.
   </Accordion>
-  <Accordion title="✅ DOs for API Key Security" icon="CheckCircle" defaultOpen="true">
+  <Accordion title="✅ DOs for API Key Security" icon="CheckCircle" defaultOpen={true}>
     - **DO** use environment variables: Store the API key in an environment variable on your server or in your development environment. Your application code can then read the key from this environment variable.
     - **DO** use a secrets management system: For production environments, consider using a dedicated secrets management service (e.g., HashiCorp Vault, AWS Secrets Manager, Google Cloud Secret Manager, Azure Key Vault).
     - **DO** restrict access: Ensure that only authorized personnel and services have access to the API key.
@@ -220,9 +220,9 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
   <Step title="2. Prepare the Request Body" icon="FileCode">
     You'll need to provide a JSON payload. For a simple test, this would include a `creative_url` pointing to a publicly accessible image.
     <CodeBlock lang="json">
-      {
-        "creative_url": "https://example.com/path/to/your/test_creative.jpg"
-      }
+{`{
+  "creative_url": "https://example.com/path/to/your/test_creative.jpg"
+}`}
     </CodeBlock>
   </Step>
   <Step title="3. Include the Authorization Header" icon="ShieldLock">
@@ -242,13 +242,13 @@ For the WEIR AI MVP, the primary functional endpoint you'll interact with is `PO
     <br />
     Example using cURL:
     <CodeBlock lang="bash">
-      curl -X POST \
-        'https://api.weir.ai/v1/scan' \ # Replace with actual Base URL
-        -H 'Authorization: Bearer YOUR_ACTUAL_API_KEY' \
-        -H 'Content-Type: application/json' \
-        -d '{
-              "creative_url": "https://www.weir.ai/images/some-test-image.png"
-            }'
+{`curl -X POST \\
+  'https://api.weir.ai/v1/scan' \\ # Replace with actual Base URL
+  -H 'Authorization: Bearer YOUR_ACTUAL_API_KEY' \\
+  -H 'Content-Type: application/json' \\
+  -d '{
+        "creative_url": "https://www.weir.ai/images/some-test-image.png"
+      }'`}
     </CodeBlock>
   </Step>
   <Step title="6. Check the Expected Outcome" icon="CheckSquare">
