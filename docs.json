@@ -20,12 +20,12 @@
             "group": "Start Here",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "weir",
+              "quickstart"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Design Principles",
             "pages": [
               "essentials/markdown",
               "essentials/code",
