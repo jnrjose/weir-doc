@@ -1,115 +1,119 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Welcome to Weir",
-  "colors": {
-    "primary": "#0b253f",
-    "light": "#ffffff",
-    "dark": "#0b253f"
-    },
-  "favicon": "/fav_icon_48px@2x.png",
-  "navigation": {
-    "versions": [
-      {
-        "version": "v0.0.0",
-    "tabs": [
-      {
-        "tab": "Gettting Started",
-        "groups": [
-          {
-            "group": "Start Here",
-            "pages": [
-              "index",
-              "weir",
-              "quickstart"
-            ]
-          },
-          {
-            "group": "Design Principles",
-            "pages": [
-              "design/concept",
-              "design/",
-              "design/",
-              "design/",
-              "design/",
-              "design/"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "reference/endpoint/get",
-              "reference/endpoint/create",
-              "reference/endpoint/delete",
-              "reference/endpoint/webhook"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Integration Guides",
-        "groups": [
-          {
-            "group": "General Best Practices",
-            "pages": [
-              "integration/auth",
-              "integration/error",
-              "integration/idempotency",
-              "integration/rate-limiting",
-              "integration/logging"
-            ]
-          },
-          {
-            "group": " AI Agent-Driven Integration",
-            "pages": [
-              "integration/endpoint-definitions",
-              "integration/error-messages",
-              "integration/prompting"
-            ]
-          }
-        ]
-      }
-    ]
-    }
-    ]
-  },
-  "logo": {
-    "light": "/logo/Weir_Logo_Website@2x.png",
-    "dark": "/logo/Weir_Logo_White_Website@2x.png"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Changelog",
-        "href": "https://weir.ai/changelogs"
-      },
-      {
-        "label": "Status",
-        "href": "https://status.weir.ai/"
-      } 
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Support",
-      "href": "https://support@weir.ai"
-    }
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/weir_ai",
-      "instagram": "https://instagram.com/weir.ai",
-      "linkedin": "https://linkedin.com/company/weirpbc"
-    }
-  }
+	"$schema": "https://mintlify.com/docs.json",
+	"theme": "willow",
+	"name": "Welcome to Weir",
+	"favicon": "/fav_icon_48px@2x.png",
+	"navigation": {
+		"versions": [
+			{
+				"version": "v0.0.0",
+				"tabs": [
+					{
+						"tab": "Gettting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"index",
+									"weir",
+									"quickstart"
+								]
+							},
+							{
+								"group": "Design Principles",
+								"pages": [
+									"design/concept",
+									"design/",
+									"design/",
+									"design/",
+									"design/",
+									"design/"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Documentation",
+								"pages": [
+									"reference/introduction"
+								]
+							},
+							{
+								"group": "Endpoint Examples",
+								"pages": [
+									"reference/endpoint/get",
+									"reference/endpoint/create",
+									"reference/endpoint/delete",
+									"reference/endpoint/webhook"
+								]
+							}
+						]
+					},
+					{
+						"tab": "Integration Guides",
+						"groups": [
+							{
+								"group": "General Best Practices",
+								"pages": [
+									"integration/auth",
+									"integration/error",
+									"integration/idempotency",
+									"integration/rate-limiting",
+									"integration/logging"
+								]
+							},
+							{
+								"group": " AI Agent-Driven Integration",
+								"pages": [
+									"integration/endpoint-definitions",
+									"integration/error-messages",
+									"integration/prompting"
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"logo": {
+		"light": "/logo/Weir_Logo_Website@2x.png",
+		"dark": "/logo/Weir_Logo_White_Website@2x.png"
+	},
+	"navbar": {
+		"links": [
+			{
+				"label": "Changelog",
+				"href": "https://weir.ai/changelogs"
+			},
+			{
+				"label": "Status",
+				"href": "https://status.weir.ai/"
+			}
+		],
+		"primary": {
+			"type": "button",
+			"label": "Support",
+			"href": "https://support@weir.ai"
+		}
+	},
+	"footer": {
+		"socials": {
+			"x": "https://x.com/weir_ai",
+			"instagram": "https://instagram.com/weir.ai",
+			"linkedin": "https://linkedin.com/company/weirpbc"
+		}
+	},
+	"colors": {
+		"primary": "#0069ED",
+		"light": "#4D9CFF",
+		"dark": "#0050B4",
+		"background": {
+			"light": "#FFFFFF",
+			"dark": "#021038"
+		}
+	}
 }

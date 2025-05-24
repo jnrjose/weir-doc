@@ -4,7 +4,8 @@
     "title": "OpenAPI Plant Store",
     "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
     "license": {
-      "name": "MIT"
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
     },
     "version": "1.0.0"
   },
@@ -21,6 +22,8 @@
   "paths": {
     "/plants": {
       "get": {
+        "operationId": "getPlants",
+        "summary": "Retrieve all plants",
         "description": "Returns all plants from the system that the user has access to",
         "parameters": [
           {
@@ -60,6 +63,8 @@
         }
       },
       "post": {
+        "operationId": "createPlant",
+        "summary": "Create a new plant",
         "description": "Creates a new plant in the store",
         "requestBody": {
           "description": "Plant to add to the store",
@@ -98,6 +103,8 @@
     },
     "/plants/{id}": {
       "delete": {
+        "operationId": "deletePlant",
+        "summary": "Delete a single plant",
         "description": "Deletes a single plant based on the ID supplied",
         "parameters": [
           {
@@ -133,6 +140,8 @@
   "webhooks": {
     "/plant/webhook": {
       "post": {
+        "operationId": "plantWebhook",
+        "summary": "Receive plant webhook",
         "description": "Information about a new plant added to the store",
         "requestBody": {
           "description": "Plant added to the store",
