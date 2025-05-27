@@ -1,0 +1,165 @@
+---
+title: "Authentication & Authorization"
+description: "A comprehensive guide to Weir AI's authentication and authorization mechanisms, including API key management, headers, and RBAC."
+icon: "Lock" # Example icon
+sidebarTitle: "Authentication"
+---
+
+# AUTHENTICATION AND AUTHORIZATION
+
+Securely interacting with the Weir AI API is paramount. This section provides a comprehensive guide to our authentication and authorization mechanisms. For engineers who are responsible for the security and integrity of their applications, a thorough understanding of these processes is essential. We aim to provide clarity on how to obtain credentials, use them correctly, manage them securely, and understand the scope of permissions associated with them. This detailed information is also vital for AI agents that may be programmed to interact with the API, ensuring they can do so securely and effectively.
+
+## Authentication vs. Authorization
+
+It's important to distinguish between these two concepts:
+
+<CardGroup cols={2}>
+  <Card title="🔑 Authentication" icon="IdentificationBadge">
+    This is the process of **verifying who you are**. Weir AI needs to confirm that the entity making an API request is a legitimate and known client. This is typically achieved using API keys or other forms of credentials.
+  </Card>
+  <Card title="🛡️ Authorization" icon="ShieldCheck">
+    Once your identity is authenticated, authorization is the process of **determining what you are allowed to do**. This involves checking if the authenticated identity has the necessary permissions to access a specific resource or perform a particular operation.
+  </Card>
+</CardGroup>
+
+The Weir AI API employs robust mechanisms for both.
+
+## API KEY MANAGEMENT: BEST PRACTICES
+
+API keys are the primary method for authenticating your applications with the Weir AI API. Think of them as secret tokens that grant access to your Weir AI resources and capabilities. Treating them with the utmost security is crucial.
+
+### Obtaining Your API Keys
+
+<Steps>
+  <Step title="Generation Location" icon="Desktop">
+    API keys are typically generated through the Weir AI Administrative console.
+    <Info>
+      **Placeholder:** Provide specific instructions or a link to the section/page where users can generate and manage their API keys. E.g., "You can generate and manage your API keys from the 'API Settings' section of your Weir AI [Admin Console](https://console.weir.ai/settings/#api-keys)."
+    </Info>
+  </Step>
+  <Step title="Multiple Keys" icon="Key">
+    You can generate two pairs of API keys per platform:
+
+    - <strong>Test Keys:</strong> For your sandbox environment, intended solely for development and testing.
+      - <strong>Public Key:</strong> Designed for client-side code, these keys allow limited operations with lower risk. They enable testing of non-sensitive functions without exposing critical permissions.
+      - <strong>Private Key:</strong> Reserved for server-side use, this key carries elevated privileges required for authenticating and executing sensitive operations. It must remain secure and never be exposed to client-side applications.
+    - <strong>Live Keys:</strong> For your production environment, granting access to your live data and real transactions.
+      - <strong>Public Key:</strong> Used in scenarios where operations present minimal security risk. Even though they are less privileged, they should be handled with care when used outside secure environments.
+      - <strong>Private Key:</strong> The most sensitive credential meant exclusively for secure server-side operations. This key allows full access to production capabilities and must be guarded meticulously to prevent any unauthorized use.
+  </Step>
+  <Step title="Secure Storage (Initial)" icon="Lock">
+    When a key is generated, it will be displayed to you. This is often the **only time** the secret part of the key is shown. You must copy and store it securely immediately. Weir AI will not be able to show you the secret key again for security reasons. If you lose a key, you will typically need to revoke it and generate a new one.
+  </Step>
+</Steps>
+
+### API Key Management
+
+<Note>
+  **Test Keys & Live Keys:**  
+  Depending on your environment, you'll use different API keys. When in development or staging, use your Test Keys to safely simulate API interactions. Once your integration is validated, switch to Live Keys in production to perform real operations.
+  
+  **Test Keys:**
+  - Used for simulating API calls.
+  - Return predictable, non-live responses.
+  - Safe for development and testing.
+
+  **Live Keys:**
+  - Used in production for real transactions.
+  - Must be secured and not exposed publicly.
+  - Directly impact real data and operations.
+  
+  Ensure you have environment variables (e.g., REACT_APP_API_KEY or NODE_ENV variables) to manage the key usage based on your deployment stage.
+</Note>
+
+### Security Best Practices for API Keys (Critical for Engineers's Team)
+
+<AccordionGroup>
+  <Accordion title="Treat API Keys like Passwords" icon="lock-keyhole" defaultOpen={true}>
+    They are sensitive credentials. Do not share them unnecessarily.
+  </Accordion>
+  <Accordion title="Do NOT Embed Secret Keys in Client-Side Code" icon="gear-code" defaultOpen={true}>
+    Secret API keys should **never** be embedded directly in mobile app binaries, JavaScript code, or any client-side application. Doing so makes them easily discoverable.
+    <Tip title="Recommendation">
+      For client-side interactions requiring API calls, implement a backend proxy service that holds the secret key and makes requests to Weir AI on behalf of the client.
+    </Tip>
+  </Accordion>
+  <Accordion title="Do NOT Commit Secret Keys to Version Control" icon="code-branch" defaultOpen={true}>
+    Never commit API keys or any sensitive credentials directly into your source code repositories (e.g., Git). Use environment variables, configuration files outside the repository, or dedicated secrets management services.
+    <Info title="For Engineering Team">
+      Implement pre-commit hooks or repository scanning tools to prevent accidental credential commits.
+    </Info>
+  </Accordion>
+  <Accordion title="Store Keys Securely" icon="Vault" defaultOpen={true}>
+    - **Server-Side:** Use environment variables (e.g., `WEIR_AI_API_KEY=your_key_here`) to make keys available to your application code. This is generally more secure than hardcoding or placing them in plaintext configuration files that might be accidentally exposed.
+    - **Secrets Management Systems:** For production environments and more robust security, leverage dedicated secrets management tools like HashiCorp Vault, AWS Secrets Manager, Google Cloud Secret Manager, or Azure Key Vault. These systems provide secure storage, access control, auditing, and often support for key rotation. Omry should advocate for this in production.
+  </Accordion>
+  <Accordion title="API Key Rotation" icon="arrows-rotate" defaultOpen={true}>
+    Regularly rotate your API keys. This means generating a new key and replacing the old one in your applications. This limits the window of opportunity if a key is compromised. Establish a rotation policy (e.g., every 90 days, annually). Weir AI's admin console supports key revocation and generation to facilitate this.
+    <Info>
+      **Note:** The WEIR platform does not offer automatic key rotation. Users should manually rotate their keys at least once per month.
+    </Info>
+  </Accordion>
+  <Accordion title="Monitor API Key Usage" icon="monitor-waveform" defaultOpen={true}>
+    Regularly review API key activity for any suspicious patterns. This can help detect compromised keys.
+    <Info>
+      **Notice:** We recommend that you maintain a detailed log of your activities. Meanwhile, Weir AI is actively working to provide access to API activity logs through the administrative console or via the CLI.
+    </Info>
+  </Accordion>
+  <Accordion title="Use Different Keys for Different Environments" icon="list-tree" defaultOpen={true}>
+    Use distinct API keys for your development, testing/staging, and production environments. This prevents accidental use of production keys in non-production environments and limits the blast radius if a non-production key is compromised.
+  </Accordion>
+  <Accordion title="Revoke Unused or Compromised Keys Immediately" icon="fire-extinguisher" defaultOpen={true}>
+    If an API key is no longer needed or you suspect it has been compromised, revoke it immediately through the Weir AI admin console.
+  </Accordion>
+</AccordionGroup>
+
+Adhering to these practices is fundamental to maintaining the security of your integration with Weir AI.
+
+## UNDERSTANDING AUTHENTICATION HEADERS
+
+Once you have your API key, you need to include it in your API requests to authenticate your client. The Weir AI API uses standard HTTP headers for this purpose.
+
+### Primary Authentication Method: Bearer Token
+
+The most common method for transmitting API keys is via the `Authorization` HTTP header, using the `Bearer` token scheme.
+
+- **Format:**
+  <CodeBlock>
+    {`Authorization: Bearer <YOUR_API_KEY>`}
+  </CodeBlock>
+- **Example:**
+  If your API key is `sk_live_abcdef1234567890`, the header would look like:
+  <CodeBlock>
+    {`Authorization: Bearer sk_live_abcdef1234567890`}
+  </CodeBlock>
+
+<Tip title="Implementation Detail for Engineers">
+  Ensure your HTTP client library is correctly setting this header for every request to a protected Weir AI endpoint. Most libraries have straightforward ways to add custom headers.
+  - The `<YOUR_API_KEY>` should be the secret API key.
+  - There is a single space between `Bearer` and the key itself.
+</Tip>
+
+### Important Notes on Headers
+
+<CardGroup cols={1}>
+  <Card title="HTTPS is Mandatory" icon="Lock">
+    All API requests to Weir AI **MUST** be made over HTTPS (HTTP Secure). This encrypts the communication between your client and our servers, including the `Authorization` header containing your API key. Attempting to make requests over plain HTTP will fail and would expose your API key.
+  </Card>
+  <Card title="Case Sensitivity" icon="font-case">
+    HTTP header names are generally case-insensitive as per [RFC 2616](https://www.rfc-editor.org/rfc/rfc2616.html), but their values (like the `Bearer` scheme or the API key itself) are often case-sensitive. It's best practice to match the case as shown in this documentation (e.g., `Authorization`, `Bearer`).
+  </Card>
+</CardGroup>
+
+<Info>
+  If authentication fails (e.g., missing API key, invalid key, expired key), the Weir AI API will typically respond with an HTTP `401 Unauthorized` status code. The response body may contain more specific error details (see Section 3.5 on Error Handling).
+</Info>
+
+## SCOPES AND PERMISSIONS (ROLE-BASED ACCESS CONTROL - RBAC)
+
+Authorization in Weir AI determines what actions an authenticated identity (identified by its API key) is permitted to perform. This is often managed through a system of scopes or roles.
+
+<Warning title="Handling Authorization Errors">
+  If an authenticated client (with a valid API key) attempts to perform an action or access a resource for which it does not have the necessary permissions, the Weir AI API will respond with an HTTP `403 Forbidden` status code. The response body may provide more details about the permission denied.
+</Warning>
+
+A clear understanding of authentication headers, secure API key management, and the authorization model is fundamental for any engineer integrating with Weir AI. This knowledge empowers Engineering team to build secure, robust, and compliant applications. Always refer to [API Reference Section](/reference/) for any per-endpoint authorization nuances.

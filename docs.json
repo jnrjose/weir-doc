@@ -2,7 +2,7 @@
 	"$schema": "https://mintlify.com/docs.json",
 	"theme": "willow",
 	"name": "Welcome to Weir",
-	"favicon": "/fav_icon_48px@2x.png",
+	"favicon": "/logo/Weir_Symbol_Circle.svg",
 	"navigation": {
 		"versions": [
 			{
@@ -20,14 +20,14 @@
 								]
 							},
 							{
-								"group": "Design Principles",
+								"group": "WEIR AI Design Principles",
 								"pages": [
 									"design/concept",
-									"design/",
-									"design/",
-									"design/",
-									"design/",
-									"design/"
+									"design/auth",
+									"design/request",
+									"design/response",
+									"design/error",
+									"design/rate"
 								]
 							}
 						]
@@ -80,8 +80,8 @@
 		]
 	},
 	"logo": {
-		"light": "/logo/Weir_Logo_Website@2x.png",
-		"dark": "/logo/Weir_Logo_White_Website@2x.png"
+		"light": "/logo/Weir_Logo_Outlined_Primary.svg",
+		"dark": "/logo/Weir_Logo_Outlined_Inverted.svg"
 	},
 	"navbar": {
 		"links": [
@@ -108,12 +108,14 @@
 		}
 	},
 	"colors": {
-		"primary": "#0069ED",
-		"light": "#4D9CFF",
-		"dark": "#0050B4",
-		"background": {
-			"light": "#FFFFFF",
-			"dark": "#021038"
-		}
-	}
+		"primary": "#000000",
+		"light": "#DD836E",
+		"dark": "#142740"
+	},
+  "background": {
+  "color": {
+	"light": "#FFFFFF",
+	"dark": "#0C233E"
+  }
+}
 }

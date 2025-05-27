@@ -39,7 +39,7 @@ Understanding these RESTful principles will enable your engineering team to leve
 
 ### REQUEST METHODS (HTTP VERBS)
 
-As mentioned, the Weir AI API utilizes standard HTTP methods to interact with resources. It's crucial to use the correct method for the intended operation, as this dictates how the server processes the request and ensures adherence to web standards.
+As mentioned, the Weir AI API utilizes standard [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods) to interact with resources. It's crucial to use the correct method for the intended operation, as this dictates how the server processes the request and ensures adherence to web standards.
 
 <AccordionGroup>
   <Accordion title="GET" icon="MagnifyingGlass">
@@ -66,7 +66,7 @@ As mentioned, the Weir AI API utilizes standard HTTP methods to interact with re
     - **Example:** <CodeBlock lang="bash">{`PATCH /api/v1/jobs/{jobId}`}</CodeBlock> with a body `{"status": "cancelled"}` to update only the status of a job.
     - **Body:** PATCH requests include a request body containing the specific changes to be applied. The format for describing these changes (e.g., JSON Patch, JSON Merge Patch) will be specified in the endpoint documentation.
     <Note>
-      **Placeholder:** Specify the patch format used by Weir AI, e.g., "Weir AI API uses JSON Merge Patch (RFC 7396) for PATCH operations."
+      **Placeholder:** Specify the patch format used by Weir AI, e.g., "Weir AI API uses JSON Merge Patch [RFC 7396](https://www.rfc-editor.org/rfc/rfc7396.html) for PATCH operations."
     </Note>
     - **Idempotency:** PATCH operations are not necessarily idempotent by default, as the outcome can depend on the current state of the resource and the nature of the patch operation. However, specific patch operations can be designed to be idempotent.
   </Accordion>
