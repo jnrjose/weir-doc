@@ -44,11 +44,13 @@ The request requires information about the creative to be scanned and can includ
 
 ##### Request Body Example (for `/v1/creatives/scan`):
 
-```json POST /v1/creatives/scan - Request Body
+```json
+{
   "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
   "advertiser_id": "adv-9876",
   "campaign_id": "cmp-summer-sale-2025",
   "callback_url": "https://your-backend.example.com/api/weir-nil-results"
+}
 ```
 
 ### Alternative API Endpoints for Ad Validation
@@ -64,9 +66,11 @@ In addition to `/v1/creatives/scan`, Weir AI provides other endpoints that can b
       </Info>
     - **Request Body Example:**
 
-    ```json POST /ad/validateIdentity - Request Body
+    ```json
+    {
     "adName": "Lebron in the air Ad Creative",
     "ad": "https://your-ad-cdn.com/creatives/lebron-intheair.jpg"
+    }
     ```
 
     <Fields>
@@ -98,11 +102,13 @@ The API provides two levels of response for the `/v1/creatives/scan` endpoint: t
 
 When you successfully submit a scan request to `/v1/creatives/scan`, you'll receive an HTTP `202 Accepted` status code. The body of this response confirms that your scan has been successfully queued.
 
-```json Example 202 Accepted Response Body (for /v1/creatives/scan)
+```json
+{
   "scan_id": "scn_a1b2c3d4e5f6g7h8",
   "status": "QUEUED",
   "message": "Creative scan accepted and queued for processing. Results will be sent to the provided callback_url upon completion.",
   "status_check_endpoint": "/v1/creatives/scans/scn_a1b2c3d4e5f6g7h8"
+}
 ```
 
 <AccordionGroup>
@@ -152,16 +158,15 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
         "height": 400
       }
     }
-    // ... potentially more matches
     ]
     }
     ```
   </Tab>
   <Tab title="No Match">
-    <info>
+    <Info>
       `scan_status: "COMPLETED_NO_MATCH"`
-    </info>
-    ```json No NIL Matches response
+    </Info>
+    ```json
     {
      "scan_id": "scn_z9y8x7w6v5u4t3s2",
      "creative_url": "https://your-ad-cdn.com/creatives/generic-background-456.png",
@@ -225,17 +230,16 @@ Here are practical examples engineering teams can adapt to make a scan request t
 
 <CodeGroup>
 
-```cURL" bash
-  {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
-   -H "Authorization: Bearer <YOUR_API_KEY>" \\
-   -H "Content-Type: application/json" \\
+```bash cURL
+curl -X POST "https://api.weir.ai/v1/creatives/scan" \
+   -H "Authorization: Bearer <YOUR_API_KEY>" \
+   -H "Content-Type: application/json" \
    -d '{
          "creative_url": "https://your-ad-cdn.com/creatives/alex-ray-ad.mp4",
          "advertiser_id": "adv-9876",
          "callback_url": "https://your-backend.example.com/api/weir-nil-results"
-       }'`}
+       }'
 ```
-
 
 ```python Python
 import requests
@@ -273,80 +277,4 @@ try:
     response = requests.post(API_SCAN_ENDPOINT, headers=headers, data=json.dumps(payload_scan))
 
     # Raise an exception for bad status codes (4xx or 5xx)
-    response.raise_for_status()
-
-    # On success (e.g., 202 Accepted), print the response content
-    scan_confirmation = response.json()
-    print("Scan successfully submitted (using /v1/creatives/scan):")
-    print(f"  Scan ID: {scan_confirmation.get('scan_id')}")
-    print(f"  Status: {scan_confirmation.get('status')}")
-    if 'status_check_endpoint' in scan_confirmation:
-        print(f"  Status Check: {API_SCAN_ENDPOINT.rsplit('/', 2)[0]}{scan_confirmation.get('status_check_endpoint')}")  # Construct full URL for status check
-
-except requests.exceptions.HTTPError as http_err:
-    print(f"HTTP error occurred: {http_err}")
-    print("Response body:", response.text)
-except Exception as err:
-    print(f"An other error occurred: {err}")
-```
-
-
-```javascript Node.js (axios)
-const axios = require('axios');
-// Best practice: store API key as an environment variable
-const apiKey = process.env.WEIR_AI_API_KEY;
-// Confirm the correct base URL for the endpoint you are targeting.
-// For /v1/creatives/scan:
-const apiScanEndpoint = 'https://api.weir.ai/v1/creatives/scan';
-// For /ad/validateIdentity (example, confirm actual base URL):
-// const apiValidateEndpoint = 'https://api.weir.ai/ad/validateIdentity';
-
-const headers = {
-  'Authorization': `Bearer ${apiKey}`,
-  'Content-Type': 'application/json'
-};
-
-// Payload for /v1/creatives/scan
-const payloadScan = {
-  creative_url: 'https://your-ad-cdn.com/creatives/alex-ray-ad.mp4',
-  advertiser_id: 'adv-9876',
-  callback_url: 'https://your-backend.example.com/api/weir-nil-results'
-};
-
-// Example for /ad/validateIdentity (illustrative)
-// const payloadValidate = {
-//   adName: 'My Ad Creative',
-//   ad: 'https://your-ad-cdn.com/creatives/my-creative.jpg'
-// };
-
-// Example for /v1/creatives/scan
-axios.post(apiScanEndpoint, payloadScan, { headers })
-  .then(response => {
-    // On success (e.g., 202 Accepted), log the response data
-    console.log('Scan successfully submitted (using /v1/creatives/scan):');
-    console.log(`  Scan ID: ${response.data.scan_id}`);
-    console.log(`  Status: ${response.data.status}`);
-    if (response.data.status_check_endpoint) {
-      const baseApiUrl = apiScanEndpoint.substring(
-        0,
-        apiScanEndpoint.lastIndexOf('/v1/') + '/v1'.length
-      ); // More robust way to get base
-      console.log(`  Status Check: ${baseApiUrl}${response.data.status_check_endpoint}`);
-    }
-  })
-  .catch(error => {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error('API Error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error('Network Error: No response received.', error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Error:', error.message);
-    }
-  });
-```
-
-</CodeGroup>
+    response.raise_for_
