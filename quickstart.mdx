@@ -1,268 +1,244 @@
 ---
-title: "Getting Started: Your Integration Journey"
-description: "Your launchpad for integrating with the WEIR AI API, covering workflow, prerequisites, account setup, and API access."
-icon: "rocket" # Example icon
+title: "Getting Started with Weir AI API"
+description: "A developer's guide to integrating Weir AI, from onboarding to making your first successful API call."
+icon: "RocketLaunch" # Example icon
 sidebarTitle: "Getting Started"
 ---
 
-This chapter is your launchpad for integrating with the WEIR AI API. We'll cover the typical integration path, what you need before you begin, how to get your developer account set up, and the crucial steps for API access and authentication.
+Welcome to the Weir AI API! This guide is designed to walk developers and engineering teams through the essential steps to begin integrating Weir AI's powerful capabilities into your applications. Our goal is to get you from initial onboarding to making your first successful, authenticated API call as smoothly and efficiently as possible. We understand your time is valuable, and clear, actionable steps are paramount.
 
 ## Overview of the Integration Workflow
 
-Integrating with the WEIR AI API generally follows a clear path. Understanding this workflow will help you plan your development efforts.
+Before diving into the specifics, let's look at the typical journey for integrating with Weir AI. This workflow outlines the key phases from initial organizational setup to actively using the API.
 
-### Your WEIR AI Integration Adventure: A Friendly Guide
-
-Ready to dive into the WEIR AI API? Think of this as your friendly map. Integrating with us is a journey with a few key stops along the way. Let's walk through it together:
+<Tip title="Conceptual Flow">
+  A visual diagram would ideally represent this flow in the final documentation.
+</Tip>
 
 <Steps>
-  <Step title="Welcome Aboard! Getting You Set Up" icon="Envelope">
-    It all starts with an email invite – your golden ticket to join your organization on the WEIR AI platform. Just click the link, and we'll smoothly guide you through creating your developer account. Easy peasy!
+  <Step title="Platform Owner Onboards Organization" icon="building-user">
+    An administrator from your company (referred to as the "Platform Owner" or "Org Admin") registers and configures your organization's account with Weir AI. This step establishes your company's presence on the platform.
   </Step>
-  <Step title="Getting Your Keys to the Kingdom (API Access)" icon="Key">
-    Next up, you'll need an API key for your company's AdTech platform. This little key is what lets your systems talk to ours. Once you have it, tuck it away safely in your development setup. We'll chat more about the best ways to do that in a bit.
+  <Step title="Platform Owner Invites Developer" icon="user-plus">
+    The Platform Owner invites individual developers or engineering team members to join the organization's Weir AI account. This grants developers access under the umbrella of the parent organization.
   </Step>
-  <Step title="Building the Heart of Your Integration" icon="Code">
-    - **Become an API Whiz:** Take a little time to explore this documentation. Get familiar with how our API endpoints work, the way we structure data, and how authentication keeps everything secure.
-    - **Teach Your System to Say "Hello":** You'll need to make sure your API client (that's the part of your code that connects to our API) knows how to properly send the API key in its requests.
-    - **Let the Scanning Begin!:** This is where the real fun starts. You'll build the feature in your system that sends ad creative details (like a URL to an image or video) over to our `POST /v1/creatives/scan` endpoint.
+  <Step title="Developer Accepts Invitation & Creates Account" icon="envelope-open">
+    The invited developer receives an email invitation, follows a link to accept, and either creates a new Weir AI developer account or links an existing one to this new organization.
   </Step>
-  <Step title="Decoding the Results" icon="magnifying-glass">
-    After a scan, our API will send back its findings. Your code will need to look at this response to see if any NIL Personas (that's Name, Image, Likeness) popped up and what their licensing story is. This involves a bit of JSON parsing, grabbing important IDs, and understanding any license terms.
+  <Step title="Developer Accesses/Obtains API Key" icon="Key">
+    Once the developer account is active within the organization, an API key is needed for authentication. This key is typically provisioned by the Platform Owner or made accessible through the Weir AI Developer Dashboard.
   </Step>
-  <Step title="Handling License Decisions (When They Come Up)" icon="Handshake">
-    If a scan flags a NIL Persona, your platform or an advertiser might need to make a call – like accepting or disputing a license. When that happens, you'll use our `POST /v1/license-interactions` endpoint to let us know what happened. It's all about sending us the right details, like the `scan_id`, `persona_id`, and the `interaction_type`.
+  <Step title="Developer Integrates API" icon="Code">
+    With the API key, developers can now start making authenticated calls to Weir AI API endpoints. A common first functional step, particularly in AdTech contexts, might be to submit a creative for scanning using an endpoint like `POST /v1/creatives/scan`.
   </Step>
-  <Step title="Keeping Everything Running Smoothly (Error Handling & Logging)" icon="Gear">
-    Life happens, and sometimes things don't go exactly as planned. It's always a good idea to build in some solid error handling for your API calls. Think about what to do if there's a network hiccup, an authentication blip, or if a request isn't quite right. And trust us, good logging of your requests and responses will be your best friend when you need to troubleshoot or just keep an eye on how things are flowing.
+  <Step title="Developer Receives & Processes API Responses" icon="file-arrow-down">
+    The application will receive responses from the API (e.g., scan job IDs, status updates, or direct results). These responses need to be parsed and handled according to the application's logic.
   </Step>
-  <Step title="Testing, Testing, 1-2-3... And Go Live!" icon="check">
-    Before you introduce your shiny new integration to the world, give it a thorough test drive. Try out all sorts of scenarios: what happens when a NIL match is found? When it isn't? How does it handle different license types? What about those pesky errors? Once you're feeling confident and everything's looking good, it's time to hit the launch button and deploy your solution!
+  <Step title="Developer Builds Features/Automations" icon="gear-complex-code">
+    Leveraging the data and capabilities exposed by the API, developers can now build out the features, automations, or insights that the project requires.
   </Step>
 </Steps>
+
+This workflow provides a high-level map. The following sections will detail each relevant step for developers.
 
 ## Prerequisites
 
-Before you begin integrating with the WEIR AI API, ensure you have the following:
+Before you begin the integration process, please ensure you have the following:
 
 <CardGroup cols={2}>
-  <Card title="Invitation to WEIR AI" icon="Envelope">
-    You should have received an email invitation from your Platform Owner (e.g., Sheryl from "Yoyodyne Ad Network") to join their organization on WEIR AI.
+  <Card title="Invitation to a Weir AI Organization" icon="envelope">
+    You must be invited by a Platform Owner or an existing administrator of a Weir AI organization.
   </Card>
-  <Card title="Basic API Understanding" icon="Book">
-    Familiarity with concepts like HTTP requests (POST, GET), JSON data format, and API authentication (e.g., using API keys in headers).
+  <Card title="Basic API Understanding" icon="book-open">
+    Familiarity with RESTful APIs, HTTP methods (GET, POST, etc.), HTTP headers, and JSON is essential. (Refer to Section 3 for a detailed refresher).
   </Card>
-  <Card title="Development Environment" icon="laptop">
-    A suitable development environment for the language and platform you'll be using for the integration (e.g., Node.js, Python, Java, etc.).
+  <Card title="Development Environment" icon="laptop-code">
+    Access to a suitable development environment for your programming language (e.g., Python, Node.js, Java).
   </Card>
-  <Card title="Backend Access" icon="Server">
-    You'll need to be able to modify the backend code of the AdTech platform you are integrating with WEIR AI.
+  <Card title="API Testing Tool (Recommended)" icon="flask">
+    A tool like Postman or curl is highly recommended for initial API exploration and testing.
   </Card>
-  <Card title="Sample Ad Creative URLs" icon="Images">
-    It's helpful to have a few URLs pointing to ad creatives that you can use for testing the scanning functionality. Ideally, these would include examples with and without recognizable public figures.
+  <Card title="AdTech Platform Context (if applicable)" icon="bullhorn">
+    If integrating for AdTech use cases, understanding your AdTech platform's creative assets/URLs will be necessary.
   </Card>
 </CardGroup>
 
-## Developer Onboarding & Account Setup
+## Developer Oboarding and INitial Setup
 
-Your journey starts with becoming a recognized developer within your organization on the WEIR AI platform.
+Your journey as a developer with Weir AI begins with being invited to an organization and setting up your individual developer account.
 
 ### Understanding Roles: Platform Owner vs. Developer
 
-Within the WEIR AI ecosystem, user roles define permissions and capabilities:
+Within the Weir AI ecosystem, there are typically distinct roles:
 
-<CardGroup cols={2}>
-  <Card title="Platform Owner (e.g., Sheryl)" icon="user-plus">
-    Typically an administrator or manager responsible for:
-    - Registering the company as an Organization on WEIR AI.
-    - Registering specific AdTech platforms (e.g., "Yoyodyne DSP").
-    - Managing API keys for these platforms.
-    - Inviting team members, such as Developers.
-  </Card>
-  <Card title="Developer (e.g., Carlton)" icon="Gear">
-    This is your role. You are responsible for:
-    - Integrating the WEIR AI API with your Organization's AdTech platforms.
-    - Using the API key (provided by the Platform Owner).
-    - Accessing API documentation and resources.
-  </Card>
-</CardGroup>
+<AccordionGroup>
+  <Accordion title="Platform Owner / Organization Administrator" icon="user-crown" defaultOpen={true}>
+    This individual (or group) is responsible for the overall management of your company's organization within Weir AI.
+    Their responsibilities usually include:
+    - Initial organization setup and configuration.
+    - Managing billing and subscription details.
+    - Inviting developers and other users to the organization.
+    - Potentially managing global API key provisioning or access policies.
+    - Overseeing overall usage and security for the organization.
+    Think of them as the primary administrative contact between your company and Weir AI.
+  </Accordion>
+  <Accordion title="Developer (Your Role)" icon="user-gear" defaultOpen={true}>
+    As a developer, you are a technical user focused on integrating Weir AI APIs into your applications or workflows.
+    Your primary interactions involve:
+    - Using API keys to make authenticated requests.
+    - Consulting API documentation (like this guide).
+    - Building client-side logic to send requests and handle responses.
+    - Implementing features based on Weir AI's capabilities.
+    You typically operate under the umbrella of an organization established by a Platform Owner.
+  </Accordion>
+</AccordionGroup>
 
 ### Accepting an Organization Invitation
 
-The onboarding process for a developer begins with an email invitation.
-
 <Steps>
-  <Step title="Receive Invitation" icon="Mailbox">
-    Your Platform Owner will send an invitation to your email address. This email will contain a unique link to join their organization on WEIR AI.
+  <Step title="Receive the Invitation Email" icon="mailbox">
+    You will receive an email from Weir AI (e.g., from `noreply@weir.ai`) with a subject like "You're invited to join [Organization Name] on Weir AI." This email contains a unique invitation link.
   </Step>
-  <Step title="Click the Invitation Link" icon="link">
-    Clicking this link will take you to a WEIR AI page to begin your account creation.
+  <Step title="Claim Your Invitation" icon="arrow-pointer">
+    Click the invitation link. Note: These links may be time-sensitive or single-use. You will be directed to the Weir AI website.
+    - **New Weir AI User:** You'll be prompted to create a new developer account (name, email matching invitation, secure password).
+    - **Existing Weir AI User:** You may be prompted to log in with your existing credentials.
   </Step>
-  <Step title="Complete Account Creation" icon="user">
-    - You'll be prompted to complete a simplified account creation form.
-    - This typically involves confirming your email (which may be pre-filled), providing your full name, and setting a secure password.
-    - The system uses an `invite_token` from the URL to associate you with the correct organization.
-  </Step>
-  <Step title="Submit Your Details" icon="Plane">
-    Upon submission, the WEIR AI platform will:
-    - Validate the `invite_token`.
-    - Create a new WEIR User account for you.
-    - Automatically associate your user account with your Platform Owner's Organization and assign you the "Developer" role.
-    - Mark the invitation token as 'accepted' or 'claimed'.
-  </Step>
-  <Step title="Confirmation" icon="Check">
-    You should receive a confirmation (e.g., a success message on the web page) indicating your account has been created and you're now part of the organization. You may be logged in automatically.
+  <Step title="Confirm and Access Granted" icon="circle-check">
+    After account creation or login, confirm joining the organization. Your developer account will then be associated, granting access to the Weir AI Developer Dashboard and relevant resources.
   </Step>
 </Steps>
 
-<Info title="Behind the Scenes: Invitation Claim">
-  The process of accepting an invitation and setting up an account is handled by the WEIR AI frontend/backend. For context, this typically involves a call to an endpoint like:
+### Your WEIR Developer Dashboard (Overview)
 
-  `POST /v1/organization-invitations/claim`
+Upon successfully logging in, you will typically land on your Weir AI Developer Dashboard. This is your central hub. While the exact layout may evolve, expect sections such as:
 
-  **Purpose:** Allows an invited user to claim their invitation and set up their account.
-  **Key Payload Fields:** `invite_token`, `full_name`, `password`, `password_confirmation`.
-
-  (Full details of this endpoint are in the [API Reference](reference). This is primarily for your understanding of the underlying mechanism.)
-</Info>
-
-### Your WEIR Developer Dashboard
-
-Once your account is created and you log in to the WEIR AI platform, you will typically have access to a developer-focused dashboard or area. The specifics may vary, but generally, you can expect to find:
-
-<Accordion title="Key Dashboard Features" icon="grid-horizontal">
-  - **API Documentation:** Links to this documentation and other developer resources.
-  - **Organization Information:** Details about the organization you belong to.
-  - **Platform Information (Potentially):** Information about the AdTech platforms registered by your organization that you might be assigned to.
-  - **API Key Access (Limited/View-Only Potentially):** Depending on the platform's UI evolution, you might be able to view API keys for platforms you are authorized to work on, though for MVP, the key is often shared directly by the Platform Owner.
-  - **Profile Management:** Options to manage your user profile (e.g., change password).
-</Accordion>
-
-## API Access & Authentication
-
-With your developer account set up, the next critical step is gaining access to and understanding how to use the API key for authentication.
-
-### Understanding API Keys: Purpose and Importance
-
-An API Key is a unique secret token that you must include in your requests to the WEIR AI API. Its purposes are:
-
-<CardGroup cols={3}>
-  <Card title="Authentication" icon="Fingerprint">
-    It verifies that the request is coming from a legitimate, authorized source (i.e., your organization's registered platform).
+<CardGroup cols={1}>
+  <Card title="API Keys / Credentials" icon="shield-keyhole">
+    <Info>
+      - As a developer, you will find your assigned API key(s) here.
+      - This section also allows you to generate new API keys
+      - This section primarily show the status of the keys assigned to your organisation
+    </Info>
   </Card>
-  <Card title="Authorization" icon="key">
-    It determines what API functionalities your application has permission to access.
+  <Card title="Documentation Links" icon="books">
+    Quick access to this API documentation, SDK guides (if available), and other developer resources.
   </Card>
-  <Card title="Usage Tracking/Billing" icon="chart-kanban">
-    It allows WEIR AI to track API usage for your organization's account.
+  <Card title="Usage Overview (Potentially)" icon="chart-pie-simple-circle-currency">
+    Some dashboards may provide a summary of your recent API usage, call volumes, or error rates, if applicable to your role and permissions.
+  </Card>
+  <Card title="Profile Settings" icon="circle-user">
+    Manage your personal account details (name, email, password).
+  </Card>
+  <Card title="Organization Information" icon="Buildings">
+    Details about the organization(s) you are a member of.
   </Card>
 </CardGroup>
 
+Familiarize yourself with the Developer Dashboard, as it will be a key resource.
+
+## API ACCESS & AUTHENTICATION
+
+Securely authenticating your application's requests is fundamental. This is primarily done using API keys.
+
+### Understanding API Keys: Purpose and Importance
+
+<AccordionGroup>
+  <Accordion title="Purpose" icon="Target">
+    An API key is a unique secret token your application uses to identify itself and authenticate requests when calling Weir AI API endpoints.
+  </Accordion>
+  <Accordion title="Importance" icon="shield-check" defaultOpen={true}>
+    - **Security:** Protects your organization's data and Weir AI resources from unauthorized access.
+    - **Access Control:** Enables Weir AI to determine if your application has necessary permissions (authorization, often tied to key scopes).
+    - **Usage Tracking & Billing:** Allows Weir AI to attribute API usage for monitoring, rate limiting, and billing.
+  </Accordion>
+</AccordionGroup>
+
 <Warning>
-  **Treat your API Key like a password.** It grants significant access to WEIR AI services on behalf of your organization.
+  Treat your API keys with the same level of security as you would passwords or other sensitive credentials.
 </Warning>
 
 ### Obtaining Your API Key
 
-For the V1, the API key for your AdTech platform (e.g., "Yoyodyne DSP") is typically generated by the Platform Owner (e.g., Sheryl) when they register the platform on WEIR AI.
+The method can vary based on your organization's setup:
 
-- **Provision by Platform Owner:** Your Platform Owner will securely communicate the API key value to you (the Developer). This might be done through a secure internal channel.
-- **Future UI Access (Potential):** In future iterations of the WEIR AI platform, there might be a user interface where Developers with appropriate permissions can view or copy the API key for platforms they are assigned to.
+    <Info>
+      From the Developer Console you will be able to generate, manage, and view your own API keys directly from the 'API Keys' section of the Weir AI Developer Console."
+    </Info>
 
-<Info title="System Context: API Key Generation">
-  Conceptually, the Platform Owner might interact with an endpoint like the following (or a UI that uses it) to manage API keys:
+**The moment you have your API key, its security is your responsibility.**
 
-  `GET /v1/organizations/me/platforms/{platform_id}/api-keys`
+### Securely Storing and Using Your API Key (Best Practices Summary)
 
-  **Purpose:** Lists API key metadata (not the key itself after initial generation, for security reasons) for a specific platform.
+Protecting your API key is critical. Refer to **Section 3.2.1** for comprehensive API key security. Key practices:
+- **NEVER** embed API keys directly in client-side code.
+- **NEVER** commit API keys to version control.
+- Use **Environment Variables** for server-side storage.
+- Use **Secrets Management Systems** (e.g., HashiCorp Vault, AWS Secrets Manager) for production.
+- Apply the **Principle of Least Privilege**.
 
-  (Full details of this conceptual endpoint are in the [API Reference](reference))
-</Info>
+## MAKING YOUR FIRST AUTHENTICATED CALL
 
-### Securely Storing and Using Your API Key (Best Practices)
+Once your API key is securely set up (e.g., as an environment variable), you're ready for your first authenticated API call. This confirms your authentication works. For AdTech, a common first call is to `POST /v1/creatives/scan`.
 
-Once you have the API key, its security is paramount.
+### Example: First Call to `POST /v1/creatives/scan` using `curl`
 
-<AccordionGroup>
-  <Accordion title="DO NOTs for API Key Security" icon="circle-x" defaultOpen={true}>
-    - **DO NOT** hardcode API keys directly into your application's source code. This is a major security risk, as keys can be accidentally exposed in version control systems or client-side code.
-    - **DO NOT** share API keys insecurely. Avoid sending API keys via email, instant messaging, or other non-secure channels.
-  </Accordion>
-  <Accordion title="DOs for API Key Security" icon="circle-check" defaultOpen={true}>
-    - **DO** use environment variables: Store the API key in an environment variable on your server or in your development environment. Your application code can then read the key from this environment variable.
-    - **DO** use a secrets management system: For production environments, consider using a dedicated secrets management service (e.g., HashiCorp Vault, AWS Secrets Manager, Google Cloud Secret Manager, Azure Key Vault).
-    - **DO** restrict access: Ensure that only authorized personnel and services have access to the API key.
-    - **DO** be prepared to rotate keys: If an API key is compromised or if your organization's policy requires it, you should be prepared to rotate the key (i.e., generate a new one and update your applications).
-  </Accordion>
-</AccordionGroup>
+This example submits a creative URL for scanning. Replace `<YOUR_API_KEY>` and `<YOUR_CREATIVE_URL>`.
 
-<Tip title="Authentication Method">
-  The WEIR AI API typically expects the API key to be sent as a Bearer Token in the `Authorization` HTTP header of your requests.
-  (More details in [API Reference](reference/introduction#Authentication). Authentication).
-  <CodeBlock>
-    Authorization: Bearer YOUR_API_KEY
-  </CodeBlock>
-</Tip>
+<CodeBlock lang="bash">
+  {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
+     -H "Authorization: Bearer <YOUR_API_KEY>" \\
+     -H "Content-Type: application/json" \\
+     -d '{
+           "scan_request": {
+             "creative_url": "<YOUR_CREATIVE_URL>",
+             "callback_url": "https://your-system.example.com/weir-callback" # Optional
+           },
+           "scan_parameters": { # Optional
+             "analysis_types": ["malware", "performance_metrics"] 
+           }
+         }'`}
+</CodeBlock>
 
-### Making Your First Authenticated Call
+<Accordion title="Understanding the `curl` Command" icon="terminal">
+  - `curl -X POST "https://api.weir.ai/v1/creatives/scan"`: Specifies POST method and endpoint URL. (Use correct base URL for your environment - Section 3.3.1).
+  - `-H "Authorization: Bearer <YOUR_API_KEY>"`: Crucial authentication header.
+  - `-H "Content-Type: application/json"`: Informs server of JSON request body.
+  - `-d '{...}'`: JSON data payload.
+    - `"scan_request"`: Details of the creative.
+      - `"creative_url"`: URL of the ad creative. (See Section 4 for alternatives like direct content upload).
+      - `"callback_url"` (Optional): For async notifications.
+    - `"scan_parameters"` (Optional): Specifies analyses to perform (details in Section 4).
+</Accordion>
 
-Once you have your API key and have stored it securely, you're ready to make your first authenticated call to the WEIR AI API. This will confirm that your setup is correct and you can communicate with the API.
+### Expected Response
+The exact response for `POST /v1/creatives/scan` depends on whether the operation is synchronous or asynchronous (detailed in Section 4).
 
-For the WEIR AI MVV1P, the primary functional endpoint you'll interact with is `POST /v1/creatives/scan`. This is an excellent candidate for your first call.
-
-<Steps>
-  <Step title="1. Identify the Endpoint URL" icon="Link">
-    This will be the Base URL (see [API Reference](Reference)) plus `/creatives/scan`.
-  </Step>
-  <Step title="2. Prepare the Request Body" icon="code">
-    You'll need to provide a JSON payload. For a simple test, this would include a `creative_url` pointing to a publicly accessible image.
-    <CodeBlock lang="json">
-{`{
-  "creative_url": "https://example.com/path/to/your/test_creative.jpg"
+<Tabs items={["Asynchronous (Common)", "Synchronous (Less Common)"]}>
+  <Tab>
+    You will likely receive an HTTP `202 Accepted`. The response body typically includes a `scan_id` or `job_id` to check status later (e.g., via `GET /v1/creatives/scan/status/{job_id}`) or await a callback.
+    <CodeBlock lang="json" title="Example 202 Accepted Response">
+      {`{
+  "scan_id": "scn_abcdef1234567890",
+  "status": "pending",
+  "message": "Creative scan accepted and queued for processing.",
+  "status_check_url": "https://api.weir.ai/v1/creatives/scan/status/scn_abcdef1234567890"
 }`}
     </CodeBlock>
-  </Step>
-  <Step title="3. Include the Authorization Header" icon="Shield">
-    Add the `Authorization` header with your API key.
-    <CodeBlock>
-      Authorization: Bearer YOUR_ACTUAL_API_KEY
-    </CodeBlock>
-  </Step>
-  <Step title="4. Set the Content-Type Header" icon="file-lines">
-    Specify that you're sending JSON data.
-    <CodeBlock>
-      Content-Type: application/json
-    </CodeBlock>
-  </Step>
-  <Step title="5. Make the POST Request" icon="Paper-Plane">
-    Use your preferred HTTP client or tool (e.g., cURL, Postman, or a library in your programming language) to send the request.
-    <br />
-    Example using cURL:
-    <CodeBlock lang="bash">
-{`curl -X POST \\
-  'https://api.weir.ai/v1/scan' \\ # Replace with actual Base URL
-  -H 'Authorization: Bearer YOUR_ACTUAL_API_KEY' \\
-  -H 'Content-Type: application/json' \\
-  -d '{
-        "creative_url": "https://www.weir.ai/images/some-test-image.png"
-      }'`}
-    </CodeBlock>
-  </Step>
-  <Step title="6. Check the Expected Outcome" icon="square-check">
-    <AccordionGroup>
-      <Accordion title="✅ Successful Call (HTTP 200 OK)" icon="CheckCircle">
-        If your API key is valid and the request is well-formed, you should receive an HTTP 200 OK response. The response body will contain the scan results (either with NIL matches or an empty `matches` array if no Personas were detected).
-      </Accordion>
-      <Accordion title="❌ Authentication Error (HTTP 401 Unauthorized)" icon="WarningCircle">
-        If your API key is missing, invalid, or expired, you'll likely receive an HTTP 401 Unauthorized error. Double-check your key and how you're including it in the header.
-      </Accordion>
-      <Accordion title="⚠️ Other Errors (HTTP 4xx/5xx)" icon="XOctagon">
-        You might receive other error codes for issues like malformed JSON (400 Bad Request) or server-side problems. Refer to [API Reference](reference) for error code details.
-      </Accordion>
-    </AccordionGroup>
-  </Step>
-</Steps>
+  </Tab>
+  <Tab>
+    You might receive a `200 OK` or `201 Created` with initial results or confirmation directly.
+  </Tab>
+</Tabs>
 
-<Tip icon="party-horn">
-  Successfully making this first call means your authentication is working, and you're ready to proceed with deeper integration of the WEIR AI API's functionalities!
-</Tip>
+**Key Goal of This First Call:** Get a successful response (e.g., `202 Accepted`, `200 OK`), NOT `401 Unauthorized` or `403 Forbidden`. This confirms your API key and authentication format are correct.
+
+<Callout type="failure" title="If You Encounter Errors:">
+  - **`401 Unauthorized`**: Issue with API key or `Authorization` header. Double-check them.
+  - **`400 Bad Request`**: Issue with JSON payload or other parameters. Validate JSON and compare with endpoint specs in Section 4.
+  - Refer to **Section 3.5 (Comprehensive Error Handling)** for more troubleshooting.
+</Callout>
+
+<Callout type="success" icon="party-horn" title="Congratulations!">
+  Successfully making this first authenticated call is a significant milestone. You are now ready to explore the full capabilities of the Weir AI API detailed in subsequent sections and the API Endpoint Reference (Section 4).
+</Callout>
