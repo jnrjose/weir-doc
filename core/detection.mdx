@@ -18,6 +18,7 @@ The primary mechanism for NIL detection is by submitting an ad creative to our s
 This is a main endpoint you will use to initiate a NIL scan. It is an **asynchronous endpoint**, meaning you submit a request to start a scan, and Weir AI processes it in the background. You receive an immediate response confirming the scan has been queued, and the detailed results are delivered later, typically via a webhook (callback) or can be retrieved by polling a status endpoint.
 
 #### Request Body Structure & Examples (for `/v1/creatives/scan`)
+
 The request requires information about the creative to be scanned and can include optional metadata for tracking and context.
 
 ##### Request Parameters:
@@ -27,18 +28,22 @@ The request requires information about the creative to be scanned and can includ
     A publicly accessible URL to the ad creative content (e.g., an image URL, a video file URL, or a URL to an ad tag/HTML file). Weir AI will fetch the content from this URL for scanning.
     <Info>Alternative methods for submitting creative content (e.g., direct upload, base64 encoding) may be supported. Refer to **Section 4 (API Endpoint Reference)** for full details.</Info>
   </Field>
+
   <Field name="advertiser_id" type="string" required={false}>
     An internal identifier from your system for the advertiser associated with this creative. Useful for tracking, reporting, and context-aware analysis.
   </Field>
+
   <Field name="campaign_id" type="string" required={false}>
     An internal identifier from your system for the campaign this creative belongs to.
   </Field>
+
   <Field name="callback_url" type="string" required={false} recommended={true}>
     A URL to which Weir AI will send a POST request (a webhook) with the full scan results once the scan is complete. Using callbacks is far more efficient than repeatedly polling for results.
   </Field>
 </Fields>
 
 ##### Request Body Example (for `/v1/creatives/scan`):
+
 ```json POST /v1/creatives/scan - Request Body
   "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
   "advertiser_id": "adv-9876",
@@ -47,43 +52,50 @@ The request requires information about the creative to be scanned and can includ
 ```
 
 ### Alternative API Endpoints for Ad Validation
+
 In addition to `/v1/creatives/scan`, Weir AI provides other endpoints that can be used to submit ad creatives for validation, which can include identity and NIL checks. These endpoints also operate asynchronously and use Bearer Token authentication.
 
 <AccordionGroup>
-  <Accordion title="1. Submit Ad for Validation: POST /ad/validateIdentity" icon="PaperPlaneTilt" defaultOpen={false}>
+  <Accordion title="1. Submit Ad for Validation: POST /ad/validateIdentity" defaultOpen="false" icon="PaperPlaneTilt">
     - **Purpose:** This endpoint allows you to submit an ad creative for identity validation. In the context of Weir AI, this process can encompass NIL detection.
     - **Authentication:** Requires `BearerAuth` (Bearer Token).
-      <Info>If you need to generate a Bearer Token programmatically, the `/auth/token` endpoint (using Basic Auth with your client ID and secret) can be utilized. Refer to the main authentication section of the API documentation for details on token generation.</Info>
+      <Info>
+        If you need to generate a Bearer Token programmatically, the `/auth/token` endpoint (using Basic Auth with your client ID and secret) can be utilized. Refer to the main authentication section of the API documentation for details on token generation.
+      </Info>
     - **Request Body Example:**
 
-     ```json  POST /ad/validateIdentity - Request Body
-  "adName": "Lebron in the air Ad Creative",
-  "ad": "https://your-ad-cdn.com/creatives/lebron-intheair.jpg"
-```
+    ```json POST /ad/validateIdentity - Request Body
+    "adName": "Lebron in the air Ad Creative",
+    "ad": "https://your-ad-cdn.com/creatives/lebron-intheair.jpg"
+    ```
+
     <Fields>
-        <Field name="adName" type="string">A name for the ad creative.</Field>
-        <Field name="ad" type="string">The URL or identifier for the ad creative to be validated. The OpenAPI specification notes "Hardcoded uris" as an example, implying this could be a direct URL or a predefined URI.</Field>
-    </Fields>
+  <Field name="adName" type="string">A name for the ad creative.</Field>
+  <Field name="ad" type="string">The URL or identifier for the ad creative to be validated. The OpenAPI specification notes "Hardcoded uris" as an example, implying this could be a direct URL or a predefined URI.</Field>
+</Fields>
+
     - **Response:** This is an asynchronous operation. A successful submission will likely return an immediate acknowledgment (e.g., HTTP `202 Accepted`) with a `trackingId` or similar identifier. The detailed validation results, including any NIL findings, would be available later.
   </Accordion>
-
-  <Accordion title="2. Get Validation Status: GET /ad/validation/status" icon="MagnifyingGlass" defaultOpen={false}>
+  <Accordion title="2. Get Validation Status: GET /ad/validation/status" defaultOpen="false" icon="MagnifyingGlass">
     - **Purpose:** Used to retrieve the status and results of an ad validation request previously submitted via `/ad/validateIdentity`.
     - **Authentication:** Requires `BearerAuth` (Bearer Token).
     - **Query Parameters:**
+
       <Fields>
-        <Field name="trackingId" type="string" required={true}>
-          The unique identifier received in the response from the `POST /ad/validateIdentity` request.
-        </Field>
-      </Fields>
+  <Field name="trackingId" type="string" required={true}>
+    The unique identifier received in the response from the `POST /ad/validateIdentity` request.
+  </Field>
+</Fields>
     - **Response:** The response will contain the current status of the validation (e.g., "PENDING", "COMPLETED", "FAILED") and, if completed, the detailed results, which would include NIL detection information if applicable. The exact structure of this response will be detailed in the full API Reference section.
   </Accordion>
 </AccordionGroup>
 
 ### Understanding the Scan Response
+
 The API provides two levels of response for the `/v1/creatives/scan` endpoint: the immediate response to your `POST` request and the final, detailed scan result (delivered via webhook or retrieved from a status endpoint). Responses from `/ad/validation/status` would follow a similar pattern of conveying results upon completion.
 
 #### 1. Immediate Response (`202 Accepted` for `/v1/creatives/scan`)
+
 When you successfully submit a scan request to `/v1/creatives/scan`, you'll receive an HTTP `202 Accepted` status code. The body of this response confirms that your scan has been successfully queued.
 
 ```json Example 202 Accepted Response Body (for /v1/creatives/scan)
@@ -92,28 +104,30 @@ When you successfully submit a scan request to `/v1/creatives/scan`, you'll rece
   "message": "Creative scan accepted and queued for processing. Results will be sent to the provided callback_url upon completion.",
   "status_check_endpoint": "/v1/creatives/scans/scn_a1b2c3d4e5f6g7h8"
 ```
+
 <AccordionGroup>
-  <Accordion title="Key fields in the immediate response:" icon="Key" defaultOpen={true}>
-    - **`scan_id` (String):** Crucial unique identifier for the scan job. Engineering teams should log this ID.
-    - **`status_check_endpoint` (String):** A relative URL to poll for scan status if not using a callback.
+  <Accordion title="Key fields in the immediate response:" defaultOpen="true" icon="Key">
+    - **`scan_id (String):`** Crucial unique identifier for the scan job. Engineering teams should log this ID.
+    - **`status_check_endpoint (String):`** A relative URL to poll for scan status if not using a callback.
   </Accordion>
 </AccordionGroup>
 
 #### 2. Final Scan Result (Delivered to your `callback_url` for `/v1/creatives/scan`)
+
 This is the detailed result of the completed scan from `/v1/creatives/scan`. It will be a `POST` request from Weir AI to your specified `callback_url` with a JSON body.
 
-<Tabs items={["NIL Matches Found", "No NIL Matches", "Scan Error"]}>
-  <Tab>
-    <Callout type="success" title="Successful Scan with NIL Matches (from /v1/creatives/scan)">
+<Tabs>
+  <Tab title="Match Found">
+    <success>
       `scan_status: "COMPLETED_MATCH_FOUND"`
-    </Callout>
+    </success>
     ```json
-      {`{
-  "scan_id": "scn_a1b2c3d4e5f6g7h8",
-  "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
-  "scan_status": "COMPLETED_MATCH_FOUND",
-  "timestamp_completed": "2025-06-02T10:30:00Z",
-  "matches": [
+    {
+    "scan_id": "scn_a1b2c3d4e5f6g7h8",
+    "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
+    "scan_status": "COMPLETED_MATCH_FOUND",
+    "timestamp_completed": "2025-06-02T10:30:00Z",
+    "matches": [
     {
       "persona": {
         "persona_id": "pers_11223344",
@@ -139,31 +153,32 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
       }
     }
     // ... potentially more matches
-  ]
-}`}
+    ]
+    }
     ```
   </Tab>
-  <Tab>
-    <Callout type="info" title="Successful Scan with No NIL Matches (from /v1/creatives/scan)">
+  <Tab title="No Match">
+    <info>
       `scan_status: "COMPLETED_NO_MATCH"`
-    </Callout>
- ```json No NIL Matches response
-{
-  "scan_id": "scn_z9y8x7w6v5u4t3s2",
-  "creative_url": "https://your-ad-cdn.com/creatives/generic-background-456.png",
-  "scan_status": "COMPLETED_NO_MATCH",
-  "timestamp_completed": "2025-06-02T10:32:00Z",
-  "matches": []
-}
-```
-
+    </info>
+    ```json No NIL Matches response
+    {
+     "scan_id": "scn_z9y8x7w6v5u4t3s2",
+     "creative_url": "https://your-ad-cdn.com/creatives/generic-background-456.png",
+     "scan_status": "COMPLETED_NO_MATCH",
+     "timestamp_completed": "2025-06-02T10:32:00Z",
+     "matches": []
+    }
+    ```
   </Tab>
-  <Tab>
-    <Callout type="failure" title="Scan Processing Error">
+  <Tab title="Failed">
+    <failure>
       `scan_status: "FAILED"`
-    </Callout>
+    </failure>
     If your initial `POST` request (to either `/v1/creatives/scan` or `/ad/validateIdentity`) is invalid, you'll receive a standard 4xx error response. If the scan itself fails during processing, the final result delivered to your callback (or retrieved via status check) might have a `scan_status` of `FAILED` with an accompanying error object.
-    <Info>Refer to **Section 3.5 (Comprehensive Error Handling)** for a detailed guide on error handling.</Info>
+    <Info>
+      Refer to **Section 3.5 (Comprehensive Error Handling)** for a detailed guide on error handling.
+    </Info>
   </Tab>
 </Tabs>
 
@@ -172,34 +187,35 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
 When NIL matches are found (whether from `/v1/creatives/scan` or as part of the results from `/ad/validation/status`), the `persona` and `license` objects contain critical information. Here's a breakdown of what to look for:
 
 <AccordionGroup>
-  <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
+  <Accordion title="`persona` Object Details" defaultOpen="true" icon="User">
     <Fields>
-      <Field name="persona_id" type="string">Unique identifier for the detected individual in Weir AI.</Field>
-      <Field name="name" type="string">Name of the detected individual.</Field>
-      <Field name="category" type="string">Category (e.g., "Athlete", "Musician", "Actor", "Influencer").</Field>
-      <Field name="confidence_score" type="float">Score (0.0-1.0) indicating identification confidence. Engineering teams should use a reasonable threshold (e.g., > 0.90) to determine if a match is actionable.</Field>
-    </Fields>
+  <Field name="persona_id" type="string">Unique identifier for the detected individual in Weir AI.</Field>
+  <Field name="name" type="string">Name of the detected individual.</Field>
+  <Field name="category" type="string">Category (e.g., "Athlete", "Musician", "Actor", "Influencer").</Field>
+  <Field name="confidence_score" type="float">Score (0.0-1.0) indicating identification confidence. Engineering teams should use a reasonable threshold (e.g., > 0.90) to determine if a match is actionable.</Field>
+</Fields>
   </Accordion>
-  <Accordion title="`license` Object Details" icon="Certificate" defaultOpen={true}>
+  <Accordion title="`license` Object Details" defaultOpen="true" icon="Certificate">
     <Fields>
-      <Field name="license_id" type="string">Unique identifier for the specific license agreement.</Field>
-      <Field name="is_active" type="boolean">Indicates if the license is currently within its active date range.</Field>
-      <Field name="is_compliant" type="boolean">**Key field:** Weir AI's determination of whether observed usage complies with license terms (e.g., correct advertiser, territory, date range).</Field>
-      <Field name="usage_allowed" type="boolean">Simpler flag indicating if any usage is permitted under this license.</Field>
-      <Field name="start_date" type="ISO 8601 String">Effective start date of the license.</Field>
-      <Field name="end_date" type="ISO 8601 String">Effective end date of the license.</Field>
-      <Field name="allowed_advertisers" type="array of strings">List of advertiser IDs permitted to use this persona's NIL. Check if your `advertiser_id` is in this list.</Field>
-      <Field name="territories" type="array of strings">List of geographic territories (e.g., ISO 3166-1 alpha-2 country codes) where usage is permitted.</Field>
-    </Fields>
+  <Field name="license_id" type="string">Unique identifier for the specific license agreement.</Field>
+  <Field name="is_active" type="boolean">Indicates if the license is currently within its active date range.</Field>
+  <Field name="is_compliant" type="boolean">**Key field:** Weir AI's determination of whether observed usage complies with license terms (e.g., correct advertiser, territory, date range).</Field>
+  <Field name="usage_allowed" type="boolean">Simpler flag indicating if any usage is permitted under this license.</Field>
+  <Field name="start_date" type="ISO 8601 String">Effective start date of the license.</Field>
+  <Field name="end_date" type="ISO 8601 String">Effective end date of the license.</Field>
+  <Field name="allowed_advertisers" type="array of strings">List of advertiser IDs permitted to use this persona's NIL. Check if your `advertiser_id` is in this list.</Field>
+  <Field name="territories" type="array of strings">List of geographic territories (e.g., ISO 3166-1 alpha-2 country codes) where usage is permitted.</Field>
+</Fields>
   </Accordion>
   <Accordion title="`bounding_box` Object Details (Optional)" icon="Scan">
     If the match is visual, this object provides coordinates and dimensions of the box surrounding the detected persona.
+
     <Fields>
-        <Field name="top_left_x" type="integer">X-coordinate of the top-left corner.</Field>
-        <Field name="top_left_y" type="integer">Y-coordinate of the top-left corner.</Field>
-        <Field name="width" type="integer">Width of the bounding box.</Field>
-        <Field name="height" type="integer">Height of the bounding box.</Field>
-    </Fields>
+  <Field name="top_left_x" type="integer">X-coordinate of the top-left corner.</Field>
+  <Field name="top_left_y" type="integer">Y-coordinate of the top-left corner.</Field>
+  <Field name="width" type="integer">Width of the bounding box.</Field>
+  <Field name="height" type="integer">Height of the bounding box.</Field>
+</Fields>
   </Accordion>
 </AccordionGroup>
 
@@ -208,16 +224,19 @@ When NIL matches are found (whether from `/v1/creatives/scan` or as part of the 
 Here are practical examples engineering teams can adapt to make a scan request to the `POST /v1/creatives/scan` endpoint. Similar principles would apply when constructing requests for `POST /ad/validateIdentity`, adjusting the endpoint path and request body as described above.
 
 <CodeGroup>
-  ```cURL"  bash 
-    {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
-     -H "Authorization: Bearer <YOUR_API_KEY>" \\
-     -H "Content-Type: application/json" \\
-     -d '{
-           "creative_url": "https://your-ad-cdn.com/creatives/alex-ray-ad.mp4",
-           "advertiser_id": "adv-9876",
-           "callback_url": "https://your-backend.example.com/api/weir-nil-results"
-         }'`}
-    ```
+
+```cURL" bash
+  {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
+   -H "Authorization: Bearer <YOUR_API_KEY>" \\
+   -H "Content-Type: application/json" \\
+   -d '{
+         "creative_url": "https://your-ad-cdn.com/creatives/alex-ray-ad.mp4",
+         "advertiser_id": "adv-9876",
+         "callback_url": "https://your-backend.example.com/api/weir-nil-results"
+       }'`}
+```
+
+
 ```python Python
 import requests
 import os
@@ -270,6 +289,7 @@ except requests.exceptions.HTTPError as http_err:
 except Exception as err:
     print(f"An other error occurred: {err}")
 ```
+
 
 ```javascript Node.js (axios)
 const axios = require('axios');
@@ -328,4 +348,5 @@ axios.post(apiScanEndpoint, payloadScan, { headers })
     }
   });
 ```
+
 </CodeGroup>
