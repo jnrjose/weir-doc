@@ -172,67 +172,35 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
 When NIL matches are found (whether from `/v1/creatives/scan` or as part of the results from `/ad/validation/status`), the `persona` and `license` objects contain critical information. Here's a breakdown of what to look for:
 
 <AccordionGroup>
-    <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
-        <Fields>
-            <Field name="persona_id" type="string">
-                Unique identifier for the detected individual in Weir AI.
-            </Field>
-            <Field name="name" type="string">
-                The full name of the detected individual.
-            </Field>
-            <Field name="category" type="string">
-                The category of the individual (e.g., Athlete, Musician, Actor, Influencer).
-            </Field>
-            <Field name="confidence_score" type="number">
-                A numeric value (0.0–1.0) representing the detection confidence. Recommended threshold: > 0.90.
-            </Field>
-        </Fields>
-    </Accordion>
-    <Accordion title="`license` Object Details" icon="Certificate" defaultOpen={true}>
-        <Fields>
-            <Field name="license_id" type="string">
-                Unique identifier for the specific license agreement.
-            </Field>
-            <Field name="is_active" type="boolean">
-                Indicates whether the license is currently active.
-            </Field>
-            <Field name="is_compliant" type="boolean">
-                Key field: Determines if the observed usage complies with license terms (e.g., advertiser, territory, date range).
-            </Field>
-            <Field name="usage_allowed" type="boolean">
-                Simple flag indicating if any usage is permitted under this license.
-            </Field>
-            <Field name="start_date" type="string" format="date-time">
-                ISO 8601 formatted effective start date of the license.
-            </Field>
-            <Field name="end_date" type="string" format="date-time">
-                ISO 8601 formatted effective end date of the license.
-            </Field>
-            <Field name="allowed_advertisers" type="string[]">
-                Array of advertiser IDs permitted to use this persona’s NIL.
-            </Field>
-            <Field name="territories" type="string[]">
-                Array of geographic territories (ISO 3166-1 alpha-2 codes) where usage is permitted.
-            </Field>
-        </Fields>
-    </Accordion>
-    <Accordion title="`bounding_box` Object Details (Optional)" icon="Scan">
-        If the match is visual, this object provides the coordinates and dimensions of the box surrounding the detected persona.
-        <Fields>
-            <Field name="top_left_x" type="number">
-                X-coordinate of the top-left corner.
-            </Field>
-            <Field name="top_left_y" type="number">
-                Y-coordinate of the top-left corner.
-            </Field>
-            <Field name="width" type="number">
-                Width of the bounding box.
-            </Field>
-            <Field name="height" type="number">
-                Height of the bounding box.
-            </Field>
-        </Fields>
-    </Accordion>
+  <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
+    <Fields>
+      <Field name="persona_id" type="string">Unique identifier for the detected individual in Weir AI.</Field>
+      <Field name="name" type="string">Name of the detected individual.</Field>
+      <Field name="category" type="string">Category (e.g., "Athlete", "Musician", "Actor", "Influencer").</Field>
+      <Field name="confidence_score" type="float">Score (0.0-1.0) indicating identification confidence. Engineering teams should use a reasonable threshold (e.g., > 0.90) to determine if a match is actionable.</Field>
+    </Fields>
+  </Accordion>
+  <Accordion title="`license` Object Details" icon="Certificate" defaultOpen={true}>
+    <Fields>
+      <Field name="license_id" type="string">Unique identifier for the specific license agreement.</Field>
+      <Field name="is_active" type="boolean">Indicates if the license is currently within its active date range.</Field>
+      <Field name="is_compliant" type="boolean">**Key field:** Weir AI's determination of whether observed usage complies with license terms (e.g., correct advertiser, territory, date range).</Field>
+      <Field name="usage_allowed" type="boolean">Simpler flag indicating if any usage is permitted under this license.</Field>
+      <Field name="start_date" type="ISO 8601 String">Effective start date of the license.</Field>
+      <Field name="end_date" type="ISO 8601 String">Effective end date of the license.</Field>
+      <Field name="allowed_advertisers" type="array of strings">List of advertiser IDs permitted to use this persona's NIL. Check if your `advertiser_id` is in this list.</Field>
+      <Field name="territories" type="array of strings">List of geographic territories (e.g., ISO 3166-1 alpha-2 country codes) where usage is permitted.</Field>
+    </Fields>
+  </Accordion>
+  <Accordion title="`bounding_box` Object Details (Optional)" icon="Scan">
+    If the match is visual, this object provides coordinates and dimensions of the box surrounding the detected persona.
+    <Fields>
+        <Field name="top_left_x" type="integer">X-coordinate of the top-left corner.</Field>
+        <Field name="top_left_y" type="integer">Y-coordinate of the top-left corner.</Field>
+        <Field name="width" type="integer">Width of the bounding box.</Field>
+        <Field name="height" type="integer">Height of the bounding box.</Field>
+    </Fields>
+  </Accordion>
 </AccordionGroup>
 
 ### Code Examples for Making a Scan Request (Focus on `/v1/creatives/scan`)
