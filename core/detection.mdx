@@ -46,8 +46,8 @@ The request requires information about the creative to be scanned and can includ
   "callback_url": "https://your-backend.example.com/api/weir-nil-results"
 ```
 
-### Alternative Public Service Endpoints for Ad Validation
-In addition to `/v1/creatives/scan`, Weir AI provides other "Public Services" endpoints that can be used to submit ad creatives for validation, which can include identity and NIL checks. These endpoints also operate asynchronously and use Bearer Token authentication.
+### Alternative API Endpoints for Ad Validation
+In addition to `/v1/creatives/scan`, Weir AI provides other endpoints that can be used to submit ad creatives for validation, which can include identity and NIL checks. These endpoints also operate asynchronously and use Bearer Token authentication.
 
 <AccordionGroup>
   <Accordion title="1. Submit Ad for Validation: POST /ad/validateIdentity" icon="PaperPlaneTilt" defaultOpen={false}>
@@ -56,9 +56,9 @@ In addition to `/v1/creatives/scan`, Weir AI provides other "Public Services" en
       <Info>If you need to generate a Bearer Token programmatically, the `/auth/token` endpoint (using Basic Auth with your client ID and secret) can be utilized. Refer to the main authentication section of the API documentation for details on token generation.</Info>
     - **Request Body Example:**
 
-     ```json title="POST /ad/validateIdentity - Request Body
-  "adName": "Lekan onMongo Ad Creative",
-  "ad": "https://your-ad-cdn.com/creatives/lekan-onmongo.jpg"
+     ```json  POST /ad/validateIdentity - Request Body
+  "adName": "Lebron in the air Ad Creative",
+  "ad": "https://your-ad-cdn.com/creatives/lebron-intheair.jpg"
 ```
     <Fields>
         <Field name="adName" type="string">A name for the ad creative.</Field>
@@ -107,7 +107,7 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
     <Callout type="success" title="Successful Scan with NIL Matches (from /v1/creatives/scan)">
       `scan_status: "COMPLETED_MATCH_FOUND"`
     </Callout>
-    <CodeBlock lang="json">
+    ```json
       {`{
   "scan_id": "scn_a1b2c3d4e5f6g7h8",
   "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
@@ -141,21 +141,22 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
     // ... potentially more matches
   ]
 }`}
-    </CodeBlock>
+    ```
   </Tab>
   <Tab>
     <Callout type="info" title="Successful Scan with No NIL Matches (from /v1/creatives/scan)">
       `scan_status: "COMPLETED_NO_MATCH"`
     </Callout>
-    <CodeBlock lang="json">
-      {`{
+ ```json No NIL Matches response
+{
   "scan_id": "scn_z9y8x7w6v5u4t3s2",
   "creative_url": "https://your-ad-cdn.com/creatives/generic-background-456.png",
   "scan_status": "COMPLETED_NO_MATCH",
   "timestamp_completed": "2025-06-02T10:32:00Z",
   "matches": []
-}`}
-    </CodeBlock>
+}
+```
+
   </Tab>
   <Tab>
     <Callout type="failure" title="Scan Processing Error">
@@ -205,10 +206,9 @@ When NIL matches are found (whether from `/v1/creatives/scan` or as part of the 
 ### Code Examples for Making a Scan Request (Focus on `/v1/creatives/scan`)
 
 Here are practical examples engineering teams can adapt to make a scan request to the `POST /v1/creatives/scan` endpoint. Similar principles would apply when constructing requests for `POST /ad/validateIdentity`, adjusting the endpoint path and request body as described above.
-<Note>The base URL for Public Service endpoints like `/ad/validateIdentity` might be different (e.g., `https://api.weir.ai/ad/validateIdentity` without `/v1/`). This should be confirmed in the main API reference documentation.</Note>
 
 <CodeGroup>
-  <CodeBlock title="cURL" lang="bash">
+  ```cURL"  bash 
     {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
      -H "Authorization: Bearer <YOUR_API_KEY>" \\
      -H "Content-Type: application/json" \\
@@ -217,9 +217,9 @@ Here are practical examples engineering teams can adapt to make a scan request t
            "advertiser_id": "adv-9876",
            "callback_url": "https://your-backend.example.com/api/weir-nil-results"
          }'`}
-  </CodeBlock>
-  <CodeBlock title="Python (requests)" lang="python">
-    {`import requests
+    ```
+```python Python
+import requests
 import os
 import json
 
@@ -230,7 +230,6 @@ API_KEY = os.getenv("WEIR_AI_API_KEY")
 API_SCAN_ENDPOINT = "https://api.weir.ai/v1/creatives/scan"
 # For /ad/validateIdentity (example, confirm actual base URL):
 # API_VALIDATE_ENDPOINT = "https://api.weir.ai/ad/validateIdentity"
-
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
@@ -263,16 +262,16 @@ try:
     print(f"  Scan ID: {scan_confirmation.get('scan_id')}")
     print(f"  Status: {scan_confirmation.get('status')}")
     if 'status_check_endpoint' in scan_confirmation:
-        print(f"  Status Check: {API_SCAN_ENDPOINT.rsplit('/', 2)[0]}{scan_confirmation.get('status_check_endpoint')}") # Construct full URL for status check
-
+        print(f"  Status Check: {API_SCAN_ENDPOINT.rsplit('/', 2)[0]}{scan_confirmation.get('status_check_endpoint')}")  # Construct full URL for status check
 
 except requests.exceptions.HTTPError as http_err:
     print(f"HTTP error occurred: {http_err}")
     print("Response body:", response.text)
 except Exception as err:
-    print(f"An other error occurred: {err}")`}
-  </CodeBlock>
-```javascript POST /v1/creatives/scan - Node.js (axios)
+    print(f"An other error occurred: {err}")
+```
+
+```javascript Node.js (axios)
 const axios = require('axios');
 // Best practice: store API key as an environment variable
 const apiKey = process.env.WEIR_AI_API_KEY;
