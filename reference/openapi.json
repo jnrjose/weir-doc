@@ -36,7 +36,7 @@
       "url": "http://weir-opsrv-admin.default.svc.cluster.local"
     },
     {
-      "url": "http://{{adminurl}}",
+      "url": "http://{adminurl}",
       "variables": {
         "adminurl": {
           "default": "admin.example.com"
