@@ -1,225 +1,1116 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    },
+    "title": "Weir APIs New",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "http://{uibaseurl}",
+      "variables": {
+        "uibaseurl": {
+          "default": "https://api-dev.weir.ai"
+        }
+      }
+    },
+    {
+      "url": "http://{{baseurl}}",
+      "variables": {
+        "baseurl": {
+          "default": "api-dev.weir.ai"
+        }
+      }
+    },
+    {
+      "url": "http://localhost:8010"
+    },
+    {
+      "url": "http://{{apibaseurl}}",
+      "variables": {
+        "apibaseurl": {
+          "default": "api-dev.weir.ai"
+        }
+      }
+    },
+    {
+      "url": "http://weir-opsrv-admin.default.svc.cluster.local"
+    },
+    {
+      "url": "http://{{adminurl}}",
+      "variables": {
+        "adminurl": {
+          "default": "admin.example.com"
+        }
+      }
     }
   ],
+  "components": {
+    "securitySchemes": {
+      "noauthAuth": {
+        "type": "http",
+        "scheme": "noauth"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
   "security": [
     {
       "bearerAuth": []
     }
   ],
+  "tags": [
+    {
+      "name": "Console"
+    },
+    {
+      "name": "Console > Auth"
+    },
+    {
+      "name": "Console > Auth > old"
+    },
+    {
+      "name": "Console > Auth > Invite validation"
+    },
+    {
+      "name": "Console > Auth > Forgot Password"
+    },
+    {
+      "name": "Console > Model Services"
+    },
+    {
+      "name": "Console > User-Org"
+    },
+    {
+      "name": "Public Services"
+    },
+    {
+      "name": "Admin UI"
+    },
+    {
+      "name": "Admin UI > Auth"
+    },
+    {
+      "name": "DemoApp"
+    },
+    {
+      "name": "Trial"
+    },
+    {
+      "name": "Trial > Demo App"
+    },
+    {
+      "name": "Trial > Console"
+    }
+  ],
   "paths": {
-    "/plants": {
-      "get": {
-        "operationId": "getPlants",
-        "summary": "Retrieve all plants",
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Console > Auth > old"
+        ],
+        "summary": "Register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "firstname": "Lekan",
+                  "lastname": "Balogun",
+                  "organization": "Slowwwtech",
+                  "email": "olalekanbalogun@ymail.com",
+                  "username": "obalgun",
+                  "password": "HelloWorld12"
+                }
+              }
             }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Successful response",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/validate/invitee": {
+      "post": {
+        "tags": [
+          "Console > Auth > Invite validation"
+        ],
+        "summary": "Validate Invitee",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "newson@mailinator.com",
+                  "role": "Organization_Admin"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/register/invitee": {
+      "post": {
+        "tags": [
+          "Console > Auth > Invite validation"
+        ],
+        "summary": "Register Invitee",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "password": "HelloWorld12",
+                  "inviteSession": "{{inviteSession}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/validate/invitee/otp": {
+      "post": {
+        "tags": [
+          "Console > Auth > Invite validation"
+        ],
+        "summary": "Validate Invitee OTP",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "otp": "847284",
+                  "otpSession": "{{otpSession}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot": {
+      "post": {
+        "tags": [
+          "Console > Auth > Forgot Password"
+        ],
+        "summary": "Forgot password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "ola@yahoo.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot/resendOtp": {
+      "post": {
+        "tags": [
+          "Console > Auth > Forgot Password"
+        ],
+        "summary": "Resend Forgot Otp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "otpSession": "{{otpSession}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot/validateOtp": {
+      "post": {
+        "tags": [
+          "Console > Auth > Forgot Password"
+        ],
+        "summary": "Validate Forgot Otp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "otpSession": "{{otpSession}}",
+                  "otp": "608134"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/update/password": {
+      "post": {
+        "tags": [
+          "Console > Auth > Forgot Password"
+        ],
+        "summary": "Change Forgot Password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "password": "Password@123"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Admin UI > Auth"
+        ],
+        "summary": "Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "username": "obalgun",
+                  "password": "HelloWorld12"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "noauthAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh/token": {
+      "post": {
+        "tags": [
+          "Console > Auth"
+        ],
+        "summary": "Refresh Token",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "refreshToken": "{{refreshToken}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Console > Auth"
+        ],
+        "summary": "Log out",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "refreshToken": "{{refreshToken}}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/ad/validateIdentity": {
+      "post": {
+        "tags": [
+          "Public Services"
+        ],
+        "summary": "submit image",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "adName": "Lekan onMongo",
+                  "ad": "Hardcoded uris"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/ad/validation/status": {
+      "get": {
+        "tags": [
+          "Public Services"
+        ],
+        "summary": "get validation status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "trackingId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "{{trackingId}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/complete/setup": {
+      "post": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Complete Setup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "organization": "Lekan de Consult",
+                  "firstname": "Lekan",
+                  "lastname": "Balogun"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/invite/member": {
+      "post": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Invite Team Member",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "firstname": "Oladeji",
+                  "lastname": "Frosh",
+                  "email": "fh@mailinator.com",
+                  "role": "Organization_User"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/event/logs": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Event Logs",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/gateway/api/user/organizations": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Get Organizations",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/org/create/client": {
+      "post": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Create client",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "name": "Lekan Client",
+                  "environment": "production"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/org/clients": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Get Clients",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/org/refresh/client": {
+      "patch": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Refresh Client",
+        "requestBody": {
+          "content": {}
+        },
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "example": "wZLLhjlZbzogpgsn"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/org/platforms": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Get Platforms",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/org/platform/6825fdf76748dd22805169af": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Get Platform Details",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/user/organization/{orgId}": {
+      "get": {
+        "tags": [
+          "Console > User-Org"
+        ],
+        "summary": "Get Organizations Details",
+        "parameters": [
+          {
+            "name": "orgId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "tags": [
+          "Public Services"
+        ],
+        "summary": "Generate Access Token",
+        "requestBody": {
+          "content": {}
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/admin/create": {
+      "post": {
+        "tags": [
+          "Admin UI > Auth"
+        ],
+        "summary": "Create Admin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "firstname": "Lekan",
+                  "lastname": "Balogun",
+                  "email": "obalogun@cimpledev.com",
+                  "username": "obalgun",
+                  "password": "HelloWorld12"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/onboarding/invite": {
+      "post": {
+        "tags": [
+          "Admin UI"
+        ],
+        "summary": "Invite User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "email": "newson@mailinator.com",
+                  "type": "Organization_Admin"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/admin/invites": {
+      "get": {
+        "tags": [
+          "Admin UI"
+        ],
+        "summary": "Get Invites",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/uploadImage": {
+      "post": {
+        "tags": [
+          "DemoApp"
+        ],
+        "summary": "UploadImage",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
-        }
-      },
-      "post": {
-        "operationId": "createPlant",
-        "summary": "Create a new plant",
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Successful response",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+              "application/json": {}
             }
           }
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "operationId": "deletePlant",
-        "summary": "Delete a single plant",
-        "description": "Deletes a single plant based on the ID supplied",
+    "/gateway/ui/trial/register": {
+      "post": {
+        "tags": [
+          "Trial > Demo App"
+        ],
+        "summary": "Register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "firstname": "Edge",
+                  "email": "withEdge@mailinator.com",
+                  "demoConsent": true,
+                  "fakeAdEmailOptIn": false
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/gateway/ui/trial/upload-selfie": {
+      "post": {
+        "tags": [
+          "Trial > Demo App"
+        ],
+        "summary": "UploadSelfie",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "name": "Authorization",
+            "in": "header",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Successful response",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
+              "application/json": {}
             }
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/trial/fakeads/{requestId}": {
+      "get": {
+        "tags": [
+          "Trial > Demo App"
+        ],
+        "summary": "Get FakeAds",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/predict": {
       "post": {
-        "operationId": "plantWebhook",
-        "summary": "Receive plant webhook",
-        "description": "Information about a new plant added to the store",
+        "tags": [
+          "default"
+        ],
+        "summary": "Model Sim",
         "requestBody": {
-          "description": "Plant added to the store",
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+            "description": "OK",
+            "headers": {
+              "date": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "Wed, 14 May 2025 19:26:18 GMT"
+              },
+              "server": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "uvicorn"
+              },
+              "content-length": {
+                "schema": {
+                  "type": "integer"
+                },
+                "example": "118"
+              },
+              "content-type": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "application/json"
+              },
+              "x-request-id": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "cfabcdf7-5462-42f3-aa17-5200b25c56ad"
+              },
+              "x-process-time": {
+                "schema": {
+                  "type": "number"
+                },
+                "example": "0.83750319480896"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "request_id": "0b72e234-ce4b-4127-a0cb-c23ab97b65e6",
+                  "predictions": [
+                    {
+                      "name": "adam levine",
+                      "score": 1,
+                      "metadata": {}
+                    }
+                  ]
+                }
               }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/mail/create/template": {
+      "post": {
+        "tags": [
+          "default"
+        ],
+        "summary": "Create Mail Template",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "invite_org_member"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "example": "Welcome to the team – your access is ready"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "requiredParams": {
+                    "type": "string",
+                    "example": "{\"member\": \"string\",\"org_admin\": \"string\",\"org_name\": \"string\"}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
       }
     }
   }

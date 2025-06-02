@@ -29,6 +29,17 @@
 									"design/error",
 									"design/rate"
 								]
+							},
+							{
+								"group": "NIL Detection & Interaction",
+								"pages": [
+									"core/detection",
+									"core/auth",
+									"core/request",
+									"core/response",
+									"core/error",
+									"core/rate"
+								]
 							}
 						]
 					},
