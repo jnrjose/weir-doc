@@ -1,119 +1,97 @@
 ---
 title: "Core API Functionality: NIL Detection & Interaction"
-description: "A guide to detecting Name, Image, and Likeness (NIL) usage within ad creatives using the Weir AI API, including primary and public service endpoints."
-icon: "face-viewfinder"
+description: "A guide to detecting Name, Image, and Likeness (NIL) usage within ad creatives using the Weir AI API, focusing on Public Service endpoints."
+icon: "ScanFace" # Example icon
 sidebarTitle: "NIL Detection"
 ---
 
 # Core API Functionality: NIL Detection & Interaction
 
-This document provides a detailed guide to a core use case of the Weir AI API: detecting Name, Image, and Likeness (NIL) usage within ad creatives. This functionality is central to ensuring compliance, managing talent usage rights, and automating the verification of ad content against licensing agreements. For engineering leads and their teams, understanding how to programmatically scan for and interpret NIL data is a key step in leveraging the full power of Weir AI. This section covers primary endpoints like `POST /v1/creatives/scan` as well as relevant "Public Services" endpoints such as `POST /ad/validateIdentity` that contribute to ad validation and potential NIL detection.
+This document provides a detailed guide to a core use case of the Weir AI API: detecting Name, Image, and Likeness (NIL) usage within ad creatives. This functionality is central to ensuring compliance, managing talent usage rights, and automating the verification of ad content against licensing agreements. For engineering leads and their teams, understanding how to programmatically scan for and interpret NIL data is a key step in leveraging the full power of Weir AI. This section focuses on the primary "Public Services" endpoints: `POST /ad/validateIdentity` for submitting creatives and `GET /ad/validation/status` for retrieving validation results, including NIL findings.
 
 ## Scanning Ad Creatives for NIL Content
 
-The primary mechanism for NIL detection is by submitting an ad creative to our scanning engine. The engine will analyze the creative's content to identify any registered personas and check their usage against known licensing agreements. While `POST /v1/creatives/scan` is a dedicated endpoint for this, other "Public Services" endpoints can also be used for ad validation.
+The primary mechanism for NIL detection and ad validation involves submitting an ad creative to our scanning engine. The engine analyzes the creative's content to identify registered personas (NIL), assess compliance, and perform other validation checks.
 
-### Primary Endpoint: `POST /v1/creatives/scan`
+<Steps>
+  <Step title="1. Submit Ad Creative for Validation" icon="PaperPlaneTilt">
+    Use the `POST /ad/validateIdentity` endpoint to initiate an ad validation process, which includes NIL detection. This is an asynchronous endpoint. You submit a request to start the validation, and Weir AI processes it in the background. You'll receive an immediate response confirming the request has been accepted, which will include a `trackingId`.
+  </Step>
+  <Step title="2. Retrieve Validation Status and Results" icon="MagnifyingGlass">
+    After submitting an ad for validation, use the `GET /ad/validation/status` endpoint to poll for the status and retrieve the detailed results, including any NIL matches found, using the `trackingId`.
+  </Step>
+</Steps>
 
-This is a main endpoint you will use to initiate a NIL scan. It is an **asynchronous endpoint**, meaning you submit a request to start a scan, and Weir AI processes it in the background. You receive an immediate response confirming the scan has been queued, and the detailed results are delivered later, typically via a webhook (callback) or can be retrieved by polling a status endpoint.
+### 1. Submit Ad Creative for Validation: `POST /ad/validateIdentity`
 
-#### Request Body Structure & Examples (for `/v1/creatives/scan`)
-The request requires information about the creative to be scanned and can include optional metadata for tracking and context.
+- **Purpose:** Submits an ad creative (e.g., an image or video URL) for identity validation and NIL detection.
+- **Authentication:** Requires `BearerAuth` (Bearer Token).
+  <Info>Refer to the main API documentation (Section 3.2 and potentially `/auth/token` endpoint details) for obtaining a Bearer Token.</Info>
+- **Base URL Note:** Public Service endpoints like `/ad/validateIdentity` may use a base URL such as `https://api.weir.ai/` (e.g., `https://api.weir.ai/ad/validateIdentity`). Please confirm the exact production base URL in the main API Reference (Section 4) or your Weir AI developer portal.
 
-##### Request Parameters:
+#### Request Body Structure & Example (for `/ad/validateIdentity`):
+The request body requires a name for the ad and the ad creative itself (typically a URL).
 
+```json title="Request Body: POST /ad/validateIdentity"
+{
+  "adName": "Summer Campaign Creative Alpha",
+  "ad": "https://your-cdn.com/ads/summer-alpha.jpg"
+}
+```
 <Fields>
-  <Field name="creative_url" type="string" required={true}>
-    A publicly accessible URL to the ad creative content (e.g., an image URL, a video file URL, or a URL to an ad tag/HTML file). Weir AI will fetch the content from this URL for scanning.
-    <Info>Alternative methods for submitting creative content (e.g., direct upload, base64 encoding) may be supported. Refer to **Section 4 (API Endpoint Reference)** for full details.</Info>
-  </Field>
-  <Field name="advertiser_id" type="string" required={false}>
-    An internal identifier from your system for the advertiser associated with this creative. Useful for tracking, reporting, and context-aware analysis.
-  </Field>
-  <Field name="campaign_id" type="string" required={false}>
-    An internal identifier from your system for the campaign this creative belongs to.
-  </Field>
-  <Field name="callback_url" type="string" required={false} recommended={true}>
-    A URL to which Weir AI will send a POST request (a webhook) with the full scan results once the scan is complete. Using callbacks is far more efficient than repeatedly polling for results.
-  </Field>
+  <Field name="adName" type="string" required={true}>A descriptive name for the ad creative being submitted.</Field>
+  <Field name="ad" type="string" required={true}>The URL pointing to the ad creative content. This could be an image, video, or other supported ad format.</Field>
 </Fields>
 
-##### Request Body Example (for `/v1/creatives/scan`):
-```json POST /v1/creatives/scan - Request Body
-  "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
-  "advertiser_id": "adv-9876",
-  "campaign_id": "cmp-summer-sale-2025",
-  "callback_url": "https://your-backend.example.com/api/weir-nil-results"
-```
+#### Immediate Response (Example `202 Accepted`):
+A successful submission to `POST /ad/validateIdentity` will typically return an HTTP `202 Accepted` status code, indicating the request has been queued for processing. The response body will contain a `trackingId`.
 
-### Alternative API Endpoints for Ad Validation
-In addition to `/v1/creatives/scan`, Weir AI provides other endpoints that can be used to submit ad creatives for validation, which can include identity and NIL checks. These endpoints also operate asynchronously and use Bearer Token authentication.
-
-<AccordionGroup>
-  <Accordion title="1. Submit Ad for Validation: POST /ad/validateIdentity" icon="PaperPlaneTilt" defaultOpen={false}>
-    - **Purpose:** This endpoint allows you to submit an ad creative for identity validation. In the context of Weir AI, this process can encompass NIL detection.
-    - **Authentication:** Requires `BearerAuth` (Bearer Token).
-      <Info>If you need to generate a Bearer Token programmatically, the `/auth/token` endpoint (using Basic Auth with your client ID and secret) can be utilized. Refer to the main authentication section of the API documentation for details on token generation.</Info>
-    - **Request Body Example:**
-
-     ```json  POST /ad/validateIdentity - Request Body
-  "adName": "Lebron in the air Ad Creative",
-  "ad": "https://your-ad-cdn.com/creatives/lebron-intheair.jpg"
-```
-    <Fields>
-        <Field name="adName" type="string">A name for the ad creative.</Field>
-        <Field name="ad" type="string">The URL or identifier for the ad creative to be validated. The OpenAPI specification notes "Hardcoded uris" as an example, implying this could be a direct URL or a predefined URI.</Field>
-    </Fields>
-    - **Response:** This is an asynchronous operation. A successful submission will likely return an immediate acknowledgment (e.g., HTTP `202 Accepted`) with a `trackingId` or similar identifier. The detailed validation results, including any NIL findings, would be available later.
-  </Accordion>
-
-  <Accordion title="2. Get Validation Status: GET /ad/validation/status" icon="MagnifyingGlass" defaultOpen={false}>
-    - **Purpose:** Used to retrieve the status and results of an ad validation request previously submitted via `/ad/validateIdentity`.
-    - **Authentication:** Requires `BearerAuth` (Bearer Token).
-    - **Query Parameters:**
-      <Fields>
-        <Field name="trackingId" type="string" required={true}>
-          The unique identifier received in the response from the `POST /ad/validateIdentity` request.
-        </Field>
-      </Fields>
-    - **Response:** The response will contain the current status of the validation (e.g., "PENDING", "COMPLETED", "FAILED") and, if completed, the detailed results, which would include NIL detection information if applicable. The exact structure of this response will be detailed in the full API Reference section.
-  </Accordion>
-</AccordionGroup>
-
-### Understanding the Scan Response
-The API provides two levels of response for the `/v1/creatives/scan` endpoint: the immediate response to your `POST` request and the final, detailed scan result (delivered via webhook or retrieved from a status endpoint). Responses from `/ad/validation/status` would follow a similar pattern of conveying results upon completion.
-
-#### 1. Immediate Response (`202 Accepted` for `/v1/creatives/scan`)
-When you successfully submit a scan request to `/v1/creatives/scan`, you'll receive an HTTP `202 Accepted` status code. The body of this response confirms that your scan has been successfully queued.
-
-```json Example 202 Accepted Response Body (for /v1/creatives/scan)
-  "scan_id": "scn_a1b2c3d4e5f6g7h8",
+```json title="Response Body: 202 Accepted"
+{
+  "trackingId": "trk_a1b2c3d4e5f6g7h8i9j0",
   "status": "QUEUED",
-  "message": "Creative scan accepted and queued for processing. Results will be sent to the provided callback_url upon completion.",
-  "status_check_endpoint": "/v1/creatives/scans/scn_a1b2c3d4e5f6g7h8"
+  "message": "Ad validation request accepted and queued for processing."
+}
 ```
-<AccordionGroup>
-  <Accordion title="Key fields in the immediate response:" icon="Key" defaultOpen={true}>
-    - **`scan_id` (String):** Crucial unique identifier for the scan job. Engineering teams should log this ID.
-    - **`status_check_endpoint` (String):** A relative URL to poll for scan status if not using a callback.
-  </Accordion>
-</AccordionGroup>
+<Fields>
+  <Field name="trackingId" type="string">This is a crucial unique identifier for this specific validation job. You must store and use this ID to retrieve the results later.</Field>
+  <Field name="status" type="string">Indicates the initial status of the request.</Field>
+  <Field name="message" type="string">A human-readable confirmation message.</Field>
+</Fields>
 
-#### 2. Final Scan Result (Delivered to your `callback_url` for `/v1/creatives/scan`)
-This is the detailed result of the completed scan from `/v1/creatives/scan`. It will be a `POST` request from Weir AI to your specified `callback_url` with a JSON body.
+### 2. Retrieve Validation Status and Results: `GET /ad/validation/status`
 
-<Tabs items={["NIL Matches Found", "No NIL Matches", "Scan Error"]}>
+After submitting an ad for validation, you use this endpoint to poll for the status and retrieve the detailed results, including any NIL matches found.
+
+- **Purpose:** Fetches the current status and results of a previously submitted ad validation request.
+- **Authentication:** Requires `BearerAuth` (Bearer Token).
+- **Base URL Note:** Similar to `POST /ad/validateIdentity`, confirm the exact production base URL.
+- **Query Parameters:**
+  <Fields>
+    <Field name="trackingId" type="string" required={true}>The unique `trackingId` received from the `POST /ad/validateIdentity` response.</Field>
+  </Fields>
+- **Example URL:**
+  ```
+  https://api.weir.ai/ad/validation/status?trackingId=trk_a1b2c3d4e5f6g7h8i9j0
+  ```
+
+### Understanding the Validation Response (from `GET /ad/validation/status`)
+
+The response from `GET /ad/validation/status` will provide the outcome of the ad validation process.
+
+<Tabs items={["NIL Matches Found", "No NIL Matches", "Pending Validation"]}>
   <Tab>
-    <Callout type="success" title="Successful Scan with NIL Matches (from /v1/creatives/scan)">
-      `scan_status: "COMPLETED_MATCH_FOUND"`
+    <Callout type="success" title="Validation Completed: NIL Matches Found">
+      `validation_status: "COMPLETED_MATCH_FOUND"` (or similar)
     </Callout>
-    ```json
-      {`{
-  "scan_id": "scn_a1b2c3d4e5f6g7h8",
-  "creative_url": "https://your-ad-cdn.com/creatives/awesomerobotad-123.jpg",
-  "scan_status": "COMPLETED_MATCH_FOUND",
+    ```json title="Example Response: NIL Matches Found"
+{
+  "trackingId": "trk_a1b2c3d4e5f6g7h8i9j0",
+  "adName": "Summer Campaign Creative Alpha",
+  "submitted_ad_identifier": "https://your-cdn.com/ads/summer-alpha.jpg",
+  "validation_status": "COMPLETED_MATCH_FOUND",
   "timestamp_completed": "2025-06-02T10:30:00Z",
-  "matches": [
+  "nil_matches": [
     {
       "persona": {
         "persona_id": "pers_11223344",
@@ -138,38 +116,49 @@ This is the detailed result of the completed scan from `/v1/creatives/scan`. It 
         "height": 400
       }
     }
-    // ... potentially more matches
   ]
-}`}
+  // ... other validation results (e.g., brand safety)
+}
     ```
   </Tab>
   <Tab>
-    <Callout type="info" title="Successful Scan with No NIL Matches (from /v1/creatives/scan)">
-      `scan_status: "COMPLETED_NO_MATCH"`
+    <Callout type="info" title="Validation Completed: No NIL Matches Found">
+      `validation_status: "COMPLETED_NO_MATCH"` (or similar)
     </Callout>
- ```json No NIL Matches response
+    ```json title="Example Response: No NIL Matches"
 {
-  "scan_id": "scn_z9y8x7w6v5u4t3s2",
-  "creative_url": "https://your-ad-cdn.com/creatives/generic-background-456.png",
-  "scan_status": "COMPLETED_NO_MATCH",
+  "trackingId": "trk_k1l2m3n4o5p6q7r8s9t0",
+  "adName": "Generic Product Ad",
+  "submitted_ad_identifier": "https://your-cdn.com/ads/generic-product.png",
+  "validation_status": "COMPLETED_NO_MATCH",
   "timestamp_completed": "2025-06-02T10:32:00Z",
-  "matches": []
+  "nil_matches": []
+  // ... other validation results
 }
-```
-
+    ```
   </Tab>
   <Tab>
-    <Callout type="failure" title="Scan Processing Error">
-      `scan_status: "FAILED"`
+    <Callout type="note" title="Validation Pending">
+      `validation_status: "PENDING"` (or "PROCESSING")
     </Callout>
-    If your initial `POST` request (to either `/v1/creatives/scan` or `/ad/validateIdentity`) is invalid, you'll receive a standard 4xx error response. If the scan itself fails during processing, the final result delivered to your callback (or retrieved via status check) might have a `scan_status` of `FAILED` with an accompanying error object.
-    <Info>Refer to **Section 3.5 (Comprehensive Error Handling)** for a detailed guide on error handling.</Info>
+    ```json title="Example Response: Pending Validation"
+{
+  "trackingId": "trk_a1b2c3d4e5f6g7h8i9j0",
+  "adName": "Summer Campaign Creative Alpha",
+  "validation_status": "PENDING",
+  "message": "Validation is still in progress."
+}
+    ```
   </Tab>
 </Tabs>
 
-### Interpreting Persona and License Objects in the Response
+<Callout type="failure" title="Error Responses">
+  If your initial `POST /ad/validateIdentity` request is invalid, or if the `GET /ad/validation/status` request has issues (e.g., invalid `trackingId`, authentication failure), you will receive a standard 4xx error response. If the validation process itself encounters an unrecoverable error, the `validation_status` might indicate `FAILED`, and the response body should contain an error object.
+  <Info>Please refer to **Section 3.5 (Comprehensive Error Handling)** of the main API documentation for a detailed guide on error handling and the structure of error objects.</Info>
+</Callout>
 
-When NIL matches are found (whether from `/v1/creatives/scan` or as part of the results from `/ad/validation/status`), the `persona` and `license` objects contain critical information. Here's a breakdown of what to look for:
+### Interpreting Persona and License Objects in the Response
+When NIL matches are found within the `nil_matches` array in the response from `GET /ad/validation/status`, the `persona` and `license` objects contain the critical information.
 
 <AccordionGroup>
   <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
@@ -184,11 +173,11 @@ When NIL matches are found (whether from `/v1/creatives/scan` or as part of the 
     <Fields>
       <Field name="license_id" type="string">Unique identifier for the specific license agreement.</Field>
       <Field name="is_active" type="boolean">Indicates if the license is currently within its active date range.</Field>
-      <Field name="is_compliant" type="boolean">**Key field:** Weir AI's determination of whether observed usage complies with license terms (e.g., correct advertiser, territory, date range).</Field>
+      <Field name="is_compliant" type="boolean">**Key field:** Weir AI's determination of whether observed usage complies with license terms.</Field>
       <Field name="usage_allowed" type="boolean">Simpler flag indicating if any usage is permitted under this license.</Field>
       <Field name="start_date" type="ISO 8601 String">Effective start date of the license.</Field>
       <Field name="end_date" type="ISO 8601 String">Effective end date of the license.</Field>
-      <Field name="allowed_advertisers" type="array of strings">List of advertiser IDs permitted to use this persona's NIL. Check if your `advertiser_id` is in this list.</Field>
+      <Field name="allowed_advertisers" type="array of strings">List of advertiser IDs permitted to use this persona's NIL.</Field>
       <Field name="territories" type="array of strings">List of geographic territories (e.g., ISO 3166-1 alpha-2 country codes) where usage is permitted.</Field>
     </Fields>
   </Accordion>
@@ -203,129 +192,203 @@ When NIL matches are found (whether from `/v1/creatives/scan` or as part of the 
   </Accordion>
 </AccordionGroup>
 
-### Code Examples for Making a Scan Request (Focus on `/v1/creatives/scan`)
-
-Here are practical examples engineering teams can adapt to make a scan request to the `POST /v1/creatives/scan` endpoint. Similar principles would apply when constructing requests for `POST /ad/validateIdentity`, adjusting the endpoint path and request body as described above.
+### Code Examples for Ad Validation and NIL Detection
+Here are practical examples engineering teams can adapt to use the `POST /ad/validateIdentity` and `GET /ad/validation/status` endpoints.
+<Note>Ensure you replace `<YOUR_API_KEY>`, `<YOUR_AD_URL>`, and `<YOUR_TRACKING_ID>` with actual values. The base URL (`API_BASE_URL`) should be confirmed from your Weir AI environment (e.g., `https://api.weir.ai` or `https://api-dev.weir.ai`).</Note>
 
 <CodeGroup>
-  ```cURL"  bash 
-    {`curl -X POST "https://api.weir.ai/v1/creatives/scan" \\
+
+    ```CURL bash
+# 1. Submit Ad for Validation
+curl -X POST "https://api.weir.ai/ad/validateIdentity" \\
      -H "Authorization: Bearer <YOUR_API_KEY>" \\
      -H "Content-Type: application/json" \\
      -d '{
-           "creative_url": "https://your-ad-cdn.com/creatives/alex-ray-ad.mp4",
-           "advertiser_id": "adv-9876",
-           "callback_url": "https://your-backend.example.com/api/weir-nil-results"
-         }'`}
+           "adName": "My Test Ad Creative",
+           "ad": "<YOUR_AD_URL>"
+         }'
+# (This should return a JSON response with a trackingId)
+
+# 2. Get Validation Status (replace <YOUR_TRACKING_ID> with the ID from step 1)
+curl -X GET "https://api.weir.ai/ad/validation/status?trackingId=<YOUR_TRACKING_ID>" \\
+     -H "Authorization: Bearer <YOUR_API_KEY>"
     ```
-```python Python
+
+    ```python Python
 import requests
 import os
 import json
+import time
 
 # Best practice: store API key as an environment variable
 API_KEY = os.getenv("WEIR_AI_API_KEY")
-# Confirm the correct base URL for the endpoint you are targeting.
-# For /v1/creatives/scan:
-API_SCAN_ENDPOINT = "https://api.weir.ai/v1/creatives/scan"
-# For /ad/validateIdentity (example, confirm actual base URL):
-# API_VALIDATE_ENDPOINT = "https://api.weir.ai/ad/validateIdentity"
+# Confirm the correct base URL for Public Service endpoints
+API_BASE_URL = "https://api.weir.ai" # Example, adjust as needed
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
 
-# Payload for /v1/creatives/scan
-payload_scan = {
-    "creative_url": "https://your-ad-cdn.com/creatives/alex-ray-ad.mp4",
-    "advertiser_id": "adv-9876",
-    "callback_url": "https://your-backend.example.com/api/weir-nil-results"
-}
+def submit_ad_for_validation(ad_name, ad_url):
+    """Submits an ad for validation and returns the trackingId."""
+    endpoint = f"{API_BASE_URL}/ad/validateIdentity"
+    payload = {
+        "adName": ad_name,
+        "ad": ad_url
+    }
+    try:
+        response = requests.post(endpoint, headers=headers, data=json.dumps(payload))
+        response.raise_for_status() # Raises an exception for 4xx/5xx errors
+        response_data = response.json()
+        print(f"Ad submission successful: {response_data}")
+        return response_data.get("trackingId")
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error during ad submission: {http_err}")
+        print("Response body:", response.text)
+    except Exception as err:
+        print(f"Other error during ad submission: {err}")
+    return None
 
-# Example for /ad/validateIdentity (illustrative)
-# payload_validate = {
-#   "adName": "My Ad Creative",
-#   "ad": "https://your-ad-cdn.com/creatives/my-creative.jpg"
-# }
+def get_validation_status(tracking_id):
+    """Polls for validation status until completion or timeout."""
+    endpoint = f"{API_BASE_URL}/ad/validation/status?trackingId={tracking_id}"
+    max_attempts = 10
+    poll_interval_seconds = 10 # Adjust as needed
+    status_data = {} # Initialize status_data
 
-try:
-    # Example for /v1/creatives/scan
-    response = requests.post(API_SCAN_ENDPOINT, headers=headers, data=json.dumps(payload_scan))
+    for attempt in range(max_attempts):
+        try:
+            response = requests.get(endpoint, headers=headers)
+            response.raise_for_status()
+            status_data = response.json()
+            print(f"Attempt {attempt + 1}: Status for {tracking_id} - {status_data.get('validation_status')}")
 
-    # Raise an exception for bad status codes (4xx or 5xx)
-    response.raise_for_status()
+            if status_data.get("validation_status", "").startswith("COMPLETED"):
+                return status_data
+            elif status_data.get("validation_status") == "FAILED":
+                print(f"Validation failed for {tracking_id}: {status_data}")
+                return status_data
+            
+            time.sleep(poll_interval_seconds)
 
-    # On success (e.g., 202 Accepted), print the response content
-    scan_confirmation = response.json()
-    print("Scan successfully submitted (using /v1/creatives/scan):")
-    print(f"  Scan ID: {scan_confirmation.get('scan_id')}")
-    print(f"  Status: {scan_confirmation.get('status')}")
-    if 'status_check_endpoint' in scan_confirmation:
-        print(f"  Status Check: {API_SCAN_ENDPOINT.rsplit('/', 2)[0]}{scan_confirmation.get('status_check_endpoint')}")  # Construct full URL for status check
+        except requests.exceptions.HTTPError as http_err:
+            print(f"HTTP error getting status: {http_err}")
+            print("Response body:", response.text)
+            return None # Or handle retry for specific errors
+        except Exception as err:
+            print(f"Other error getting status: {err}")
+            return None
+    
+    print(f"Max polling attempts reached for {tracking_id}. Last status: {status_data.get('validation_status') if status_data else 'Unknown'}")
+    return None
 
-except requests.exceptions.HTTPError as http_err:
-    print(f"HTTP error occurred: {http_err}")
-    print("Response body:", response.text)
-except Exception as err:
-    print(f"An other error occurred: {err}")
-```
 
-```javascript Node.js (axios)
+# --- Example Usage ---
+if API_KEY:
+    test_ad_name = "My Python Test Ad"
+    test_ad_url = "https://your-ad-cdn.com/creatives/sample-ad-for-python.jpg" # Replace with a real, accessible URL
+
+    tracking_id = submit_ad_for_validation(test_ad_name, test_ad_url)
+
+    if tracking_id:
+        print(f"\\nPolling for results for trackingId: {tracking_id}...")
+        final_results = get_validation_status(tracking_id)
+        if final_results:
+            print("\\n--- Final Validation Results ---")
+            print(json.dumps(final_results, indent=2))
+            # Further process final_results, especially final_results.get("nil_matches")
+        else:
+            print("Could not retrieve final validation results.")
+else:
+    print("WEIR_AI_API_KEY environment variable not set.")
+    ```
+  
+    ```javascript javascript
 const axios = require('axios');
+const util = require('util');
+const sleep = util.promisify(setTimeout);
+
 // Best practice: store API key as an environment variable
 const apiKey = process.env.WEIR_AI_API_KEY;
-// Confirm the correct base URL for the endpoint you are targeting.
-// For /v1/creatives/scan:
-const apiScanEndpoint = 'https://api.weir.ai/v1/creatives/scan';
-// For /ad/validateIdentity (example, confirm actual base URL):
-// const apiValidateEndpoint = 'https://api.weir.ai/ad/validateIdentity';
+// Confirm the correct base URL for Public Service endpoints
+const apiBaseUrl = 'https://api.weir.ai'; // Example, adjust as needed
 
 const headers = {
-  'Authorization': `Bearer ${apiKey}`,
+  'Authorization': \`Bearer \${apiKey}\`,
   'Content-Type': 'application/json'
 };
 
-// Payload for /v1/creatives/scan
-const payloadScan = {
-  creative_url: 'https://your-ad-cdn.com/creatives/alex-ray-ad.mp4',
-  advertiser_id: 'adv-9876',
-  callback_url: 'https://your-backend.example.com/api/weir-nil-results'
-};
+async function submitAdForValidation(adName, adUrl) {
+  const endpoint = \`\${apiBaseUrl}/ad/validateIdentity\`;
+  const payload = { adName, ad: adUrl };
+  try {
+    const response = await axios.post(endpoint, payload, { headers });
+    console.log('Ad submission successful:', response.data);
+    return response.data.trackingId;
+  } catch (error) {
+    handleAxiosError(error, 'ad submission');
+    return null;
+  }
+}
 
-// Example for /ad/validateIdentity (illustrative)
-// const payloadValidate = {
-//   adName: 'My Ad Creative',
-//   ad: 'https://your-ad-cdn.com/creatives/my-creative.jpg'
-// };
+async function getValidationStatus(trackingId) {
+  const endpoint = \`\${apiBaseUrl}/ad/validation/status?trackingId=\${trackingId}\`;
+  const maxAttempts = 10;
+  const pollIntervalMs = 10000; // Adjust as needed
 
-// Example for /v1/creatives/scan
-axios.post(apiScanEndpoint, payloadScan, { headers })
-  .then(response => {
-    // On success (e.g., 202 Accepted), log the response data
-    console.log('Scan successfully submitted (using /v1/creatives/scan):');
-    console.log(`  Scan ID: ${response.data.scan_id}`);
-    console.log(`  Status: ${response.data.status}`);
-    if (response.data.status_check_endpoint) {
-      const baseApiUrl = apiScanEndpoint.substring(
-        0,
-        apiScanEndpoint.lastIndexOf('/v1/') + '/v1'.length
-      ); // More robust way to get base
-      console.log(`  Status Check: ${baseApiUrl}${response.data.status_check_endpoint}`);
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const response = await axios.get(endpoint, { headers });
+      const statusData = response.data;
+      console.log(\`Attempt \${attempt + 1}: Status for \${trackingId} - \${statusData.validation_status}\`);
+
+      if (statusData.validation_status?.startsWith("COMPLETED") || statusData.validation_status === "FAILED") {
+        return statusData;
+      }
+      await sleep(pollIntervalMs);
+    } catch (error) {
+      handleAxiosError(error, 'getting validation status');
+      return null; // Or handle retry for specific errors
     }
-  })
-  .catch(error => {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error('API Error:', error.response.status, error.response.data);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error('Network Error: No response received.', error.request);
+  }
+  console.log(\`Max polling attempts reached for \${trackingId}.\`);
+  return null;
+}
+
+function handleAxiosError(error, operation) {
+  if (error.response) {
+    console.error(\`API Error during \${operation}:\`, error.response.status, error.response.data);
+  } else if (error.request) {
+    console.error(\`Network Error during \${operation}: No response received.\`, error.request);
+  } else {
+    console.error(\`Error during \${operation}:\`, error.message);
+  }
+}
+
+// --- Example Usage ---
+(async () => {
+  if (!apiKey) {
+    console.error("WEIR_AI_API_KEY environment variable not set.");
+    return;
+  }
+
+  const testAdName = "My Node Test Ad";
+  const testAdUrl = "https://your-ad-cdn.com/creatives/sample-ad-for-node.jpg"; // Replace with a real, accessible URL
+
+  const trackingId = await submitAdForValidation(testAdName, testAdUrl);
+
+  if (trackingId) {
+    console.log(\`\\nPolling for results for trackingId: \${trackingId}...\`);
+    const finalResults = await getValidationStatus(trackingId);
+    if (finalResults) {
+      console.log("\\n--- Final Validation Results ---");
+      console.log(JSON.stringify(finalResults, null, 2));
+      // Further process finalResults, especially finalResults.nil_matches
     } else {
-      // Something happened in setting up the request that triggered an Error
-      console.error('Error:', error.message);
+      console.log("Could not retrieve final validation results.");
     }
-  });
-```
+  }
+})();
+    ```
 </CodeGroup>
