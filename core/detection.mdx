@@ -1,11 +1,13 @@
 ---
 title: "Core API Functionality: NIL Detection & Interaction"
 description: "A guide to detecting Name, Image, and Likeness (NIL) usage within ad creatives using the Weir AI API, focusing on Public Service endpoints."
-icon: "ScanFace" # Example icon
+icon: "face-viewfinder" # Example icon
 sidebarTitle: "NIL Detection"
 ---
 
-This of WEIR api document provides a detailed guide to a core use case of the Weir AI API: detecting Name, Image, and Likeness (NIL) usage within ad creatives. This functionality is central to ensuring compliance, managing talent usage rights, and automating the verification of ad content against licensing agreements. For engineering leads and their teams, understanding how to programmatically scan for and interpret NIL data is a key step in leveraging the full power of Weir AI. This section focuses on the primary "Public Services" endpoints: `POST /ad/validateIdentity` for submitting creatives and `GET /ad/validation/status` for retrieving validation results, including NIL findings.
+# Core API Functionality: NIL Detection & Interaction
+
+This document provides a detailed guide to a core use case of the Weir AI API: detecting Name, Image, and Likeness (NIL) usage within ad creatives. This functionality is central to ensuring compliance, managing talent usage rights, and automating the verification of ad content against licensing agreements. For engineering leads and their teams, understanding how to programmatically scan for and interpret NIL data is a key step in leveraging the full power of Weir AI. This section focuses on the primary "Public Services" endpoints: `POST /ad/validateIdentity` for submitting creatives and `GET /ad/validation/status` for retrieving validation results, including NIL findings.
 
 ## Scanning Ad Creatives for NIL Content
 
@@ -28,18 +30,28 @@ The primary mechanism for NIL detection and ad validation involves submitting an
 - **Base URL Note:** Public Service endpoints like `/ad/validateIdentity` may use a base URL such as `https://api.weir.ai/` (e.g., `https://api.weir.ai/ad/validateIdentity`). Please confirm the exact production base URL in the main API Reference (Section 4) or your Weir AI developer portal.
 
 #### Request Body Structure & Example (for `/ad/validateIdentity`):
-The request body requires a name for the ad and the ad creative itself (typically a URL).
+The request body requires a name for the ad and the ad creative itself.
 
+**Request Parameters / Body Fields:**
+<Fields>
+  <Field name="adName" type="string" required={true}>
+    A descriptive name for the ad creative being submitted. This helps in identifying the scan job.
+  </Field>
+  <Field name="ad" type="string" required={true}>
+    This field specifies the creative to be scanned. It can be:
+    - A publicly accessible URL pointing to the ad creative content (e.g., an image URL, a video file URL). This is the most common usage for external integrations.
+    - The phrase "Hardcoded uris" as seen in some examples suggests that for specific internal or pre-configured setups, this might refer to a system-recognized internal identifier or a set of predefined test URIs. For general public API integration, you should provide a direct, publicly accessible URL to your creative asset.
+  </Field>
+</Fields>
+
+**Example Request Body:**
 ```json title="Request Body: POST /ad/validateIdentity"
 {
-  "adName": "Summer Campaign Creative Alpha",
-  "ad": "https://your-cdn.com/ads/summer-alpha.jpg"
+  "adName": "Lebron christmasjingle",
+  "ad": "[https://your-cdn.com/ads/lebron-christmas-jingle.mp4](https://your-cdn.com/ads/lebron-christmas-jingle.mp4)"
 }
 ```
-<Fields>
-  <Field name="adName" type="string" required={true}>A descriptive name for the ad creative being submitted.</Field>
-  <Field name="ad" type="string" required={true}>The URL pointing to the ad creative content. This could be an image, video, or other supported ad format.</Field>
-</Fields>
+<Info>(Note: In this example, "Hardcoded uris" from your prompt has been replaced with a placeholder URL. When integrating, you would use the actual URL of the creative you wish to scan.)</Info>
 
 #### Immediate Response (Example `202 Accepted`):
 A successful submission to `POST /ad/validateIdentity` will typically return an HTTP `202 Accepted` status code, indicating the request has been queued for processing. The response body will contain a `trackingId`.
@@ -59,7 +71,7 @@ A successful submission to `POST /ad/validateIdentity` will typically return an 
 
 ### 2. Retrieve Validation Status and Results: `GET /ad/validation/status`
 
-After submitting an ad for validation, you use this endpoint to poll for the status and retrieve the detailed results, including any NIL matches found.
+After submitting an ad for validation via `/ad/validateIdentity`, you use this endpoint to poll for the status and retrieve the detailed results, including any NIL matches found.
 
 - **Purpose:** Fetches the current status and results of a previously submitted ad validation request.
 - **Authentication:** Requires `BearerAuth` (Bearer Token).
@@ -70,7 +82,7 @@ After submitting an ad for validation, you use this endpoint to poll for the sta
   </Fields>
 - **Example URL:**
   ```
-  https://api.weir.ai/ad/validation/status?trackingId=trk_a1b2c3d4e5f6g7h8i9j0
+  [https://api.weir.ai/ad/validation/status?trackingId=trk_a1b2c3d4e5f6g7h8i9j0](https://api.weir.ai/ad/validation/status?trackingId=trk_a1b2c3d4e5f6g7h8i9j0)
   ```
 
 ### Understanding the Validation Response (from `GET /ad/validation/status`)
@@ -85,37 +97,38 @@ The response from `GET /ad/validation/status` will provide the outcome of the ad
     ```json title="Example Response: NIL Matches Found"
 {
   "trackingId": "trk_a1b2c3d4e5f6g7h8i9j0",
-  "adName": "Summer Campaign Creative Alpha",
-  "submitted_ad_identifier": "https://your-cdn.com/ads/summer-alpha.jpg",
+  "adName": "Lebron christmasjingle",
+  "submitted_ad_identifier": "[https://your-cdn.com/ads/lebron-christmas-jingle.mp4](https://your-cdn.com/ads/lebron-christmas-jingle.mp4)",
   "validation_status": "COMPLETED_MATCH_FOUND",
-  "timestamp_completed": "2025-06-02T10:30:00Z",
+  "timestamp_completed": "2025-06-03T10:30:00Z",
   "nil_matches": [
     {
       "persona": {
-        "persona_id": "pers_11223344",
-        "name": "Alex Ray",
+        "persona_id": "pers_lebronjames001",
+        "name": "LeBron James",
         "category": "Athlete",
-        "confidence_score": 0.985
+        "confidence_score": 0.992
       },
       "license": {
-        "license_id": "lic_aabbccddeeff",
+        "license_id": "lic_lj_xmas_abc",
         "is_active": true,
-        "is_compliant": true,
+        "is_compliant": false,
         "usage_allowed": true,
-        "start_date": "2025-01-01T00:00:00Z",
+        "start_date": "2025-11-01T00:00:00Z",
         "end_date": "2025-12-31T23:59:59Z",
-        "allowed_advertisers": ["adv-9876", "adv-5555"],
-        "territories": ["US", "CA"]
+        "allowed_advertisers": ["adv_global_sports_drink"],
+        "territories": ["US"]
       },
       "bounding_box": {
-        "top_left_x": 150,
-        "top_left_y": 300,
-        "width": 250,
-        "height": 400
+        "top_left_x": 120,
+        "top_left_y": 250,
+        "width": 300,
+        "height": 450
       }
     }
+    // ... other matches if any
   ]
-  // ... other validation results (e.g., brand safety)
+  // ... other validation results (e.g., brand safety, technical specs) may also be present
 }
     ```
   </Tab>
@@ -126,10 +139,10 @@ The response from `GET /ad/validation/status` will provide the outcome of the ad
     ```json title="Example Response: No NIL Matches"
 {
   "trackingId": "trk_k1l2m3n4o5p6q7r8s9t0",
-  "adName": "Generic Product Ad",
-  "submitted_ad_identifier": "https://your-cdn.com/ads/generic-product.png",
+  "adName": "Generic Holiday Scenery Ad",
+  "submitted_ad_identifier": "[https://your-cdn.com/ads/holiday-scenery.jpg](https://your-cdn.com/ads/holiday-scenery.jpg)",
   "validation_status": "COMPLETED_NO_MATCH",
-  "timestamp_completed": "2025-06-02T10:32:00Z",
+  "timestamp_completed": "2025-06-03T10:32:00Z",
   "nil_matches": []
   // ... other validation results
 }
@@ -142,7 +155,7 @@ The response from `GET /ad/validation/status` will provide the outcome of the ad
     ```json title="Example Response: Pending Validation"
 {
   "trackingId": "trk_a1b2c3d4e5f6g7h8i9j0",
-  "adName": "Summer Campaign Creative Alpha",
+  "adName": "Lebron christmasjingle",
   "validation_status": "PENDING",
   "message": "Validation is still in progress."
 }
@@ -161,7 +174,7 @@ When NIL matches are found within the `nil_matches` array in the response from `
 <AccordionGroup>
   <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
     <Fields>
-      <Field name="persona_id" type="string">Unique identifier for the detected individual in Weir AI.</Field>
+      <Field name="persona_id" type="string">Unique identifier for the detected individual in the Weir AI system.</Field>
       <Field name="name" type="string">Name of the detected individual.</Field>
       <Field name="category" type="string">Category (e.g., "Athlete", "Musician", "Actor", "Influencer").</Field>
       <Field name="confidence_score" type="float">Score (0.0-1.0) indicating identification confidence. Engineering teams should use a reasonable threshold (e.g., > 0.90) to determine if a match is actionable.</Field>
@@ -192,26 +205,24 @@ When NIL matches are found within the `nil_matches` array in the response from `
 
 ### Code Examples for Ad Validation and NIL Detection
 Here are practical examples engineering teams can adapt to use the `POST /ad/validateIdentity` and `GET /ad/validation/status` endpoints.
-<Note>Ensure you replace `<YOUR_API_KEY>`, `<YOUR_AD_URL>`, and `<YOUR_TRACKING_ID>` with actual values. The base URL (`API_BASE_URL`) should be confirmed from your Weir AI environment (e.g., `https://api.weir.ai` or `https://api-dev.weir.ai`).</Note>
+<Note>Ensure you replace `<YOUR_API_KEY>`, `<YOUR_AD_URL_FOR_LEBRON_JINGLE>`, and `<YOUR_TRACKING_ID>` with actual values. The base URL (`API_BASE_URL`) should be confirmed from your Weir AI environment (e.g., `https://api.weir.ai` or `https://api-dev.weir.ai`).</Note>
 
 <CodeGroup>
-
-    ```CURL bash
-# 1. Submit Ad for Validation
-curl -X POST "https://api.weir.ai/ad/validateIdentity" \\
+    ```bash cURL
+# 1. Submit Ad for Validation:
+curl -X POST "[https://api.weir.ai/ad/validateIdentity](https://api.weir.ai/ad/validateIdentity)" \\
      -H "Authorization: Bearer <YOUR_API_KEY>" \\
      -H "Content-Type: application/json" \\
      -d '{
-           "adName": "My Test Ad Creative",
-           "ad": "<YOUR_AD_URL>"
+           "adName": "Lebron christmasjingle",
+           "ad": "<YOUR_AD_URL_FOR_LEBRON_JINGLE>"
          }'
 # (This should return a JSON response with a trackingId)
 
-# 2. Get Validation Status (replace <YOUR_TRACKING_ID> with the ID from step 1)
-curl -X GET "https://api.weir.ai/ad/validation/status?trackingId=<YOUR_TRACKING_ID>" \\
+# 2. Get Validation Status:
+curl -X GET "[https://api.weir.ai/ad/validation/status?trackingId=](https://api.weir.ai/ad/validation/status?trackingId=)<YOUR_TRACKING_ID>" \\
      -H "Authorization: Bearer <YOUR_API_KEY>"
     ```
-
     ```python Python
 import requests
 import os
@@ -221,7 +232,7 @@ import time
 # Best practice: store API key as an environment variable
 API_KEY = os.getenv("WEIR_AI_API_KEY")
 # Confirm the correct base URL for Public Service endpoints
-API_BASE_URL = "https://api.weir.ai" # Example, adjust as needed
+API_BASE_URL = "[https://api.weir.ai](https://api.weir.ai)" # Example, adjust as needed
 
 headers = {
     "Authorization": f"Bearer {API_KEY}",
@@ -236,6 +247,7 @@ def submit_ad_for_validation(ad_name, ad_url):
         "ad": ad_url
     }
     try:
+        print(f"Submitting ad for validation: {ad_name} from {ad_url}")
         response = requests.post(endpoint, headers=headers, data=json.dumps(payload))
         response.raise_for_status() # Raises an exception for 4xx/5xx errors
         response_data = response.json()
@@ -243,7 +255,8 @@ def submit_ad_for_validation(ad_name, ad_url):
         return response_data.get("trackingId")
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error during ad submission: {http_err}")
-        print("Response body:", response.text)
+        if response is not None: # Check if response object exists
+            print("Response body:", response.text)
     except Exception as err:
         print(f"Other error during ad submission: {err}")
     return None
@@ -253,10 +266,11 @@ def get_validation_status(tracking_id):
     endpoint = f"{API_BASE_URL}/ad/validation/status?trackingId={tracking_id}"
     max_attempts = 10
     poll_interval_seconds = 10 # Adjust as needed
-    status_data = {} # Initialize status_data
+    status_data = {} # Initialize to ensure it's defined in all paths
 
     for attempt in range(max_attempts):
         try:
+            print(f"Polling attempt {attempt + 1} for trackingId: {tracking_id}")
             response = requests.get(endpoint, headers=headers)
             response.raise_for_status()
             status_data = response.json()
@@ -272,20 +286,23 @@ def get_validation_status(tracking_id):
 
         except requests.exceptions.HTTPError as http_err:
             print(f"HTTP error getting status: {http_err}")
-            print("Response body:", response.text)
+            if response is not None: # Check if response object exists
+                 print("Response body:", response.text)
             return None # Or handle retry for specific errors
         except Exception as err:
             print(f"Other error getting status: {err}")
             return None
     
-    print(f"Max polling attempts reached for {tracking_id}. Last status: {status_data.get('validation_status') if status_data else 'Unknown'}")
+    print(f"Max polling attempts reached for {tracking_id}. Last status: {status_data.get('validation_status', 'Unknown')}")
     return None
 
 
 # --- Example Usage ---
 if API_KEY:
-    test_ad_name = "My Python Test Ad"
-    test_ad_url = "https://your-ad-cdn.com/creatives/sample-ad-for-python.jpg" # Replace with a real, accessible URL
+    # Use the specific adName from the prompt
+    test_ad_name = "Lebron christmasjingle"
+    # Replace with an actual, publicly accessible URL for the creative
+    test_ad_url = "[https://your-cdn.com/creatives/lebron-xmas-jingle-final.mp4](https://your-cdn.com/creatives/lebron-xmas-jingle-final.mp4)" 
 
     tracking_id = submit_ad_for_validation(test_ad_name, test_ad_url)
 
@@ -301,8 +318,7 @@ if API_KEY:
 else:
     print("WEIR_AI_API_KEY environment variable not set.")
     ```
-  
-    ```javascript javascript
+```javascript  Node.js (axios)
 const axios = require('axios');
 const util = require('util');
 const sleep = util.promisify(setTimeout);
@@ -310,17 +326,18 @@ const sleep = util.promisify(setTimeout);
 // Best practice: store API key as an environment variable
 const apiKey = process.env.WEIR_AI_API_KEY;
 // Confirm the correct base URL for Public Service endpoints
-const apiBaseUrl = 'https://api.weir.ai'; // Example, adjust as needed
+const apiBaseUrl = "https://api.weir.ai"; // Example, adjust as needed
 
 const headers = {
-  'Authorization': \`Bearer \${apiKey}\`,
+  'Authorization': `Bearer ${apiKey}`,
   'Content-Type': 'application/json'
 };
 
 async function submitAdForValidation(adName, adUrl) {
-  const endpoint = \`\${apiBaseUrl}/ad/validateIdentity\`;
+  const endpoint = `${apiBaseUrl}/ad/validateIdentity`;
   const payload = { adName, ad: adUrl };
   try {
+    console.log(`Submitting ad for validation: ${adName} from ${adUrl}`);
     const response = await axios.post(endpoint, payload, { headers });
     console.log('Ad submission successful:', response.data);
     return response.data.trackingId;
@@ -331,15 +348,17 @@ async function submitAdForValidation(adName, adUrl) {
 }
 
 async function getValidationStatus(trackingId) {
-  const endpoint = \`\${apiBaseUrl}/ad/validation/status?trackingId=\${trackingId}\`;
+  const endpoint = `${apiBaseUrl}/ad/validation/status?trackingId=${trackingId}`;
   const maxAttempts = 10;
   const pollIntervalMs = 10000; // Adjust as needed
+  let statusData = {}; // Initialize
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
+      console.log(`Polling attempt ${attempt + 1} for trackingId: ${trackingId}`);
       const response = await axios.get(endpoint, { headers });
-      const statusData = response.data;
-      console.log(\`Attempt \${attempt + 1}: Status for \${trackingId} - \${statusData.validation_status}\`);
+      statusData = response.data;
+      console.log(`Attempt ${attempt + 1}: Status for ${trackingId} - ${statusData.validation_status}`);
 
       if (statusData.validation_status?.startsWith("COMPLETED") || statusData.validation_status === "FAILED") {
         return statusData;
@@ -350,17 +369,17 @@ async function getValidationStatus(trackingId) {
       return null; // Or handle retry for specific errors
     }
   }
-  console.log(\`Max polling attempts reached for \${trackingId}.\`);
+  console.log(`Max polling attempts reached for ${trackingId}. Last status: ${statusData.validation_status || 'Unknown'}`);
   return null;
 }
 
 function handleAxiosError(error, operation) {
   if (error.response) {
-    console.error(\`API Error during \${operation}:\`, error.response.status, error.response.data);
+    console.error(`API Error during ${operation}:`, error.response.status, error.response.data);
   } else if (error.request) {
-    console.error(\`Network Error during \${operation}: No response received.\`, error.request);
+    console.error(`Network Error during ${operation}: No response received.`, error.request);
   } else {
-    console.error(\`Error during \${operation}:\`, error.message);
+    console.error(`Error during ${operation}:`, error.message);
   }
 }
 
@@ -371,16 +390,18 @@ function handleAxiosError(error, operation) {
     return;
   }
 
-  const testAdName = "My Node Test Ad";
-  const testAdUrl = "https://your-ad-cdn.com/creatives/sample-ad-for-node.jpg"; // Replace with a real, accessible URL
+  // Use the specific adName from the prompt
+  const testAdName = "Lebron christmasjingle";
+  // Replace with an actual, publicly accessible URL for the creative
+  const testAdUrl = "https://your-cdn.com/creatives/lebron-xmas-jingle-final.mp4";
 
   const trackingId = await submitAdForValidation(testAdName, testAdUrl);
 
   if (trackingId) {
-    console.log(\`\\nPolling for results for trackingId: \${trackingId}...\`);
+    console.log(`\nPolling for results for trackingId: ${trackingId}...`);
     const finalResults = await getValidationStatus(trackingId);
     if (finalResults) {
-      console.log("\\n--- Final Validation Results ---");
+      console.log("\n--- Final Validation Results ---");
       console.log(JSON.stringify(finalResults, null, 2));
       // Further process finalResults, especially finalResults.nil_matches
     } else {
@@ -388,5 +409,16 @@ function handleAxiosError(error, operation) {
     }
   }
 })();
-    ```
+```
+
 </CodeGroup>
+/*
+(Note: The POST /v1/creatives/scan endpoint, previously detailed, 
+can be considered an alternative or specialized scanning endpoint. 
+For primary NIL detection and general ad validation as per this updated guide, 
+the /ad/validateIdentity and /ad/validation/status flow is recommended. 
+Refer to the full API Reference (Section 4) for details on all available 
+endpoints and their specific use cases.)
+*/
+
+
