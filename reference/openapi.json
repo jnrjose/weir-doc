@@ -3,7 +3,11 @@
   "info": {
     "title": "Combined Weir API",
     "version": "1.0.0",
-    "description": "OpenAPI 3.0 specification generated from the provided Postman collection. Base URL is set to https://api-dev.weir.ai."
+    "description": "OpenAPI 3.0 specification generated from the provided Postman collection. Base URL is set to https://api-dev.weir.ai.",
+    "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
   },
   "servers": [
     {
@@ -16,6 +20,7 @@
       "post": {
         "summary": "Register",
         "operationId": "register",
+        "security": [],
         "requestBody": {
           "description": "User registration payload",
           "required": true,
@@ -94,6 +99,32 @@
                         "refreshToken": {
                           "type": "string"
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }
@@ -180,6 +211,32 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Invalid image upload data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid image data"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "default": {
             "description": "Error response",
             "content": {
@@ -211,6 +268,7 @@
       "get": {
         "summary": "Get FakeAds",
         "operationId": "getFakeAds",
+        "security": [],
         "parameters": [
           {
             "name": "requestId",
@@ -249,6 +307,32 @@
                         "https://api-dev.weir.ai/gateway/ui/trial/fakead/68307b7e73c815b31f8e7e6d",
                         "https://api-dev.weir.ai/gateway/ui/trial/fakead/683079ce554aee42d950a969"
                       ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid request parameters"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -311,6 +395,32 @@
                         "expiresIn": {
                           "type": "integer"
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }
@@ -404,6 +514,32 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request - Invalid ad validation payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid ad payload"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
           "default": {
             "description": "Error response",
             "content": {
@@ -477,6 +613,32 @@
                           "type": "string",
                           "example": "pending"
                         }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid tracking identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid tracking identifier"
+                    },
+                    "errors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
                       }
                     }
                   }

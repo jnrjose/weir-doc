@@ -33,7 +33,7 @@
 							{
 								"group": "NIL Detection & Interaction",
 								"pages": [
-									"core/detection",
+									"core/nil",
 									"core/auth",
 									"core/request",
 									"core/response",
