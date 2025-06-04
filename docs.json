@@ -20,25 +20,10 @@
 								]
 							},
 							{
-								"group": "WEIR AI Design Principles",
-								"pages": [
-									"design/concept",
-									"design/auth",
-									"design/request",
-									"design/response",
-									"design/error",
-									"design/rate"
-								]
-							},
-							{
 								"group": "NIL Detection & Interaction",
 								"pages": [
 									"core/nil",
-									"core/auth",
-									"core/request",
-									"core/response",
-									"core/error",
-									"core/rate"
+									"core/analysis"
 								]
 							}
 						]
@@ -71,20 +56,11 @@
 							{
 								"group": "General Best Practices",
 								"pages": [
+									"integration/concept",
 									"integration/auth",
-									"integration/error",
-									"integration/idempotency",
-									"integration/rate-limiting",
-									"integration/logging"
-								]
-							},
-							{
-								"group": " AI Agent-Driven Integration",
-								"pages": [
-									"integration/endpoint-definitions",
-									"integration/error-messages",
-									"integration/prompting"
-								]
+									"integration/request",
+									"integration/response"
+									]
 							}
 						]
 					}
