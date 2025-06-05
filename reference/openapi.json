@@ -36,7 +36,7 @@
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "example": "withEdge@mailinator.com"
+                    "example": "sample@weir.ai"
                   },
                   "demoConsent": {
                     "type": "boolean",

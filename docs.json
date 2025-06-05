@@ -40,13 +40,12 @@
 							{
 								"group": "Endpoint Examples",
 								"pages": [
-									"reference/endpoint/createNIL",
-									"reference/endpoint/getNIL",
-									"reference/endpoint/getNILdetails",
-									"reference/endpoint/dispute",
-									"reference/endpoint/getDispute",
-									"reference/endpoint/getDisputeDetails",
-									"reference/endpoint/getDisputeEvidence"]
+									"reference/endpoint/register",
+									"reference/endpoint/upload",
+									"reference/endpoint/fakeads",
+									"reference/endpoint/accessToken",
+									"reference/endpoint/validateIdentity",
+									"reference/endpoint/status"]
 							}
 						]
 					},
