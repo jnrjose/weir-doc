@@ -45,7 +45,7 @@
 									"reference/endpoint/login",
 									"reference/endpoint/logout",
 									"reference/endpoint/passwordreset",
-									"reference/endpoint/passwordresettotp",
+									"reference/endpoint/passwordresetotp",
 									"reference/endpoint/refreshtoken",
 									"reference/endpoint/register",
 									"reference/endpoint/validate",
