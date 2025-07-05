@@ -40,12 +40,19 @@
 							{
 								"group": "Endpoint Examples",
 								"pages": [
-									"reference/endpoint/register",
-									"reference/endpoint/upload",
-									"reference/endpoint/fakeads",
 									"reference/endpoint/accessToken",
+									"reference/endpoint/auth",
+									"reference/endpoint/login",
+									"reference/endpoint/logout",
+									"reference/endpoint/passwordreset",
+									"reference/endpoint/passwordresettotp",
+									"reference/endpoint/refreshtoken",
+									"reference/endpoint/register",
+									"reference/endpoint/validate",
 									"reference/endpoint/validateIdentity",
-									"reference/endpoint/status"]
+									"reference/endpoint/validateinvitee",
+									"reference/endpoint/verifyinviteeOTP"
+										]
 							}
 						]
 					},

@@ -1,676 +1,254 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Combined Weir API",
+    "title": "Auth Service API",
     "version": "1.0.0",
-    "description": "OpenAPI 3.0 specification generated from the provided Postman collection. Base URL is set to https://api-dev.weir.ai.",
-    "license": {
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
-      }
+    "description": "Comprehensive endpoints for user authentication, registration, and session management."
   },
   "servers": [
     {
-      "url": "https://api-dev.weir.ai",
-      "description": "Development server"
+      "url": "{{baseUrl}}",
+      "description": "Base URL of the Auth Service"
     }
   ],
   "paths": {
-    "/gateway/ui/trial/register": {
+    "/auth/authenticate": {
       "post": {
-        "summary": "Register",
-        "operationId": "register",
-        "security": [],
+        "summary": "Authenticate user via JWT",
+        "description": "Validates the provided JWT token and starts a new user session.",
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Origin of the request (e.g., 'UI' or 'API').",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "requestBody": {
-          "description": "User registration payload",
+          "description": "Payload containing the JWT token to validate.",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "firstname": {
-                    "type": "string",
-                    "example": "Edge"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "sample@weir.ai"
-                  },
-                  "demoConsent": {
-                    "type": "boolean",
-                    "example": true
-                  },
-                  "fakeAdEmailOptIn": {
-                    "type": "boolean",
-                    "example": false
-                  }
+                  "token": { "type": "string" }
                 },
-                "required": ["firstname", "email", "demoConsent", "fakeAdEmailOptIn"]
+                "required": ["token"]
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Registration was successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Registration was successful"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "sub": {
-                              "type": "string",
-                              "example": "683f7ddd7ba018e9b4346acb"
-                            },
-                            "firstname": {
-                              "type": "string",
-                              "example": "Edge"
-                            },
-                            "email": {
-                              "type": "string",
-                              "format": "email",
-                              "example": "withEdge@mailinator.com"
-                            },
-                            "hasExistingProfile": {
-                              "type": "boolean",
-                              "example": false
-                            }
-                          }
-                        },
-                        "accessToken": {
-                          "type": "string"
-                        },
-                        "refreshToken": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - Invalid input",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid input data"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+          "201": { "description": "Token validated; session created." },
+          "401": { "description": "Invalid or expired token." }
         }
       }
     },
-    "/gateway/ui/trial/upload-selfie": {
+    "/auth/authenticateForgotToken": {
       "post": {
-        "summary": "Upload Selfie",
-        "operationId": "uploadSelfie",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "description": "Multipart form upload for selfie image",
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "image": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": ["image"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Image uploaded successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Image uploaded successfully"
-                    },
-                    "data": {
-                      "type": "string",
-                      "example": "OSo5op28"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - Invalid image upload data",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid image data"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/gateway/ui/trial/fakeads/{requestId}": {
-      "get": {
-        "summary": "Get FakeAds",
-        "operationId": "getFakeAds",
-        "security": [],
+        "summary": "Validate password reset token",
+        "description": "Checks the validity of a password reset token and returns status.",
+        "tags": ["auth"],
         "parameters": [
-          {
-            "name": "requestId",
-            "in": "path",
-            "description": "Identifier returned from upload-selfie",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "OSo5op28"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ad generation completed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Ad generation completed"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "format": "uri"
-                      },
-                      "example": [
-                        "https://api-dev.weir.ai/gateway/ui/trial/fakead/68307b7e73c815b31f8e7e6d",
-                        "https://api-dev.weir.ai/gateway/ui/trial/fakead/683079ce554aee42d950a969"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - Invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid request parameters"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/gateway/api/auth/token": {
-      "post": {
-        "summary": "Generate Access Token",
-        "operationId": "generateAccessToken",
-        "security": [
-          {
-            "basicAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Access token generated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "accessToken": {
-                          "type": "string"
-                        },
-                        "expiresIn": {
-                          "type": "integer"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - Invalid credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Unauthorized"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ad/validateIdentity": {
-      "post": {
-        "summary": "Submit Ad for Identity Validation",
-        "operationId": "submitAdValidateIdentity",
-        "security": [
-          {
-            "bearerAuth": []
-          }
+          { "name": "x-source", "in": "header", "description": "Origin of the request (e.g., 'UI' or 'API').", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
-          "description": "Ad validation payload",
+          "description": "Payload containing the reset token.",
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "adName": {
-                    "type": "string",
-                    "example": "Lekan onMongo"
-                  },
-                  "ad": {
-                    "type": "string",
-                    "example": "Hardcoded uris"
-                  }
-                },
-                "required": ["adName", "ad"]
-              }
+              "schema": { "type": "object", "properties": { "token": { "type": "string" } }, "required": ["token"] }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Tracking ID returned",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "trackingId": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - Invalid ad validation payload",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid ad payload"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
+          "201": { "description": "Reset token valid." },
+          "400": { "description": "Invalid token format." },
+          "401": { "description": "Expired or invalid token." }
         }
       }
     },
-    "/ad/validation/status": {
-      "get": {
-        "summary": "Get Validation Status",
-        "operationId": "getValidationStatus",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+    "/auth/authenticateAPI": {
+      "post": {
+        "summary": "API-to-API authentication",
+        "description": "Authenticates machine clients using API tokens.",
+        "tags": ["auth"],
         "parameters": [
-          {
-            "name": "trackingId",
-            "in": "query",
-            "description": "Tracking identifier returned from ad validation submit",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "OSo5op28"
-            }
-          }
+          { "name": "x-source", "in": "header", "description": "Origin of the request (should be 'API').", "required": true, "schema": { "type": "string" } }
         ],
-        "responses": {
-          "200": {
-            "description": "Validation status response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "trackingId": {
-                          "type": "string"
-                        },
-                        "validationStatus": {
-                          "type": "string",
-                          "example": "pending"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request - Invalid tracking identifier",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Invalid tracking identifier"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "Error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+        "requestBody": { "description": "API token payload.", "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "token": { "type": "string" } }, "required": ["token"] } } } },
+        "responses": { "201": { "description": "Machine client authenticated." }, "403": { "description": "Unauthorized client." } }
+      }
+    },
+    "/auth/validate/invitee/otp": {
+      "post": {
+        "summary": "Verify invitee OTP",
+        "description": "Validates the one-time password sent to an invitee.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source", "in": "header", "description": "Origin of the request.", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": { "description": "OTP and session identifier.", "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "otp": { "type": "string" }, "otpSession": { "type": "string" } }, "required": ["otp","otpSession"] } } } },
+        "responses": { "201": { "description": "OTP validated successfully." }, "400": { "description": "Incorrect OTP or session." } }
+      }
+    },
+    "/auth/validate/invitee": {
+      "post": {
+        "summary": "Initiate invitee validation",
+        "description": "Starts the invitee validation process by collecting email, role, and fullname.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source", "in": "header", "description": "Origin of the request.", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": { "description": "Invitee details.", "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "email": { "type": "string", "format": "email" }, "role": { "type": "string" }, "fullname": { "type": "string" } }, "required": ["email","role","fullname"] } } } },
+        "responses": { "201": { "description": "Invitee validated and OTP sent." }, "409": { "description": "Invitee already registered." } }
+      }
+    },
+    "/auth/register/invitee": {
+      "post": {
+        "summary": "Complete invitee registration",
+        "description": "Registers a new user using invite session and password.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer token from invite validation.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "Invitee registration payload.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "fullname": { "type": "string" }, "password": { "type": "string" }, "inviteSession": { "type": "string" } }, "required": ["fullname","password","inviteSession"] } } } },
+        "responses": { "201": { "description": "Invitee registered successfully." }, "400": { "description": "Invalid registration data." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register new user",
+        "description": "Creates a new user account along with an organization.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer token for invitation scenarios.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "User and organization details.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "fullname": { "type": "string" }, "email": { "type": "string","format": "email" }, "password": { "type": "string" }, "organization": { "type": "object","properties": { "name": { "type": "string" }, "type": { "type": "string" }, "description": { "type": "string" } },"required": ["name","type","description"] } },"required": ["fullname","email","password","organization"] } } } },
+        "responses": { "201": { "description": "User and organization created." }, "409": { "description": "Email already registered." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticates a user and returns access and refresh tokens.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "User credentials payload.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "username": { "type": "string" }, "password": { "type": "string" } },"required": ["username","password"] } } } },
+        "responses": { "200": { "description": "Login successful; tokens returned." }, "401": { "description": "Invalid credentials." } }
+      }
+    },
+    "/auth/refresh/token": {
+      "post": {
+        "summary": "Refresh access token",
+        "description": "Exchanges a valid refresh token for a new access token.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer refresh token.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "Payload containing the refresh token.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "refreshToken": { "type": "string" } },"required": ["refreshToken"] } } } },
+        "responses": { "200": { "description": "New access token issued." }, "401": { "description": "Invalid or expired refresh token." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Revoke session tokens",
+        "description": "Invalidates the provided refresh token and ends the session.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer refresh token.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "Payload containing the refresh token to revoke.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "refreshToken": { "type": "string" } },"required": ["refreshToken"] } } } },
+        "responses": { "204": { "description": "Logout successful; token revoked." }, "401": { "description": "Invalid or missing token." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/forgot/resendOtp": {
+      "post": {
+        "summary": "Resend password reset OTP",
+        "description": "Sends a new OTP for password reset to the user’s email.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "OTP session identifier.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "otpSession": { "type": "string" } },"required": ["otpSession"] } } } },
+        "responses": { "200": { "description": "OTP resent successfully." }, "404": { "description": "OTP session not found." } }
+      }
+    },
+    "/auth/forgot/validateOtp": {
+      "post": {
+        "summary": "Validate password reset OTP",
+        "description": "Checks the OTP provided for password reset and returns a validation status.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "Payload containing the OTP value.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "otp": { "type": "string" } },"required": ["otp"] } } } },
+        "responses": { "200": { "description": "OTP valid." }, "400": { "description": "Invalid or expired OTP." } }
+      }
+    },
+    "/auth/forgot": {
+      "post": {
+        "summary": "Request password reset",
+        "description": "Initiates password reset by sending an OTP to the user's email.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "User email for password reset.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "email": { "type": "string","format": "email" } },"required": ["email"] } } } },
+        "responses": { "200": { "description": "Password reset OTP sent." }, "404": { "description": "Email not found." } }
+      }
+    },
+    "/auth/update/password": {
+      "post": {
+        "summary": "Change user password",
+        "description": "Allows an authenticated user to update their password.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer access token.","required": true,"schema": {"type":"string"} }
+        ],
+        "requestBody": { "description": "Payload containing the new password.","required": true,"content": { "application/json": { "schema": { "type": "object","properties": { "password": { "type": "string" } },"required": ["password"] } } } },
+        "responses": { "204": { "description": "Password updated successfully." }, "400": { "description": "Invalid password format." }, "401": { "description": "Unauthorized request." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "summary": "Generate access and refresh tokens",
+        "description": "Creates new tokens for an authenticated session.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer token if renewing.","required": true,"schema": {"type":"string"} }
+        ],
+        "responses": { "201": { "description": "Tokens generated successfully." }, "401": { "description": "Invalid credentials or token." } },
+        "security": [{ "bearerAuth": [] }]
+      }
+    },
+    "/auth/revoke/token": {
+      "post": {
+        "summary": "Revoke access or refresh token",
+        "description": "Invalidates the specified token to end a session.",
+        "tags": ["auth"],
+        "parameters": [
+          { "name": "x-source","in": "header","description": "Origin of request.","required": true,"schema": {"type":"string"} },
+          { "name": "Authorization","in": "header","description": "Bearer token to revoke.","required": true,"schema": {"type":"string"} }
+        ],
+        "responses": { "204": { "description": "Token revoked successfully." }, "401": { "description": "Invalid or missing token." } },
+        "security": [{ "bearerAuth": [] }]
       }
     }
   },
@@ -680,10 +258,6 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      },
-      "basicAuth": {
-        "type": "http",
-        "scheme": "basic"
       }
     }
   }
