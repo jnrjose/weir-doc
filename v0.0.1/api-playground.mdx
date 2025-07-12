@@ -1,0 +1,87 @@
+---
+title: "API Playground"
+description: "Interactive API playground for testing Weir AI endpoints"
+icon: "code"
+sidebarTitle: "API Playground"
+---
+
+<OpenApiPlayground
+  specUrl="/v0.0.1/reference/openapi.json"
+  title="Weir AI API v0.0.1"
+  description="Test and explore the Weir AI API endpoints interactively"
+/>
+
+## Getting Started with the API Playground
+
+The API Playground above allows you to:
+
+- **Test endpoints directly** - Make real API calls to the Weir AI platform
+- **Explore request/response schemas** - See exactly what data is expected and returned
+- **Authenticate securely** - Use your API keys to test authenticated endpoints
+- **View examples** - See sample requests and responses for each endpoint
+
+## Authentication
+
+Most endpoints require authentication using Bearer tokens. You can:
+
+1. **Get your API key** from the Weir AI console
+2. **Click the "Authorize" button** in the playground
+3. **Enter your Bearer token** in the format: `Bearer YOUR_TOKEN_HERE`
+
+## Available Endpoint Categories
+
+### Authentication (`/auth/*`)
+- User registration and login
+- Token management and refresh
+- Password reset functionality
+- Invitee validation
+
+### Organization Management (`/org/*`)
+- Organization information and updates
+- Team creation and management
+- Platform and client management
+- Member invitations
+
+### Ad Validation (`/ad/*`)
+- Identity validation for advertisements
+- Validation status tracking
+
+### Trial Features (`/trial/*`)
+- Demo user management
+- Image upload and processing
+- Fake ad generation
+
+### Event Logging (`/event/*`)
+- Event log retrieval
+
+## Tips for Using the Playground
+
+<Tip>
+  **Start with Trial Endpoints**: If you don't have API credentials yet, try the `/trial/*` endpoints which don't require authentication.
+</Tip>
+
+<Warning>
+  **Use Test Environment**: Make sure you're testing against the appropriate environment (staging/production) based on your API key.
+</Warning>
+
+<Info>
+  **Rate Limits**: Be mindful of API rate limits when testing. The playground will show rate limit headers in responses.
+</Info>
+
+## Next Steps
+
+After exploring the API playground:
+
+1. **Review the Quickstart Guide** for step-by-step integration instructions
+2. **Check the Core API documentation** for detailed endpoint explanations
+3. **Explore Integration Guides** for best practices and error handling
+4. **Use the API Reference** for complete technical specifications
+
+<CardGroup cols={2}>
+  <Card title="Quickstart Guide" icon="RocketLaunch" href="/v0.0.1/quickstart">
+    Get started with your first API integration
+  </Card>
+  <Card title="API Reference" icon="Code" href="/v0.0.1/reference/introduction">
+    Complete technical documentation
+  </Card>
+</CardGroup> 

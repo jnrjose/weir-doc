@@ -1,0 +1,1859 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Merged API",
+    "description": "Merged OpenAPI specification (grouped by tags)",
+    "version": "0.0.1"
+  },
+  "paths": {
+    "/auth/authenticate": {
+      "post": {
+        "operationId": "AuthController_authenticate",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/authenticateForgotToken": {
+      "post": {
+        "operationId": "AuthController_authenticateForgotToken",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/authenticateAPI": {
+      "post": {
+        "operationId": "AuthController_authenticationAPI",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateTokenDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/validate/invitee": {
+      "post": {
+        "operationId": "AuthController_inviteeValidation",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateInviteeDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/register/invitee": {
+      "post": {
+        "operationId": "AuthController_registerInvitee",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRegisterUserDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/validate/invitee/otp": {
+      "post": {
+        "operationId": "AuthController_validateInviteeOTP",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateInviteeRegDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateOrgOnboardingDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateLoginDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/refresh/token": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRefreshDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateRefreshDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/forgot": {
+      "post": {
+        "operationId": "AuthController_forgot",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateForgotPasswordDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/forgot/resendOtp": {
+      "post": {
+        "operationId": "AuthController_resendForgotPasswordOtp",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validateResendForgotPasswordOtpDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/forgot/validateOtp": {
+      "post": {
+        "operationId": "AuthController_validateForgotPasswordOTP",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validateForgotPasswordOtpDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/update/password": {
+      "post": {
+        "operationId": "AuthController_changePassword",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validateForgotPasswordChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "operationId": "AuthController_generateToken",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/revoke/token": {
+      "post": {
+        "operationId": "AuthController_revokeToken",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/org/information": {
+      "get": {
+        "operationId": "OrgController_getOrgDetails",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      },
+      "patch": {
+        "operationId": "OrgController_updateOrgDetails",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrgInfoDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/platforms": {
+      "get": {
+        "operationId": "OrgController_getOrganizationPlatforms",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/create/team": {
+      "post": {
+        "operationId": "OrgController_createTeam",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/teams": {
+      "get": {
+        "operationId": "OrgController_getTeams",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Maximum number of results per page. Expected input: integer as string."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Page number for pagination. Expected input: integer as string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/team/{teamId}": {
+      "delete": {
+        "operationId": "OrgController_deleteTeam",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/invite/team/member/{teamId}": {
+      "post": {
+        "operationId": "OrgController_inviteTeamMember",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteTeamMemberDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/team/members/{teamId}": {
+      "get": {
+        "operationId": "OrgController_getTeamMembers",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/create/platform": {
+      "post": {
+        "operationId": "OrgController_createPlatform",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlatformDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/platform/{platformId}": {
+      "delete": {
+        "operationId": "OrgController_deletePlatform",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "platformId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the platform. Expected input: a valid platform ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/create/client": {
+      "post": {
+        "operationId": "OrgController_createClient",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/clients": {
+      "get": {
+        "operationId": "OrgController_getClients",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/refresh/client": {
+      "patch": {
+        "operationId": "OrgController_updateClient",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the client. Expected input: a valid client ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/org/client/{clientId}": {
+      "delete": {
+        "operationId": "OrgController_deleteClient",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the client. Expected input: a valid client ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Org"
+        ]
+      }
+    },
+    "/ad/validateIdentity": {
+      "post": {
+        "operationId": "AdController_identityValidation",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyAdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Ad"
+        ]
+      }
+    },
+    "/ad/validation/status": {
+      "get": {
+        "operationId": "AdController_getValidationStatus",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          },
+          {
+            "name": "trackingId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tracking identifier for ad validation. Expected input: a valid tracking ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Ad"
+        ]
+      }
+    },
+    "/event/logs": {
+      "get": {
+        "operationId": "EventController_getEvents",
+        "parameters": [
+          {
+            "name": "x-source",
+            "in": "header",
+            "description": "Type of API call. Expected input: 'console' for UI-originated requests, 'external' for third-party API calls. (Allowed values: 'console', 'external')",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "console",
+                "external"
+              ],
+              "default": "console"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Event"
+        ]
+      }
+    },
+    "/trial/authenticate": {
+      "post": {
+        "operationId": "TrialController_authenticate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/register": {
+      "post": {
+        "operationId": "TrialController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrialRegistrationDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/users": {
+      "get": {
+        "operationId": "TrialController_getdemoUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      },
+      "delete": {
+        "operationId": "TrialController_deleteDemoUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/user/{userId}": {
+      "delete": {
+        "operationId": "TrialController_deleteDemoUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier for the user. Expected input: a valid user ID string."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/upload-selfie": {
+      "post": {
+        "operationId": "TrialController_uploadSelfie",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoUploadSelfieDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/uploadImage": {
+      "post": {
+        "operationId": "TrialController_uploadImage",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoUploadImageDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/fakead/{imageId}": {
+      "get": {
+        "operationId": "TrialController_getFakeAd",
+        "parameters": [
+          {
+            "name": "imageId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/fakeads/{requestId}": {
+      "get": {
+        "operationId": "TrialController_getDemoFakeAds",
+        "parameters": [
+          {
+            "name": "requestId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    },
+    "/trial/selfie/{imageId}": {
+      "get": {
+        "operationId": "TrialController_getSelfie",
+        "parameters": [
+          {
+            "name": "imageId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Trial"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ValidateTokenDTO": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT or access token to be validated. Expected input: a valid token string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "token"
+        ]
+      },
+      "ValidateInviteeDTO": {
+        "type": "object",
+        "properties": {
+          "fullname": {
+            "type": "string",
+            "description": "Full name of the invitee. Expected input: first and last name.",
+            "example": "firstname lastname"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the invitee. Expected input: valid email format (e.g., user@example.com).",
+            "example": "string@world.com"
+          },
+          "role": {
+            "type": "string",
+            "description": "Role assigned to the invitee. Allowed values: 'Admin', 'User'.",
+            "example": "Admin",
+            "enum": [
+              "Admin",
+              "User"
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "role"
+        ]
+      },
+      "ValidateRegisterUserDTO": {
+        "type": "object",
+        "properties": {
+          "fullname": {
+            "type": "string",
+            "description": "Full name of the user registering. Expected input: first and last name.",
+            "example": "firstname lastname"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for the new user account. Expected input: a secure password string.",
+            "example": "string"
+          },
+          "inviteSession": {
+            "type": "string",
+            "description": "Session token received from the invite process. Expected input: a valid session string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "fullname",
+          "password",
+          "inviteSession"
+        ]
+      },
+      "ValidateInviteeRegDTO": {
+        "type": "object",
+        "properties": {
+          "otp": {
+            "type": "string",
+            "description": "One-time password sent to the invitee. Expected input: numeric or alphanumeric OTP code.",
+            "example": "string"
+          },
+          "otpSession": {
+            "type": "string",
+            "description": "Session identifier for the OTP validation. Expected input: a valid session string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "otp",
+          "otpSession"
+        ]
+      },
+      "OrganizationDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the organization. Expected input: organization name as a string.",
+            "example": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the organization. Allowed values: 'Platform', 'Agency', 'Advertiser'.",
+            "example": "Platform",
+            "enum": [
+              "Platform",
+              "Agency",
+              "Advertiser"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the organization. Expected input: a short text about the organization.",
+            "example": "A business platform"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "description"
+        ]
+      },
+      "ValidateOrgOnboardingDTO": {
+        "type": "object",
+        "properties": {
+          "fullname": {
+            "type": "string",
+            "description": "Full name of the user onboarding the organization. Expected input: first and last name.",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the user. Expected input: valid email format (e.g., user@example.com).",
+            "example": "string"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for the new user account. Expected input: a secure password string.",
+            "example": "string"
+          },
+          "organization": {
+            "description": "Organization details for onboarding. Should match the OrganizationDTO schema.",
+            "example": {
+              "name": "string",
+              "type": "Platform",
+              "description": "A business platform"
+            },
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrganizationDTO"
+              }
+            ]
+          }
+        },
+        "required": [
+          "fullname",
+          "email",
+          "password",
+          "organization"
+        ]
+      },
+      "ValidateLoginDTO": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username or email address for login. Expected input: valid username or email.",
+            "example": "Jane Doe"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for the user account. Expected input: a secure password string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "ValidateRefreshDTO": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token to obtain a new access token. Expected input: a valid refresh token string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "ValidateForgotPasswordDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address for password reset. Expected input: valid email format (e.g., user@example.com).",
+            "example": "string@world.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "validateResendForgotPasswordOtpDTO": {
+        "type": "object",
+        "properties": {
+          "otpSession": {
+            "type": "string",
+            "description": "Session identifier for the OTP resend request. Expected input: a valid session string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "otpSession"
+        ]
+      },
+      "validateForgotPasswordOtpDTO": {
+        "type": "object",
+        "properties": {
+          "otp": {
+            "type": "string",
+            "description": "One-time password for password reset. Expected input: numeric or alphanumeric OTP code.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "otp"
+        ]
+      },
+      "validateForgotPasswordChange": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "New password for the user account. Expected input: a secure password string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "password"
+        ]
+      },
+      "UpdateOrgInfoDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateTeamDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the team to be created. Expected input: team name as a string.",
+            "example": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "InviteTeamMemberDTO": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the team member to invite. Expected input: valid email format (e.g., user@example.com).",
+            "example": "string"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "description": "Whether the invited member should have admin privileges. Expected input: true or false.",
+            "example": false
+          },
+          "role": {
+            "type": "string",
+            "description": "Role assigned to the team member. Allowed values: 'Business User', 'Technical User', 'Combined Access'.",
+            "example": "Business User",
+            "enum": [
+              "Business User",
+              "Technical User",
+              "Combined Access"
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "isAdmin",
+          "role"
+        ]
+      },
+      "CreatePlatformDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the platform to be created. Expected input: platform name as a string.",
+            "example": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the platform. Expected input: a short text about the platform.",
+            "example": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the platform. Allowed values: 'Social Media', 'News Media', 'E-Commerce', 'Video', 'Forum/Community', 'Website/Blog', 'Mobile App', 'Partner Site'.",
+            "example": "Forum/Community",
+            "enum": [
+              "Social Media",
+              "News Media",
+              "E-Commerce",
+              "Video",
+              "Forum/Community",
+              "Website/Blog",
+              "Mobile App",
+              "Partner Site"
+            ]
+          },
+          "domain": {
+            "type": "string",
+            "description": "Domain name of the platform. Expected input: valid domain string (e.g., example.com).",
+            "example": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "type",
+          "domain"
+        ]
+      },
+      "CreateClientDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "VerifyAdDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "TrialRegistrationDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "DemoUploadSelfieDTO": {
+        "type": "object",
+        "properties": {}
+      },
+      "DemoUploadImageDTO": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Enter your Bearer token"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Ad"
+    },
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "Event"
+    },
+    {
+      "name": "Org"
+    },
+    {
+      "name": "Trial"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://api-dev.weir.ai",
+      "description": "Development API server (default)"
+    },
+    {
+      "url": "https://api.weir.ai",
+      "description": "Production API server"
+    },
+    {
+      "url": "https://staging-api.weir.ai",
+      "description": "Staging API server"
+    }
+  ],
+  "security": [
+    {
+      "bearer": []
+    },
+    {
+      "bearer": []
+    },
+    {
+      "bearer": []
+    },
+    {
+      "bearer": []
+    },
+    {
+      "bearer": []
+    }
+  ]
+}

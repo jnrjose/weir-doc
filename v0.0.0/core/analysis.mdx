@@ -1,0 +1,390 @@
+---
+title: "Core API: Analyzing Ads for NIL Content (General Workflow)"
+description: "A guide to using Weir AI's ad validation services for NIL detection, including token generation, ad submission, and result retrieval."
+icon: "MagnifyingGlassChart" # Example icon
+sidebarTitle: "NIL Analysis Workflow"
+---
+
+After your application has obtained an ad creative (either from the demo workflow described in Part 1 or through other means), the next step is to analyze it for Name, Image, and Likeness (NIL) content and compliance. This general workflow uses a dedicated set of API endpoints for broader ad validation and NIL detection.
+
+This process involves three key steps:
+1.  Generating a general-purpose API access token for authenticating with the ad validation services.
+2.  Submitting the ad creative URL for validation.
+3.  Polling for the validation status and retrieving the detailed results, including any NIL findings.
+
+<Info>The base URL for these endpoints is: `https://api-dev.weir.ai`.</Info>
+
+## The Workflow
+
+<Steps>
+  <Step title="1. Generate API Access Token (for /ad/* endpoints)" icon="Key">
+    To interact with the `/ad/validateIdentity` and `/ad/validation/status` endpoints, your application will first obtain a Bearer Token. This token is generated using your organization's client credentials through Basic Authentication.
+    <br/>
+    **Endpoint:** `POST /gateway/api/auth/token`
+    <br/>
+    **Purpose:** Generates an `accessToken` for authenticating calls to protected "Public Services," such as ad validation.
+    <br/>
+    **Authentication:** This endpoint uses `BasicAuth`. Provide your `clientId` and `clientSecret` (received during organization onboarding) Base64 encoded in the `Authorization` header.
+    <br/>
+    **Header Format:** `Authorization: Basic <base64Encoded(clientId:clientSecret)>`
+
+    **Understanding the Response:**
+    A successful request returns an HTTP `200 OK`. The JSON response body contains the `accessToken` and its validity period (`expiresIn` in seconds). Securely store this `accessToken` and manage its lifecycle (refresh before expiration).
+
+    **Example `200 OK` Response:**
+    ```json
+    {
+      "status": "success",
+      "data": {
+        "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjbGllbnRJZCIsImV4cCI6MTY3ODg4NjQwMCwiaWF0IjoxNjc4ODgzODAwfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+        "expiresIn": 3600
+      }
+    }
+    ```
+    <Tip type="failure">If credentials are invalid, the API returns a `401 Unauthorized` response.</Tip>
+  </Step>
+
+  <Step title="2. Submitting Ads for NIL Analysis" icon="PaperPlaneTilt">
+    Once your application has a valid `accessToken`, it submits the ad creative URL to the validation endpoint.
+    <br/>
+    **Endpoint:** `POST /ad/validateIdentity`
+    <br/>
+    **Purpose:** Accepts an ad creative for a comprehensive identity and NIL compliance scan (asynchronous).
+    <br/>
+    **Authentication:** Requires `BearerAuth`. Include the `accessToken` (from Step 1) in the `Authorization` header.
+    <br/>
+    **Header Format:** `Authorization: Bearer <accessTokenFromTokenEndpoint>`
+
+    **Request Body Structure:**
+    Send a JSON payload specifying the ad's name and URL.
+    <Fields>
+      <Field name="adName" type="string" required={true}>A descriptive name for the ad creative.</Field>
+      <Field name="ad" type="string" required={true}>The URL of the ad creative to be validated.</Field>
+    </Fields>
+
+    **Example Request Body:**
+    ```json
+    {
+      "adName": "Summer Campaign Ad URL for Validation",
+      "ad": "[https://your-cdn.com/ads/summer-ad-to-validate.jpg](https://your-cdn.com/ads/summer-ad-to-validate.jpg)"
+    }
+    ```
+
+    **Understanding the Response:**
+    A successful submission returns an HTTP `200 OK`. The JSON response includes a `trackingId`. Store this ID for retrieving results.
+
+    **Example `200 OK` Response (for submission):**
+    ```json
+    {
+      "status": "success",
+      "message": "Ad validation request accepted",
+      "data": {
+        "trackingId": "trk_abcdef1234567890"
+      }
+    }
+    ```
+    <Tip type="failure">If the payload is invalid, the API returns a `400 Bad Request`.</Tip>
+  </Step>
+
+  <Step title="3. Get NIL Validation Status and Results" icon="ClipboardText">
+    After submitting, use the `trackingId` to poll this endpoint for status and results.
+    <br/>
+    **Endpoint:** `GET /ad/validation/status`
+    <br/>
+    **Purpose:** Retrieves current validation status and final results.
+    <br/>
+    **Authentication:** Requires `BearerAuth` (using the `accessToken` from Step 1).
+    <br/>
+    **Header Format:** `Authorization: Bearer <accessTokenFromTokenEndpoint>`
+    <br/>
+    **Query Parameter:**
+    <Fields>
+      <Field name="trackingId" type="string" required={true}>The unique identifier from the `POST /ad/validateIdentity` response.</Field>
+    </Fields>
+
+    **Understanding the Scan Response:**
+    The response indicates the validation state.
+    <Tabs items={["Pending", "NIL Matches Found", "No NIL Matches", "Error/Failed"]}>
+      <Tab>
+        If validation is in progress, `validationStatus` will be "PENDING" or similar. Continue polling.
+      </Tab>
+      <Tab>
+        If complete with matches, `validationStatus` might be "COMPLETED_MATCH_FOUND". The `nil_matches` array will contain details.
+        ```json title="Example: Completed with NIL Matches"
+        {
+          "status": "success",
+          "message": "Validation status retrieved",
+          "data": {
+            "trackingId": "trk_abcdef1234567890",
+            "validationStatus": "COMPLETED_MATCH_FOUND",
+            "adName": "Summer Campaign Ad URL for Validation",
+            "nil_matches": [
+              {
+                "persona": {
+                  "persona_id": "pers_example123",
+                  "name": "Famous Athlete",
+                  "category": "Athlete",
+                  "confidence_score": 0.97
+                },
+                "license": {
+                  "license_id": "lic_athlete_abc",
+                  "is_active": true,
+                  "is_compliant": true,
+                  "usage_allowed": true
+                  // ... other license details
+                }
+              }
+            ]
+            // ... other validation data
+          }
+        }
+        ```
+      </Tab>
+      <Tab>
+        If complete with no matches, `validationStatus` might be "COMPLETED_NO_MATCH". `nil_matches` will be empty.
+      </Tab>
+      <Tab>
+        If the `trackingId` is invalid or other request issues occur, a `400 Bad Request` or other error is returned. If validation fails, `validationStatus` may be "FAILED".
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+## Interpreting Persona and License Objects in the Response
+
+When NIL matches are found (returned by `GET /ad/validation/status`), parse the `persona` and `license` objects within the `nil_matches` array.
+
+<AccordionGroup>
+  <Accordion title="`persona` Object Details" icon="User" defaultOpen={true}>
+    <Fields>
+      <Field name="persona_id" type="string">Unique identifier for the persona in Weir AI.</Field>
+      <Field name="name" type="string">Name of the detected individual.</Field>
+      <Field name="category" type="string">Classification (e.g., "Athlete", "Musician", "Influencer").</Field>
+      <Field name="confidence_score" type="float">System's confidence in the identification.</Field>
+    </Fields>
+  </Accordion>
+  <Accordion title="`license` Object Details" icon="Certificate" defaultOpen={true}>
+    <Fields>
+      <Field name="license_id" type="string">Unique identifier for the license agreement.</Field>
+      <Field name="is_active" type="boolean">Indicates if the license is currently in effect.</Field>
+      <Field name="is_compliant" type="boolean">**Crucial:** Weir AI's assessment of whether usage aligns with known license terms.</Field>
+      <Field name="usage_allowed" type="boolean">Indicates if usage is generally permitted.</Field>
+      <Field name="start_date" type="ISO 8601 String" required={false}>Effective start date of the license.</Field>
+      <Field name="end_date" type="ISO 8601 String" required={false}>Effective end date of the license.</Field>
+      <Field name="allowed_advertisers" type="array of strings" required={false}>List of advertiser IDs permitted for NIL use.</Field>
+      <Field name="territories" type="array of strings" required={false}>Geographic territories for permitted use.</Field>
+    </Fields>
+  </Accordion>
+</AccordionGroup>
+
+Your application uses this information for decisions about the ad creative (approve, flag for review, block).
+
+## Code Examples (for NIL Analysis Workflow)
+The following examples illustrate the three-step NIL analysis workflow.
+
+<CodeGroup>
+  ```bash title="cURL"
+# Step 1: Generate Access Token (Replace CLIENT_ID and CLIENT_SECRET)
+# Base64 encode 'your_client_id:your_client_secret'.
+# In bash: ENCODED_CREDS=$(echo -n "your_client_id:your_client_secret" | base64)
+ENCODED_CREDS="eW91cl9jbGllbnRfaWQ6eW91cl9jbGllbnRfc2VjcmV0" # Replace!
+
+API_TOKEN=$(curl -X POST "[https://api-dev.weir.ai/gateway/api/auth/token](https://api-dev.weir.ai/gateway/api/auth/token)" \
+     -H "Authorization: Basic $ENCODED_CREDS" \
+     -H "Content-Type: application/json" \
+     -d '{}' | jq -r '.data.accessToken')
+
+echo "API Access Token: $API_TOKEN"
+
+# Step 2: Submit Ad for Validation
+AD_URL_TO_VALIDATE="[https://your-cdn.com/ads/ad-for-nil-check.jpg](https://your-cdn.com/ads/ad-for-nil-check.jpg)" # Replace!
+TRACKING_ID=$(curl -X POST "[https://api-dev.weir.ai/ad/validateIdentity](https://api-dev.weir.ai/ad/validateIdentity)" \
+     -H "Authorization: Bearer $API_TOKEN" \
+     -H "Content-Type: application/json" \
+     -d "{
+           \"adName\": \"Ad for NIL Check\",
+           \"ad\": \"$AD_URL_TO_VALIDATE\"
+         }" | jq -r '.data.trackingId')
+
+echo "Tracking ID: $TRACKING_ID"
+
+# Step 3: Get Validation Status (Implement polling in a real application)
+echo "Waiting for validation (polling example)..."
+sleep 15 # Adjust delay
+
+curl -X GET "[https://api-dev.weir.ai/ad/validation/status?trackingId=$TRACKING_ID](https://api-dev.weir.ai/ad/validation/status?trackingId=$TRACKING_ID)" \
+     -H "Authorization: Bearer $API_TOKEN"
+  ```
+  ```python title="Python (requests)"
+import requests
+import os
+import time
+import base64
+import json
+
+API_BASE_URL = "[https://api-dev.weir.ai](https://api-dev.weir.ai)"
+
+def generate_api_token(client_id, client_secret):
+    """Generates an API access token using Basic Auth."""
+    creds = f"{client_id}:{client_secret}"
+    encoded_creds = base64.b64encode(creds.encode()).decode()
+    headers = {
+        "Authorization": f"Basic {encoded_creds}",
+        "Content-Type": "application/json"
+    }
+    print(f"Requesting token from: {API_BASE_URL}/gateway/api/auth/token")
+    response = requests.post(f"{API_BASE_URL}/gateway/api/auth/token", headers=headers, data="{}")
+    response.raise_for_status()
+    return response.json()["data"]["accessToken"]
+
+def submit_ad_for_nil_validation(api_token, ad_name, ad_url):
+    """Submits an ad for NIL validation and returns the trackingId."""
+    headers = {
+        "Authorization": f"Bearer {api_token}",
+        "Content-Type": "application/json"
+    }
+    payload = {"adName": ad_name, "ad": ad_url}
+    print(f"Submitting ad to: {API_BASE_URL}/ad/validateIdentity")
+    response = requests.post(f"{API_BASE_URL}/ad/validateIdentity", headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()["data"]["trackingId"]
+
+def get_nil_validation_status(api_token, tracking_id, max_attempts=5, poll_interval=10):
+    """Polls for NIL validation status."""
+    headers = {"Authorization": f"Bearer {api_token}"}
+    print(f"Polling for status of trackingId: {tracking_id}")
+    status_data = {} # Initialize
+    for attempt in range(max_attempts):
+        print(f"Attempt {attempt + 1}...")
+        response = requests.get(f"{API_BASE_URL}/ad/validation/status?trackingId={tracking_id}", headers=headers)
+        response.raise_for_status()
+        status_data = response.json()
+        current_validation_status = status_data.get("data", {}).get("validationStatus")
+        print(f"Current validation status: {current_validation_status}")
+        if current_validation_status and current_validation_status.startswith("COMPLETED"):
+            return status_data
+        if attempt < max_attempts - 1:
+            time.sleep(poll_interval)
+    print("Max polling attempts reached.")
+    return status_data # Return last fetched status
+
+# --- Main Execution for NIL Analysis ---
+try:
+    CLIENT_ID = os.getenv("WEIR_CLIENT_ID")
+    CLIENT_SECRET = os.getenv("WEIR_CLIENT_SECRET")
+
+    if not CLIENT_ID or not CLIENT_SECRET:
+        print("Error: WEIR_CLIENT_ID and WEIR_CLIENT_SECRET environment variables must be set.")
+    else:
+        print("Step 1: Generating API Token...")
+        api_access_token = generate_api_token(CLIENT_ID, CLIENT_SECRET)
+        print(f"API Token generated successfully. Token starts with: {api_access_token[:15]}...")
+
+        print("\nStep 2: Submitting ad for NIL validation...")
+        ad_url_to_check = "[https://your-cdn.com/path/to/your/ad_creative.jpg](https://your-cdn.com/path/to/your/ad_creative.jpg)" # Replace
+        tracking_id = submit_ad_for_nil_validation(api_access_token, "My Ad for NIL Check", ad_url_to_check)
+        print(f"Ad submitted for validation. Tracking ID: {tracking_id}")
+
+        print("\nStep 3: Retrieving NIL validation status...")
+        validation_results = get_nil_validation_status(api_access_token, tracking_id)
+        print("\n--- Final Validation Results ---")
+        print(json.dumps(validation_results, indent=2))
+        # Your application would then parse validation_results["data"] for "nil_matches"
+
+except requests.exceptions.HTTPError as e:
+    print(f"An HTTP error occurred: {e}")
+    if e.response is not None:
+        print(f"Response Status: {e.response.status_code}")
+        print(f"Response Body: {e.response.text}")
+except Exception as ex:
+    print(f"An unexpected error occurred: {ex}")
+  ```
+  ```javascript title="Node.js (axios)"
+const axios = require('axios');
+
+const API_BASE_URL = '[https://api-dev.weir.ai](https://api-dev.weir.ai)';
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function generateApiToken(clientId, clientSecret) {
+  const credentials = Buffer.from(\`\${clientId}:\${clientSecret}\`).toString('base64');
+  console.log(\`Requesting token from: \${API_BASE_URL}/gateway/api/auth/token\`);
+  const response = await axios.post(\`\${API_BASE_URL}/gateway/api/auth/token\`, {}, {
+    headers: {
+      'Authorization': \`Basic \${credentials}\`,
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.data.data.accessToken;
+}
+
+async function submitAdForNilValidation(apiToken, adName, adUrl) {
+  console.log(\`Submitting ad to: \${API_BASE_URL}/ad/validateIdentity\`);
+  const response = await axios.post(\`\${API_BASE_URL}/ad/validateIdentity\`, 
+    { adName, ad: adUrl },
+    { headers: { 'Authorization': \`Bearer \${apiToken}\`, 'Content-Type': 'application/json' } }
+  );
+  return response.data.data.trackingId;
+}
+
+async function getNilValidationStatus(apiToken, trackingId, maxAttempts = 5, pollIntervalMs = 10000) {
+  console.log(\`Polling for status of trackingId: \${trackingId}\`);
+  let statusData = {}; // Initialize
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    console.log(\`Attempt \${attempt + 1}...\`);
+    const response = await axios.get(\`\${API_BASE_URL}/ad/validation/status?trackingId=\${trackingId}\`, {
+      headers: { 'Authorization': \`Bearer \${apiToken}\` }
+    });
+    statusData = response.data;
+    const currentValidationStatus = statusData.data?.validationStatus;
+    console.log(\`Current validation status: \${currentValidationStatus}\`);
+    if (currentValidationStatus?.startsWith("COMPLETED")) {
+      return statusData;
+    }
+    if (attempt < maxAttempts - 1) {
+      await sleep(pollIntervalMs);
+    }
+  }
+  console.log("Max polling attempts reached.");
+  return statusData; // Return last fetched status
+}
+
+// --- Main Execution for NIL Analysis ---
+async function runNILAnalysisWorkflow() {
+  try {
+    const clientId = process.env.WEIR_CLIENT_ID;
+    const clientSecret = process.env.WEIR_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      console.error("Error: WEIR_CLIENT_ID and WEIR_CLIENT_SECRET environment variables must be set.");
+      return;
+    }
+
+    console.log('Step 1: Generating API Token...');
+    const apiToken = await generateApiToken(clientId, clientSecret);
+    console.log(\`API Token generated successfully. Token starts with: \${apiToken.substring(0,15)}...\`);
+
+    console.log('\\nStep 2: Submitting ad for NIL validation...');
+    const adUrlToCheck = "[https://your-cdn.com/path/to/your/ad_creative_for_node.jpg](https://your-cdn.com/path/to/your/ad_creative_for_node.jpg)"; // Replace
+    const trackingId = await submitAdForNilValidation(apiToken, "My Node Ad for NIL Check", adUrlToCheck);
+    console.log(\`Ad submitted for validation. Tracking ID: \${trackingId}\`);
+
+    console.log('\\nStep 3: Retrieving NIL validation status...');
+    const validationResults = await getNilValidationStatus(apiToken, trackingId);
+    console.log('\\n--- Final Validation Results ---');
+    console.log(JSON.stringify(validationResults, null, 2));
+    // Your application would then parse validationResults.data for "nil_matches"
+
+  } catch (error) {
+    if (error.response) {
+      console.error('An API error occurred:', error.response.status, error.response.data);
+    } else if (error.request) {
+      console.error('Network error:', error.request);
+    } else {
+      console.error('An error occurred:', error.message);
+    }
+  }
+}
+
+runNILAnalysisWorkflow();
+  ```
+</CodeGroup>

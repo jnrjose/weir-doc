@@ -1,0 +1,155 @@
+---
+title: "Core API Concepts & Functionality"
+description: "Understanding the fundamental concepts, architectural principles, and core functionality of the Weir AI API."
+icon: "Cubes" # Example icon, replace with a suitable Mintlify icon
+sidebarTitle: "Core API Concepts"
+---
+
+This section delves into the fundamental concepts and architectural principles that underpin the Weir AI API. A solid understanding of these principles is crucial for engineers like Omry and their teams to effectively and efficiently integrate with our platform, build robust applications, and troubleshoot any issues that may arise. We'vedesigned our API with clarity, consistency, and developer experience as paramount concerns.
+
+## WEIR AI API DESIGN PRINCIPLES
+
+The Weir AI API is built upon a set of widely adopted and proven design principles. These principles ensure predictability, scalability, and ease of use, whether you are making your first call or architecting a complex, high-volume integration. For engineers like Omry, who have experience with various APIs, these familiar patterns will facilitate a quicker ramp-up and more intuitive interaction with our services. For AI agents, these standardized principles allow for more reliable programmatic interaction.
+
+### RESTFUL ARCHITECTURE
+
+The Weir AI API adheres to the principles of Representational State Transfer (REST), an architectural style that uses standard HTTP methods and conventions. This approach is chosen for its simplicity, scalability, and broad support across different programming languages and platforms.
+
+<AccordionGroup>
+  <Accordion title="Resource-Oriented" icon="Box" defaultOpen={true}>
+    Functionality is exposed through resources (e.g., a specific data analysis job, a user profile, a model configuration). Each resource is uniquely identifiable via a Uniform Resource Identifier (URI). For Omry, this means interactions are intuitive: you operate on nouns (resources) using verbs (HTTP methods).
+  </Accordion>
+  <Accordion title="Standard HTTP Methods" icon="ArrowSwitch" defaultOpen={true}>
+    We utilize standard HTTP methods (verbs) to perform operations on these resources: `GET`, `POST`, `PUT`, `PATCH` (if supported), and `DELETE`. These are detailed in Section 3.1.2.
+  </Accordion>
+  <Accordion title="Statelessness" icon="CloudOff" defaultOpen={true}>
+    Each request from a client to the server must contain all the information needed to understand and process the request. The server does not store any client context between requests. This is detailed further in Section 3.1.3.
+  </Accordion>
+  <Accordion title="Standard HTTP Status Codes" icon="ListChecks" defaultOpen={true}>
+    We use standard HTTP status codes to indicate the outcome of an API request (e.g., `200 OK`, `201 Created`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`, `500 Internal Server Error`). This provides a consistent way for clients, including AI agents, to understand the result of an operation.
+  </Accordion>
+  <Accordion title="Content Negotiation" icon="FileJson" defaultOpen={true}>
+    While JSON (`application/json`) is our primary data exchange format for request and response bodies, the API may support content negotiation via the `Accept` and `Content-Type` HTTP headers if other formats are offered in the future. For now, assume `application/json`.
+  </Accordion>
+</AccordionGroup>
+
+Understanding these RESTful principles will enable your engineering team to leverage existing HTTP libraries and tools, making integration more straightforward and less error-prone.
+
+### REQUEST METHODS (HTTP VERBS)
+
+As mentioned, the Weir AI API utilizes standard [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods) to interact with resources. It's crucial to use the correct method for the intended operation, as this dictates how the server processes the request and ensures adherence to web standards.
+
+<AccordionGroup>
+  <Accordion title="GET" icon="MagnifyingGlass">
+    - **Purpose:** Used to retrieve information about a resource or a collection of resources without causing any side effects on the server (i.e., it's a safe method).
+    - **Example:** <CodeBlock lang="bash">{`GET /api/v1/jobs/{jobId}`}</CodeBlock> (to retrieve details of a specific job).
+    - **Body:** GET requests should NOT have a request body. Parameters are typically passed via URL path variables or query parameters.
+    - **Cacheability:** GET responses can often be cached by clients or intermediaries to improve performance.
+  </Accordion>
+  <Accordion title="POST" icon="PlusCircle">
+    - **Purpose:** Primarily used to create a new resource within a collection, or to submit a command or data for processing that doesn't neatly fit the "create a specific resource" model (e.g., submitting a complex query for analysis).
+    - **Example:** <CodeBlock lang="bash">{`POST /api/v1/jobs`}</CodeBlock> (to submit a new analysis job).
+    - **Body:** POST requests typically include a request body containing the data for the new resource or the parameters for the command.
+    - **Response:** A successful POST request that creates a resource usually returns an HTTP status code `201 Created` and includes a `Location` header pointing to the URI of the newly created resource, and often a representation of the new resource in the response body.
+    - **Non-Idempotent:** Generally, multiple identical POST requests may result in multiple new resources being created (unless specific server-side de-duplication logic is in place for that endpoint).
+  </Accordion>
+  <Accordion title="PUT" icon="PencilSimple">
+    - **Purpose:** Used to update an existing resource in its entirety. If the resource identified by the URI does not exist, some APIs might create it (upsert behavior – this will be specified per endpoint for Weir AI). If it does exist, PUT replaces the entire resource with the data provided in the request body.
+    - **Example:** <CodeBlock lang="bash">{`PUT /api/v1/users/{userId}/profile`}</CodeBlock> (to update a user's entire profile).
+    - **Body:** PUT requests must include a request body containing the complete new representation of the resource.
+    - **Idempotent:** Multiple identical PUT requests to the same URI should have the same effect as a single request (i.e., the resource state will be the same after the first or Nth identical request). This is crucial for Omry when designing resilient systems that might retry requests.
+  </Accordion>
+  <Accordion title="PATCH" icon="PaintBrush">
+    - **Purpose:** Used to apply partial modifications to an existing resource. Unlike PUT, you only need to send the data for the fields you want to change.
+    - **Example:** <CodeBlock lang="bash">{`PATCH /api/v1/jobs/{jobId}`}</CodeBlock> with a body `{"status": "cancelled"}` to update only the status of a job.
+    - **Body:** PATCH requests include a request body containing the specific changes to be applied. The format for describing these changes (e.g., JSON Patch, JSON Merge Patch) will be specified in the endpoint documentation.
+    <Note>
+      **Placeholder:** Specify the patch format used by Weir AI, e.g., "Weir AI API uses JSON Merge Patch [RFC 7396](https://www.rfc-editor.org/rfc/rfc7396.html) for PATCH operations."
+    </Note>
+    - **Idempotency:** PATCH operations are not necessarily idempotent by default, as the outcome can depend on the current state of the resource and the nature of the patch operation. However, specific patch operations can be designed to be idempotent.
+  </Accordion>
+  <Accordion title="DELETE" icon="Trash">
+    - **Purpose:** Used to remove a specific resource identified by its URI.
+    - **Example:** <CodeBlock lang="bash">{`DELETE /api/v1/datasets/{datasetId}`}</CodeBlock> (to delete a dataset).
+    - **Body:** DELETE requests typically do not have a request body.
+    - **Response:** A successful DELETE request usually returns `200 OK` or `204 No Content`.
+    - **Idempotent:** Multiple identical DELETE requests to the same URI should have the same effect: the resource is deleted after the first successful request, and subsequent requests should ideally return a `404 Not Found` (though some APIs might return `204 No Content` consistently). For Omry, this means retrying a DELETE is generally safe.
+  </Accordion>
+</AccordionGroup>
+
+Engineers integrating with Weir AI, including Omry's team and any AI agents, must carefully select the appropriate HTTP method for each interaction as defined in the API endpoint reference (Section 4).
+
+### STATELESSNESS
+
+A core tenet of REST and a fundamental design principle of the Weir AI API is statelessness. This means that every request sent from a client (your application or an AI agent) to the Weir AI server must contain all the information necessary for the server to understand and process that request.
+
+- **No Server-Side Session State:** The server does not maintain any information about the client's session or state across multiple requests. For example, if a request requires authentication, the authentication credentials must be sent with every request that requires them. The server doesn't "remember" that a client was authenticated in a previous request.
+- **Self-Contained Requests:** Each request is treated as an independent transaction. All context, such as authentication tokens, user identifiers (if not part of the path), and any other necessary parameters, must be included within the request itself (typically in headers or the request body/query parameters).
+
+<Info title="Benefits of Statelessness">
+  <CardGroup cols={2}>
+    <Card title="Scalability" icon="ArrowsOutCardinal">
+      Simplifies server-side scaling. Any server instance can handle any request, making load balancing straightforward.
+    </Card>
+    <Card title="Reliability & Resilience" icon="ShieldCheck">
+      Requests can be seamlessly routed to another instance if one fails, without loss of context.
+    </Card>
+    <Card title="Simplicity" icon="PuzzlePiece">
+      Simplifies server-side design as there's no need to manage session state.
+    </Card>
+    <Card title="Cacheability" icon="Database">
+      Stateless requests are often more cacheable by intermediary systems.
+    </Card>
+    <Card title="Visibility" icon="Eye">
+      Each request can be understood in isolation, aiding in logging, monitoring, and debugging.
+    </Card>
+  </CardGroup>
+</Info>
+
+<Tip title="Implications for Integration">
+  - **Authentication:** Ensure that API keys or authentication tokens are included in the appropriate headers for every protected API call, as detailed in Section 3.2.
+  - **Client-Side State Management:** Your application will be responsible for maintaining any state it needs across requests (e.g., user preferences, multi-step workflow progress).
+</Tip>
+
+### IDEMPOTENCY
+
+Idempotency is a critical concept in API design, particularly for building robust and fault-tolerant systems. An HTTP method is considered idempotent if making multiple identical requests has the same effect on the server's state as making a single request.
+
+**Idempotency of Standard HTTP Methods in Weir AI API:**
+
+<CardGroup cols={1}>
+  <Card title="GET" icon="CheckCircle">
+    Always idempotent. Retrieving a resource multiple times does not change the resource.
+  </Card>
+  <Card title="PUT" icon="CheckCircle">
+    Idempotent. If you PUT the same complete representation of a resource to the same URI multiple times, the resource's state will be that representation after the first successful request.
+  </Card>
+  <Card title="DELETE" icon="CheckCircle">
+    Idempotent. Deleting a resource multiple times results in the resource being deleted (after the first successful request).
+  </Card>
+  <Card title="POST" icon="XCircle">
+    Generally NOT idempotent. Sending the same POST request multiple times typically results in the creation of multiple distinct resources or the execution of a command multiple times.
+    <Warning title="Important: Idempotency for POST">
+      **Placeholder:** If Weir AI implements idempotency keys for specific POST endpoints, describe it here. E.g., "For certain critical POST operations, such as payment processing or job submission, Weir AI supports an `Idempotency-Key` header. When you provide a unique key in this header, the server will ensure that if a request with the same key is retried (e.g., due to a network error), it will not be processed twice. The server will typically return the original response for the first successful request associated with that key." This is a very important feature for Omry if available.
+    </Warning>
+  </Card>
+  <Card title="PATCH" icon="Question">
+    Not inherently idempotent. The effect of a PATCH can depend on the current state of the resource. Some patch operations can be idempotent (e.g., "set field X to value Y"), while others are not (e.g., "append item to list").
+  </Card>
+</CardGroup>
+
+<Info title="Why Idempotency Matters for Omry's Team">
+  <AccordionGroup>
+    <Accordion title="Safe Retries" icon="ArrowClockwise">
+      If a client sends a request but doesn't receive a response (e.g., due to a timeout), it can safely retry idempotent operations without worrying about unintended side effects.
+    </Accordion>
+    <Accordion title="Fault Tolerance" icon="ShieldWarning">
+      Idempotency is key to building fault-tolerant applications, allowing for more aggressive retry strategies to recover from transient network issues.
+    </Accordion>
+    <Accordion title="Simplified Client Logic" icon="CodeSimple">
+      When dealing with idempotent operations, client-side error handling and retry logic become simpler.
+    </Accordion>
+  </AccordionGroup>
+</Info>
+
+Engineers should design their client applications to leverage the idempotency characteristics of Weir AI API methods, especially when implementing retry mechanisms for network failures or transient server errors. For non-idempotent POST operations, careful consideration must be given to how retries are handled to avoid unintended duplication, unless an idempotency key mechanism is provided by Weir AI.

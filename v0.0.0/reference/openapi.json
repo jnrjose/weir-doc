@@ -7,8 +7,16 @@
   },
   "servers": [
     {
-      "url": "{{baseUrl}}",
-      "description": "Base URL of the Auth Service"
+      "url": "https://api-dev.weir.ai",
+      "description": "Development API server (default)"
+    },
+    {
+      "url": "https://api.weir.ai",
+      "description": "Production API server"
+    },
+    {
+      "url": "https://staging-api.weir.ai",
+      "description": "Staging API server"
     }
   ],
   "paths": {
@@ -21,7 +29,7 @@
           {
             "name": "x-source",
             "in": "header",
-            "description": "Origin of the request (e.g., 'UI' or 'API').",
+            "description": "Origin of the request (e.g., 'console' or 'external').",
             "required": true,
             "schema": { "type": "string" }
           }
@@ -53,7 +61,7 @@
         "description": "Checks the validity of a password reset token and returns status.",
         "tags": ["auth"],
         "parameters": [
-          { "name": "x-source", "in": "header", "description": "Origin of the request (e.g., 'UI' or 'API').", "required": true, "schema": { "type": "string" } }
+          { "name": "x-source", "in": "header", "description": "Origin of the request (e.g., 'console' or 'external').", "required": true, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "description": "Payload containing the reset token.",

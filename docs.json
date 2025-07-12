@@ -1,29 +1,30 @@
 {
 	"$schema": "https://mintlify.com/docs.json",
-	"theme": "willow",
+	"theme": "palm",
 	"name": "Welcome to Weir",
-	"favicon": "/logo/Weir_Symbol_Circle.svg",
+	"favicon": "/shared/logo/Weir_Symbol_Circle.svg",
 	"navigation": {
 		"versions": [
 			{
-				"version": "v0.0.0",
+				"version": "v0.0.1",
+				"default": true,
 				"tabs": [
 					{
-						"tab": "Gettting Started",
+						"tab": "Getting Started",
 						"groups": [
 							{
 								"group": "Start Here",
 								"pages": [
-									"index",
-									"weir",
-									"quickstart"
+									"v0.0.1/index",
+									"v0.0.1/weir",
+									"v0.0.1/quickstart"
 								]
 							},
 							{
 								"group": "NIL Detection & Interaction",
 								"pages": [
-									"core/nil",
-									"core/analysis"
+									"v0.0.1/core/nil",
+									"v0.0.1/core/analysis"
 								]
 							}
 						]
@@ -32,27 +33,76 @@
 						"tab": "API Reference",
 						"groups": [
 							{
-								"group": "API Documentation",
+								"group": "API Playground",
 								"pages": [
-									"reference/introduction"
+									"v0.0.1/api-playground"
 								]
 							},
 							{
-								"group": "Endpoint Examples",
+								"group": "Ad Endpoints",
 								"pages": [
-									"reference/endpoint/accessToken",
-									"reference/endpoint/auth",
-									"reference/endpoint/login",
-									"reference/endpoint/logout",
-									"reference/endpoint/passwordreset",
-									"reference/endpoint/passwordresetotp",
-									"reference/endpoint/refreshtoken",
-									"reference/endpoint/register",
-									"reference/endpoint/validate",
-									"reference/endpoint/validateIdentity",
-									"reference/endpoint/validateinvitee",
-									"reference/endpoint/verifyinviteeOTP"
-										]
+									"v0.0.1/reference/ad/validateIdentity",
+									"v0.0.1/reference/ad/validation/status"
+								]
+							},
+							{
+								"group": "Auth Endpoints",
+								"pages": [
+									"v0.0.1/reference/auth/register",
+									"v0.0.1/reference/auth/login",
+									"v0.0.1/reference/auth/token",
+									"v0.0.1/reference/auth/refresh/token",
+									"v0.0.1/reference/auth/authenticate",
+									"v0.0.1/reference/auth/authenticateAPI",
+									"v0.0.1/reference/auth/authenticateForgotToken",
+									"v0.0.1/reference/auth/forgot",
+									"v0.0.1/reference/auth/forgot/resendOtp",
+									"v0.0.1/reference/auth/forgot/validateOtp",
+									"v0.0.1/reference/auth/update/password",
+									"v0.0.1/reference/auth/logout",
+									"v0.0.1/reference/auth/revoke/token",
+									"v0.0.1/reference/auth/register/invitee",
+									"v0.0.1/reference/auth/validate/invitee",
+									"v0.0.1/reference/auth/validate/invitee/otp"
+								]
+							},
+							{
+								"group": "Event Endpoints",
+								"pages": [
+									"v0.0.1/reference/event/logs"
+								]
+							},
+							{
+								"group": "Org Endpoints",
+								"pages": [
+									"v0.0.1/reference/org/create/client",
+									"v0.0.1/reference/org/create/platform",
+									"v0.0.1/reference/org/create/team",
+									"v0.0.1/reference/org/information",
+									"v0.0.1/reference/org/clients",
+									"v0.0.1/reference/org/platforms",
+									"v0.0.1/reference/org/teams",
+									"v0.0.1/reference/org/client/{clientId}",
+									"v0.0.1/reference/org/platform/{platformId}",
+									"v0.0.1/reference/org/team/{teamId}",
+									"v0.0.1/reference/org/team/members/{teamId}",
+									"v0.0.1/reference/org/invite/team/member/{teamId}",
+									"v0.0.1/reference/org/refresh/client"
+								]
+							},
+							{
+								"group": "Trial Endpoints",
+								"pages": [
+									"v0.0.1/reference/trial/register",
+									"v0.0.1/reference/trial/authenticate",
+									"v0.0.1/reference/trial/users",
+									"v0.0.1/reference/trial/user/{userId}",
+									"v0.0.1/reference/trial/fakeads/{requestId}",
+									"v0.0.1/reference/trial/fakead/{imageId}",
+									"v0.0.1/reference/trial/upload-selfie",
+									"v0.0.1/reference/trial/uploadImage",
+									"v0.0.1/reference/trial/selfie/{imageId}"
+								]
 							}
 						]
 					},
@@ -62,11 +112,82 @@
 							{
 								"group": "General Best Practices",
 								"pages": [
-									"integration/concept",
-									"integration/auth",
-									"integration/request",
-									"integration/response"
-									]
+									"v0.0.1/integration/concept",
+									"v0.0.1/integration/auth",
+									"v0.0.1/integration/request",
+									"v0.0.1/integration/response"
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"version": "v0.0.0",
+				"tabs": [
+					{
+						"tab": "Getting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"v0.0.0/index",
+									"v0.0.0/weir",
+									"v0.0.0/quickstart"
+								]
+							},
+							{
+								"group": "NIL Detection & Interaction",
+								"pages": [
+									"v0.0.0/core/nil",
+									"v0.0.0/core/analysis"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Playground",
+								"pages": [
+									"v0.0.0/api-playground"
+								]
+							},
+							{
+								"group": "Auth Endpoints",
+								"pages": [
+									"v0.0.0/reference/auth/authenticate",
+									"v0.0.0/reference/auth/authenticateAPI",
+									"v0.0.0/reference/auth/authenticateForgotToken",
+									"v0.0.0/reference/auth/login",
+									"v0.0.0/reference/auth/logout",
+									"v0.0.0/reference/auth/register",
+									"v0.0.0/reference/auth/token",
+									"v0.0.0/reference/auth/forgot",
+									"v0.0.0/reference/auth/forgot/resendOtp",
+									"v0.0.0/reference/auth/forgot/validateOtp",
+									"v0.0.0/reference/auth/update/password",
+									"v0.0.0/reference/auth/revoke/token",
+									"v0.0.0/reference/auth/register/invitee",
+									"v0.0.0/reference/auth/validate/invitee",
+									"v0.0.0/reference/auth/validate/invitee/otp",
+									"v0.0.0/reference/auth/refresh/token"
+								]
+							}
+						]
+					},
+					{
+						"tab": "Integration Guides",
+						"groups": [
+							{
+								"group": "General Best Practices",
+								"pages": [
+									"v0.0.0/integration/concept",
+									"v0.0.0/integration/auth",
+									"v0.0.0/integration/request",
+									"v0.0.0/integration/response"
+								]
 							}
 						]
 					}
@@ -75,8 +196,8 @@
 		]
 	},
 	"logo": {
-		"light": "/logo/Weir_Logo_Outlined_Primary.svg",
-		"dark": "/logo/Weir_Logo_Outlined_Inverted.svg"
+		"light": "/shared/logo/Weir_Logo_Outlined_Primary.svg",
+		"dark": "/shared/logo/Weir_Logo_Outlined_Inverted.svg"
 	},
 	"navbar": {
 		"links": [
@@ -107,10 +228,34 @@
 		"light": "#DD836E",
 		"dark": "#142740"
 	},
-  "background": {
-  "color": {
-	"light": "#FFFFFF",
-	"dark": "#0C233E"
-  }
-}
+	"background": {
+		"color": {
+			"light": "#FFFFFF",
+			"dark": "#0C233E"
+		}
+	},
+	"api": {
+		"baseUrl": "https://api-dev.weir.ai/",
+		"auth": {
+			"method": "bearer"
+		},
+		"playground": {
+			"display": "interactive"
+		},
+		"examples": {
+			"languages": [
+				"curl",
+				"javascript",
+				"python",
+				"php",
+				"go",
+				"ruby",
+				"java",
+				"csharp",
+				"swift",
+				"kotlin"
+			],
+			"defaults": "required"
+		}
+	}
 }

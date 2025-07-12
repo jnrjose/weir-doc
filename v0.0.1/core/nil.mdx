@@ -1,0 +1,705 @@
+---
+title: "Core API: Ad Demo & NIL Detection"
+description: "A guide to the Weir AI trial and ad demonstration workflow, including user registration, image upload, ad generation, and subsequent NIL analysis."
+icon: "Sparkle" # Example icon
+sidebarTitle: "Ad Demo & NIL Detection"
+---
+
+This chapter details the Weir AI trial and ad demonstration workflow. This process is designed to showcase the platform's capabilities by allowing a user to register, upload their own image (a "selfie"), and receive newly generated advertisements featuring that image. For engineering leads and their teams, this provides a clear, three-step path to demonstrate a core value proposition of the platform. After generating these ads, your application can then submit them to Weir AI's validation and NIL (Name, Image, Likeness) detection services to analyze the content for compliance and licensing details.
+
+<Info>The entire workflow uses the base URL: `https://api-dev.weir.ai`.</Info>
+
+## Part 1: The Ad Demo Workflow
+
+This workflow consists of three distinct API calls: registering the user, uploading an image, and retrieving the generated ads.
+
+<Steps>
+  <Step title="1. Registration" icon="User-Plus">
+    The first step is to create a trial user account. This action provides the necessary authentication tokens for subsequent steps.
+    <br/>
+    **Endpoint:** `POST /gateway/ui/trial/register`
+    <br/>
+    **Purpose:** Creates a new trial user and returns an access token required for protected endpoints.
+
+    **Request Body Structure:**
+    Your application will send a JSON object containing the user's details.
+    <Fields>
+      <Field name="firstname" type="string" required={true}>
+        The first name of the user.
+      </Field>
+      <Field name="email" type="string" required={true}>
+        The user's email address.
+      </Field>
+      <Field name="demoConsent" type="boolean" required={true}>
+        A flag indicating the user's consent for the demo.
+      </Field>
+      <Field name="fakeAdEmailOptIn" type="boolean" required={true}>
+        A flag for opting into receiving fake ad emails.
+      </Field>
+    </Fields>
+
+    **Example Request Body:**
+    ```json
+    {
+      "firstname": "Alex",
+      "email": "alex.engineer@example.com",
+      "demoConsent": true,
+      "fakeAdEmailOptIn": false
+    }
+    ```
+
+    **Understanding the Response:**
+    A successful registration returns a `201 Created` status. The response body includes user information, a critical `accessToken`, and a `refreshToken`. Your application must securely store the `accessToken` to authenticate the user for the next steps.
+
+    **Example `201 Created` Response:**
+    ```json
+    {
+      "status": "success",
+      "message": "Registration was successful",
+      "data": {
+        "user": {
+          "sub": "683f7ddd7ba018e9b4346acb",
+          "firstname": "Alex",
+          "email": "alex.engineer@example.com",
+          "hasExistingProfile": false
+        },
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "refreshToken": "djA6NjgzZjdkZDc3YmEwMThlOWI0MzQ2YWNi..."
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="2. Image Upload" icon="Upload">
+    With the `accessToken` from the registration step, your application can now upload a user's image.
+    <br/>
+    **Endpoint:** `POST /gateway/ui/trial/upload-selfie`
+    <br/>
+    **Purpose:** Uploads a user's image, which will be used to generate personalized ad creatives.
+    <br/>
+    **Authentication:** This is a protected endpoint and requires Bearer Token authentication. Your application must include the `accessToken` in the `Authorization` header.
+    <br/>
+    **Header Format:** `Authorization: Bearer <accessToken>`
+
+    **Request Body Structure:**
+    The request is sent as `multipart/form-data` and contains the image file.
+    <Fields>
+      <Field name="image" type="binary (file)" required={true}>
+        The user's image file.
+      </Field>
+    </Fields>
+
+    **Understanding the Response:**
+    A successful upload returns a `201 Created` status. The response body contains a `data` field with a `requestId` string. This `requestId` is the unique identifier for the uploaded image and the subsequent ad generation job. Your application must store this ID for the final step.
+
+    **Example `201 Created` Response:**
+    ```json
+    {
+      "status": "success",
+      "message": "Image uploaded successfully",
+      "data": "OSo5op28"
+    }
+    ```
+  </Step>
+
+  <Step title="3. Get Generated Ads" icon="Images">
+    Using the `requestId` from the image upload, your application can now retrieve the URLs of the personalized ads.
+    <br/>
+    **Endpoint:** `GET /gateway/ui/trial/fakeads/{requestId}`
+    <br/>
+    **Purpose:** Retrieves a list of URLs for the generated ad creatives.
+    <br/>
+    **Authentication:** Although not explicitly marked in the spec, this endpoint accesses a user-specific resource and requires the same Bearer Token authentication as the upload step.
+    <br/>
+    **Header Format:** `Authorization: Bearer <accessToken>`
+    <br/>
+    **Path Parameter:** The `requestId` from the previous step is included in the URL path.
+
+    **Understanding the Response:**
+    A successful request returns a `200 OK` status when the ad generation is complete. The response body contains an array of strings, where each string is a URL pointing to a generated ad.
+    <Note>If the ads are not yet ready, the API may return a different status or message indicating the process is still pending.</Note>
+
+    **Example `200 OK` Response:**
+    ```json
+    {
+      "status": "success",
+      "message": "Ad generation completed",
+      "data": [
+        "[https://api-dev.weir.ai/gateway/ui/trial/fakead/68307b7e73c815b31f8e7e6d](https://api-dev.weir.ai/gateway/ui/trial/fakead/68307b7e73c815b31f8e7e6d)",
+        "[https://api-dev.weir.ai/gateway/ui/trial/fakead/683079ce554aee42d950a969](https://api-dev.weir.ai/gateway/ui/trial/fakead/683079ce554aee42d950a969)"
+      ]
+    }
+    ```
+  </Step>
+</Steps>
+
+## Part 2: Analyzing Generated Ads for NIL Content
+
+After your application has retrieved the URLs of the generated ads from the demo workflow, the next logical step is to analyze these new creatives for NIL content and compliance. Your application will use the ad validation endpoints for this purpose.
+
+### Submitting Generated Ads for NIL Analysis
+You will take the ad URLs returned from the `GET /gateway/ui/trial/fakeads/{requestId}` endpoint and submit them, one by one, to the ad validation endpoint.
+
+**Endpoint:** `POST /ad/validateIdentity`
+<br/>
+**Purpose:** Submits an ad for a comprehensive identity and NIL compliance scan.
+<br/>
+**Process:** This is an asynchronous process. You submit the ad URL, receive a `trackingId`, and then use that ID to poll for the results using `GET /ad/validation/status`.
+
+<Tip>For full details on the `POST /ad/validateIdentity` and `GET /ad/validation/status` two-step process, refer to the **"Core API Functionality: NIL Detection & Interaction"** documentation chapter (artifact ID: `weir_ai_core_nil_functionality`).</Tip>
+
+### Understanding the Scan Response
+When you retrieve the final validation status from `GET /ad/validation/status`, the response will detail any NIL matches.
+
+<AccordionGroup>
+  <Accordion title="Successful scan with NIL matches" icon="Users">
+    The response will contain a `nil_matches` array with one or more objects. Each object provides details about the detected `persona` and their associated `license`.
+  </Accordion>
+  <Accordion title="Successful scan with no NIL matches" icon="User-Minus">
+    The `nil_matches` array will be empty.
+  </Accordion>
+  <Accordion title="Error responses" icon="triangle-exclamation">
+    If the validation fails or the request is invalid, the API will return a standard error response.
+  </Accordion>
+</AccordionGroup>
+
+### Interpreting Persona and License Objects in the Response
+When NIL matches are found, your application will parse the `persona` and `license` objects to understand the compliance status.
+
+<Accordion title="`persona` Object" icon="User" defaultOpen={true}>
+  Contains the ID, name, and category of the detected individual, along with a confidence score for the match.
+</Accordion>
+<Accordion title="`license` Object" icon="Certificate" defaultOpen={true}>
+  Contains the license ID and its terms, such as the active date range, allowed advertisers, and geographic territories. Critically, it includes an `is_compliant` boolean field, which provides Weir AI's determination of whether the ad's usage complies with the known license terms.
+</Accordion>
+
+## Code Examples
+
+The following examples demonstrate the three-step ad demo workflow.
+
+<Tabs>
+  <Tab title="cURL">
+  ```shell
+  # Step 1: Register and capture the accessToken
+  ACCESS_TOKEN=$(curl -X POST "[https://api-dev.weir.ai/gateway/ui/trial/register](https://api-dev.weir.ai/gateway/ui/trial/register)" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "firstname": "Alex",
+           "email": "alex.demo@example.com",
+           "demoConsent": true,
+           "fakeAdEmailOptIn": false
+         }' | jq -r '.data.accessToken')
+
+  echo "Access Token: $ACCESS_TOKEN"
+
+  # Step 2: Upload selfie and capture the requestId
+  # Replace /path/to/your/selfie.jpg with the actual path to an image file
+  REQUEST_ID=$(curl -X POST "[https://api-dev.weir.ai/gateway/ui/trial/upload-selfie](https://api-dev.weir.ai/gateway/ui/trial/upload-selfie)" \
+     -H "Authorization: Bearer $ACCESS_TOKEN" \
+     -F "image=@/path/to/your/selfie.jpg" | jq -r '.data')
+
+  echo "Request ID: $REQUEST_ID"
+
+  # Step 3: Get the generated ads (you may need to add a delay for processing)
+  echo "Waiting for ad generation..."
+  sleep 15 # Wait for a few seconds before polling
+
+  curl -X GET "[https://api-dev.weir.ai/gateway/ui/trial/fakeads/$REQUEST_ID](https://api-dev.weir.ai/gateway/ui/trial/fakeads/$REQUEST_ID)" \
+     -H "Authorization: Bearer $ACCESS_TOKEN"
+  ```
+  </Tab>
+  <Tab title="Python">
+  ```python
+import requests
+import os
+import time
+import json
+
+API_BASE_URL = "[https://api-dev.weir.ai](https://api-dev.weir.ai)"
+
+def register_user(email, first_name):
+    """Registers a user and returns the access token."""
+    payload = {
+        "firstname": first_name,
+        "email": email,
+        "demoConsent": True,
+        "fakeAdEmailOptIn": False
+    }
+    response = requests.post(f"{API_BASE_URL}/gateway/ui/trial/register", json=payload)
+    response.raise_for_status()
+    return response.json()["data"]["accessToken"]
+
+def upload_selfie(token, image_path):
+    """Uploads an image and returns a requestId."""
+    headers = {"Authorization": f"Bearer {token}"}
+    with open(image_path, "rb") as image_file:
+        files = {"image": (os.path.basename(image_path), image_file)}
+        response = requests.post(
+            f"{API_BASE_URL}/gateway/ui/trial/upload-selfie",
+            headers=headers,
+            files=files
+        )
+        response.raise_for_status()
+        return response.json()["data"]  # This is the requestId
+
+def get_fake_ads(token, request_id):
+    """Retrieves generated ad URLs."""
+    headers = {"Authorization": f"Bearer {token}"}
+    # Polling may be required in a real-world scenario if ads aren't ready immediately
+    response = requests.get(
+        f"{API_BASE_URL}/gateway/ui/trial/fakeads/{request_id}",
+        headers=headers
+    )
+    response.raise_for_status()
+    return response.json()["data"]  # This is the array of ad URLs
+
+# --- Main Execution ---
+try:
+    print("Step 1: Registering user...")
+    access_token = register_user("alex.python.demo@example.com", "Alex")
+    print(f"Registration successful. Token starts with: {access_token[:15]}...")
+
+    print("\nStep 2: Uploading selfie...")
+    # Make sure 'selfie.jpg' exists in the same directory or provide a full path
+    image_file_path = "selfie.jpg"
+    if not os.path.exists(image_file_path):
+        raise FileNotFoundError(f"Error: {image_file_path} not found. Please place an image file in the correct path.")
+
+    request_id = upload_selfie(access_token, image_file_path)
+    print(f"Upload successful. Request ID: {request_id}")
+
+    print("\nStep 3: Retrieving generated ads (waiting 15 seconds)...")
+    time.sleep(15)  # Wait for ad generation
+    ad_urls = get_fake_ads(access_token, request_id)
+    print("Generated Ad URLs:")
+    for url in ad_urls:
+        print(f"- {url}")
+
+    # Example of how you might then submit these ads for NIL analysis:
+    # print("\nSubmitting generated ads for NIL analysis (conceptual)...")
+    # for ad_url in ad_urls:
+    #     print(f"Submitting {ad_url} to /ad/validateIdentity...")
+    #     # tracking_id = submit_ad_for_validation_from_other_doc(ad_url, "Generated Ad")
+    #     # if tracking_id:
+    #     #     nil_results = get_validation_status_from_other_doc(tracking_id)
+    #     #     print(f"NIL results for {ad_url}: {json.dumps(nil_results, indent=2)}")
+
+except requests.exceptions.HTTPError as e:
+    print(f"An HTTP error occurred: {e}")
+    print(f"Response Body: {e.response.text if e.response else 'No response body'}")
+except FileNotFoundError as e:
+    print(e)
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+  ```
+  </Tab>
+  <Tab title="Node.js">
+  ```javascript
+const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+const path = require('path');
+
+const API_BASE_URL = '[https://api-dev.weir.ai](https://api-dev.weir.ai)';
+
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function runAdDemo() {
+  try {
+    // Step 1: Register User
+    console.log('Step 1: Registering user...');
+    const registerResponse = await axios.post(\`\${API_BASE_URL}/gateway/ui/trial/register\`, {
+      firstname: 'Alex',
+      email: 'alex.node.demo@example.com',
+      demoConsent: true,
+      fakeAdEmailOptIn: false,
+    });
+    const accessToken = registerResponse.data.data.accessToken;
+    console.log(\`Registration successful. Token starts with: \${accessToken.substring(0, 15)}...\`);
+
+    // Step 2: Upload Selfie
+    console.log('\\nStep 2: Uploading selfie...'); // For Node.js console.log, \n creates a newline
+    // Make sure 'selfie.png' (or .jpg) exists in the same directory or provide a full path
+    const imagePath = path.join(__dirname, 'selfie.png'); 
+    if (!fs.existsSync(imagePath)) {
+      console.error(\`Error: \${imagePath} not found. Please place an image file in the correct path.\`);
+      throw new Error(\`Image file not found: \${imagePath}\`);
+    }
+    const form = new FormData();
+    form.append('image', fs.createReadStream(imagePath));
+
+    const uploadResponse = await axios.post(
+      \`\${API_BASE_URL}/gateway/ui/trial/upload-selfie\`,
+      form,
+      {
+        headers: {
+          ...form.getHeaders(),
+          'Authorization': \`Bearer \${accessToken}\`,
+        },
+      }
+    );
+    const requestId = uploadResponse.data.data;
+    console.log(\`Upload successful. Request ID: \${requestId}\`);
+
+    // Step 3: Get Generated Ads
+    console.log('\\nStep 3: Retrieving generated ads (waiting 15 seconds)...'); // For Node.js console.log, \n creates a newline
+    await sleep(15000);
+    const adsResponse = await axios.get(
+      \`\${API_BASE_URL}/gateway/ui/trial/fakeads/\${requestId}\`,
+      {
+        headers: { 'Authorization': \`Bearer \${accessToken}\` },
+      }
+    );
+
+    console.log('Generated Ad URLs:');
+    const adUrls = adsResponse.data.data;
+    adUrls.forEach(url => console.log(\`- \${url}\`));
+
+    // Example of how you might then submit these ads for NIL analysis:
+    // console.log('\\nSubmitting generated ads for NIL analysis (conceptual)...'); // For Node.js console.log, \n creates a newline
+    // for (const adUrl of adUrls) {
+    //   console.log(\`Submitting \${adUrl} to /ad/validateIdentity...\`);
+    //   // const tracking_id = await submitAdForValidationFromOtherDoc(adUrl, "Generated Ad");
+    //   // if (tracking_id) {
+    //   //   const nil_results = await getValidationStatusFromOtherDoc(tracking_id);
+    //   //   console.log(\`NIL results for \${ad_url}: \${JSON.stringify(nil_results, null, 2)}\`);
+    //   // }
+    // }
+
+  } catch (error) {
+    if (error.response) {
+      console.error('An API error occurred:', error.response.status, error.response.data);
+    } else if (error.request) {
+      console.error('An error occurred with the request (no response):', error.request);
+    } else {
+      console.error('An error occurred:', error.message);
+    }
+  }
+}
+
+runAdDemo();
+  ```
+  </Tab>
+  <Tab title="Java">
+  ```java
+  import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.entity.mime.StringBody;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+public class WeirAdDemo {
+    private static final String API_BASE_URL = "https://api-dev.weir.ai";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static void main(String[] args) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            System.out.println("Step 1: Registering user...");
+            String accessToken = registerUser(httpClient, "alex.java.demo@example.com", "Alex");
+            System.out.println("Registration successful. Token starts with: "
+                    + accessToken.substring(0, Math.min(accessToken.length(), 15)) + "...");
+
+            System.out.println("\nStep 2: Uploading selfie...");
+            String imagePath = "selfie.jpg";
+            File imageFile = new File(imagePath);
+            if (!imageFile.exists()) {
+                throw new IOException("Error: " + imagePath + " not found. Please place an image file in the correct path.");
+            }
+            String requestId = uploadSelfie(httpClient, accessToken, imageFile);
+            System.out.println("Upload successful. Request ID: " + requestId);
+
+            System.out.println("\nStep 3: Retrieving generated ads (waiting 15 seconds)...");
+            Thread.sleep(15000);
+            List<String> adUrls = getFakeAds(httpClient, accessToken, requestId);
+            System.out.println("Generated Ad URLs:");
+            for (String url : adUrls) {
+                System.out.println("- " + url);
+            }
+
+            // Example of how you might then submit these ads for NIL analysis:
+            // for (String adUrl : adUrls) {
+            //     System.out.println("Submitting " + adUrl + " to /ad/validateIdentity...");
+            //     // String trackingId = submitAdForValidation(httpClient, accessToken, adUrl);
+            //     // if (trackingId != null) {
+            //     //     JsonNode nilResults = getValidationStatus(httpClient, accessToken, trackingId);
+            //     //     System.out.println("NIL results for " + adUrl + ": " + nilResults.toPrettyString());
+            //     // }
+            // }
+
+        } catch (Exception e) {
+            System.err.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static String registerUser(CloseableHttpClient httpClient, String email, String firstName) throws IOException {
+        HttpPost postRequest = new HttpPost(URI.create(API_BASE_URL + "/gateway/ui/trial/register"));
+        postRequest.addHeader("Content-Type", "application/json");
+
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("firstname", firstName);
+        payload.put("email", email);
+        payload.put("demoConsent", true);
+        payload.put("fakeAdEmailOptIn", false);
+
+        String jsonString = objectMapper.writeValueAsString(payload);
+        postRequest.setEntity(new org.apache.hc.client5.http.entity.StringEntity(jsonString, ContentType.APPLICATION_JSON));
+
+        try (CloseableHttpResponse response = httpClient.execute(postRequest)) {
+            int status = response.getCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                JsonNode root = objectMapper.readTree(entity.getContent());
+                return root.path("data").path("accessToken").asText();
+            } else {
+                throw new IOException("Unexpected response status: " + status);
+            }
+        }
+    }
+
+    private static String uploadSelfie(CloseableHttpClient httpClient, String token, File imageFile) throws IOException {
+        HttpPost postRequest = new HttpPost(URI.create(API_BASE_URL + "/gateway/ui/trial/upload-selfie"));
+        postRequest.addHeader("Authorization", "Bearer " + token);
+
+        FileBody fileBody = new FileBody(imageFile, ContentType.DEFAULT_BINARY);
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.setMode(HttpMultipartMode.STRICT);
+        builder.addPart("image", fileBody);
+        HttpEntity multipart = builder.build();
+        postRequest.setEntity(multipart);
+
+        try (CloseableHttpResponse response = httpClient.execute(postRequest)) {
+            int status = response.getCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                JsonNode root = objectMapper.readTree(entity.getContent());
+                return root.path("data").asText();
+            } else {
+                throw new IOException("Unexpected response status: " + status);
+            }
+        }
+    }
+
+    private static List<String> getFakeAds(CloseableHttpClient httpClient, String token, String requestId) throws IOException {
+        HttpGet getRequest = new HttpGet(URI.create(API_BASE_URL + "/gateway/ui/trial/fakeads/" + requestId));
+        getRequest.addHeader("Authorization", "Bearer " + token);
+
+        try (CloseableHttpResponse response = httpClient.execute(getRequest)) {
+            int status = response.getCode();
+            if (status >= 200 && status < 300) {
+                HttpEntity entity = response.getEntity();
+                JsonNode root = objectMapper.readTree(entity.getContent());
+                JsonNode dataArray = root.path("data");
+                return objectMapper.convertValue(dataArray, objectMapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            } else {
+                throw new IOException("Unexpected response status: " + status);
+            }
+        }
+    }
+}
+  ```
+  </Tab>
+  <Tab title="Go">
+  ```go
+  package main
+
+import (
+	bytes "bytes"
+	encoding/json"
+	fmt"
+	io"
+	mime/multipart"
+	net/http"
+	os"
+	path/filepath"
+	time"
+)
+
+const (
+	apiBaseURL = "https://api-dev.weir.ai"
+)
+
+// registerUser registers a user and returns the access token.
+func registerUser(email, firstName string) (string, error) {
+	url := fmt.Sprintf("%s/gateway/ui/trial/register", apiBaseURL)
+	payload := map[string]interface{}{
+		"firstname":         firstName,
+		"email":             email,
+		"demoConsent":       true,
+		"fakeAdEmailOptIn":  false,
+	}
+	bodyBytes, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal payload: %w", err)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bodyBytes))
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("registration request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result struct {
+		Data struct {
+			AccessToken string `json:"accessToken"`
+		} `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode registration response: %w", err)
+	}
+
+	return result.Data.AccessToken, nil
+}
+
+// uploadSelfie uploads an image and returns a requestId.
+func uploadSelfie(token, imagePath string) (string, error) {
+	url := fmt.Sprintf("%s/gateway/ui/trial/upload-selfie", apiBaseURL)
+
+	file, err := os.Open(imagePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open image file: %w", err)
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("image", filepath.Base(imagePath))
+	if err != nil {
+		return "", fmt.Errorf("failed to create form file: %w", err)
+	}
+	if _, err := io.Copy(part, file); err != nil {
+		return "", fmt.Errorf("failed to copy file content: %w", err)
+	}
+	writer.Close()
+
+	req, err := http.NewRequest(http.MethodPost, url, body)
+	if err != nil {
+		return "", fmt.Errorf("failed to create upload request: %w", err)
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("upload request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var result struct {
+		Data string `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return "", fmt.Errorf("failed to decode upload response: %w", err)
+	}
+
+	return result.Data, nil
+}
+
+// getFakeAds retrieves generated ad URLs.
+func getFakeAds(token, requestId string) ([]string, error) {
+	url := fmt.Sprintf("%s/gateway/ui/trial/fakeads/%s", apiBaseURL, requestId)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create get request: %w", err)
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("get request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+
+	var result struct {
+		Data []string `json:"data"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode get response: %w", err)
+	}
+
+	return result.Data, nil
+}
+
+func main() {
+	// Step 1: Register user
+	fmt.Println("Step 1: Registering user...")
+	accessToken, err := registerUser("alex.go.demo@example.com", "Alex")
+	if err != nil {
+		fmt.Printf("Registration error: %v\n", err)
+		return
+	}
+	fmt.Printf("Registration successful. Token starts with: %s...\n", accessToken[:15])
+
+	// Step 2: Upload selfie
+	fmt.Println("\nStep 2: Uploading selfie...")
+	imagePath := "selfie.jpg"
+	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
+		fmt.Printf("Error: %s not found. Please place an image file in the correct path.\n", imagePath)
+		return
+	}
+	requestId, err := uploadSelfie(accessToken, imagePath)
+	if err != nil {
+		fmt.Printf("Upload error: %v\n", err)
+		return
+	}
+	fmt.Printf("Upload successful. Request ID: %s\n", requestId)
+
+	// Step 3: Retrieve generated ads
+	fmt.Println("\nStep 3: Retrieving generated ads (waiting 15 seconds)...")
+	time.Sleep(15 * time.Second)
+	adUrls, err := getFakeAds(accessToken, requestId)
+	if err != nil {
+		fmt.Printf("Get ads error: %v\n", err)
+		return
+	}
+	fmt.Println("Generated Ad URLs:")
+	for _, url := range adUrls {
+		fmt.Printf("- %s\n", url)
+	}
+
+	// Example: submit for NIL analysis (conceptual)
+	// for _, adUrl := range adUrls {
+	//     fmt.Printf("Submitting %s for NIL analysis...\n", adUrl)
+	//     // Implement submission and polling here
+	// }
+}
+```
+  </Tab>
+</Tabs>
