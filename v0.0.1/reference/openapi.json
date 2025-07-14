@@ -9,6 +9,8 @@
     "/auth/authenticate": {
       "post": {
         "operationId": "AuthController_authenticate",
+        "summary": "Authenticate user via JWT.",
+        "description": "Authenticates a user using a JWT or access token.",
         "parameters": [
           {
             "name": "x-source",
@@ -37,7 +39,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -48,6 +50,8 @@
     "/auth/authenticateForgotToken": {
       "post": {
         "operationId": "AuthController_authenticateForgotToken",
+        "summary": "Authenticate user via JWT.",
+        "description": "Authenticates a user using a JWT or access token.",
         "parameters": [
           {
             "name": "x-source",
@@ -76,7 +80,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -87,6 +91,8 @@
     "/auth/authenticateAPI": {
       "post": {
         "operationId": "AuthController_authenticationAPI",
+        "summary": "Authenticate user via JWT.",
+        "description": "Authenticates a user using a JWT or access token.",
         "parameters": [
           {
             "name": "x-source",
@@ -115,7 +121,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -126,6 +132,8 @@
     "/auth/validate/invitee": {
       "post": {
         "operationId": "AuthController_inviteeValidation",
+        "summary": "Validate invitee.",
+        "description": "Validates the invitee details.",
         "parameters": [
           {
             "name": "x-source",
@@ -154,7 +162,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -165,6 +173,8 @@
     "/auth/register/invitee": {
       "post": {
         "operationId": "AuthController_registerInvitee",
+        "summary": "Register invitee.",
+        "description": "Registers a new invitee user.",
         "parameters": [
           {
             "name": "x-source",
@@ -193,7 +203,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -204,6 +214,8 @@
     "/auth/validate/invitee/otp": {
       "post": {
         "operationId": "AuthController_validateInviteeOTP",
+        "summary": "Validate invitee OTP.",
+        "description": "Validates the one-time password for invitee registration.",
         "parameters": [
           {
             "name": "x-source",
@@ -232,7 +244,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -243,6 +255,8 @@
     "/auth/register": {
       "post": {
         "operationId": "AuthController_register",
+        "summary": "Register organization.",
+        "description": "Registers a new organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -271,7 +285,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -282,6 +296,8 @@
     "/auth/login": {
       "post": {
         "operationId": "AuthController_login",
+        "summary": "Login user.",
+        "description": "Logs in a user with username/email and password.",
         "parameters": [
           {
             "name": "x-source",
@@ -310,7 +326,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -321,6 +337,8 @@
     "/auth/refresh/token": {
       "post": {
         "operationId": "AuthController_refresh",
+        "summary": "Refresh token.",
+        "description": "Refreshes the access token using a refresh token.",
         "parameters": [
           {
             "name": "x-source",
@@ -349,7 +367,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -360,6 +378,8 @@
     "/auth/logout": {
       "post": {
         "operationId": "AuthController_logout",
+        "summary": "Logout user.",
+        "description": "Logs out the current user.",
         "parameters": [
           {
             "name": "x-source",
@@ -388,7 +408,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -399,6 +419,8 @@
     "/auth/forgot": {
       "post": {
         "operationId": "AuthController_forgot",
+        "summary": "Forgot password.",
+        "description": "Initiates the password reset process for a user.",
         "parameters": [
           {
             "name": "x-source",
@@ -427,7 +449,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -438,6 +460,8 @@
     "/auth/forgot/resendOtp": {
       "post": {
         "operationId": "AuthController_resendForgotPasswordOtp",
+        "summary": "Resend forgot password OTP.",
+        "description": "Resends the one-time password for password reset.",
         "parameters": [
           {
             "name": "x-source",
@@ -466,7 +490,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -477,6 +501,8 @@
     "/auth/forgot/validateOtp": {
       "post": {
         "operationId": "AuthController_validateForgotPasswordOTP",
+        "summary": "Validate forgot password OTP.",
+        "description": "Validates the one-time password for password reset.",
         "parameters": [
           {
             "name": "x-source",
@@ -505,7 +531,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -516,6 +542,8 @@
     "/auth/update/password": {
       "post": {
         "operationId": "AuthController_changePassword",
+        "summary": "Change password.",
+        "description": "Changes the password for the authenticated user.",
         "parameters": [
           {
             "name": "x-source",
@@ -544,7 +572,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -555,6 +583,8 @@
     "/auth/token": {
       "post": {
         "operationId": "AuthController_generateToken",
+        "summary": "Generate token.",
+        "description": "Generates a new access token for the authenticated user.",
         "parameters": [
           {
             "name": "x-source",
@@ -573,7 +603,7 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -584,6 +614,8 @@
     "/auth/revoke/token": {
       "post": {
         "operationId": "AuthController_revokeToken",
+        "summary": "Revoke token.",
+        "description": "Revokes the access token for the authenticated user.",
         "parameters": [
           {
             "name": "x-source",
@@ -602,7 +634,7 @@
         ],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -613,6 +645,8 @@
     "/org/information": {
       "get": {
         "operationId": "OrgController_getOrgDetails",
+        "summary": "Get organization information.",
+        "description": "Retrieves information about the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -631,7 +665,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -640,6 +674,8 @@
       },
       "patch": {
         "operationId": "OrgController_updateOrgDetails",
+        "summary": "Update organization details.",
+        "description": "Updates the details of the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -668,7 +704,7 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -679,6 +715,8 @@
     "/org/platforms": {
       "get": {
         "operationId": "OrgController_getOrganizationPlatforms",
+        "summary": "Get organization platforms.",
+        "description": "Retrieves all platforms associated with the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -697,7 +735,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -708,6 +746,8 @@
     "/org/create/team": {
       "post": {
         "operationId": "OrgController_createTeam",
+        "summary": "Create team.",
+        "description": "Creates a new team within the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -736,7 +776,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -747,6 +787,8 @@
     "/org/teams": {
       "get": {
         "operationId": "OrgController_getTeams",
+        "summary": "Get teams.",
+        "description": "Retrieves all teams within the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -783,7 +825,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -794,6 +836,8 @@
     "/org/team/{teamId}": {
       "delete": {
         "operationId": "OrgController_deleteTeam",
+        "summary": "Delete team.",
+        "description": "Deletes a team by its ID.",
         "parameters": [
           {
             "name": "x-source",
@@ -811,17 +855,17 @@
           },
           {
             "name": "teamId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the team. Expected input: a valid team ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -832,6 +876,8 @@
     "/org/invite/team/member/{teamId}": {
       "post": {
         "operationId": "OrgController_inviteTeamMember",
+        "summary": "Invite team member.",
+        "description": "Invites a new member to a team.",
         "parameters": [
           {
             "name": "x-source",
@@ -849,12 +895,12 @@
           },
           {
             "name": "teamId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the team. Expected input: a valid team ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+            }
           }
         ],
         "requestBody": {
@@ -869,7 +915,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -880,6 +926,8 @@
     "/org/team/members/{teamId}": {
       "get": {
         "operationId": "OrgController_getTeamMembers",
+        "summary": "Get team members.",
+        "description": "Retrieves all members of a specific team.",
         "parameters": [
           {
             "name": "x-source",
@@ -897,17 +945,17 @@
           },
           {
             "name": "teamId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the team. Expected input: a valid team ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the team. Expected input: a valid team ID string."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -918,6 +966,8 @@
     "/org/create/platform": {
       "post": {
         "operationId": "OrgController_createPlatform",
+        "summary": "Create platform.",
+        "description": "Creates a new platform within the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -946,7 +996,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -957,6 +1007,8 @@
     "/org/platform/{platformId}": {
       "delete": {
         "operationId": "OrgController_deletePlatform",
+        "summary": "Delete platform.",
+        "description": "Deletes a platform by its ID.",
         "parameters": [
           {
             "name": "x-source",
@@ -974,17 +1026,17 @@
           },
           {
             "name": "platformId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the platform. Expected input: a valid platform ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the platform. Expected input: a valid platform ID string."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -995,6 +1047,8 @@
     "/org/create/client": {
       "post": {
         "operationId": "OrgController_createClient",
+        "summary": "Create client.",
+        "description": "Creates a new client within the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -1023,7 +1077,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1034,6 +1088,8 @@
     "/org/clients": {
       "get": {
         "operationId": "OrgController_getClients",
+        "summary": "Get clients.",
+        "description": "Retrieves all clients associated with the organization.",
         "parameters": [
           {
             "name": "x-source",
@@ -1052,7 +1108,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1063,6 +1119,8 @@
     "/org/refresh/client": {
       "patch": {
         "operationId": "OrgController_updateClient",
+        "summary": "Update client.",
+        "description": "Updates the details of a client.",
         "parameters": [
           {
             "name": "x-source",
@@ -1090,7 +1148,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1101,6 +1159,8 @@
     "/org/client/{clientId}": {
       "delete": {
         "operationId": "OrgController_deleteClient",
+        "summary": "Delete client.",
+        "description": "Deletes a client by its ID.",
         "parameters": [
           {
             "name": "x-source",
@@ -1118,17 +1178,17 @@
           },
           {
             "name": "clientId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the client. Expected input: a valid client ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the client. Expected input: a valid client ID string."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1139,6 +1199,8 @@
     "/ad/validateIdentity": {
       "post": {
         "operationId": "AdController_identityValidation",
+        "summary": "Validate ad identity.",
+        "description": "Validates the identity of an ad.",
         "parameters": [
           {
             "name": "x-source",
@@ -1167,7 +1229,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1178,6 +1240,8 @@
     "/ad/validation/status": {
       "get": {
         "operationId": "AdController_getValidationStatus",
+        "summary": "Get ad validation status.",
+        "description": "Retrieves the status of an ad validation request.",
         "parameters": [
           {
             "name": "x-source",
@@ -1205,7 +1269,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1216,6 +1280,8 @@
     "/event/logs": {
       "get": {
         "operationId": "EventController_getEvents",
+        "summary": "Get event logs.",
+        "description": "Retrieves all event logs.",
         "parameters": [
           {
             "name": "x-source",
@@ -1234,7 +1300,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1245,10 +1311,12 @@
     "/trial/authenticate": {
       "post": {
         "operationId": "TrialController_authenticate",
+        "summary": "Authenticate trial user.",
+        "description": "Authenticates a trial user.",
         "parameters": [],
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1259,6 +1327,8 @@
     "/trial/register": {
       "post": {
         "operationId": "TrialController_register",
+        "summary": "Register trial user.",
+        "description": "Registers a new trial user.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1272,7 +1342,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1283,10 +1353,12 @@
     "/trial/users": {
       "get": {
         "operationId": "TrialController_getdemoUsers",
+        "summary": "Get trial users.",
+        "description": "Retrieves all demo users.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1295,10 +1367,12 @@
       },
       "delete": {
         "operationId": "TrialController_deleteDemoUsers",
+        "summary": "Delete trial users.",
+        "description": "Deletes all demo users.",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1309,20 +1383,22 @@
     "/trial/user/{userId}": {
       "delete": {
         "operationId": "TrialController_deleteDemoUser",
+        "summary": "Delete trial user.",
+        "description": "Deletes a specific demo user by ID.",
         "parameters": [
           {
             "name": "userId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the user. Expected input: a valid user ID string.",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "description": "Unique identifier for the user. Expected input: a valid user ID string."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1333,6 +1409,8 @@
     "/trial/upload-selfie": {
       "post": {
         "operationId": "TrialController_uploadSelfie",
+        "summary": "Upload selfie.",
+        "description": "Uploads a selfie image for a trial user.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1346,7 +1424,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1357,6 +1435,8 @@
     "/trial/uploadImage": {
       "post": {
         "operationId": "TrialController_uploadImage",
+        "summary": "Upload image.",
+        "description": "Uploads an image for a trial user.",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1370,7 +1450,7 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1381,11 +1461,14 @@
     "/trial/fakead/{imageId}": {
       "get": {
         "operationId": "TrialController_getFakeAd",
+        "summary": "Get fake ad.",
+        "description": "Retrieves a fake ad by its ID.",
         "parameters": [
           {
             "name": "imageId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the image. Expected input: a valid image ID string.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1393,7 +1476,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1404,11 +1487,14 @@
     "/trial/fakeads/{requestId}": {
       "get": {
         "operationId": "TrialController_getDemoFakeAds",
+        "summary": "Get demo fake ads.",
+        "description": "Retrieves fake ads for a specific request.",
         "parameters": [
           {
             "name": "requestId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the request. Expected input: a valid request ID string.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1416,7 +1502,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1427,11 +1513,14 @@
     "/trial/selfie/{imageId}": {
       "get": {
         "operationId": "TrialController_getSelfie",
+        "summary": "Get selfie.",
+        "description": "Retrieves a selfie image by its ID.",
         "parameters": [
           {
             "name": "imageId",
-            "required": true,
             "in": "path",
+            "description": "Unique identifier for the image. Expected input: a valid image ID string.",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1439,7 +1528,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Request processed successfully."
           }
         },
         "tags": [
@@ -1809,21 +1898,11 @@
     }
   },
   "tags": [
-    {
-      "name": "Ad"
-    },
-    {
-      "name": "Auth"
-    },
-    {
-      "name": "Event"
-    },
-    {
-      "name": "Org"
-    },
-    {
-      "name": "Trial"
-    }
+    { "name": "Ad" },
+    { "name": "Auth" },
+    { "name": "Event" },
+    { "name": "Org" },
+    { "name": "Trial" }
   ],
   "servers": [
     {
@@ -1837,23 +1916,6 @@
     {
       "url": "https://staging-api.weir.ai",
       "description": "Staging API server"
-    }
-  ],
-  "security": [
-    {
-      "bearer": []
-    },
-    {
-      "bearer": []
-    },
-    {
-      "bearer": []
-    },
-    {
-      "bearer": []
-    },
-    {
-      "bearer": []
     }
   ]
 }
