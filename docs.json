@@ -47,7 +47,8 @@
 								"group": "Console APIs",
 								"pages": [
 									"v0.0.2/api-reference/console",
-									"v0.0.2/api-reference/console/team-management"
+									"v0.0.2/api-reference/console/team-management",
+									"v0.0.2/api-reference/console/team-management/create-team"
 								]
 							},
 							{
@@ -65,7 +66,9 @@
 							{
 								"group": "Authentication APIs",
 								"pages": [
-									"v0.0.2/api-reference/auth"
+									"v0.0.2/api-reference/auth",
+									"v0.0.2/api-reference/auth/login",
+									"v0.0.2/api-reference/auth/register"
 								]
 							},
 							{

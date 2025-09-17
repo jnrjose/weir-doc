@@ -1,0 +1,540 @@
+---
+title: "Create Team"
+api: "POST /org/create/team"
+description: "Create a new team within your organization"
+---
+
+# Create Team
+
+Create a new team within your organization. Teams are used to organize users and manage permissions within your organization.
+
+## Request
+
+<RequestExample>
+```bash
+curl -X POST "https://api-dev.weir.ai/org/create/team" \
+  -H "Authorization: Bearer your-console-token" \
+  -H "x-source: console" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Development Team"
+  }'
+```
+
+```javascript
+const response = await fetch('https://api-dev.weir.ai/org/create/team', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer your-console-token',
+    'x-source': 'console',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Development Team'
+  })
+});
+
+const data = await response.json();
+```
+
+```python
+import requests
+
+response = requests.post(
+    'https://api-dev.weir.ai/org/create/team',
+    headers={
+        'Authorization': 'Bearer your-console-token',
+        'x-source': 'console',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'name': 'Development Team'
+    }
+)
+
+data = response.json()
+```
+
+```php
+<?php
+$data = [
+    'name' => 'Development Team'
+];
+
+$response = file_get_contents('https://api-dev.weir.ai/org/create/team', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer your-console-token',
+            'x-source: console',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($data)
+    ]
+]));
+
+$result = json_decode($response, true);
+?>
+```
+</RequestExample>
+
+## Authentication
+
+This endpoint requires console authentication with the following headers:
+
+- `Authorization: Bearer your-console-token`
+- `x-source: console`
+
+## Request Body
+
+<RequestField name="name" type="string" required>
+  The name of the team. Must be between 2 and 100 characters and unique within the organization.
+</RequestField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the team creation request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  The team data returned on successful creation
+</ResponseField>
+
+<ResponseField name="data.id" type="string">
+  Unique team identifier
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Team name
+</ResponseField>
+
+<ResponseField name="data.organizationId" type="string">
+  ID of the organization that owns the team
+</ResponseField>
+
+<ResponseField name="data.createdAt" type="string">
+  ISO 8601 timestamp of team creation
+</ResponseField>
+
+<ResponseField name="data.updatedAt" type="string">
+  ISO 8601 timestamp of last team update
+</ResponseField>
+
+<ResponseField name="data.memberCount" type="integer">
+  Number of members in the team (0 for newly created teams)
+</ResponseField>
+
+<ResponseField name="data.createdBy" type="string">
+  ID of the user who created the team
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Team status (always "active" for newly created teams)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+### Success Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "team-123",
+    "name": "Development Team",
+    "organizationId": "org-456",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "memberCount": 0,
+    "createdBy": "user-789",
+    "status": "active"
+  },
+  "message": "Team created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### Error Response
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "TEAM_NAME_EXISTS",
+    "message": "Team name already exists",
+    "details": "A team with this name already exists in your organization"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Codes
+
+| Code | Description | HTTP Status | Solution |
+|------|-------------|-------------|----------|
+| `TEAM_NAME_EXISTS` | Team name already exists in organization | 409 | Choose a different team name |
+| `INVALID_TEAM_NAME` | Team name is invalid or too short/long | 400 | Use a valid team name (2-100 characters) |
+| `INSUFFICIENT_PERMISSIONS` | User lacks permission to create teams | 403 | Check user role and permissions |
+| `ORGANIZATION_NOT_FOUND` | Organization doesn't exist | 404 | Verify organization ID |
+| `RATE_LIMIT_EXCEEDED` | Too many team creation requests | 429 | Wait before retrying |
+| `INVALID_REQUEST` | Malformed request body | 400 | Check request format and required fields |
+
+## Rate Limits
+
+- **10 team creation requests per hour** per user
+- **50 team creation requests per hour** per organization
+- **100 team creation requests per hour** per IP address
+
+<Callout type="warning">
+Rate limits are enforced per user, organization, and IP address. Exceeding limits will result in a 429 status code with a `Retry-After` header.
+</Callout>
+
+## Validation Rules
+
+### Team Name Requirements
+- Must be between 2 and 100 characters
+- Must be unique within the organization
+- Cannot contain special characters except spaces, hyphens, and underscores
+- Cannot start or end with spaces
+- Cannot be a reserved name (e.g., "admin", "root", "system")
+
+### Permission Requirements
+- User must have `Organization_Admin` or `Team_Manager` role
+- User must be a member of the organization
+- User must have active status
+
+## Usage Examples
+
+### Basic Team Creation
+
+```javascript
+async function createTeam(teamName) {
+  try {
+    const response = await fetch('https://api-dev.weir.ai/org/create/team', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${consoleToken}`,
+        'x-source': 'console',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: teamName
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error.message);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Team creation failed:', error);
+    throw error;
+  }
+}
+```
+
+### Team Creation with Validation
+
+```javascript
+function validateTeamName(name) {
+  const errors = [];
+  
+  if (!name || name.trim().length === 0) {
+    errors.push('Team name is required');
+  }
+  
+  if (name.length < 2) {
+    errors.push('Team name must be at least 2 characters long');
+  }
+  
+  if (name.length > 100) {
+    errors.push('Team name must be less than 100 characters');
+  }
+  
+  if (!/^[a-zA-Z0-9\s\-_]+$/.test(name)) {
+    errors.push('Team name can only contain letters, numbers, spaces, hyphens, and underscores');
+  }
+  
+  if (name.startsWith(' ') || name.endsWith(' ')) {
+    errors.push('Team name cannot start or end with spaces');
+  }
+  
+  const reservedNames = ['admin', 'root', 'system', 'api', 'test'];
+  if (reservedNames.includes(name.toLowerCase())) {
+    errors.push('Team name is reserved and cannot be used');
+  }
+  
+  return errors;
+}
+
+async function createTeamWithValidation(teamName) {
+  // Validate team name
+  const errors = validateTeamName(teamName);
+  if (errors.length > 0) {
+    throw new Error(errors.join(', '));
+  }
+  
+  try {
+    const response = await fetch('https://api-dev.weir.ai/org/create/team', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${consoleToken}`,
+        'x-source': 'console',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: teamName.trim()
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error.message);
+    }
+    
+    return data.data;
+  } catch (error) {
+    console.error('Team creation failed:', error);
+    throw error;
+  }
+}
+```
+
+### Team Creation with Error Handling
+
+```javascript
+async function createTeamWithErrorHandling(teamName) {
+  try {
+    const response = await fetch('https://api-dev.weir.ai/org/create/team', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${consoleToken}`,
+        'x-source': 'console',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: teamName
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      switch (data.error.code) {
+        case 'TEAM_NAME_EXISTS':
+          throw new Error('A team with this name already exists. Please choose a different name.');
+        case 'INVALID_TEAM_NAME':
+          throw new Error('Team name is invalid. Please use a valid name (2-100 characters).');
+        case 'INSUFFICIENT_PERMISSIONS':
+          throw new Error('You do not have permission to create teams.');
+        case 'RATE_LIMIT_EXCEEDED':
+          throw new Error('Too many team creation requests. Please wait before trying again.');
+        default:
+          throw new Error(data.error.message);
+      }
+    }
+    
+    return data.data;
+  } catch (error) {
+    console.error('Team creation failed:', error);
+    throw error;
+  }
+}
+```
+
+### Batch Team Creation
+
+```javascript
+async function createMultipleTeams(teamNames) {
+  const results = [];
+  const errors = [];
+  
+  for (const teamName of teamNames) {
+    try {
+      const team = await createTeamWithValidation(teamName);
+      results.push({
+        name: teamName,
+        team: team,
+        status: 'success'
+      });
+    } catch (error) {
+      errors.push({
+        name: teamName,
+        error: error.message,
+        status: 'error'
+      });
+    }
+    
+    // Add delay to respect rate limits
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  
+  return {
+    successful: results,
+    failed: errors,
+    summary: {
+      total: teamNames.length,
+      successful: results.length,
+      failed: errors.length
+    }
+  };
+}
+```
+
+## Best Practices
+
+### 1. Team Naming Conventions
+```javascript
+class TeamNamingConvention {
+  static generateTeamName(baseName, department, location = null) {
+    let name = baseName;
+    
+    if (department) {
+      name += ` - ${department}`;
+    }
+    
+    if (location) {
+      name += ` (${location})`;
+    }
+    
+    return name;
+  }
+  
+  static validateNamingConvention(name) {
+    const patterns = [
+      /^[A-Z][a-z]+(\s[A-Z][a-z]+)*$/, // Title Case
+      /^[A-Z][a-z]+(\s[A-Z][a-z]+)*\s-\s[A-Z][a-z]+$/, // Title Case - Department
+      /^[A-Z][a-z]+(\s[A-Z][a-z]+)*\s\([A-Z]{2,3}\)$/ // Title Case (Location)
+    ];
+    
+    return patterns.some(pattern => pattern.test(name));
+  }
+}
+```
+
+### 2. Team Creation Workflow
+```javascript
+class TeamCreationWorkflow {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createTeamWithSetup(teamData) {
+    try {
+      // Step 1: Create team
+      const team = await this.createTeam(teamData.name);
+      
+      // Step 2: Set team permissions
+      await this.setTeamPermissions(team.id, teamData.permissions);
+      
+      // Step 3: Add initial members
+      if (teamData.members && teamData.members.length > 0) {
+        await this.addTeamMembers(team.id, teamData.members);
+      }
+      
+      // Step 4: Configure team settings
+      if (teamData.settings) {
+        await this.configureTeamSettings(team.id, teamData.settings);
+      }
+      
+      return team;
+    } catch (error) {
+      console.error('Team creation workflow failed:', error);
+      throw error;
+    }
+  }
+  
+  async createTeam(name) {
+    return await this.apiClient.makeRequest('/org/create/team', {
+      method: 'POST',
+      body: JSON.stringify({ name })
+    });
+  }
+  
+  async setTeamPermissions(teamId, permissions) {
+    // Implementation for setting team permissions
+    console.log(`Setting permissions for team ${teamId}:`, permissions);
+  }
+  
+  async addTeamMembers(teamId, members) {
+    // Implementation for adding team members
+    console.log(`Adding members to team ${teamId}:`, members);
+  }
+  
+  async configureTeamSettings(teamId, settings) {
+    // Implementation for configuring team settings
+    console.log(`Configuring settings for team ${teamId}:`, settings);
+  }
+}
+```
+
+### 3. Team Management Class
+```javascript
+class TeamManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createTeam(name, options = {}) {
+    const teamData = {
+      name,
+      ...options
+    };
+    
+    return await this.apiClient.makeRequest('/org/create/team', {
+      method: 'POST',
+      body: JSON.stringify(teamData)
+    });
+  }
+  
+  async getTeam(teamId) {
+    return await this.apiClient.makeRequest(`/org/team/${teamId}`);
+  }
+  
+  async updateTeam(teamId, updates) {
+    return await this.apiClient.makeRequest(`/org/team/${teamId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates)
+    });
+  }
+  
+  async deleteTeam(teamId) {
+    return await this.apiClient.makeRequest(`/org/team/${teamId}`, {
+      method: 'DELETE'
+    });
+  }
+  
+  async getTeams(page = 1, limit = 20) {
+    return await this.apiClient.makeRequest(`/org/teams?page=${page}&limit=${limit}`);
+  }
+  
+  async addTeamMember(teamId, memberData) {
+    return await this.apiClient.makeRequest(`/org/invite/team/member/${teamId}`, {
+      method: 'POST',
+      body: JSON.stringify(memberData)
+    });
+  }
+  
+  async getTeamMembers(teamId) {
+    return await this.apiClient.makeRequest(`/org/team/members/${teamId}`);
+  }
+}
+```
+
+## Related Endpoints
+
+- [Get Teams](/v0.0.2/api-reference/console/team-management/get-teams) - Retrieve all teams
+- [Get Team Members](/v0.0.2/api-reference/console/team-management/get-team-members) - Get team members
+- [Invite Team Member](/v0.0.2/api-reference/console/team-management/invite-team-member) - Add members to team
+- [Delete Team](/v0.0.2/api-reference/console/team-management/delete-team) - Delete a team

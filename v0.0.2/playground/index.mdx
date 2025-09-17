@@ -1,6 +1,6 @@
 ---
 title: "API Playground"
-description: "Interactive playground to test Weir API endpoints"
+description: "Interactive playground to test Weir API endpoints with real-time responses"
 ---
 
 import { Card, CardGroup } from '@mintlify/components';
@@ -16,7 +16,280 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
 **No Setup Required**: The playground is ready to use with pre-configured examples and test data.
 </Callout>
 
-## Available Playgrounds
+## Interactive API Testing
+
+<ApiPlayground
+  baseUrl="https://api-dev.weir.ai"
+  endpoints={[
+    {
+      method: "POST",
+      path: "/auth/token",
+      name: "Generate Access Token",
+      description: "Generate access tokens for external API authentication",
+      auth: {
+        type: "basic",
+        username: "clientId",
+        password: "secretKey"
+      },
+      body: {
+        type: "none"
+      },
+      examples: [
+        {
+          name: "Basic Authentication",
+          description: "Generate token using Client ID and Secret Key",
+          request: {
+            auth: {
+              username: "your-client-id",
+              password: "your-secret-key"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              tokenType: "Bearer"
+            },
+            message: "Access token generated successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "POST",
+      path: "/auth/login",
+      name: "User Login",
+      description: "Authenticate users and generate access tokens",
+      auth: {
+        type: "none"
+      },
+      body: {
+        type: "json",
+        schema: {
+          type: "object",
+          properties: {
+            username: {
+              type: "string",
+              description: "User's email address or username"
+            },
+            password: {
+              type: "string",
+              description: "User's password"
+            }
+          },
+          required: ["username", "password"]
+        }
+      },
+      examples: [
+        {
+          name: "Standard Login",
+          description: "Login with email and password",
+          request: {
+            body: {
+              username: "user@example.com",
+              password: "your-password"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              user: {
+                id: "user-123",
+                email: "user@example.com",
+                role: "Organization_User"
+              }
+            },
+            message: "Login successful",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "GET",
+      path: "/org/information",
+      name: "Get Organization Information",
+      description: "Retrieve organization details and settings",
+      auth: {
+        type: "bearer",
+        token: "accessToken"
+      },
+      body: {
+        type: "none"
+      },
+      examples: [
+        {
+          name: "Get Org Info",
+          description: "Retrieve organization information",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              id: "org-123",
+              name: "Example Organization",
+              type: "Platform",
+              description: "A business platform",
+              website: "https://example.com",
+              industry: "TECHNOLOGY",
+              companySize: "MEDIUM",
+              founded: "2020",
+              address: {
+                address1: "123 Main Street",
+                city: "San Francisco",
+                state: "CA",
+                postalCode: "94105",
+                country: "USA"
+              },
+              contact: {
+                phone: "+1-555-123-4567",
+                email: "info@example.com"
+              }
+            },
+            message: "Organization information retrieved successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "POST",
+      path: "/org/create/team",
+      name: "Create Team",
+      description: "Create a new team within your organization",
+      auth: {
+        type: "bearer",
+        token: "accessToken"
+      },
+      body: {
+        type: "json",
+        schema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              description: "Team name"
+            }
+          },
+          required: ["name"]
+        }
+      },
+      examples: [
+        {
+          name: "Create New Team",
+          description: "Create a team with a specific name",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token",
+              "x-source": "console"
+            },
+            body: {
+              name: "Development Team"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              id: "team-123",
+              name: "Development Team",
+              organizationId: "org-123",
+              createdAt: "2024-01-15T10:30:00Z",
+              memberCount: 0
+            },
+            message: "Team created successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "GET",
+      path: "/org/teams",
+      name: "Get Teams",
+      description: "Retrieve a list of all teams in your organization",
+      auth: {
+        type: "bearer",
+        token: "accessToken"
+      },
+      body: {
+        type: "none"
+      },
+      queryParams: [
+        {
+          name: "page",
+          type: "integer",
+          description: "Page number for pagination",
+          required: false,
+          default: 1
+        },
+        {
+          name: "limit",
+          type: "integer",
+          description: "Number of items per page",
+          required: false,
+          default: 20
+        }
+      ],
+      examples: [
+        {
+          name: "Get All Teams",
+          description: "Retrieve all teams with pagination",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token",
+              "x-source": "console"
+            },
+            query: {
+              page: 1,
+              limit: 20
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              items: [
+                {
+                  id: "team-123",
+                  name: "Development Team",
+                  organizationId: "org-123",
+                  createdAt: "2024-01-15T10:30:00Z",
+                  memberCount: 5
+                },
+                {
+                  id: "team-456",
+                  name: "Marketing Team",
+                  organizationId: "org-123",
+                  createdAt: "2024-01-14T09:15:00Z",
+                  memberCount: 3
+                }
+              ],
+              pagination: {
+                page: 1,
+                limit: 20,
+                total: 2,
+                pages: 1,
+                hasNext: false,
+                hasPrev: false
+              }
+            },
+            message: "Teams retrieved successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    }
+  ]}
+/>
+
+## Available Playground Categories
 
 <CardGroup cols={2}>
   <Card
@@ -24,70 +297,73 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
     icon="shield"
     href="/v0.0.2/playground/authentication"
   >
-    Test authentication endpoints, token generation, and user management
+    Test authentication endpoints, token generation, and user management with interactive examples
   </Card>
   <Card
     title="Organization Playground"
     icon="building"
     href="/v0.0.2/playground/organization"
   >
-    Explore organization management, teams, and platform operations
+    Explore organization management, teams, and platform operations with real-time testing
   </Card>
   <Card
     title="NIL Detection Playground"
     icon="search"
     href="/v0.0.2/playground/nil-detection"
   >
-    Test NIL detection and identity verification endpoints
+    Test NIL detection and identity verification endpoints with sample data
   </Card>
   <Card
     title="Talent Management Playground"
     icon="star"
     href="/v0.0.2/playground/talent-management"
   >
-    Experiment with talent roster management and licensing
+    Experiment with talent roster management and licensing operations
   </Card>
   <Card
     title="Admin Playground"
     icon="settings"
     href="/v0.0.2/playground/admin"
   >
-    Test administrative functions and system management
+    Test administrative functions and system management endpoints
   </Card>
   <Card
     title="Custom Playground"
     icon="code"
     href="/v0.0.2/playground/custom"
   >
-    Create custom API requests with your own parameters
+    Create custom API requests with your own parameters and test scenarios
   </Card>
 </CardGroup>
 
 ## Features
 
 ### Interactive Testing
-- **Real-time API calls** with live responses
-- **Parameter customization** for all endpoints
+- **Real-time API calls** with live responses from the development environment
+- **Parameter customization** for all endpoints with validation
 - **Multiple authentication methods** (API Key, Bearer Token, Console)
-- **Request/response inspection** with detailed logging
+- **Request/response inspection** with detailed logging and error handling
+- **Code generation** for multiple programming languages
 
 ### Pre-configured Examples
-- **Ready-to-use examples** for common scenarios
-- **Sample data** for testing and development
-- **Error handling examples** with different scenarios
-- **Best practice implementations** for each endpoint
+- **Ready-to-use examples** for common scenarios and use cases
+- **Sample data** for testing and development purposes
+- **Error handling examples** with different error scenarios
+- **Best practice implementations** for each endpoint type
 
 ### Code Generation
-- **cURL commands** for command-line testing
-- **JavaScript examples** for web applications
-- **Python code** for backend services
-- **Multiple language support** for different platforms
+- **cURL commands** for command-line testing and automation
+- **JavaScript examples** for web applications and Node.js
+- **Python code** for backend services and data analysis
+- **Multiple language support** for different development environments
 
-## Authentication
+## Authentication Methods
 
 The playground supports multiple authentication methods:
 
 ### 1. API Key Authentication
+For external integrations and third-party applications:
+
 ```bash
 # Generate access token
 curl -X POST "https://api-dev.weir.ai/auth/token" \
@@ -95,6 +371,8 @@ curl -X POST "https://api-dev.weir.ai/auth/token" \
 ```
 
 ### 2. Bearer Token Authentication
+For user-facing applications and web dashboards:
+
 ```bash
 # Use access token
 curl -X GET "https://api-dev.weir.ai/org/information" \
@@ -102,6 +380,8 @@ curl -X GET "https://api-dev.weir.ai/org/information" \
 ```
 
 ### 3. Console Authentication
+For internal console applications:
+
 ```bash
 # Console API with special header
 curl -X GET "https://api-dev.weir.ai/org/teams" \
@@ -135,10 +415,10 @@ The playground includes comprehensive error handling examples:
 
 ### Common Error Scenarios
 - **Authentication failures** with invalid credentials
-- **Rate limiting** with retry logic
-- **Permission errors** with role-based access
-- **Validation errors** with parameter validation
-- **Network errors** with timeout handling
+- **Rate limiting** with retry logic and backoff strategies
+- **Permission errors** with role-based access control
+- **Validation errors** with parameter validation and constraints
+- **Network errors** with timeout handling and retry mechanisms
 
 ### Error Response Examples
 ```json
@@ -147,28 +427,28 @@ The playground includes comprehensive error handling examples:
   "error": {
     "code": "AUTHENTICATION_FAILED",
     "message": "Invalid credentials provided",
-    "details": "The provided API key is invalid or expired"
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
+    "details": "The provided API key is invalid or expired",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
 }
 ```
 
 ## Best Practices
 
 ### 1. Test Authentication First
-Always start by testing your authentication method before making other API calls.
+Always start by testing your authentication method before making other API calls to ensure your credentials are working correctly.
 
 ### 2. Use Appropriate Endpoints
 Choose the right API category for your use case:
-- **External APIs** for third-party integrations
-- **Console APIs** for internal applications
-- **Admin APIs** for administrative functions
+- **External APIs** for third-party integrations and external applications
+- **Console APIs** for internal dashboard applications and administrative tools
+- **Admin APIs** for system-wide administrative functions
 
 ### 3. Handle Errors Gracefully
-Implement proper error handling in your applications based on the playground examples.
+Implement proper error handling in your applications based on the playground examples and error scenarios.
 
 ### 4. Respect Rate Limits
-Use the playground to understand rate limits and implement appropriate throttling.
+Use the playground to understand rate limits and implement appropriate throttling and retry logic in your applications.
 
 ## Integration Examples
 
@@ -178,28 +458,28 @@ Use the playground to understand rate limits and implement appropriate throttlin
     icon="javascript"
     href="/v0.0.2/examples/javascript"
   >
-    Complete JavaScript examples for web applications
+    Complete JavaScript examples for browser and Node.js environments
   </Card>
   <Card
     title="Python Integration"
     icon="python"
     href="/v0.0.2/examples/python"
   >
-    Python SDK and integration examples
+    Python SDK and integration examples with async support
   </Card>
   <Card
     title="React Components"
     icon="react"
     href="/v0.0.2/examples/react"
   >
-    React components for Weir integration
+    React components and hooks for Weir integration
   </Card>
   <Card
     title="Vue.js Components"
     icon="vue"
     href="/v0.0.2/examples/vue"
   >
-    Vue.js components for Weir integration
+    Vue.js components and composables for Weir integration
   </Card>
 </CardGroup>
 
@@ -214,8 +494,8 @@ Need help with the API Playground?
 
 ## Getting Started
 
-Ready to start testing? Choose a playground category above and begin exploring the Weir API!
+Ready to start testing? Use the interactive playground above to test API endpoints, or choose a specific playground category to explore focused functionality!
 
 <Callout type="success">
-**Pro Tip**: Start with the Authentication Playground to get your credentials working, then move on to the specific functionality you need.
+**Pro Tip**: Start with the Authentication endpoints to get your credentials working, then move on to the specific functionality you need for your integration.
 </Callout>
