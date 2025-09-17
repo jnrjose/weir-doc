@@ -1,0 +1,869 @@
+---
+title: "Best Practices"
+description: "Industry best practices for API integration, security, and performance optimization"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# Best Practices
+
+This comprehensive guide covers industry best practices for integrating with the Weir API platform. Learn proven patterns, security considerations, performance optimization techniques, and architectural recommendations for building robust, scalable applications.
+
+## Table of Contents
+
+<CardGroup cols={2}>
+  <Card
+    title="Security Best Practices"
+    icon="shield"
+    href="/v0.0.2/integration-guides/best-practices/security"
+  >
+    Authentication, authorization, and data protection
+  </Card>
+  <Card
+    title="Performance Optimization"
+    icon="zap"
+    href="/v0.0.2/integration-guides/best-practices/performance"
+  >
+    Caching, batching, and efficient data handling
+  </Card>
+  <Card
+    title="Error Handling"
+    icon="alert-triangle"
+    href="/v0.0.2/integration-guides/best-practices/error-handling"
+  >
+    Robust error handling and recovery strategies
+  </Card>
+  <Card
+    title="Code Organization"
+    icon="folder"
+    href="/v0.0.2/integration-guides/best-practices/code-organization"
+  >
+    Clean code patterns and architectural principles
+  </Card>
+  <Card
+    title="Testing Strategies"
+    icon="test-tube"
+    href="/v0.0.2/integration-guides/best-practices/testing"
+  >
+    Comprehensive testing approaches and patterns
+  </Card>
+  <Card
+    title="Monitoring & Logging"
+    icon="activity"
+    href="/v0.0.2/integration-guides/best-practices/monitoring"
+  >
+    Observability, logging, and debugging techniques
+  </Card>
+</CardGroup>
+
+## Security Best Practices
+
+### 1. Secure Authentication
+
+<Callout type="warning">
+**Never expose credentials in client-side code**. Always use secure server-side authentication for sensitive operations.
+</Callout>
+
+```javascript
+// ✅ Good: Server-side authentication
+class SecureAPIClient {
+  constructor(serverEndpoint) {
+    this.serverEndpoint = serverEndpoint;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    // Authentication handled server-side
+    const response = await fetch(`${this.serverEndpoint}/api/proxy`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        endpoint,
+        options
+      })
+    });
+    
+    return response.json();
+  }
+}
+
+// ❌ Bad: Client-side credentials
+const apiClient = new APIClient('client-id', 'secret-key'); // Exposed!
+```
+
+### 2. Token Management
+
+```javascript
+class SecureTokenManager {
+  constructor() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.tokenExpiry = null;
+  }
+  
+  async getValidToken() {
+    if (!this.accessToken || this.isTokenExpired()) {
+      await this.refreshAccessToken();
+    }
+    return this.accessToken;
+  }
+  
+  isTokenExpired() {
+    if (!this.tokenExpiry) return true;
+    return Date.now() >= this.tokenExpiry;
+  }
+  
+  async refreshAccessToken() {
+    if (!this.refreshToken) {
+      throw new Error('No refresh token available');
+    }
+    
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          refreshToken: this.refreshToken
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Token refresh failed');
+      }
+      
+      const data = await response.json();
+      this.accessToken = data.accessToken;
+      this.refreshToken = data.refreshToken;
+      this.tokenExpiry = Date.now() + (data.expiresIn * 1000);
+      
+      return this.accessToken;
+    } catch (error) {
+      this.clearTokens();
+      throw error;
+    }
+  }
+  
+  clearTokens() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.tokenExpiry = null;
+  }
+}
+```
+
+### 3. Input Validation and Sanitization
+
+```javascript
+class InputValidator {
+  static validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new Error('Invalid email format');
+    }
+    return email.toLowerCase().trim();
+  }
+  
+  static validatePassword(password) {
+    if (password.length < 8) {
+      throw new Error('Password must be at least 8 characters');
+    }
+    
+    if (!/(?=.*[a-z])/.test(password)) {
+      throw new Error('Password must contain at least one lowercase letter');
+    }
+    
+    if (!/(?=.*[A-Z])/.test(password)) {
+      throw new Error('Password must contain at least one uppercase letter');
+    }
+    
+    if (!/(?=.*\d)/.test(password)) {
+      throw new Error('Password must contain at least one number');
+    }
+    
+    return password;
+  }
+  
+  static sanitizeString(input) {
+    if (typeof input !== 'string') {
+      throw new Error('Input must be a string');
+    }
+    
+    return input
+      .trim()
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .substring(0, 1000); // Limit length
+  }
+}
+```
+
+## Performance Optimization
+
+### 1. Request Batching
+
+```javascript
+class RequestBatcher {
+  constructor(apiClient, batchSize = 10, batchDelay = 100) {
+    this.apiClient = apiClient;
+    this.batchSize = batchSize;
+    this.batchDelay = batchDelay;
+    this.pendingRequests = [];
+    this.batchTimeout = null;
+  }
+  
+  addRequest(request) {
+    return new Promise((resolve, reject) => {
+      this.pendingRequests.push({
+        request,
+        resolve,
+        reject
+      });
+      
+      if (this.pendingRequests.length >= this.batchSize) {
+        this.processBatch();
+      } else {
+        this.scheduleBatch();
+      }
+    });
+  }
+  
+  scheduleBatch() {
+    if (this.batchTimeout) {
+      clearTimeout(this.batchTimeout);
+    }
+    
+    this.batchTimeout = setTimeout(() => {
+      this.processBatch();
+    }, this.batchDelay);
+  }
+  
+  async processBatch() {
+    if (this.pendingRequests.length === 0) return;
+    
+    const requests = [...this.pendingRequests];
+    this.pendingRequests = [];
+    
+    try {
+      const results = await this.apiClient.batchRequest(
+        requests.map(r => r.request)
+      );
+      
+      requests.forEach(({ resolve }, index) => {
+        resolve(results[index]);
+      });
+    } catch (error) {
+      requests.forEach(({ reject }) => {
+        reject(error);
+      });
+    }
+  }
+}
+```
+
+### 2. Intelligent Caching
+
+```javascript
+class IntelligentCache {
+  constructor() {
+    this.cache = new Map();
+    this.accessCounts = new Map();
+    this.maxSize = 1000;
+  }
+  
+  get(key) {
+    const item = this.cache.get(key);
+    if (item) {
+      // Update access count
+      this.accessCounts.set(key, (this.accessCounts.get(key) || 0) + 1);
+      return item.data;
+    }
+    return null;
+  }
+  
+  set(key, data, ttl = 300000) {
+    // Remove least accessed items if cache is full
+    if (this.cache.size >= this.maxSize) {
+      this.evictLeastAccessed();
+    }
+    
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl
+    });
+  }
+  
+  evictLeastAccessed() {
+    let leastAccessedKey = null;
+    let leastAccessCount = Infinity;
+    
+    for (const [key, count] of this.accessCounts.entries()) {
+      if (count < leastAccessCount) {
+        leastAccessCount = count;
+        leastAccessedKey = key;
+      }
+    }
+    
+    if (leastAccessedKey) {
+      this.cache.delete(leastAccessedKey);
+      this.accessCounts.delete(leastAccessedKey);
+    }
+  }
+  
+  clear() {
+    this.cache.clear();
+    this.accessCounts.clear();
+  }
+}
+```
+
+### 3. Lazy Loading and Pagination
+
+```javascript
+class LazyDataLoader {
+  constructor(apiClient, endpoint, options = {}) {
+    this.apiClient = apiClient;
+    this.endpoint = endpoint;
+    this.options = options;
+    this.data = [];
+    this.loading = false;
+    this.hasMore = true;
+    this.currentPage = 1;
+  }
+  
+  async loadMore() {
+    if (this.loading || !this.hasMore) {
+      return this.data;
+    }
+    
+    this.loading = true;
+    
+    try {
+      const response = await this.apiClient.get(this.endpoint, {
+        ...this.options,
+        page: this.currentPage,
+        limit: 20
+      });
+      
+      this.data.push(...response.items);
+      this.hasMore = response.pagination.hasNext;
+      this.currentPage++;
+      
+      return this.data;
+    } catch (error) {
+      console.error('Failed to load data:', error);
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  }
+  
+  async loadAll() {
+    while (this.hasMore) {
+      await this.loadMore();
+    }
+    return this.data;
+  }
+}
+```
+
+## Error Handling
+
+### 1. Comprehensive Error Handling
+
+```javascript
+class ErrorHandler {
+  static handle(error, context = {}) {
+    const errorInfo = {
+      message: error.message,
+      code: error.code,
+      context,
+      timestamp: new Date().toISOString(),
+      stack: error.stack
+    };
+    
+    // Log error
+    console.error('API Error:', errorInfo);
+    
+    // Send to monitoring service
+    this.sendToMonitoring(errorInfo);
+    
+    // Return user-friendly error
+    return this.getUserFriendlyError(error);
+  }
+  
+  static getUserFriendlyError(error) {
+    const errorMessages = {
+      'NETWORK_ERROR': 'Network connection failed. Please check your internet connection.',
+      'TIMEOUT': 'Request timed out. Please try again.',
+      'RATE_LIMITED': 'Too many requests. Please wait a moment and try again.',
+      'AUTHENTICATION_FAILED': 'Authentication failed. Please log in again.',
+      'PERMISSION_DENIED': 'You do not have permission to perform this action.',
+      'RESOURCE_NOT_FOUND': 'The requested resource was not found.',
+      'VALIDATION_ERROR': 'Please check your input and try again.',
+      'SERVER_ERROR': 'A server error occurred. Please try again later.'
+    };
+    
+    return errorMessages[error.code] || 'An unexpected error occurred. Please try again.';
+  }
+  
+  static sendToMonitoring(errorInfo) {
+    // Send to your monitoring service (e.g., Sentry, LogRocket)
+    if (window.Sentry) {
+      window.Sentry.captureException(new Error(errorInfo.message), {
+        extra: errorInfo
+      });
+    }
+  }
+}
+```
+
+### 2. Retry Logic with Exponential Backoff
+
+```javascript
+class RetryManager {
+  static async withRetry(operation, options = {}) {
+    const {
+      maxRetries = 3,
+      baseDelay = 1000,
+      maxDelay = 10000,
+      backoffFactor = 2
+    } = options;
+    
+    let lastError;
+    
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+        
+        if (attempt === maxRetries) {
+          break;
+        }
+        
+        if (!this.shouldRetry(error)) {
+          break;
+        }
+        
+        const delay = Math.min(
+          baseDelay * Math.pow(backoffFactor, attempt),
+          maxDelay
+        );
+        
+        await this.delay(delay);
+      }
+    }
+    
+    throw lastError;
+  }
+  
+  static shouldRetry(error) {
+    const retryableErrors = [
+      'NETWORK_ERROR',
+      'TIMEOUT',
+      'RATE_LIMITED',
+      'SERVER_ERROR'
+    ];
+    
+    return retryableErrors.includes(error.code);
+  }
+  
+  static delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+```
+
+## Code Organization
+
+### 1. Modular API Client
+
+```javascript
+// api/client.js
+class APIClient {
+  constructor(config) {
+    this.baseUrl = config.baseUrl;
+    this.tokenManager = new TokenManager();
+    this.cache = new IntelligentCache();
+    this.requestBatcher = new RequestBatcher(this);
+  }
+  
+  // Core request method
+  async request(endpoint, options = {}) {
+    const token = await this.tokenManager.getValidToken();
+    
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    return this.handleResponse(response);
+  }
+  
+  async handleResponse(response) {
+    if (!response.ok) {
+      throw await this.createError(response);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error.message);
+    }
+    
+    return data.data;
+  }
+}
+
+// api/teams.js
+class TeamsAPI {
+  constructor(apiClient) {
+    this.client = apiClient;
+  }
+  
+  async getTeams(options = {}) {
+    const cacheKey = `teams_${JSON.stringify(options)}`;
+    const cached = this.client.cache.get(cacheKey);
+    
+    if (cached) {
+      return cached;
+    }
+    
+    const data = await this.client.request('/org/teams', {
+      method: 'GET',
+      params: options
+    });
+    
+    this.client.cache.set(cacheKey, data);
+    return data;
+  }
+  
+  async createTeam(teamData) {
+    const data = await this.client.request('/org/create/team', {
+      method: 'POST',
+      body: JSON.stringify(teamData)
+    });
+    
+    // Invalidate cache
+    this.client.cache.clear();
+    
+    return data;
+  }
+}
+
+// api/index.js
+export class WeirAPI {
+  constructor(config) {
+    this.client = new APIClient(config);
+    this.teams = new TeamsAPI(this.client);
+    this.users = new UsersAPI(this.client);
+    this.organizations = new OrganizationsAPI(this.client);
+  }
+}
+```
+
+### 2. Service Layer Pattern
+
+```javascript
+// services/TeamService.js
+class TeamService {
+  constructor(apiClient) {
+    this.api = apiClient.teams;
+    this.cache = new Map();
+  }
+  
+  async getTeam(teamId) {
+    const cacheKey = `team_${teamId}`;
+    
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey);
+    }
+    
+    const team = await this.api.getTeam(teamId);
+    this.cache.set(cacheKey, team);
+    
+    return team;
+  }
+  
+  async createTeam(teamData) {
+    const team = await this.api.createTeam(teamData);
+    this.cache.set(`team_${team.id}`, team);
+    
+    return team;
+  }
+  
+  async updateTeam(teamId, updates) {
+    const team = await this.api.updateTeam(teamId, updates);
+    this.cache.set(`team_${teamId}`, team);
+    
+    return team;
+  }
+  
+  async deleteTeam(teamId) {
+    await this.api.deleteTeam(teamId);
+    this.cache.delete(`team_${teamId}`);
+  }
+}
+```
+
+## Testing Strategies
+
+### 1. Unit Testing
+
+```javascript
+// __tests__/api-client.test.js
+describe('APIClient', () => {
+  let apiClient;
+  let mockFetch;
+  
+  beforeEach(() => {
+    mockFetch = jest.fn();
+    global.fetch = mockFetch;
+    
+    apiClient = new APIClient({
+      baseUrl: 'https://api-dev.weir.ai'
+    });
+  });
+  
+  test('should make authenticated request', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({
+        success: true,
+        data: { id: 'team-123', name: 'Test Team' }
+      })
+    });
+    
+    const result = await apiClient.request('/org/teams');
+    
+    expect(mockFetch).toHaveBeenCalledWith(
+      'https://api-dev.weir.ai/org/teams',
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'Authorization': expect.stringMatching(/^Bearer /)
+        })
+      })
+    );
+    
+    expect(result).toEqual({ id: 'team-123', name: 'Test Team' });
+  });
+  
+  test('should handle error response', async () => {
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 404,
+      json: () => Promise.resolve({
+        success: false,
+        error: { message: 'Team not found' }
+      })
+    });
+    
+    await expect(apiClient.request('/org/teams/123')).rejects.toThrow('Team not found');
+  });
+});
+```
+
+### 2. Integration Testing
+
+```javascript
+// __tests__/integration/teams.test.js
+describe('Teams Integration', () => {
+  let apiClient;
+  
+  beforeAll(() => {
+    apiClient = new WeirAPI({
+      baseUrl: process.env.API_BASE_URL,
+      clientId: process.env.CLIENT_ID,
+      secretKey: process.env.SECRET_KEY
+    });
+  });
+  
+  test('should create and retrieve team', async () => {
+    const teamData = {
+      name: 'Test Team',
+      description: 'Integration test team'
+    };
+    
+    const createdTeam = await apiClient.teams.createTeam(teamData);
+    expect(createdTeam.name).toBe(teamData.name);
+    
+    const retrievedTeam = await apiClient.teams.getTeam(createdTeam.id);
+    expect(retrievedTeam.id).toBe(createdTeam.id);
+    
+    // Cleanup
+    await apiClient.teams.deleteTeam(createdTeam.id);
+  });
+});
+```
+
+## Monitoring and Logging
+
+### 1. Request Logging
+
+```javascript
+class RequestLogger {
+  static logRequest(method, url, options) {
+    console.log(`[API] ${method} ${url}`, {
+      headers: options.headers,
+      body: options.body,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  static logResponse(response, duration) {
+    console.log(`[API] Response ${response.status}`, {
+      duration: `${duration}ms`,
+      timestamp: new Date().toISOString()
+    });
+  }
+  
+  static logError(error, context) {
+    console.error(`[API] Error: ${error.message}`, {
+      context,
+      timestamp: new Date().toISOString(),
+      stack: error.stack
+    });
+  }
+}
+```
+
+### 2. Performance Monitoring
+
+```javascript
+class PerformanceMonitor {
+  static startTimer(label) {
+    performance.mark(`${label}-start`);
+  }
+  
+  static endTimer(label) {
+    performance.mark(`${label}-end`);
+    performance.measure(label, `${label}-start`, `${label}-end`);
+    
+    const measure = performance.getEntriesByName(label)[0];
+    console.log(`${label}: ${measure.duration}ms`);
+    
+    return measure.duration;
+  }
+  
+  static measureAPICall(endpoint, operation) {
+    const label = `api-${endpoint}`;
+    this.startTimer(label);
+    
+    return operation().finally(() => {
+      this.endTimer(label);
+    });
+  }
+}
+```
+
+## Deployment Considerations
+
+### 1. Environment Configuration
+
+```javascript
+// config/environments.js
+const environments = {
+  development: {
+    baseUrl: 'https://api-dev.weir.ai',
+    logLevel: 'debug',
+    cacheEnabled: false
+  },
+  staging: {
+    baseUrl: 'https://api-staging.weir.ai',
+    logLevel: 'info',
+    cacheEnabled: true
+  },
+  production: {
+    baseUrl: 'https://api.weir.ai',
+    logLevel: 'error',
+    cacheEnabled: true
+  }
+};
+
+export default environments[process.env.NODE_ENV || 'development'];
+```
+
+### 2. Feature Flags
+
+```javascript
+class FeatureFlags {
+  constructor() {
+    this.flags = new Map();
+  }
+  
+  setFlag(name, value) {
+    this.flags.set(name, value);
+  }
+  
+  isEnabled(name) {
+    return this.flags.get(name) || false;
+  }
+  
+  async loadFlags() {
+    try {
+      const response = await fetch('/api/feature-flags');
+      const flags = await response.json();
+      
+      flags.forEach(flag => {
+        this.setFlag(flag.name, flag.enabled);
+      });
+    } catch (error) {
+      console.warn('Failed to load feature flags:', error);
+    }
+  }
+}
+```
+
+## Summary
+
+Following these best practices will help you build robust, secure, and performant applications that integrate seamlessly with the Weir API platform. Remember to:
+
+- **Prioritize security** in all aspects of your integration
+- **Optimize performance** through caching and efficient data handling
+- **Handle errors gracefully** with comprehensive error handling
+- **Organize your code** with clear separation of concerns
+- **Test thoroughly** with both unit and integration tests
+- **Monitor and log** for better observability and debugging
+
+## Next Steps
+
+Continue exploring the Weir API platform:
+
+<CardGroup cols={2}>
+  <Card
+    title="API Playground"
+    icon="play"
+    href="/v0.0.2/playground"
+  >
+    Practice these best practices in our interactive playground
+  </Card>
+  <Card
+    title="Core API Concepts"
+    icon="book"
+    href="/v0.0.2/integration-guides/core-api-concepts"
+  >
+    Review fundamental API concepts and architecture
+  </Card>
+  <Card
+    title="Authentication Guide"
+    icon="shield"
+    href="/v0.0.2/integration-guides/authentication"
+  >
+    Learn about authentication methods and security
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/v0.0.2/api-reference"
+  >
+    Explore the complete API reference documentation
+  </Card>
+</CardGroup>

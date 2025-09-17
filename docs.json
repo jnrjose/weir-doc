@@ -99,9 +99,18 @@
 						"tab": "Integration Guides",
 						"groups": [
 							{
-								"group": "Integration Overview",
+								"group": "Core Concepts",
 								"pages": [
-									"v0.0.2/integration-guides"
+									"v0.0.2/integration-guides/core-api-concepts",
+									"v0.0.2/integration-guides/authentication",
+									"v0.0.2/integration-guides/request-construction",
+									"v0.0.2/integration-guides/response-interpretation"
+								]
+							},
+							{
+								"group": "Best Practices",
+								"pages": [
+									"v0.0.2/integration-guides/best-practices"
 								]
 							}
 						]

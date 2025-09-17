@@ -1,0 +1,399 @@
+---
+title: "Core API Concepts"
+description: "Understanding the fundamental concepts and architecture of the Weir API platform"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# Core API Concepts
+
+Understanding the fundamental concepts and architecture of the Weir API platform is essential for successful integration. This guide covers the core principles, data models, and architectural patterns that underpin the Weir API ecosystem.
+
+## What You'll Learn
+
+By the end of this guide, you'll understand:
+- **API Architecture** - How the Weir API is structured and organized
+- **Data Models** - Core entities and their relationships
+- **API Categories** - Different types of APIs and their purposes
+- **Request/Response Patterns** - Standard patterns used across all endpoints
+- **Error Handling** - Consistent error handling across the platform
+- **Rate Limiting** - How to work within API limits effectively
+
+## API Architecture Overview
+
+The Weir API follows a **RESTful architecture** with clear separation of concerns and consistent patterns across all endpoints.
+
+### Base URL Structure
+
+```
+https://api-dev.weir.ai/    # Development environment
+https://api.weir.ai/        # Production environment
+```
+
+### API Categories
+
+<CardGroup cols={2}>
+  <Card
+    title="External APIs"
+    icon="globe"
+    href="/v0.0.2/integration-guides/core-api-concepts/external-apis"
+  >
+    Public APIs for third-party integrations and external applications
+  </Card>
+  <Card
+    title="Console APIs"
+    icon="monitor"
+    href="/v0.0.2/integration-guides/core-api-concepts/console-apis"
+  >
+    Internal APIs for dashboard applications and administrative tools
+  </Card>
+  <Card
+    title="Admin APIs"
+    icon="settings"
+    href="/v0.0.2/integration-guides/core-api-concepts/admin-apis"
+  >
+    System-wide administrative functions and platform management
+  </Card>
+  <Card
+    title="Organization APIs"
+    icon="building"
+    href="/v0.0.2/integration-guides/core-api-concepts/organization-apis"
+  >
+    Organization management, teams, and user administration
+  </Card>
+</CardGroup>
+
+## Core Data Models
+
+### User Model
+
+The **User** is the central entity in the Weir platform, representing individuals who interact with the system.
+
+```json
+{
+  "id": "user-123",
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "role": "Organization_User",
+  "organizationId": "org-456",
+  "isEmailVerified": true,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "lastActiveAt": "2024-01-15T14:22:00Z"
+}
+```
+
+### Organization Model
+
+**Organizations** represent companies, agencies, or entities using the Weir platform.
+
+```json
+{
+  "id": "org-456",
+  "name": "Example Corp",
+  "type": "Platform",
+  "description": "A business platform for NIL management",
+  "website": "https://example.com",
+  "industry": "TECHNOLOGY",
+  "companySize": "MEDIUM",
+  "createdAt": "2024-01-15T10:30:00Z"
+}
+```
+
+### Team Model
+
+**Teams** are organizational units within organizations, used for grouping users and managing permissions.
+
+```json
+{
+  "id": "team-123",
+  "name": "Development Team",
+  "description": "Software development team",
+  "organizationId": "org-456",
+  "memberCount": 5,
+  "createdAt": "2024-01-15T10:30:00Z",
+  "status": "active"
+}
+```
+
+## API Request Patterns
+
+### Standard Request Structure
+
+All API requests follow consistent patterns:
+
+```http
+POST /api/endpoint HTTP/1.1
+Host: api-dev.weir.ai
+Authorization: Bearer your-access-token
+Content-Type: application/json
+x-source: console
+
+{
+  "field1": "value1",
+  "field2": "value2"
+}
+```
+
+### Common Headers
+
+| Header | Description | Required | Example |
+|--------|-------------|----------|---------|
+| `Authorization` | Authentication token | Yes | `Bearer your-access-token` |
+| `Content-Type` | Request body format | Yes | `application/json` |
+| `x-source` | API category identifier | Console/Admin | `console`, `admin` |
+| `x-request-id` | Unique request identifier | No | `req-123456` |
+
+## API Response Patterns
+
+### Standard Response Structure
+
+All API responses follow a consistent structure:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response data here
+  },
+  "message": "Operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### Error Response Structure
+
+Error responses also follow a consistent pattern:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## HTTP Status Codes
+
+The Weir API uses standard HTTP status codes with specific meanings:
+
+| Code | Meaning | Usage |
+|------|---------|-------|
+| `200` | OK | Successful GET, PUT, PATCH requests |
+| `201` | Created | Successful POST requests |
+| `204` | No Content | Successful DELETE requests |
+| `400` | Bad Request | Invalid request format or parameters |
+| `401` | Unauthorized | Invalid or missing authentication |
+| `403` | Forbidden | Insufficient permissions |
+| `404` | Not Found | Resource doesn't exist |
+| `409` | Conflict | Resource already exists or conflict |
+| `422` | Unprocessable Entity | Validation errors |
+| `429` | Too Many Requests | Rate limit exceeded |
+| `500` | Internal Server Error | Server-side error |
+
+## Pagination
+
+Many endpoints support pagination for large datasets:
+
+### Request Parameters
+
+- `page` - Page number (starts from 1)
+- `limit` - Items per page (1-100, default 20)
+
+### Response Structure
+
+```json
+{
+  "success": true,
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 100,
+      "pages": 5,
+      "hasNext": true,
+      "hasPrev": false
+    }
+  }
+}
+```
+
+## Rate Limiting
+
+The Weir API implements rate limiting to ensure fair usage:
+
+### Rate Limit Headers
+
+```http
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 999
+X-RateLimit-Reset: 1642123400
+Retry-After: 60
+```
+
+### Rate Limit Categories
+
+| API Category | Limit | Window |
+|--------------|-------|--------|
+| External APIs | 1,000 requests | Per hour |
+| Console APIs | 5,000 requests | Per hour |
+| Admin APIs | 10,000 requests | Per hour |
+
+## Data Validation
+
+### Input Validation
+
+All API inputs are validated according to strict rules:
+
+- **Email addresses** must be valid format
+- **Passwords** must meet security requirements
+- **Names** must be 1-100 characters
+- **IDs** must be valid UUIDs or alphanumeric strings
+
+### Validation Error Response
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "details": {
+      "field1": ["Error message 1", "Error message 2"],
+      "field2": ["Error message 3"]
+    }
+  }
+}
+```
+
+## Security Considerations
+
+### Authentication Methods
+
+1. **API Key Authentication** - For external integrations
+2. **Bearer Token Authentication** - For user-facing applications
+3. **Console Authentication** - For internal dashboard applications
+
+### Data Protection
+
+- All data is encrypted in transit (HTTPS)
+- Sensitive data is encrypted at rest
+- API keys and tokens are securely generated
+- User passwords are hashed using industry standards
+
+## Best Practices
+
+### 1. Error Handling
+
+Always implement comprehensive error handling:
+
+```javascript
+try {
+  const response = await fetch('/api/endpoint', options);
+  const data = await response.json();
+  
+  if (!data.success) {
+    throw new Error(data.error.message);
+  }
+  
+  return data.data;
+} catch (error) {
+  console.error('API request failed:', error);
+  throw error;
+}
+```
+
+### 2. Rate Limit Handling
+
+Implement exponential backoff for rate limit errors:
+
+```javascript
+async function makeRequestWithRetry(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After') || Math.pow(2, i);
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        continue;
+      }
+      
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+    }
+  }
+}
+```
+
+### 3. Caching
+
+Implement appropriate caching strategies:
+
+```javascript
+class APICache {
+  constructor(ttl = 300000) { // 5 minutes
+    this.cache = new Map();
+    this.ttl = ttl;
+  }
+  
+  get(key) {
+    const item = this.cache.get(key);
+    if (item && Date.now() - item.timestamp < this.ttl) {
+      return item.data;
+    }
+    this.cache.delete(key);
+    return null;
+  }
+  
+  set(key, data) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+  }
+}
+```
+
+## Next Steps
+
+Now that you understand the core API concepts, explore the detailed guides:
+
+<CardGroup cols={2}>
+  <Card
+    title="Authentication Guide"
+    icon="shield"
+    href="/v0.0.2/integration-guides/authentication"
+  >
+    Learn about authentication methods, token management, and security
+  </Card>
+  <Card
+    title="Request Construction"
+    icon="code"
+    href="/v0.0.2/integration-guides/request-construction"
+  >
+    Master the art of constructing effective API requests
+  </Card>
+  <Card
+    title="Response Interpretation"
+    icon="eye"
+    href="/v0.0.2/integration-guides/response-interpretation"
+  >
+    Understand how to interpret and handle API responses
+  </Card>
+  <Card
+    title="Best Practices"
+    icon="star"
+    href="/v0.0.2/integration-guides/best-practices"
+  >
+    Learn industry best practices for API integration
+  </Card>
+</CardGroup>
