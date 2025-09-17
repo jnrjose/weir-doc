@@ -1,0 +1,466 @@
+---
+title: "External APIs"
+description: "Public APIs for third-party integrations and external applications"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# External APIs
+
+External APIs are designed for third-party integrations and external applications that need to interact with the Weir platform. These APIs provide secure, authenticated access to core functionality without requiring direct access to internal systems.
+
+## Overview
+
+External APIs are the primary interface for:
+- **Third-party applications** integrating with Weir
+- **External services** requiring API access
+- **Public integrations** and partnerships
+- **Client applications** built by external developers
+
+## Authentication
+
+External APIs use **API Key Authentication** for secure access:
+
+### API Key Generation
+
+```bash
+curl -X POST "https://api-dev.weir.ai/auth/token" \
+  -u "your-client-id:your-secret-key"
+```
+
+```javascript
+const response = await fetch('https://api-dev.weir.ai/auth/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Basic ' + btoa('client-id:secret-key')
+  }
+});
+
+const { data } = await response.json();
+const accessToken = data.accessToken;
+```
+
+### Using Access Tokens
+
+```javascript
+const apiClient = new ExternalAPIClient(accessToken);
+
+// All subsequent requests use the access token
+const teams = await apiClient.getTeams();
+```
+
+## Available Endpoints
+
+### Authentication Endpoints
+
+<CardGroup cols={2}>
+  <Card
+    title="Generate Access Token"
+    icon="key"
+    href="/v0.0.2/api-reference/external/generate-access-token"
+  >
+    Generate access tokens for API authentication
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+External APIs have specific rate limits to ensure fair usage:
+
+| Endpoint Category | Rate Limit | Window |
+|------------------|------------|--------|
+| Authentication | 100 requests | Per hour |
+| General API | 1,000 requests | Per hour |
+| Bulk Operations | 100 requests | Per hour |
+
+## Security Considerations
+
+### API Key Management
+
+- **Never expose API keys** in client-side code
+- **Rotate keys regularly** for enhanced security
+- **Use environment variables** for key storage
+- **Implement key validation** before making requests
+
+### Request Security
+
+```javascript
+class SecureExternalAPIClient {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.baseUrl = 'https://api-dev.weir.ai';
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    // Validate API key
+    if (!this.apiKey || this.apiKey.length < 32) {
+      throw new Error('Invalid API key');
+    }
+    
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+        'User-Agent': 'MyApp/1.0.0',
+        ...options.headers
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status}`);
+    }
+    
+    return response.json();
+  }
+}
+```
+
+## Error Handling
+
+External APIs return consistent error responses:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_API_KEY",
+    "message": "The provided API key is invalid or expired",
+    "details": "Please check your API key and try again"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### Common Error Codes
+
+| Code | Description | Action |
+|------|-------------|--------|
+| `INVALID_API_KEY` | API key is invalid or expired | Check and regenerate API key |
+| `RATE_LIMIT_EXCEEDED` | Rate limit exceeded | Implement exponential backoff |
+| `INSUFFICIENT_PERMISSIONS` | API key lacks required permissions | Contact support for permission upgrade |
+| `INVALID_REQUEST` | Request format is invalid | Validate request parameters |
+
+## Best Practices
+
+### 1. Implement Retry Logic
+
+```javascript
+class RetryableExternalAPI {
+  constructor(apiClient, maxRetries = 3) {
+    this.apiClient = apiClient;
+    this.maxRetries = maxRetries;
+  }
+  
+  async makeRequestWithRetry(endpoint, options) {
+    for (let i = 0; i < this.maxRetries; i++) {
+      try {
+        return await this.apiClient.makeRequest(endpoint, options);
+      } catch (error) {
+        if (i === this.maxRetries - 1) throw error;
+        
+        if (error.message.includes('RATE_LIMIT_EXCEEDED')) {
+          await this.delay(Math.pow(2, i) * 1000);
+          continue;
+        }
+        
+        throw error;
+      }
+    }
+  }
+  
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+```
+
+### 2. Cache Responses
+
+```javascript
+class CachedExternalAPI {
+  constructor(apiClient, ttl = 300000) {
+    this.apiClient = apiClient;
+    this.cache = new Map();
+    this.ttl = ttl;
+  }
+  
+  async getCachedData(key, fetchFunction) {
+    const cached = this.cache.get(key);
+    
+    if (cached && Date.now() - cached.timestamp < this.ttl) {
+      return cached.data;
+    }
+    
+    const data = await fetchFunction();
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+    
+    return data;
+  }
+}
+```
+
+### 3. Validate Responses
+
+```javascript
+class ValidatedExternalAPI {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async makeValidatedRequest(endpoint, options) {
+    const response = await this.apiClient.makeRequest(endpoint, options);
+    
+    if (!response.success) {
+      throw new Error(`API Error: ${response.error.message}`);
+    }
+    
+    if (!response.data) {
+      throw new Error('Invalid response: missing data');
+    }
+    
+    return response.data;
+  }
+}
+```
+
+## Integration Examples
+
+### Node.js Integration
+
+```javascript
+const axios = require('axios');
+
+class WeirExternalAPI {
+  constructor(apiKey) {
+    this.client = axios.create({
+      baseURL: 'https://api-dev.weir.ai',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+  }
+  
+  async generateAccessToken() {
+    const response = await this.client.post('/auth/token');
+    return response.data.data;
+  }
+  
+  async getTeams() {
+    const response = await this.client.get('/org/teams');
+    return response.data.data;
+  }
+}
+
+// Usage
+const api = new WeirExternalAPI('your-api-key');
+const teams = await api.getTeams();
+```
+
+### Python Integration
+
+```python
+import requests
+import os
+
+class WeirExternalAPI:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = 'https://api-dev.weir.ai'
+        self.headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+    
+    def generate_access_token(self):
+        response = requests.post(
+            f'{self.base_url}/auth/token',
+            headers=self.headers
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    
+    def get_teams(self):
+        response = requests.get(
+            f'{self.base_url}/org/teams',
+            headers=self.headers
+        )
+        response.raise_for_status()
+        return response.json()['data']
+
+# Usage
+api = WeirExternalAPI(os.getenv('WEIR_API_KEY'))
+teams = api.get_teams()
+```
+
+### PHP Integration
+
+```php
+<?php
+
+class WeirExternalAPI {
+    private $apiKey;
+    private $baseUrl;
+    
+    public function __construct($apiKey) {
+        $this->apiKey = $apiKey;
+        $this->baseUrl = 'https://api-dev.weir.ai';
+    }
+    
+    private function makeRequest($endpoint, $method = 'GET', $data = null) {
+        $url = $this->baseUrl . $endpoint;
+        
+        $headers = [
+            'Authorization: Bearer ' . $this->apiKey,
+            'Content-Type: application/json'
+        ];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        
+        if ($data) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        }
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode >= 400) {
+            throw new Exception("API request failed with status: $httpCode");
+        }
+        
+        return json_decode($response, true);
+    }
+    
+    public function generateAccessToken() {
+        $response = $this->makeRequest('/auth/token', 'POST');
+        return $response['data'];
+    }
+    
+    public function getTeams() {
+        $response = $this->makeRequest('/org/teams');
+        return $response['data'];
+    }
+}
+
+// Usage
+$api = new WeirExternalAPI($_ENV['WEIR_API_KEY']);
+$teams = $api->getTeams();
+?>
+```
+
+## Monitoring and Debugging
+
+### Request Logging
+
+```javascript
+class LoggedExternalAPI {
+  constructor(apiClient, enableLogging = true) {
+    this.apiClient = apiClient;
+    this.enableLogging = enableLogging;
+  }
+  
+  async makeRequest(endpoint, options) {
+    if (this.enableLogging) {
+      console.log(`[External API] ${options.method || 'GET'} ${endpoint}`);
+    }
+    
+    const startTime = Date.now();
+    
+    try {
+      const response = await this.apiClient.makeRequest(endpoint, options);
+      
+      if (this.enableLogging) {
+        console.log(`[External API] Success in ${Date.now() - startTime}ms`);
+      }
+      
+      return response;
+    } catch (error) {
+      if (this.enableLogging) {
+        console.error(`[External API] Error after ${Date.now() - startTime}ms:`, error.message);
+      }
+      throw error;
+    }
+  }
+}
+```
+
+### Performance Monitoring
+
+```javascript
+class MonitoredExternalAPI {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+    this.metrics = {
+      requestCount: 0,
+      errorCount: 0,
+      totalTime: 0
+    };
+  }
+  
+  async makeRequest(endpoint, options) {
+    const startTime = Date.now();
+    this.metrics.requestCount++;
+    
+    try {
+      const response = await this.apiClient.makeRequest(endpoint, options);
+      this.metrics.totalTime += Date.now() - startTime;
+      return response;
+    } catch (error) {
+      this.metrics.errorCount++;
+      this.metrics.totalTime += Date.now() - startTime;
+      throw error;
+    }
+  }
+  
+  getMetrics() {
+    return {
+      ...this.metrics,
+      averageTime: this.metrics.totalTime / this.metrics.requestCount,
+      errorRate: this.metrics.errorCount / this.metrics.requestCount
+    };
+  }
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Console APIs"
+    icon="monitor"
+    href="/v0.0.2/integration-guides/core-api-concepts/console-apis"
+  >
+    Learn about internal APIs for dashboard applications
+  </Card>
+  <Card
+    title="Admin APIs"
+    icon="settings"
+    href="/v0.0.2/integration-guides/core-api-concepts/admin-apis"
+  >
+    Explore system-wide administrative functions
+  </Card>
+  <Card
+    title="Organization APIs"
+    icon="building"
+    href="/v0.0.2/integration-guides/core-api-concepts/organization-apis"
+  >
+    Discover organization management capabilities
+  </Card>
+  <Card
+    title="API Playground"
+    icon="play"
+    href="/v0.0.2/playground"
+  >
+    Test External APIs in our interactive playground
+  </Card>
+</CardGroup>

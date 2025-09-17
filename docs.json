@@ -102,6 +102,10 @@
 								"group": "Core Concepts",
 								"pages": [
 									"v0.0.2/integration-guides/core-api-concepts",
+									"v0.0.2/integration-guides/core-api-concepts/external-apis",
+									"v0.0.2/integration-guides/core-api-concepts/console-apis",
+									"v0.0.2/integration-guides/core-api-concepts/admin-apis",
+									"v0.0.2/integration-guides/core-api-concepts/organization-apis",
 									"v0.0.2/integration-guides/authentication",
 									"v0.0.2/integration-guides/request-construction",
 									"v0.0.2/integration-guides/response-interpretation"
