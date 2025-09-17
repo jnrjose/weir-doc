@@ -1,0 +1,331 @@
+---
+title: "Organization APIs"
+description: "APIs for managing organizations, teams, clients, and platforms"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# Organization APIs
+
+Comprehensive APIs for managing organizations, teams, clients, platforms, and talent rosters within the Weir ecosystem.
+
+## Overview
+
+Organization APIs provide functionality for:
+- Organization management and configuration
+- Team creation and member management
+- Client and platform administration
+- Talent roster and license management
+- Card and payment management
+- Platform verification and monitoring
+
+## Authentication
+
+Organization APIs support multiple authentication methods:
+
+### Console Authentication
+```bash
+curl -X GET "https://api-dev.weir.ai/org/information" \
+  -H "Authorization: Bearer your-console-token" \
+  -H "x-source: console"
+```
+
+### Bearer Token Authentication
+```bash
+curl -X GET "https://api-dev.weir.ai/org/teams" \
+  -H "Authorization: Bearer your-access-token"
+```
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card
+    title="Organization Management"
+    icon="building"
+    href="/v0.0.2/api-reference/org/organization-management"
+  >
+    Manage organization information, settings, and configuration
+  </Card>
+  <Card
+    title="Team Management"
+    icon="users"
+    href="/v0.0.2/api-reference/org/team-management"
+  >
+    Create, manage, and delete teams and team members
+  </Card>
+  <Card
+    title="Client Management"
+    icon="briefcase"
+    href="/v0.0.2/api-reference/org/client-management"
+  >
+    Manage API clients and their configurations
+  </Card>
+  <Card
+    title="Platform Management"
+    icon="monitor"
+    href="/v0.0.2/api-reference/org/platform-management"
+  >
+    Create, manage, and verify platforms
+  </Card>
+  <Card
+    title="Talent Management"
+    icon="star"
+    href="/v0.0.2/api-reference/org/talent-management"
+  >
+    Manage talent rosters, licenses, and agency operations
+  </Card>
+  <Card
+    title="Card Management"
+    icon="credit-card"
+    href="/v0.0.2/api-reference/org/card-management"
+  >
+    Manage payment cards and billing information
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+Organization APIs have the following rate limits:
+- **2,000 requests per hour** per organization
+- **200 requests per minute** burst limit
+- **20 concurrent requests** maximum
+
+<Callout type="info">
+Rate limits are enforced per organization. Different API categories may have different limits.
+</Callout>
+
+## Common Use Cases
+
+### 1. Organization Setup
+```javascript
+async function setupOrganization(orgData) {
+  try {
+    // Get organization information
+    const orgInfo = await fetch('https://api-dev.weir.ai/org/information', {
+      headers: {
+        'Authorization': `Bearer ${consoleToken}`,
+        'x-source': 'console'
+      }
+    });
+    
+    // Update organization information
+    const updateResponse = await fetch('https://api-dev.weir.ai/org/information', {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${consoleToken}`,
+        'x-source': 'console',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orgData)
+    });
+    
+    return await updateResponse.json();
+  } catch (error) {
+    console.error('Organization setup failed:', error);
+    throw error;
+  }
+}
+```
+
+### 2. Team Management
+```javascript
+class OrganizationTeamManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createTeam(teamData) {
+    return await this.apiClient.makeRequest('/org/create/team', {
+      method: 'POST',
+      body: JSON.stringify(teamData)
+    });
+  }
+  
+  async inviteTeamMember(teamId, memberData) {
+    return await this.apiClient.makeRequest(`/org/invite/team/member/${teamId}`, {
+      method: 'POST',
+      body: JSON.stringify(memberData)
+    });
+  }
+  
+  async getTeams(page = 1, limit = 20) {
+    return await this.apiClient.makeRequest(`/org/teams?page=${page}&limit=${limit}`);
+  }
+  
+  async deleteTeam(teamId) {
+    return await this.apiClient.makeRequest(`/org/team/${teamId}`, {
+      method: 'DELETE'
+    });
+  }
+}
+```
+
+### 3. Platform Management
+```javascript
+class PlatformManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createPlatform(platformData) {
+    return await this.apiClient.makeRequest('/org/create/platform', {
+      method: 'POST',
+      body: JSON.stringify(platformData)
+    });
+  }
+  
+  async getPlatforms() {
+    return await this.apiClient.makeRequest('/org/platforms');
+  }
+  
+  async verifyPlatform(platformId) {
+    return await this.apiClient.makeRequest(`/org/verify/platform/${platformId}`);
+  }
+  
+  async deletePlatform(platformId) {
+    return await this.apiClient.makeRequest(`/org/platform/${platformId}`, {
+      method: 'DELETE'
+    });
+  }
+}
+```
+
+## Error Handling
+
+Organization APIs return specific error codes:
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `ORGANIZATION_NOT_FOUND` | Organization doesn't exist | Check organization ID |
+| `TEAM_NOT_FOUND` | Team with specified ID doesn't exist | Check team ID |
+| `PLATFORM_NOT_FOUND` | Platform with specified ID doesn't exist | Check platform ID |
+| `INSUFFICIENT_PERMISSIONS` | User lacks required permissions | Check user role |
+| `INVALID_ORGANIZATION_DATA` | Invalid organization data | Validate input data |
+| `TEAM_HAS_MEMBERS` | Cannot delete team with active members | Remove members first |
+
+## Best Practices
+
+### 1. Implement Proper Validation
+```javascript
+function validateOrganizationData(data) {
+  const requiredFields = ['name', 'type', 'description'];
+  
+  for (const field of requiredFields) {
+    if (!data[field]) {
+      throw new Error(`Missing required field: ${field}`);
+    }
+  }
+  
+  // Validate organization type
+  const validTypes = ['Platform', 'Agency', 'Enterprise'];
+  if (!validTypes.includes(data.type)) {
+    throw new Error(`Invalid organization type. Must be one of: ${validTypes.join(', ')}`);
+  }
+  
+  return true;
+}
+```
+
+### 2. Handle Pagination
+```javascript
+async function getAllTeams(apiClient) {
+  const allTeams = [];
+  let page = 1;
+  let hasMore = true;
+  
+  while (hasMore) {
+    const response = await apiClient.makeRequest(`/org/teams?page=${page}&limit=100`);
+    const teams = response.data.items;
+    
+    allTeams.push(...teams);
+    
+    hasMore = response.data.pagination.hasNext;
+    page++;
+  }
+  
+  return allTeams;
+}
+```
+
+### 3. Implement Caching
+```javascript
+class OrganizationCache {
+  constructor(ttl = 300000) { // 5 minutes
+    this.cache = new Map();
+    this.ttl = ttl;
+  }
+  
+  get(key) {
+    const item = this.cache.get(key);
+    if (item && Date.now() - item.timestamp < this.ttl) {
+      return item.data;
+    }
+    this.cache.delete(key);
+    return null;
+  }
+  
+  set(key, data) {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now()
+    });
+  }
+  
+  clear() {
+    this.cache.clear();
+  }
+}
+```
+
+## Integration Examples
+
+<CardGroup cols={2}>
+  <Card
+    title="Organization Dashboard"
+    icon="monitor"
+    href="/v0.0.2/examples/org-dashboard"
+  >
+    Complete organization management dashboard
+  </Card>
+  <Card
+    title="Team Management App"
+    icon="users"
+    href="/v0.0.2/examples/org-team-management"
+  >
+    Team management and collaboration tool
+  </Card>
+  <Card
+    title="Platform Manager"
+    icon="monitor"
+    href="/v0.0.2/examples/org-platform-manager"
+  >
+    Platform management and monitoring tool
+  </Card>
+  <Card
+    title="Talent Roster System"
+    icon="star"
+    href="/v0.0.2/examples/org-talent-roster"
+  >
+    Talent roster and license management system
+  </Card>
+</CardGroup>
+
+## Monitoring and Analytics
+
+Organization APIs provide comprehensive monitoring:
+
+- **Usage Metrics**: API usage and performance metrics
+- **Organization Analytics**: Organization-level analytics and insights
+- **Team Analytics**: Team performance and collaboration metrics
+- **Platform Analytics**: Platform usage and performance data
+- **Talent Analytics**: Talent roster and license analytics
+
+## Support
+
+Need help with Organization APIs?
+
+- **Documentation**: Check our comprehensive API reference
+- **Support Team**: Contact us at support@weir.ai
+- **Status Page**: Check system status at status.weir.ai
+- **Community**: Join our developer community for peer support

@@ -6,8 +6,114 @@
 	"navigation": {
 		"versions": [
 			{
-				"version": "v0.0.1",
+				"version": "v0.0.2",
 				"default": true,
+				"tabs": [
+					{
+						"tab": "Getting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"v0.0.2/index"
+								]
+							},
+							{
+								"group": "API Guide",
+								"pages": [
+									"v0.0.2/api-guide/getting-started",
+									"v0.0.2/api-guide/authentication"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Playground",
+								"pages": [
+									"v0.0.2/playground"
+								]
+							},
+							{
+								"group": "External APIs",
+								"pages": [
+									"v0.0.2/api-reference/external",
+									"v0.0.2/api-reference/external/generate-access-token"
+								]
+							},
+							{
+								"group": "Console APIs",
+								"pages": [
+									"v0.0.2/api-reference/console",
+									"v0.0.2/api-reference/console/team-management"
+								]
+							},
+							{
+								"group": "Admin APIs",
+								"pages": [
+									"v0.0.2/api-reference/admin"
+								]
+							},
+							{
+								"group": "Organization APIs",
+								"pages": [
+									"v0.0.2/api-reference/org"
+								]
+							},
+							{
+								"group": "Authentication APIs",
+								"pages": [
+									"v0.0.2/api-reference/auth"
+								]
+							},
+							{
+								"group": "Trial APIs",
+								"pages": [
+									"v0.0.2/api-reference/trial"
+								]
+							},
+							{
+								"group": "Ad Detection APIs",
+								"pages": [
+									"v0.0.2/api-reference/ad"
+								]
+							},
+							{
+								"group": "Event & Logging APIs",
+								"pages": [
+									"v0.0.2/api-reference/event"
+								]
+							}
+						]
+					},
+					{
+						"tab": "Integration Guides",
+						"groups": [
+							{
+								"group": "Integration Overview",
+								"pages": [
+									"v0.0.2/integration-guides"
+								]
+							}
+						]
+					},
+					{
+						"tab": "Code Examples",
+						"groups": [
+							{
+								"group": "Examples Overview",
+								"pages": [
+									"v0.0.2/examples"
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"version": "v0.0.1",
 				"tabs": [
 					{
 						"tab": "Getting Started",

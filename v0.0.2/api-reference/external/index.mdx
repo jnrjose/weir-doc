@@ -1,0 +1,180 @@
+---
+title: "External APIs"
+description: "APIs for third-party integrations and external applications"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# External APIs
+
+External APIs are designed for third-party integrations and external applications that need to interact with Weir's core services. These APIs provide access to essential functionality while maintaining security and rate limiting appropriate for external use.
+
+## Overview
+
+External APIs are ideal for:
+- Third-party applications integrating with Weir
+- External dashboards and monitoring tools
+- Automated systems and scripts
+- Mobile applications
+- Web applications
+
+## Authentication
+
+External APIs use API Key authentication with Client ID and Secret Key:
+
+```bash
+curl -X POST "https://api-dev.weir.ai/auth/token" \
+  -u "your-client-id:your-secret-key"
+```
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card
+    title="Generate Access Token"
+    icon="key"
+    href="/v0.0.2/api-reference/external/generate-access-token"
+  >
+    Generate access tokens for external API authentication
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+External APIs have the following rate limits:
+- **1,000 requests per hour** per API key
+- **100 requests per minute** burst limit
+- **10 concurrent requests** maximum
+
+<Callout type="warning">
+Rate limits are enforced per API key. Exceeding limits will result in a 429 status code with a `Retry-After` header.
+</Callout>
+
+## Error Handling
+
+External APIs return standard HTTP status codes and error responses:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Rate limit exceeded",
+    "details": "You have exceeded the maximum number of requests per hour"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Best Practices
+
+### 1. Implement Proper Error Handling
+```javascript
+async function makeExternalRequest(url, options = {}) {
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(`API Error: ${error.error.message}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('External API request failed:', error);
+    throw error;
+  }
+}
+```
+
+### 2. Handle Rate Limits
+```javascript
+async function makeRequestWithRetry(url, options = {}, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After') || 60;
+        console.log(`Rate limited. Retrying after ${retryAfter} seconds...`);
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        continue;
+      }
+      
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+    }
+  }
+}
+```
+
+### 3. Secure Token Storage
+```javascript
+// Store tokens securely
+const tokenManager = {
+  setToken: (token) => {
+    // Use secure storage mechanism
+    sessionStorage.setItem('weir_external_token', token);
+  },
+  
+  getToken: () => {
+    return sessionStorage.getItem('weir_external_token');
+  },
+  
+  clearToken: () => {
+    sessionStorage.removeItem('weir_external_token');
+  }
+};
+```
+
+## Integration Examples
+
+<CardGroup cols={2}>
+  <Card
+    title="JavaScript Integration"
+    icon="javascript"
+    href="/v0.0.2/examples/external-javascript"
+  >
+    Complete JavaScript example for external API integration
+  </Card>
+  <Card
+    title="Python Integration"
+    icon="python"
+    href="/v0.0.2/examples/external-python"
+  >
+    Python example with error handling and rate limiting
+  </Card>
+  <Card
+    title="cURL Examples"
+    icon="terminal"
+    href="/v0.0.2/examples/external-curl"
+  >
+    Command-line examples using cURL
+  </Card>
+  <Card
+    title="Postman Collection"
+    icon="postman"
+    href="/v0.0.2/examples/external-postman"
+  >
+    Import our Postman collection for testing
+  </Card>
+</CardGroup>
+
+## Support
+
+Need help with External APIs?
+
+- **Documentation**: Check our comprehensive API reference
+- **Support Team**: Contact us at support@weir.ai
+- **Status Page**: Check system status at status.weir.ai
+- **Community**: Join our developer community for peer support

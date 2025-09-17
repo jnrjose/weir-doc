@@ -1,0 +1,400 @@
+---
+title: "Event & Logging APIs"
+description: "Event tracking, logging, and monitoring endpoints"
+---
+
+import { Card, CardGroup } from '@mintlify/components';
+import { Callout } from '@mintlify/components';
+
+# Event & Logging APIs
+
+APIs for event tracking, logging, and monitoring within the Weir platform, providing comprehensive visibility into system operations and user activities.
+
+## Overview
+
+Event & Logging APIs provide functionality for:
+- Event tracking and logging
+- System monitoring and analytics
+- Error tracking and debugging
+- Performance monitoring
+- Audit logging and compliance
+
+## Authentication
+
+Event & Logging APIs use Bearer token authentication:
+
+```bash
+curl -X POST "https://api-dev.weir.ai/logs/log" \
+  -H "Authorization: Bearer your-access-token" \
+  -H "Content-Type: application/json"
+```
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card
+    title="Create Log Entry"
+    icon="plus"
+    href="/v0.0.2/api-reference/event/create-log"
+  >
+    Create new log entries and events
+  </Card>
+  <Card
+    title="Search Log Entries"
+    icon="search"
+    href="/v0.0.2/api-reference/event/search-logs"
+  >
+    Search and filter log entries
+  </Card>
+  <Card
+    title="Get All Logs"
+    icon="list"
+    href="/v0.0.2/api-reference/event/get-logs"
+  >
+    Retrieve all log entries with pagination
+  </Card>
+  <Card
+    title="Event Analytics"
+    icon="bar-chart"
+    href="/v0.0.2/api-reference/event/analytics"
+  >
+    Get analytics and insights from event data
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+Event & Logging APIs have the following rate limits:
+- **1,000 requests per hour** per API key
+- **100 requests per minute** burst limit
+- **20 concurrent requests** maximum
+
+<Callout type="info">
+Event & Logging APIs have moderate rate limits to ensure system stability while allowing comprehensive monitoring.
+</Callout>
+
+## Common Use Cases
+
+### 1. Event Logging
+```javascript
+async function logEvent(eventData) {
+  try {
+    const response = await fetch('https://api-dev.weir.ai/logs/log', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        type: 'INFO',
+        message: eventData.message,
+        dateTime: new Date().toISOString(),
+        metadata: eventData.metadata
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Logging failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error.message);
+    }
+    
+    return data.data;
+  } catch (error) {
+    console.error('Event logging failed:', error);
+    throw error;
+  }
+}
+```
+
+### 2. Error Tracking
+```javascript
+class ErrorTracker {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async trackError(error, context = {}) {
+    const errorData = {
+      type: 'ERROR',
+      message: error.message,
+      dateTime: new Date().toISOString(),
+      metadata: {
+        stack: error.stack,
+        context,
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      }
+    };
+    
+    try {
+      await this.apiClient.makeRequest('/logs/log', {
+        method: 'POST',
+        body: JSON.stringify(errorData)
+      });
+    } catch (logError) {
+      console.error('Failed to log error:', logError);
+    }
+  }
+  
+  async trackWarning(message, context = {}) {
+    const warningData = {
+      type: 'WARNING',
+      message,
+      dateTime: new Date().toISOString(),
+      metadata: context
+    };
+    
+    try {
+      await this.apiClient.makeRequest('/logs/log', {
+        method: 'POST',
+        body: JSON.stringify(warningData)
+      });
+    } catch (logError) {
+      console.error('Failed to log warning:', logError);
+    }
+  }
+}
+```
+
+### 3. Performance Monitoring
+```javascript
+class PerformanceMonitor {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async trackPerformance(operation, duration, metadata = {}) {
+    const perfData = {
+      type: 'PERFORMANCE',
+      message: `Operation ${operation} completed`,
+      dateTime: new Date().toISOString(),
+      metadata: {
+        operation,
+        duration,
+        ...metadata
+      }
+    };
+    
+    try {
+      await this.apiClient.makeRequest('/logs/log', {
+        method: 'POST',
+        body: JSON.stringify(perfData)
+      });
+    } catch (logError) {
+      console.error('Failed to log performance:', logError);
+    }
+  }
+  
+  async trackAPICall(endpoint, method, duration, status) {
+    await this.trackPerformance('API_CALL', duration, {
+      endpoint,
+      method,
+      status
+    });
+  }
+}
+```
+
+## Error Handling
+
+Event & Logging APIs return specific error codes:
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `INVALID_LOG_FORMAT` | Invalid log entry format | Check log entry structure |
+| `LOG_SIZE_EXCEEDED` | Log entry too large | Reduce log entry size |
+| `RATE_LIMIT_EXCEEDED` | Too many log requests | Wait before retrying |
+| `INSUFFICIENT_PERMISSIONS` | User lacks logging permissions | Check user permissions |
+| `LOG_STORAGE_FULL` | Log storage capacity exceeded | Contact support |
+
+## Best Practices
+
+### 1. Structured Logging
+```javascript
+class StructuredLogger {
+  constructor(apiClient, serviceName) {
+    this.apiClient = apiClient;
+    this.serviceName = serviceName;
+  }
+  
+  async log(level, message, data = {}) {
+    const logEntry = {
+      type: level.toUpperCase(),
+      message,
+      dateTime: new Date().toISOString(),
+      metadata: {
+        service: this.serviceName,
+        ...data
+      }
+    };
+    
+    try {
+      await this.apiClient.makeRequest('/logs/log', {
+        method: 'POST',
+        body: JSON.stringify(logEntry)
+      });
+    } catch (error) {
+      console.error('Failed to log entry:', error);
+    }
+  }
+  
+  info(message, data) {
+    return this.log('INFO', message, data);
+  }
+  
+  warn(message, data) {
+    return this.log('WARNING', message, data);
+  }
+  
+  error(message, data) {
+    return this.log('ERROR', message, data);
+  }
+  
+  debug(message, data) {
+    return this.log('DEBUG', message, data);
+  }
+}
+```
+
+### 2. Log Filtering and Search
+```javascript
+async function searchLogs(filters = {}) {
+  const queryParams = new URLSearchParams();
+  
+  if (filters.type) queryParams.append('type', filters.type);
+  if (filters.startDate) queryParams.append('startDate', filters.startDate);
+  if (filters.endDate) queryParams.append('endDate', filters.endDate);
+  if (filters.searchTerm) queryParams.append('searchTerm', filters.searchTerm);
+  if (filters.page) queryParams.append('page', filters.page);
+  if (filters.limit) queryParams.append('limit', filters.limit);
+  
+  try {
+    const response = await fetch(`https://api-dev.weir.ai/logs/search?${queryParams}`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Search failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error(data.error.message);
+    }
+    
+    return data.data;
+  } catch (error) {
+    console.error('Log search failed:', error);
+    throw error;
+  }
+}
+```
+
+### 3. Log Aggregation and Analytics
+```javascript
+class LogAnalytics {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async getErrorRate(startDate, endDate) {
+    const logs = await this.searchLogs({
+      type: 'ERROR',
+      startDate,
+      endDate
+    });
+    
+    const totalLogs = await this.getTotalLogs(startDate, endDate);
+    
+    return {
+      errorCount: logs.items.length,
+      totalLogs: totalLogs,
+      errorRate: (logs.items.length / totalLogs) * 100
+    };
+  }
+  
+  async getPerformanceMetrics(startDate, endDate) {
+    const logs = await this.searchLogs({
+      type: 'PERFORMANCE',
+      startDate,
+      endDate
+    });
+    
+    const durations = logs.items.map(log => log.metadata.duration);
+    
+    return {
+      averageDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
+      minDuration: Math.min(...durations),
+      maxDuration: Math.max(...durations),
+      totalOperations: durations.length
+    };
+  }
+}
+```
+
+## Integration Examples
+
+<CardGroup cols={2}>
+  <Card
+    title="Logging Dashboard"
+    icon="monitor"
+    href="/v0.0.2/examples/event-logging-dashboard"
+  >
+    Real-time logging and monitoring dashboard
+  </Card>
+  <Card
+    title="Error Tracking System"
+    icon="alert-triangle"
+    href="/v0.0.2/examples/event-error-tracking"
+  >
+    Comprehensive error tracking and alerting system
+  </Card>
+  <Card
+    title="Performance Monitor"
+    icon="activity"
+    href="/v0.0.2/examples/event-performance-monitor"
+  >
+    Performance monitoring and analytics tool
+  </Card>
+  <Card
+    title="Audit Log Viewer"
+    icon="file-text"
+    href="/v0.0.2/examples/event-audit-viewer"
+  >
+    Audit log viewer and compliance tool
+  </Card>
+</CardGroup>
+
+## Log Types and Levels
+
+### 1. Log Levels
+- **DEBUG**: Detailed information for debugging
+- **INFO**: General information about system operation
+- **WARNING**: Warning messages for potential issues
+- **ERROR**: Error messages for failed operations
+- **CRITICAL**: Critical errors that require immediate attention
+
+### 2. Log Categories
+- **AUTHENTICATION**: User login, logout, and authentication events
+- **API_CALLS**: API request and response logging
+- **PERFORMANCE**: Performance metrics and timing data
+- **SECURITY**: Security events and access attempts
+- **BUSINESS**: Business logic and user actions
+- **SYSTEM**: System events and infrastructure changes
+
+## Support
+
+Need help with Event & Logging APIs?
+
+- **Documentation**: Check our comprehensive API reference
+- **Support Team**: Contact us at support@weir.ai
+- **Status Page**: Check system status at status.weir.ai
+- **Community**: Join our developer community for peer support
