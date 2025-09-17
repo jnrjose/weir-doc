@@ -18,10 +18,149 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
 
 ## Interactive API Testing
 
-<OpenApiPlayground
-  specUrl="/v0.0.2/reference/openapi.json"
-  title="Weir API v0.0.2"
-  description="Test and explore the Weir API endpoints interactively"
+<ApiPlayground
+  baseUrl="https://api-dev.weir.ai"
+  endpoints={[
+    {
+      method: "POST",
+      path: "/auth/token",
+      name: "Generate Access Token",
+      description: "Generate access tokens for external API authentication",
+      auth: {
+        type: "basic",
+        username: "clientId",
+        password: "secretKey"
+      },
+      body: {
+        type: "none"
+      },
+      examples: [
+        {
+          name: "Basic Authentication",
+          description: "Generate token using Client ID and Secret Key",
+          request: {
+            auth: {
+              username: "your-client-id",
+              password: "your-secret-key"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              tokenType: "Bearer"
+            },
+            message: "Access token generated successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "POST",
+      path: "/auth/login",
+      name: "User Login",
+      description: "Authenticate users and generate access tokens",
+      auth: {
+        type: "none"
+      },
+      body: {
+        type: "json",
+        schema: {
+          type: "object",
+          properties: {
+            username: {
+              type: "string",
+              description: "User's email address or username"
+            },
+            password: {
+              type: "string",
+              description: "User's password"
+            }
+          },
+          required: ["username", "password"]
+        }
+      },
+      examples: [
+        {
+          name: "Standard Login",
+          description: "Login with email and password",
+          request: {
+            body: {
+              username: "user@example.com",
+              password: "your-password"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              user: {
+                id: "user-123",
+                email: "user@example.com",
+                role: "Organization_User"
+              }
+            },
+            message: "Login successful",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
+    {
+      method: "GET",
+      path: "/org/information",
+      name: "Get Organization Information",
+      description: "Retrieve organization details and settings",
+      auth: {
+        type: "bearer",
+        token: "accessToken"
+      },
+      body: {
+        type: "none"
+      },
+      examples: [
+        {
+          name: "Get Org Info",
+          description: "Retrieve organization information",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              id: "org-123",
+              name: "Example Organization",
+              type: "Platform",
+              description: "A business platform",
+              website: "https://example.com",
+              industry: "TECHNOLOGY",
+              companySize: "MEDIUM",
+              founded: "2020",
+              address: {
+                address1: "123 Main Street",
+                city: "San Francisco",
+                state: "CA",
+                postalCode: "94105",
+                country: "USA"
+              },
+              contact: {
+                phone: "+1-555-123-4567",
+                email: "info@example.com"
+              }
+            },
+            message: "Organization information retrieved successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    }
+  ]}
 />
 
 ## Available Playground Categories
