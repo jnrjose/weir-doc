@@ -48,7 +48,11 @@
 								"pages": [
 									"v0.0.2/api-reference/console",
 									"v0.0.2/api-reference/console/team-management",
-									"v0.0.2/api-reference/console/team-management/create-team"
+									"v0.0.2/api-reference/console/team-management/create-team",
+									"v0.0.2/api-reference/console/team-management/invite-team-member",
+									"v0.0.2/api-reference/console/team-management/get-teams",
+									"v0.0.2/api-reference/console/team-management/delete-team",
+									"v0.0.2/api-reference/console/team-management/get-team-members"
 								]
 							},
 							{
