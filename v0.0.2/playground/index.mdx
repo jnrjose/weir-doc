@@ -18,16 +18,14 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
 
 ## Interactive API Testing
 
-### 1. Generate Access Token (External APIs)
-
 <ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
+  baseUrl="https://api-dev.weir.ai/"
   endpoints={[
     {
       method: "POST",
       path: "/auth/token",
       name: "Generate Access Token",
-      description: "Generate access tokens for external API authentication using Client ID and Secret Key",
+      description: "Generate access tokens for external API authentication",
       auth: {
         type: "basic",
         username: "clientId",
@@ -35,21 +33,35 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
       },
       body: {
         type: "none"
-      }
-    }
-  ]}
-/>
-
-### 2. User Login (Console APIs)
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
+      },
+      examples: [
+        {
+          name: "Basic Authentication",
+          description: "Generate token using Client ID and Secret Key",
+          request: {
+            auth: {
+              username: "your-client-id",
+              password: "your-secret-key"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              tokenType: "Bearer"
+            },
+            message: "Access token generated successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
     {
       method: "POST",
       path: "/auth/login",
       name: "User Login",
-      description: "Authenticate users and generate access tokens for console applications",
+      description: "Authenticate users and generate access tokens",
       auth: {
         type: "none"
       },
@@ -60,27 +72,44 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
           properties: {
             username: {
               type: "string",
-              description: "User's email address or username",
-              example: "user@example.com"
+              description: "User's email address or username"
             },
             password: {
               type: "string",
-              description: "User's password",
-              example: "your-password"
+              description: "User's password"
             }
           },
           required: ["username", "password"]
         }
-      }
-    }
-  ]}
-/>
-
-### 3. Get Organization Information
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
+      },
+      examples: [
+        {
+          name: "Standard Login",
+          description: "Login with email and password",
+          request: {
+            body: {
+              username: "user@example.com",
+              password: "your-password"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+              expiresIn: 3600,
+              user: {
+                id: "user-123",
+                email: "user@example.com",
+                role: "Organization_User"
+              }
+            },
+            message: "Login successful",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
     {
       method: "GET",
       path: "/org/information",
@@ -92,16 +121,45 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
       },
       body: {
         type: "none"
-      }
-    }
-  ]}
-/>
-
-### 4. Create Team
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
+      },
+      examples: [
+        {
+          name: "Get Org Info",
+          description: "Retrieve organization information",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              id: "org-123",
+              name: "Example Organization",
+              type: "Platform",
+              description: "A business platform",
+              website: "https://example.com",
+              industry: "TECHNOLOGY",
+              companySize: "MEDIUM",
+              founded: "2020",
+              address: {
+                address1: "123 Main Street",
+                city: "San Francisco",
+                state: "CA",
+                postalCode: "94105",
+                country: "USA"
+              },
+              contact: {
+                phone: "+1-555-123-4567",
+                email: "info@example.com"
+              }
+            },
+            message: "Organization information retrieved successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
     {
       method: "POST",
       path: "/org/create/team",
@@ -118,22 +176,40 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
           properties: {
             name: {
               type: "string",
-              description: "Team name",
-              example: "Development Team"
+              description: "Team name"
             }
           },
           required: ["name"]
         }
-      }
-    }
-  ]}
-/>
-
-### 5. Get Teams
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
+      },
+      examples: [
+        {
+          name: "Create New Team",
+          description: "Create a team with a specific name",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token",
+              "x-source": "console"
+            },
+            body: {
+              name: "Development Team"
+            }
+          },
+          response: {
+            success: true,
+            data: {
+              id: "team-123",
+              name: "Development Team",
+              organizationId: "org-123",
+              createdAt: "2024-01-15T10:30:00Z",
+              memberCount: 0
+            },
+            message: "Team created successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
+        }
+      ]
+    },
     {
       method: "GET",
       path: "/org/teams",
@@ -161,135 +237,52 @@ Welcome to the Weir API Playground! This interactive environment allows you to t
           required: false,
           default: 20
         }
-      ]
-    }
-  ]}
-/>
-
-### 6. Invite Team Member
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
-    {
-      method: "POST",
-      path: "/org/invite/team/member/{teamId}",
-      name: "Invite Team Member",
-      description: "Invite a new member to an existing team",
-      auth: {
-        type: "bearer",
-        token: "accessToken"
-      },
-      body: {
-        type: "json",
-        schema: {
-          type: "object",
-          properties: {
-            firstname: {
-              type: "string",
-              description: "Member's first name",
-              example: "John"
+      ],
+      examples: [
+        {
+          name: "Get All Teams",
+          description: "Retrieve all teams with pagination",
+          request: {
+            headers: {
+              Authorization: "Bearer your-access-token",
+              "x-source": "console"
             },
-            lastname: {
-              type: "string",
-              description: "Member's last name",
-              example: "Doe"
-            },
-            email: {
-              type: "string",
-              description: "Member's email address",
-              example: "john.doe@example.com"
-            },
-            role: {
-              type: "string",
-              description: "Member's role in the team",
-              example: "Organization_User",
-              enum: ["Organization_User", "Team_Admin", "Team_Member"]
+            query: {
+              page: 1,
+              limit: 20
             }
           },
-          required: ["firstname", "lastname", "email", "role"]
-        }
-      },
-      pathParams: [
-        {
-          name: "teamId",
-          type: "string",
-          description: "The ID of the team to invite the member to",
-          example: "team-123"
-        }
-      ]
-    }
-  ]}
-/>
-
-### 7. Get Team Members
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
-    {
-      method: "GET",
-      path: "/org/team/members/{teamId}",
-      name: "Get Team Members",
-      description: "Retrieve all members of a specific team",
-      auth: {
-        type: "bearer",
-        token: "accessToken"
-      },
-      body: {
-        type: "none"
-      },
-      pathParams: [
-        {
-          name: "teamId",
-          type: "string",
-          description: "The ID of the team to get members for",
-          example: "team-123"
-        }
-      ],
-      queryParams: [
-        {
-          name: "page",
-          type: "integer",
-          description: "Page number for pagination",
-          required: false,
-          default: 1
-        },
-        {
-          name: "limit",
-          type: "integer",
-          description: "Number of items per page",
-          required: false,
-          default: 20
-        }
-      ]
-    }
-  ]}
-/>
-
-### 8. Delete Team
-
-<ApiPlayground
-  baseUrl="https://api-dev.weir.ai"
-  endpoints={[
-    {
-      method: "DELETE",
-      path: "/org/team/{teamId}",
-      name: "Delete Team",
-      description: "Delete an existing team from your organization",
-      auth: {
-        type: "bearer",
-        token: "accessToken"
-      },
-      body: {
-        type: "none"
-      },
-      pathParams: [
-        {
-          name: "teamId",
-          type: "string",
-          description: "The ID of the team to delete",
-          example: "team-123"
+          response: {
+            success: true,
+            data: {
+              items: [
+                {
+                  id: "team-123",
+                  name: "Development Team",
+                  organizationId: "org-123",
+                  createdAt: "2024-01-15T10:30:00Z",
+                  memberCount: 5
+                },
+                {
+                  id: "team-456",
+                  name: "Marketing Team",
+                  organizationId: "org-123",
+                  createdAt: "2024-01-14T09:15:00Z",
+                  memberCount: 3
+                }
+              ],
+              pagination: {
+                page: 1,
+                limit: 20,
+                total: 2,
+                pages: 1,
+                hasNext: false,
+                hasPrev: false
+              }
+            },
+            message: "Teams retrieved successfully",
+            timestamp: "2024-01-15T10:30:00Z"
+          }
         }
       ]
     }
