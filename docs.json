@@ -102,17 +102,6 @@
 							}
 						]
 					},
-					{
-						"tab": "Code Examples",
-						"groups": [
-							{
-								"group": "Examples Overview",
-								"pages": [
-									"v0.0.2/examples"
-								]
-							}
-						]
-					}
 				]
 			},
 			{
