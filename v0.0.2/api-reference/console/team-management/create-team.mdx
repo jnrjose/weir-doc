@@ -11,7 +11,7 @@ Create a new team within your organization. Teams are used to organize users and
 ## Request
 
 <RequestExample>
-```bash
+```bash cURL
 curl -X POST "https://api-dev.weir.ai/org/create/team" \
   -H "Authorization: Bearer your-console-token" \
   -H "x-source: console" \
@@ -21,7 +21,7 @@ curl -X POST "https://api-dev.weir.ai/org/create/team" \
   }'
 ```
 
-```javascript
+```javascript JavaScript
 const response = await fetch('https://api-dev.weir.ai/org/create/team', {
   method: 'POST',
   headers: {
@@ -37,7 +37,7 @@ const response = await fetch('https://api-dev.weir.ai/org/create/team', {
 const data = await response.json();
 ```
 
-```python
+```python Python
 import requests
 
 response = requests.post(
@@ -55,7 +55,7 @@ response = requests.post(
 data = response.json()
 ```
 
-```php
+```php PHP
 <?php
 $data = [
     'name' => 'Development Team'

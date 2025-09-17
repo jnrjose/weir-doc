@@ -11,7 +11,7 @@ Register new users and create accounts within the Weir platform. This endpoint s
 ## Request
 
 <RequestExample>
-```bash
+```bash cURL
 curl -X POST "https://api-dev.weir.ai/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
@@ -26,7 +26,7 @@ curl -X POST "https://api-dev.weir.ai/auth/register" \
   }'
 ```
 
-```javascript
+```javascript JavaScript
 const response = await fetch('https://api-dev.weir.ai/auth/register', {
   method: 'POST',
   headers: {
@@ -47,7 +47,7 @@ const response = await fetch('https://api-dev.weir.ai/auth/register', {
 const data = await response.json();
 ```
 
-```python
+```python Python
 import requests
 
 response = requests.post(
@@ -67,7 +67,7 @@ response = requests.post(
 data = response.json()
 ```
 
-```php
+```php PHP
 <?php
 $data = [
     'fullname' => 'John Doe',

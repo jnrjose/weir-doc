@@ -11,12 +11,12 @@ Generate access tokens for external API authentication using your Client ID and 
 ## Request
 
 <RequestExample>
-```bash
+```bash cURL
 curl -X POST "https://api-dev.weir.ai/auth/token" \
   -u "your-client-id:your-secret-key"
 ```
 
-```javascript
+```javascript JavaScript
 const response = await fetch('https://api-dev.weir.ai/auth/token', {
   method: 'POST',
   headers: {
@@ -25,7 +25,7 @@ const response = await fetch('https://api-dev.weir.ai/auth/token', {
 });
 ```
 
-```python
+```python Python
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -33,6 +33,19 @@ response = requests.post(
     'https://api-dev.weir.ai/auth/token',
     auth=HTTPBasicAuth('your-client-id', 'your-secret-key')
 )
+```
+
+```php PHP
+<?php
+$response = file_get_contents('https://api-dev.weir.ai/auth/token', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => 'Authorization: Basic ' . base64_encode('your-client-id:your-secret-key')
+    ]
+]));
+
+$data = json_decode($response, true);
+?>
 ```
 </RequestExample>
 
