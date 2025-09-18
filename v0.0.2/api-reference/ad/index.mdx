@@ -3,9 +3,6 @@ title: "Ad Detection APIs"
 description: "NIL detection and identity verification endpoints"
 ---
 
-import { Card, CardGroup } from '@mintlify/components';
-import { Callout } from '@mintlify/components';
-
 # Ad Detection APIs
 
 APIs for NIL (Name, Image, Likeness) detection and identity verification, providing advanced AI-powered analysis of celebrity images and likenesses.
@@ -19,6 +16,16 @@ Ad Detection APIs provide functionality for:
 - Unauthorized usage detection
 - Content monitoring and analysis
 
+## Available Endpoints
+
+### Identity Validation
+- **Validate Identity** - Validate and verify celebrity identities in images
+- **Check Validation Status** - Check the status of identity validation requests
+
+### NIL Detection
+- **NIL Detection** - Detect unauthorized use of celebrity likenesses
+- **Content Analysis** - Analyze content for potential NIL violations
+
 ## Authentication
 
 Ad Detection APIs use Bearer token authentication:
@@ -29,321 +36,26 @@ curl -X POST "https://api-dev.weir.ai/ad/validateIdentity" \
   -H "Content-Type: application/json"
 ```
 
-## Available Endpoints
+## Use Cases
 
-<CardGroup cols={2}>
-  <Card
-    title="Validate Identity"
-    icon="user-check"
-    href="/v0.0.2/api-reference/ad/validate-identity"
-  >
-    Validate and verify celebrity identities in images
-  </Card>
-  <Card
-    title="Check Validation Status"
-    icon="clock"
-    href="/v0.0.2/api-reference/ad/validation-status"
-  >
-    Check the status of identity validation requests
-  </Card>
-  <Card
-    title="NIL Detection"
-    icon="search"
-    href="/v0.0.2/api-reference/ad/nil-detection"
-  >
-    Detect unauthorized use of celebrity images and likenesses
-  </Card>
-  <Card
-    title="Image Analysis"
-    icon="image"
-    href="/v0.0.2/api-reference/ad/image-analysis"
-  >
-    Analyze images for celebrity content and potential violations
-  </Card>
-</CardGroup>
+### Brand Protection
+- Monitor advertisements for unauthorized celebrity usage
+- Detect potential NIL violations in marketing content
+- Protect brand reputation and legal compliance
 
-## Rate Limits
+### Content Verification
+- Verify celebrity endorsements
+- Validate image usage rights
+- Ensure proper licensing compliance
 
-Ad Detection APIs have the following rate limits:
-- **500 requests per hour** per API key
-- **50 requests per minute** burst limit
-- **10 concurrent requests** maximum
+### Legal Compliance
+- Support legal teams with evidence gathering
+- Provide detailed analysis reports
+- Maintain audit trails for compliance
 
-<Callout type="info">
-Ad Detection APIs have moderate rate limits due to the computational intensity of AI analysis.
-</Callout>
+## Getting Started
 
-## Common Use Cases
-
-### 1. Identity Validation
-```javascript
-async function validateIdentity(imageData) {
-  try {
-    const response = await fetch('https://api-dev.weir.ai/ad/validateIdentity', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(imageData)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Validation failed: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (!data.success) {
-      throw new Error(data.error.message);
-    }
-    
-    return data.data;
-  } catch (error) {
-    console.error('Identity validation failed:', error);
-    throw error;
-  }
-}
-```
-
-### 2. NIL Detection Analysis
-```javascript
-async function detectNILViolations(imageUrl) {
-  try {
-    const response = await fetch('https://api-dev.weir.ai/ad/nilDetection', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        imageUrl: imageUrl,
-        analysisType: 'comprehensive'
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error(`NIL detection failed: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (!data.success) {
-      throw new Error(data.error.message);
-    }
-    
-    return data.data;
-  } catch (error) {
-    console.error('NIL detection failed:', error);
-    throw error;
-  }
-}
-```
-
-### 3. Batch Image Analysis
-```javascript
-async function analyzeBatchImages(imageUrls) {
-  const results = [];
-  
-  for (const imageUrl of imageUrls) {
-    try {
-      const result = await detectNILViolations(imageUrl);
-      results.push({
-        imageUrl,
-        result,
-        status: 'success'
-      });
-    } catch (error) {
-      results.push({
-        imageUrl,
-        error: error.message,
-        status: 'error'
-      });
-    }
-    
-    // Add delay to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
-  
-  return results;
-}
-```
-
-## Error Handling
-
-Ad Detection APIs return specific error codes:
-
-| Code | Description | Solution |
-|------|-------------|----------|
-| `INVALID_IMAGE_FORMAT` | Unsupported image format | Use supported formats (JPEG, PNG, WebP) |
-| `IMAGE_TOO_LARGE` | Image file too large | Reduce image size |
-| `ANALYSIS_FAILED` | AI analysis failed | Retry with different image |
-| `RATE_LIMIT_EXCEEDED` | Too many analysis requests | Wait before retrying |
-| `INSUFFICIENT_CREDITS` | Not enough analysis credits | Check account balance |
-
-## Best Practices
-
-### 1. Image Preprocessing
-```javascript
-function preprocessImage(file) {
-  return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    img.onload = () => {
-      // Resize image if too large
-      const maxSize = 2048;
-      let { width, height } = img;
-      
-      if (width > maxSize || height > maxSize) {
-        const ratio = Math.min(maxSize / width, maxSize / height);
-        width *= ratio;
-        height *= ratio;
-      }
-      
-      canvas.width = width;
-      canvas.height = height;
-      
-      ctx.drawImage(img, 0, 0, width, height);
-      
-      canvas.toBlob(resolve, 'image/jpeg', 0.9);
-    };
-    
-    img.onerror = reject;
-    img.src = URL.createObjectURL(file);
-  });
-}
-```
-
-### 2. Implement Caching
-```javascript
-class AdDetectionCache {
-  constructor(ttl = 3600000) { // 1 hour
-    this.cache = new Map();
-    this.ttl = ttl;
-  }
-  
-  getCacheKey(imageUrl, analysisType) {
-    return `${imageUrl}_${analysisType}`;
-  }
-  
-  get(imageUrl, analysisType) {
-    const key = this.getCacheKey(imageUrl, analysisType);
-    const item = this.cache.get(key);
-    
-    if (item && Date.now() - item.timestamp < this.ttl) {
-      return item.data;
-    }
-    
-    this.cache.delete(key);
-    return null;
-  }
-  
-  set(imageUrl, analysisType, data) {
-    const key = this.getCacheKey(imageUrl, analysisType);
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
-  }
-}
-```
-
-### 3. Handle Analysis Results
-```javascript
-function processAnalysisResult(result) {
-  const {
-    confidence,
-    celebrity,
-    violation,
-    recommendations
-  } = result;
-  
-  if (confidence > 0.8) {
-    if (violation.detected) {
-      return {
-        status: 'violation',
-        message: `Unauthorized use of ${celebrity.name} detected`,
-        confidence,
-        recommendations
-      };
-    } else {
-      return {
-        status: 'clean',
-        message: 'No violations detected',
-        confidence
-      };
-    }
-  } else {
-    return {
-      status: 'uncertain',
-      message: 'Analysis inconclusive',
-      confidence,
-      recommendations: ['Manual review recommended']
-    };
-  }
-}
-```
-
-## Integration Examples
-
-<CardGroup cols={2}>
-  <Card
-    title="NIL Detection Widget"
-    icon="search"
-    href="/v0.0.2/playground"
-  >
-    Interactive NIL detection widget
-  </Card>
-  <Card
-    title="Identity Verification Form"
-    icon="user-check"
-    href="/v0.0.2/playground"
-  >
-    Identity verification form component
-  </Card>
-  <Card
-    title="Content Monitoring Dashboard"
-    icon="monitor"
-    href="/v0.0.2/playground"
-  >
-    Content monitoring and analysis dashboard
-  </Card>
-  <Card
-    title="Batch Analysis Tool"
-    icon="layers"
-    href="/v0.0.2/playground"
-  >
-    Batch image analysis and processing tool
-  </Card>
-</CardGroup>
-
-## AI Analysis Features
-
-### 1. Celebrity Recognition
-- **Facial Recognition**: Advanced facial recognition technology
-- **Celebrity Database**: Comprehensive database of celebrities and public figures
-- **Confidence Scoring**: AI confidence scores for recognition accuracy
-- **Multiple Angles**: Analysis from various angles and lighting conditions
-
-### 2. NIL Violation Detection
-- **Unauthorized Usage**: Detect unauthorized use of celebrity images
-- **Commercial Use**: Identify commercial use without permission
-- **Social Media Monitoring**: Monitor social media platforms for violations
-- **Real-time Alerts**: Get notified of potential violations
-
-### 3. Content Analysis
-- **Image Quality**: Assess image quality and clarity
-- **Context Analysis**: Understand the context of image usage
-- **Risk Assessment**: Evaluate the risk level of potential violations
-- **Recommendations**: Get actionable recommendations for compliance
-
-## Support
-
-Need help with Ad Detection APIs?
-
-- **Documentation**: Check our comprehensive API reference
-- **Support Team**: Contact us at support@weir.ai
-- **Status Page**: Check system status at status.weir.ai
-- **Community**: Join our developer community for peer support
+1. Obtain your API credentials
+2. Upload images for analysis
+3. Review detection results
+4. Take appropriate action based on findings

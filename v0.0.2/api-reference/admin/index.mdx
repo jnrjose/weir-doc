@@ -3,9 +3,6 @@ title: "Admin APIs"
 description: "Administrative APIs for system management and platform operations"
 ---
 
-import { Card, CardGroup } from '@mintlify/components';
-import { Callout } from '@mintlify/components';
-
 # Admin APIs
 
 Administrative APIs for system management, platform operations, and administrative functions within the Weir platform.
@@ -19,6 +16,28 @@ Admin APIs are designed for:
 - System monitoring and analytics
 - License and platform management
 
+## Available Endpoints
+
+### User Management
+- Get Admin Members
+- Invite Admin User
+- Authenticate Admin
+
+### System Management
+- Get Organizations
+- Get Platforms
+- Get Licenses
+
+### Logging & Monitoring
+- Create Log Entry
+- Search Log Entries
+- Get Log Entries
+
+### Pod Management
+- Create Pod
+- Get Pods
+- Start/Pause/Stop Pods
+
 ## Authentication
 
 Admin APIs use Bearer token authentication with admin-level permissions:
@@ -27,255 +46,3 @@ Admin APIs use Bearer token authentication with admin-level permissions:
 curl -X GET "https://api-dev.weir.ai/admin/members" \
   -H "Authorization: Bearer your-admin-token"
 ```
-
-## Available Endpoints
-
-<CardGroup cols={2}>
-  <Card
-    title="User Management"
-    icon="users"
-    href="/v0.0.2/api-reference/admin/user-management"
-  >
-    Create, manage, and administer users across the platform
-  </Card>
-  <Card
-    title="Organization Management"
-    icon="building"
-    href="/v0.0.2/api-reference/admin/organization-management"
-  >
-    Manage organizations, platforms, and system-wide settings
-  </Card>
-  <Card
-    title="License Management"
-    icon="key"
-    href="/v0.0.2/api-reference/admin/license-management"
-  >
-    Manage licenses, talent rosters, and agency operations
-  </Card>
-  <Card
-    title="Platform Management"
-    icon="monitor"
-    href="/v0.0.2/api-reference/admin/platform-management"
-  >
-    Configure and manage platform-wide settings and features
-  </Card>
-  <Card
-    title="Mail Template Management"
-    icon="mail"
-    href="/v0.0.2/api-reference/admin/mail-management"
-  >
-    Create and manage email templates for system communications
-  </Card>
-  <Card
-    title="Pod Management"
-    icon="server"
-    href="/v0.0.2/api-reference/admin/pod-management"
-  >
-    Manage system pods, scaling, and infrastructure
-  </Card>
-  <Card
-    title="Log Management"
-    icon="file-text"
-    href="/v0.0.2/api-reference/admin/log-management"
-  >
-    Access and manage system logs and monitoring data
-  </Card>
-</CardGroup>
-
-## Rate Limits
-
-Admin APIs have the following rate limits:
-- **10,000 requests per hour** per admin user
-- **1,000 requests per minute** burst limit
-- **100 concurrent requests** maximum
-
-<Callout type="info">
-Admin APIs have the highest rate limits due to their administrative nature and system-wide scope.
-</Callout>
-
-## Required Permissions
-
-Admin APIs require specific permissions:
-
-| Permission | Description | Required For |
-|------------|-------------|--------------|
-| `ADMIN_USER_MANAGEMENT` | Manage users and user accounts | User management endpoints |
-| `ADMIN_ORGANIZATION_MANAGEMENT` | Manage organizations and platforms | Organization management |
-| `ADMIN_SYSTEM_CONFIGURATION` | Configure system settings | Platform configuration |
-| `ADMIN_LICENSE_MANAGEMENT` | Manage licenses and talent | License management |
-| `ADMIN_LOG_ACCESS` | Access system logs | Log management |
-| `ADMIN_POD_MANAGEMENT` | Manage system infrastructure | Pod management |
-
-## Error Handling
-
-Admin APIs return detailed error information:
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "INSUFFICIENT_ADMIN_PERMISSIONS",
-    "message": "Insufficient admin permissions for this operation",
-    "details": "You need super-admin permissions to perform this action"
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
-
-## Common Error Codes
-
-| Code | Description | Solution |
-|------|-------------|----------|
-| `INSUFFICIENT_ADMIN_PERMISSIONS` | User lacks admin permissions | Check user role and permissions |
-| `ADMIN_TOKEN_EXPIRED` | Admin token has expired | Refresh the admin token |
-| `SYSTEM_MAINTENANCE` | System is under maintenance | Wait for maintenance to complete |
-| `RATE_LIMIT_EXCEEDED` | Too many admin requests | Wait before making another request |
-| `INVALID_ADMIN_OPERATION` | Invalid admin operation | Check operation parameters |
-
-## Best Practices
-
-### 1. Implement Proper Error Handling
-```javascript
-async function makeAdminRequest(endpoint, options = {}) {
-  try {
-    const response = await fetch(`https://api-dev.weir.ai${endpoint}`, {
-      ...options,
-      headers: {
-        'Authorization': `Bearer ${adminToken}`,
-        'Content-Type': 'application/json',
-        ...options.headers
-      }
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      if (error.error.code === 'INSUFFICIENT_ADMIN_PERMISSIONS') {
-        throw new Error('Insufficient admin permissions');
-      }
-      throw new Error(`Admin API Error: ${error.error.message}`);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Admin API request failed:', error);
-    throw error;
-  }
-}
-```
-
-### 2. Handle System Maintenance
-```javascript
-async function makeAdminRequestWithRetry(endpoint, options = {}, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const response = await makeAdminRequest(endpoint, options);
-      return response;
-    } catch (error) {
-      if (error.message.includes('SYSTEM_MAINTENANCE')) {
-        console.log('System under maintenance. Retrying in 30 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-        continue;
-      }
-      
-      if (i === maxRetries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
-    }
-  }
-}
-```
-
-### 3. Implement Audit Logging
-```javascript
-class AdminAPIAuditLogger {
-  logAdminAction(action, details, adminUser) {
-    const auditLog = {
-      timestamp: new Date().toISOString(),
-      action,
-      details,
-      adminUser,
-      ipAddress: this.getClientIP(),
-      userAgent: navigator.userAgent
-    };
-    
-    // Send to audit logging system
-    this.sendAuditLog(auditLog);
-  }
-  
-  async sendAuditLog(auditLog) {
-    try {
-      await fetch('/api/audit-logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(auditLog)
-      });
-    } catch (error) {
-      console.error('Failed to send audit log:', error);
-    }
-  }
-}
-```
-
-## Integration Examples
-
-<CardGroup cols={2}>
-  <Card
-    title="Admin Dashboard"
-    icon="monitor"
-    href="/v0.0.2/playground"
-  >
-    Complete admin dashboard implementation
-  </Card>
-  <Card
-    title="System Monitoring"
-    icon="activity"
-    href="/v0.0.2/playground"
-  >
-    System monitoring and analytics dashboard
-  </Card>
-  <Card
-    title="User Management Tool"
-    icon="users"
-    href="/v0.0.2/playground"
-  >
-    User management and administration tool
-  </Card>
-  <Card
-    title="Platform Configuration"
-    icon="settings"
-    href="/v0.0.2/playground"
-  >
-    Platform configuration and settings management
-  </Card>
-</CardGroup>
-
-## Security Considerations
-
-<Callout type="warning">
-**Important Security Notes:**
-
-- Admin APIs provide system-wide access - use with extreme caution
-- Implement proper access controls and audit logging
-- Never expose admin tokens in client-side code
-- Use HTTPS for all admin API requests
-- Regularly rotate admin tokens
-- Monitor admin API usage for suspicious activity
-</Callout>
-
-## Monitoring and Analytics
-
-Admin APIs provide comprehensive monitoring capabilities:
-
-- **System Metrics**: Performance, usage, and health metrics
-- **User Analytics**: User behavior and engagement analytics
-- **Error Tracking**: Detailed error logging and analysis
-- **Audit Logs**: Complete audit trail of admin actions
-- **Security Monitoring**: Security events and threat detection
-
-## Support
-
-Need help with Admin APIs?
-
-- **Documentation**: Check our comprehensive API reference
-- **Support Team**: Contact us at support@weir.ai
-- **Status Page**: Check system status at status.weir.ai
-- **Internal Support**: Use our internal support channels for admin-specific issues
