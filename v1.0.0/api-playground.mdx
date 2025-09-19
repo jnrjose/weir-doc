@@ -1,0 +1,345 @@
+---
+title: "API Playground"
+description: "Interactive API playground for testing Weir AI API v1.0.0 endpoints"
+icon: "play"
+sidebarTitle: "API Playground"
+---
+
+Welcome to the Weir AI API Playground! This interactive environment allows you to test all API endpoints directly in your browser without needing external tools like Postman or curl.
+
+<Info>
+  **Interactive Testing**
+  
+  Use this playground to explore endpoints, test different parameters, and understand API responses. All endpoints are fully functional and will make real API calls.
+</Info>
+
+## How to Use the Playground
+
+<Steps>
+  <Step title="Select an Endpoint" icon="mouse-pointer">
+    Choose any endpoint from the API Reference section. Each endpoint has an interactive playground.
+  </Step>
+  <Step title="Configure Authentication" icon="key">
+    Enter your API credentials in the authentication section of each endpoint.
+  </Step>
+  <Step title="Set Parameters" icon="cog">
+    Fill in any required parameters, request body, or query parameters.
+  </Step>
+  <Step title="Make the Request" icon="play">
+    Click "Try it out" to execute the API call and see the response.
+  </Step>
+  <Step title="View Results" icon="eye">
+    Examine the response data, status codes, and headers.
+  </Step>
+</Steps>
+
+## Authentication Setup
+
+Before testing endpoints, you'll need to configure authentication:
+
+### For External APIs
+Use Basic Authentication with your username and password:
+
+<CodeBlock lang="json">
+{`{
+  "username": "your_username",
+  "password": "your_password"
+}`}
+</CodeBlock>
+
+### For Console/Admin APIs
+Use Bearer Token authentication:
+
+<CodeBlock lang="json">
+{`{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}`}
+</CodeBlock>
+
+## Available Endpoints
+
+The playground includes all Weir AI API v1.0.0 endpoints organized by category:
+
+<AccordionGroup>
+  <Accordion title="External APIs" icon="globe" defaultOpen={true}>
+    **Base URL**: `https://external.example.com`
+    
+    **Available Endpoints**:
+    - `POST /auth/token` - Generate access token
+    
+    **Authentication**: Basic Authentication
+  </Accordion>
+  
+  <Accordion title="Console APIs" icon="desktop">
+    **Base URL**: `https://api.example.com`
+    
+    **Available Endpoints**:
+    - `POST /auth/m/register` - Register user
+    - `POST /auth/validate/registration` - Validate registration
+    - `PUT /auth/resend/otp/{session}` - Resend OTP
+    - `GET /org/information` - Get organization info
+    - `PATCH /org/information` - Update organization info
+    - `GET /org/teams` - Get teams
+    - `POST /org/create/team` - Create team
+    - `DELETE /org/team/{teamId}` - Delete team
+    - `GET /org/team/members/{teamId}` - Get team members
+    - `POST /org/invite/team/member/{teamId}` - Invite team member
+    - `GET /org/cards` - Get cards
+    - `POST /org/card` - Add card
+    - `DELETE /org/card/{cardId}` - Delete card
+    - `GET /org/platforms` - Get platforms
+    - `POST /org/create/platform` - Create platform
+    - `DELETE /org/platform/{platformId}` - Delete platform
+    - `GET /org/verify/platform/{platformId}` - Verify platform
+    - `GET /org/clients` - Get clients
+    - `POST /org/create/client` - Create client
+    - `PATCH /org/refresh/client` - Refresh client
+    - `DELETE /org/client/{clientId}` - Delete client
+    - `GET /org/talent/roster` - Get talent roster
+    - `POST /org/invite/talent` - Invite talent
+    - `GET /org/talent/name/search` - Search talent
+    - `GET /org/licenses` - Get licenses
+    - `POST /org/talent/license/{talentId}` - Create license
+    - `PATCH /org/talent/license/{licenseId}/image` - Add license images
+    - `DELETE /org/talent/license/{licenseId}/image/{imageId}` - Remove license image
+    
+    **Authentication**: Bearer Token
+  </Accordion>
+  
+  <Accordion title="Admin APIs" icon="user-shield">
+    **Base URL**: `https://api.example.com`
+    
+    **Available Endpoints**:
+    - `POST /auth/login` - Admin login
+    - `POST /auth/logout` - Admin logout
+    - `POST /auth/refresh/token` - Refresh token
+    - `POST /auth/register` - Create admin
+    - `POST /auth/authenticateAdmin` - Authenticate admin
+    - `GET /admin/members` - Get admin members
+    - `POST /admin/member/invite` - Invite admin user
+    - `GET /admin/licenses` - Get licenses
+    - `GET /admin/organizations` - Get organizations
+    - `GET /admin/platforms` - Get platforms
+    - `POST /mail/create/template` - Create mail template
+    - `GET /mail/templates` - Get mail templates
+    - `PUT /mail/template/{id}` - Update mail template
+    - `DELETE /mail/template/{id}` - Delete mail template
+    - `POST /pax/pod` - Create pod
+    - `GET /pax/pods` - Get pods
+    - `GET /pax/pod/{podId}` - Get pod
+    - `POST /pax/start/pod/{podId}` - Start pod
+    - `POST /pax/pause/pod/{podId}` - Pause pod
+    - `POST /pax/stop/pod/{podId}` - Stop pod
+    - `POST /pax/start/pods` - Start all pods
+    - `POST /pax/pause/pods` - Pause all pods
+    - `POST /pax/stop/pods` - Stop all pods
+    - `POST /logs/log` - Create log entry
+    - `GET /logs/search` - Search log entries
+    - `GET /logs/all` - Get log entries
+    
+    **Authentication**: Bearer Token
+  </Accordion>
+</AccordionGroup>
+
+## Testing Scenarios
+
+Here are some common testing scenarios you can try in the playground:
+
+<AccordionGroup>
+  <Accordion title="Authentication Flow" icon="key">
+    **Test the complete authentication flow**:
+    
+    1. **External API**: Test `POST /auth/token` with Basic Auth
+    2. **Console API**: Test `POST /auth/m/register` for user registration
+    3. **Admin API**: Test `POST /auth/login` for admin authentication
+    4. **Token Refresh**: Test `POST /auth/refresh/token` with refresh token
+    
+    **Expected Results**: Successful authentication with access tokens
+  </Accordion>
+  
+  <Accordion title="Organization Management" icon="building">
+    **Test organization management features**:
+    
+    1. **Get Organization Info**: `GET /org/information`
+    2. **Update Organization**: `PATCH /org/information` with updated data
+    3. **Create Team**: `POST /org/create/team` with team details
+    4. **Get Teams**: `GET /org/teams` to list all teams
+    5. **Invite Team Member**: `POST /org/invite/team/member/{teamId}`
+    
+    **Expected Results**: Successful CRUD operations on organization resources
+  </Accordion>
+  
+  <Accordion title="Platform Management" icon="server">
+    **Test platform management features**:
+    
+    1. **Create Platform**: `POST /org/create/platform` with platform details
+    2. **Get Platforms**: `GET /org/platforms` to list platforms
+    3. **Verify Platform**: `GET /org/verify/platform/{platformId}`
+    4. **Delete Platform**: `DELETE /org/platform/{platformId}`
+    
+    **Expected Results**: Successful platform lifecycle management
+  </Accordion>
+  
+  <Accordion title="Talent Management" icon="user-tie">
+    **Test talent and license management**:
+    
+    1. **Get Talent Roster**: `GET /org/talent/roster`
+    2. **Search Talent**: `GET /org/talent/name/search?search=name`
+    3. **Invite Talent**: `POST /org/invite/talent` with email
+    4. **Create License**: `POST /org/talent/license/{talentId}` with license data
+    5. **Get Licenses**: `GET /org/licenses`
+    
+    **Expected Results**: Successful talent and license management operations
+  </Accordion>
+  
+  <Accordion title="System Administration" icon="cogs">
+    **Test admin and monitoring features**:
+    
+    1. **Get Organizations**: `GET /admin/organizations`
+    2. **Get Admin Members**: `GET /admin/members`
+    3. **Create Log Entry**: `POST /logs/log` with log data
+    4. **Search Logs**: `GET /logs/search` with search parameters
+    5. **Pod Management**: Test pod creation, starting, pausing, and stopping
+    
+    **Expected Results**: Successful administrative operations and monitoring
+  </Accordion>
+</AccordionGroup>
+
+## Request/Response Examples
+
+### Example 1: External API Token Generation
+
+<CodeBlock lang="bash" title="Request">
+{`curl -X POST "https://external.example.com/auth/token" \\
+  -H "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" \\
+  -H "Content-Type: application/json"`}
+</CodeBlock>
+
+<CodeBlock lang="json" title="Response">
+{`{
+  "success": true,
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  },
+  "message": "Token generated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+### Example 2: Create Team
+
+<CodeBlock lang="bash" title="Request">
+{`curl -X POST "https://api.example.com/org/create/team" \\
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "name": "Development Team"
+  }'`}
+</CodeBlock>
+
+<CodeBlock lang="json" title="Response">
+{`{
+  "success": true,
+  "data": {
+    "team_id": "team_1234567890",
+    "name": "Development Team",
+    "created_at": "2024-01-15T10:30:00Z",
+    "status": "active"
+  },
+  "message": "Team created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+### Example 3: Get Organization Information
+
+<CodeBlock lang="bash" title="Request">
+{`curl -X GET "https://api.example.com/org/information" \\
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json"`}
+</CodeBlock>
+
+<CodeBlock lang="json" title="Response">
+{`{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890",
+    "name": "Example Company",
+    "website": "https://example.com",
+    "industry": "TECHNOLOGY",
+    "company_size": "MEDIUM",
+    "founded": "2020",
+    "description": "A technology company",
+    "address": {
+      "address1": "123 Main St",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country": "USA"
+    },
+    "contact": {
+      "phone": "+1-555-0123",
+      "email": "contact@example.com"
+    },
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Organization information retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Handling in Playground
+
+The playground will show you different types of errors you might encounter:
+
+<CardGroup cols={2}>
+  <Card title="Authentication Errors" icon="exclamation-triangle">
+    - **401 Unauthorized**: Invalid credentials
+    - **403 Forbidden**: Insufficient permissions
+    - **Token Expired**: Need to refresh token
+  </Card>
+  <Card title="Validation Errors" icon="check-circle">
+    - **400 Bad Request**: Invalid request data
+    - **Missing Fields**: Required parameters not provided
+    - **Invalid Format**: Data format validation errors
+  </Card>
+  <Card title="Resource Errors" icon="file-exclamation">
+    - **404 Not Found**: Resource doesn't exist
+    - **409 Conflict**: Resource already exists
+    - **422 Unprocessable Entity**: Business logic validation
+  </Card>
+  <Card title="Rate Limiting" icon="clock">
+    - **429 Too Many Requests**: Rate limit exceeded
+    - **Retry After**: Information about when to retry
+  </Card>
+</CardGroup>
+
+## Tips for Using the Playground
+
+<CardGroup cols={2}>
+  <Card title="Start Simple" icon="play">
+    Begin with simple GET requests to understand the API structure before trying complex operations.
+  </Card>
+  <Card title="Test Authentication" icon="key">
+    Always test authentication first to ensure your credentials are working correctly.
+  </Card>
+  <Card title="Check Responses" icon="eye">
+    Pay attention to response codes, headers, and error messages to understand API behavior.
+  </Card>
+  <Card title="Use Real Data" icon="database">
+    Use realistic test data that matches the expected format and constraints.
+  </Card>
+  <Card title="Test Error Cases" icon="exclamation-triangle">
+    Try invalid data, missing parameters, and edge cases to understand error handling.
+  </Card>
+  <Card title="Save Examples" icon="bookmark">
+    Copy successful requests and responses for use in your actual implementation.
+  </Card>
+</CardGroup>
+
+<Callout type="info" title="Ready to Test?">
+  Navigate to any endpoint in the API Reference section to start testing. Each endpoint has its own interactive playground where you can experiment with different parameters and see real responses.
+</Callout>

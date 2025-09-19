@@ -1,0 +1,477 @@
+---
+title: "Authentication Guide"
+description: "Complete guide to authentication methods and security best practices for Weir AI API v1.0.0"
+icon: "shield-check"
+sidebarTitle: "Authentication"
+---
+
+Authentication is the foundation of secure API access. This guide covers all authentication methods available in Weir AI API v1.0.0 and provides best practices for secure implementation.
+
+## Authentication Methods Overview
+
+The Weir AI API supports multiple authentication methods, each designed for specific use cases:
+
+<CardGroup cols={2}>
+  <Card title="Basic Authentication" icon="key">
+    **Use Case**: External APIs, simple integrations
+    
+    **Security Level**: Medium
+    
+    **Best For**: Third-party applications, external services
+  </Card>
+  <Card title="Bearer Token (JWT)" icon="shield">
+    **Use Case**: Console and Admin APIs
+    
+    **Security Level**: High
+    
+    **Best For**: Web applications, mobile apps, internal services
+  </Card>
+</CardGroup>
+
+## Basic Authentication
+
+Basic Authentication is the simplest form of authentication, suitable for external integrations and third-party applications.
+
+### How It Works
+
+<Steps>
+  <Step title="Encode Credentials" icon="code">
+    Combine your username and password with a colon (`username:password`) and encode in Base64
+  </Step>
+  <Step title="Add Authorization Header" icon="header">
+    Include the encoded credentials in the `Authorization` header: `Basic <encoded_credentials>`
+  </Step>
+  <Step title="Make API Request" icon="globe">
+    Send your request with the authorization header
+  </Step>
+</Steps>
+
+### Implementation Examples
+
+<AccordionGroup>
+  <Accordion title="cURL" icon="terminal">
+    <CodeBlock lang="bash">
+{`curl -X POST "https://external.example.com/auth/token" \\
+  -H "Authorization: Basic $(echo -n 'username:password' | base64)" \\
+  -H "Content-Type: application/json"`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="JavaScript" icon="javascript">
+    <CodeBlock lang="javascript">
+{`const credentials = btoa('username:password');
+const response = await fetch('https://external.example.com/auth/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Basic \${credentials}\`,
+    'Content-Type': 'application/json'
+  }
+});`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python" icon="python">
+    <CodeBlock lang="python">
+{`import base64
+import requests
+
+credentials = base64.b64encode(b'username:password').decode('ascii')
+response = requests.post(
+    'https://external.example.com/auth/token',
+    headers={
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+)`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+### Security Considerations
+
+<Warning>
+  **Important Security Notes**:
+  
+  - Always use HTTPS with Basic Authentication
+  - Store credentials securely (environment variables, not in code)
+  - Rotate credentials regularly
+  - Consider using API keys instead of passwords when possible
+</Warning>
+
+## Bearer Token Authentication (JWT)
+
+Bearer Token authentication uses JSON Web Tokens (JWT) for stateless, secure authentication. This is the primary method for Console and Admin APIs.
+
+### Obtaining a Bearer Token
+
+There are several ways to obtain a Bearer token:
+
+<AccordionGroup>
+  <Accordion title="Admin Login" icon="user-shield">
+    **Endpoint**: `POST /auth/login`
+    
+    **Use Case**: Admin users accessing administrative functions
+    
+    <CodeBlock lang="json" title="Request Body">
+{`{
+  "username": "admin@example.com",
+  "password": "your_password"
+}`}
+    </CodeBlock>
+    
+    <CodeBlock lang="json" title="Response">
+{`{
+  "success": true,
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expires_in": 3600,
+    "token_type": "Bearer"
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="User Registration" icon="user-plus">
+    **Endpoint**: `POST /auth/m/register`
+    
+    **Use Case**: New user registration (mobile/web)
+    
+    <CodeBlock lang="json" title="Request Body">
+{`{
+  "fullname": "John Doe",
+  "email": "john@example.com",
+  "password": "secure_password"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Token Refresh" icon="refresh">
+    **Endpoint**: `POST /auth/refresh/token`
+    
+    **Use Case**: Refresh expired access tokens
+    
+    <CodeBlock lang="json" title="Request Body">
+{`{
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+### Using Bearer Tokens
+
+Once you have a Bearer token, include it in the `Authorization` header:
+
+<CodeBlock lang="bash">
+{`curl -X GET "https://api.example.com/org/information" \\
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
+  -H "Content-Type: application/json"`}
+</CodeBlock>
+
+### Token Lifecycle Management
+
+<CardGroup cols={2}>
+  <Card title="Access Tokens" icon="clock">
+    - **Lifetime**: 1 hour (3600 seconds)
+    - **Purpose**: API authentication
+    - **Refresh**: Use refresh token to get new access token
+  </Card>
+  <Card title="Refresh Tokens" icon="refresh">
+    - **Lifetime**: 7 days
+    - **Purpose**: Obtain new access tokens
+    - **Security**: Store securely, can be revoked
+  </Card>
+</CardGroup>
+
+### Token Refresh Implementation
+
+<CodeBlock lang="javascript" title="Automatic Token Refresh">
+{`class WeirAPIClient {
+  constructor(baseURL, refreshToken) {
+    this.baseURL = baseURL;
+    this.refreshToken = refreshToken;
+    this.accessToken = null;
+  }
+  
+  async refreshAccessToken() {
+    const response = await fetch(\`\${this.baseURL}/auth/refresh/token\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        refresh_token: this.refreshToken
+      })
+    });
+    
+    const data = await response.json();
+    this.accessToken = data.data.access_token;
+    return this.accessToken;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    if (!this.accessToken) {
+      await this.refreshAccessToken();
+    }
+    
+    const response = await fetch(\`\${this.baseURL}\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${this.accessToken}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    // Handle token expiration
+    if (response.status === 401) {
+      await this.refreshAccessToken();
+      return this.makeRequest(endpoint, options);
+    }
+    
+    return response;
+  }
+}`}
+</CodeBlock>
+
+## Authentication for Different API Categories
+
+### External APIs
+
+<CardGroup cols={1}>
+  <Card title="Authentication Method" icon="key">
+    **Primary**: Basic Authentication
+    
+    **Alternative**: Bearer Token (if obtained from other sources)
+  </Card>
+  <Card title="Use Cases" icon="globe">
+    - Third-party integrations
+    - External applications
+    - Public API access
+    - Mobile applications
+  </Card>
+  <Card title="Security Level" icon="shield">
+    Medium - suitable for external integrations with proper HTTPS usage
+  </Card>
+</CardGroup>
+
+### Console APIs
+
+<CardGroup cols={1}>
+  <Card title="Authentication Method" icon="shield">
+    **Primary**: Bearer Token (JWT)
+    
+    **Session**: Web console sessions
+  </Card>
+  <Card title="Use Cases" icon="desktop">
+    - Organization management
+    - Team administration
+    - Platform configuration
+    - User management
+  </Card>
+  <Card title="Security Level" icon="user-shield">
+    High - includes role-based access control and audit logging
+  </Card>
+</CardGroup>
+
+### Admin APIs
+
+<CardGroup cols={1}>
+  <Card title="Authentication Method" icon="user-shield">
+    **Primary**: Admin Bearer Token
+    
+    **Additional**: Multi-factor authentication for sensitive operations
+  </Card>
+  <Card title="Use Cases" icon="cogs">
+    - System administration
+    - Platform monitoring
+    - User oversight
+    - System configuration
+  </Card>
+  <Card title="Security Level" icon="shield-check">
+    Highest - includes elevated privileges and comprehensive audit logging
+  </Card>
+</CardGroup>
+
+## Security Best Practices
+
+### Credential Management
+
+<Steps>
+  <Step title="Never Hardcode Credentials" icon="exclamation-triangle">
+    Store all credentials in environment variables or secure credential stores. Never commit credentials to version control.
+  </Step>
+  <Step title="Use Environment Variables" icon="code">
+    <CodeBlock lang="bash">
+{`# .env file
+WEIR_API_USERNAME=your_username
+WEIR_API_PASSWORD=your_password
+WEIR_API_BASE_URL=https://api.example.com`}
+    </CodeBlock>
+  </Step>
+  <Step title="Implement Credential Rotation" icon="refresh">
+    Regularly rotate API credentials and tokens. Implement automated rotation where possible.
+  </Step>
+  <Step title="Use Least Privilege" icon="user-check">
+    Only request and use the minimum permissions required for your use case.
+  </Step>
+</Steps>
+
+### Network Security
+
+<CardGroup cols={2}>
+  <Card title="Always Use HTTPS" icon="lock">
+    - All API communications must use HTTPS
+    - Verify SSL certificates
+    - Use TLS 1.2 or higher
+  </Card>
+  <Card title="Validate Certificates" icon="certificate">
+    - Implement proper certificate validation
+    - Use certificate pinning for mobile apps
+    - Monitor for certificate changes
+  </Card>
+  <Card title="Secure Network Configuration" icon="network-wired">
+    - Use VPNs for sensitive operations
+    - Implement network segmentation
+    - Monitor network traffic
+  </Card>
+  <Card title="Rate Limiting" icon="clock">
+    - Implement client-side rate limiting
+    - Respect API rate limits
+    - Use exponential backoff
+  </Card>
+</CardGroup>
+
+### Error Handling
+
+<CodeBlock lang="javascript" title="Secure Error Handling">
+{`async function makeSecureRequest(url, options) {
+  try {
+    const response = await fetch(url, options);
+    
+    if (response.status === 401) {
+      // Handle authentication error
+      console.error('Authentication failed - check credentials');
+      throw new Error('Authentication failed');
+    }
+    
+    if (response.status === 403) {
+      // Handle authorization error
+      console.error('Access denied - insufficient permissions');
+      throw new Error('Access denied');
+    }
+    
+    if (response.status === 429) {
+      // Handle rate limiting
+      const retryAfter = response.headers.get('Retry-After');
+      console.warn(\`Rate limited. Retry after \${retryAfter} seconds\`);
+      throw new Error('Rate limited');
+    }
+    
+    return response;
+  } catch (error) {
+    // Log error securely (don't log credentials)
+    console.error('API request failed:', error.message);
+    throw error;
+  }
+}`}
+</CodeBlock>
+
+## Troubleshooting Authentication Issues
+
+### Common Issues and Solutions
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized" icon="exclamation-triangle">
+    **Possible Causes**:
+    - Invalid credentials
+    - Expired token
+    - Missing Authorization header
+    - Incorrect token format
+    
+    **Solutions**:
+    1. Verify credentials are correct
+    2. Check token expiration
+    3. Ensure Authorization header is properly formatted
+    4. Refresh token if expired
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="user-slash">
+    **Possible Causes**:
+    - Insufficient permissions
+    - Token doesn't have required scope
+    - Account restrictions
+    
+    **Solutions**:
+    1. Check user permissions
+    2. Verify token scope
+    3. Contact administrator for access
+  </Accordion>
+  
+  <Accordion title="Token Expired" icon="clock">
+    **Possible Causes**:
+    - Access token has expired
+    - Refresh token has expired
+    - Clock skew issues
+    
+    **Solutions**:
+    1. Refresh access token using refresh token
+    2. Re-authenticate if refresh token expired
+    3. Check system clock synchronization
+  </Accordion>
+</AccordionGroup>
+
+### Debugging Tips
+
+<CardGroup cols={2}>
+  <Card title="Check Headers" icon="header">
+    Verify that the Authorization header is correctly formatted and included in requests.
+  </Card>
+  <Card title="Validate Tokens" icon="check-circle">
+    Use JWT debugger tools to inspect token contents and expiration.
+  </Card>
+  <Card title="Test with API Playground" icon="play">
+    Use the interactive API playground to test authentication without code.
+  </Card>
+  <Card title="Monitor Logs" icon="chart-line">
+    Check application logs for authentication errors and patterns.
+  </Card>
+</CardGroup>
+
+## API Key Management
+
+### Best Practices for API Keys
+
+<Steps>
+  <Step title="Generate Unique Keys" icon="key">
+    Create unique API keys for each application or environment (development, staging, production).
+  </Step>
+  <Step title="Implement Key Rotation" icon="refresh">
+    Regularly rotate API keys and implement a process for seamless key updates.
+  </Step>
+  <Step title="Monitor Key Usage" icon="eye">
+    Track API key usage patterns and monitor for unusual activity.
+  </Step>
+  <Step title="Implement Key Revocation" icon="ban">
+    Have a process to immediately revoke compromised or unused keys.
+  </Step>
+</Steps>
+
+### Key Storage Security
+
+<CodeBlock lang="javascript" title="Secure Key Storage Example">
+{`// ❌ NEVER do this
+const API_KEY = 'sk_live_1234567890abcdef';
+
+// ✅ DO this instead
+const API_KEY = process.env.WEIR_API_KEY;
+
+// ✅ Even better - use a secure credential store
+const { getSecret } = require('@aws-sdk/client-secrets-manager');
+const apiKey = await getSecret('weir-api-key');`}
+</CodeBlock>
+
+<Tip>
+  **Pro Tip**: Use the API Playground to test different authentication methods and understand the response formats before implementing in your application. This will help you avoid common authentication pitfalls.
+</Tip>

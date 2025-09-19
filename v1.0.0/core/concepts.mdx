@@ -1,0 +1,394 @@
+---
+title: "Core API Concepts"
+description: "Understanding the fundamental concepts and design principles of Weir AI API v1.0.0"
+icon: "lightbulb"
+sidebarTitle: "Core Concepts"
+---
+
+This section covers the fundamental concepts and design principles that underpin the Weir AI API v1.0.0. Understanding these concepts will help you build more effective and reliable integrations.
+
+## API Architecture Overview
+
+The Weir AI API v1.0.0 follows a modern, RESTful architecture designed for scalability, security, and ease of use.
+
+<CardGroup cols={1}>
+  <Card title="RESTful Design" icon="globe">
+    All endpoints follow REST principles with clear resource-based URLs, standard HTTP methods, and consistent response formats.
+  </Card>
+  <Card title="Multi-Tenant Architecture" icon="building">
+    Support for multiple organizations, teams, and platforms with proper isolation and access control.
+  </Card>
+  <Card title="Role-Based Access Control" icon="user-shield">
+    Different API categories (External, Console, Admin) with appropriate permissions and authentication methods.
+  </Card>
+  <Card title="Scalable Infrastructure" icon="server">
+    Built to handle high-volume requests with proper rate limiting and monitoring capabilities.
+  </Card>
+</CardGroup>
+
+## API Categories and Use Cases
+
+The Weir AI API is organized into three main categories, each serving specific use cases:
+
+### External APIs
+**Purpose**: Public-facing APIs for third-party integrations
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - **Basic Authentication**: Username/password based authentication
+    - **Bearer Token**: JWT-based authentication for stateless operations
+    - **API Key**: Simple key-based authentication for external services
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="globe">
+    - Third-party application integrations
+    - Public API access
+    - External service providers
+    - Mobile applications
+  </Accordion>
+  
+  <Accordion title="Key Endpoints" icon="list">
+    - `POST /auth/token` - Generate access tokens
+    - Token management and refresh
+    - Basic resource access
+  </Accordion>
+</AccordionGroup>
+
+### Console APIs
+**Purpose**: Organization and platform management
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="shield">
+    - **Bearer Token (JWT)**: Primary authentication method
+    - **Session-based**: For web console access
+    - **Multi-factor**: Enhanced security for sensitive operations
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="desktop">
+    - Organization management dashboards
+    - Team and user management
+    - Platform configuration
+    - Client and resource management
+  </Accordion>
+  
+  <Accordion title="Key Endpoints" icon="list">
+    - User registration and authentication
+    - Organization information management
+    - Team creation and management
+    - Platform and client management
+    - Talent roster management
+  </Accordion>
+</AccordionGroup>
+
+### Admin APIs
+**Purpose**: System administration and platform-wide management
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="user-shield">
+    - **Admin Bearer Token**: Elevated privileges required
+    - **Multi-factor Authentication**: Enhanced security
+    - **Audit Logging**: All admin actions are logged
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="cogs">
+    - System administration
+    - Platform monitoring
+    - Content management
+    - User and organization oversight
+    - Logging and analytics
+  </Accordion>
+  
+  <Accordion title="Key Endpoints" icon="list">
+    - Admin authentication and management
+    - System-wide user management
+    - Platform monitoring and control
+    - Mail template management
+    - Pod orchestration
+    - Comprehensive logging
+  </Accordion>
+</AccordionGroup>
+
+## Authentication and Security
+
+Security is a fundamental aspect of the Weir AI API. Here's how we ensure your data and integrations are protected:
+
+### Authentication Methods
+
+<CardGroup cols={2}>
+  <Card title="Basic Authentication" icon="key">
+    **Use Case**: External APIs, simple integrations
+    
+    **Format**: `Authorization: Basic <base64(username:password)>`
+    
+    **Security**: HTTPS required, credentials should be rotated regularly
+  </Card>
+  <Card title="Bearer Token (JWT)" icon="shield">
+    **Use Case**: Console and Admin APIs, stateless operations
+    
+    **Format**: `Authorization: Bearer <jwt_token>`
+    
+    **Security**: Tokens have expiration, can be refreshed, support revocation
+  </Card>
+</CardGroup>
+
+### Security Best Practices
+
+<Steps>
+  <Step title="Use HTTPS Always" icon="lock">
+    All API communications must use HTTPS. Never send credentials over unencrypted connections.
+  </Step>
+  <Step title="Store Credentials Securely" icon="vault">
+    Never hardcode credentials in your application. Use environment variables or secure credential stores.
+  </Step>
+  <Step title="Implement Token Refresh" icon="refresh">
+    Use refresh tokens to maintain long-lived sessions without storing permanent credentials.
+  </Step>
+  <Step title="Monitor API Usage" icon="eye">
+    Implement logging and monitoring to detect unusual API usage patterns.
+  </Step>
+  <Step title="Follow Principle of Least Privilege" icon="user-check">
+    Only request and use the minimum permissions required for your use case.
+  </Step>
+</Steps>
+
+## Request and Response Patterns
+
+### Standard Request Format
+
+All API requests follow consistent patterns:
+
+<CodeBlock lang="json" title="Request Headers">
+{`{
+  "Authorization": "Bearer <token>",
+  "Content-Type": "application/json",
+  "Accept": "application/json",
+  "User-Agent": "YourApp/1.0"
+}`}
+</CodeBlock>
+
+### Standard Response Format
+
+API responses follow a consistent structure:
+
+<CodeBlock lang="json" title="Success Response">
+{`{
+  "success": true,
+  "data": {
+    // Response data here
+  },
+  "message": "Operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+<CodeBlock lang="json" title="Error Response">
+{`{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request parameters",
+    "details": {
+      "field": "email",
+      "reason": "Invalid email format"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Handling
+
+Robust error handling is essential for reliable integrations:
+
+### HTTP Status Codes
+
+<CardGroup cols={2}>
+  <Card title="2xx Success" icon="check-circle">
+    - **200 OK**: Request successful
+    - **201 Created**: Resource created
+    - **202 Accepted**: Request accepted for processing
+  </Card>
+  <Card title="4xx Client Error" icon="exclamation-triangle">
+    - **400 Bad Request**: Invalid request
+    - **401 Unauthorized**: Authentication required
+    - **403 Forbidden**: Access denied
+    - **404 Not Found**: Resource not found
+    - **429 Too Many Requests**: Rate limit exceeded
+  </Card>
+  <Card title="5xx Server Error" icon="server">
+    - **500 Internal Server Error**: Server error
+    - **502 Bad Gateway**: Gateway error
+    - **503 Service Unavailable**: Service unavailable
+  </Card>
+  <Card title="Rate Limiting" icon="clock">
+    - **429 Too Many Requests**: Rate limit exceeded
+    - Check `Retry-After` header for retry timing
+  </Card>
+</CardGroup>
+
+### Error Response Structure
+
+<CodeBlock lang="json" title="Detailed Error Response">
+{`{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests",
+    "details": {
+      "limit": 1000,
+      "remaining": 0,
+      "reset_time": "2024-01-15T11:00:00Z"
+    },
+    "retry_after": 3600
+  },
+  "timestamp": "2024-01-15T10:30:00Z",
+  "request_id": "req_1234567890"
+}`}
+</CodeBlock>
+
+## Rate Limiting
+
+To ensure fair usage and system stability, the Weir AI API implements rate limiting:
+
+<AccordionGroup>
+  <Accordion title="Rate Limit Headers" icon="clock">
+    Every API response includes rate limit information:
+    
+    - `X-RateLimit-Limit`: Maximum requests per time window
+    - `X-RateLimit-Remaining`: Remaining requests in current window
+    - `X-RateLimit-Reset`: Time when the rate limit resets
+  </Accordion>
+  
+  <Accordion title="Rate Limit Tiers" icon="layers">
+    Different API categories have different rate limits:
+    
+    - **External APIs**: 1000 requests/hour
+    - **Console APIs**: 5000 requests/hour
+    - **Admin APIs**: 10000 requests/hour
+  </Accordion>
+  
+  <Accordion title="Handling Rate Limits" icon="exclamation-triangle">
+    When you hit a rate limit:
+    
+    1. Check the `Retry-After` header
+    2. Implement exponential backoff
+    3. Consider upgrading your plan for higher limits
+    4. Optimize your API usage patterns
+  </Accordion>
+</AccordionGroup>
+
+## Pagination
+
+Many endpoints support pagination for large datasets:
+
+<CodeBlock lang="json" title="Paginated Response">
+{`{
+  "success": true,
+  "data": [
+    // Array of items
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 150,
+    "total_pages": 8,
+    "has_next": true,
+    "has_prev": false
+  }
+}`}
+</CodeBlock>
+
+### Pagination Parameters
+
+<CardGroup cols={2}>
+  <Card title="Query Parameters" icon="list">
+    - `page`: Page number (default: 1)
+    - `limit`: Items per page (default: 20, max: 100)
+  </Card>
+  <Card title="Response Headers" icon="eye">
+    - `X-Total-Count`: Total number of items
+    - `X-Page-Count`: Total number of pages
+    - `Link`: Navigation links for pagination
+  </Card>
+</CardGroup>
+
+## Data Formats and Validation
+
+### Supported Content Types
+
+<CardGroup cols={2}>
+  <Card title="Request Content" icon="upload">
+    - `application/json`: JSON data
+    - `multipart/form-data`: File uploads
+    - `application/x-www-form-urlencoded`: Form data
+  </Card>
+  <Card title="Response Content" icon="download">
+    - `application/json`: JSON responses
+    - `application/pdf`: PDF documents
+    - `image/*`: Image files
+  </Card>
+</CardGroup>
+
+### Data Validation
+
+<AccordionGroup>
+  <Accordion title="Input Validation" icon="check-circle">
+    All input data is validated against defined schemas:
+    
+    - Required fields are enforced
+    - Data types are validated
+    - Format validation (email, URL, etc.)
+    - Length and size constraints
+  </Accordion>
+  
+  <Accordion title="Error Messages" icon="exclamation-triangle">
+    Validation errors include detailed information:
+    
+    - Field-specific error messages
+    - Suggested corrections
+    - Validation rule references
+  </Accordion>
+</AccordionGroup>
+
+## Webhooks and Callbacks
+
+For asynchronous operations, the API supports webhooks:
+
+<CardGroup cols={1}>
+  <Card title="Webhook Configuration" icon="webhook">
+    Configure callback URLs for real-time notifications of events and status changes.
+  </Card>
+  <Card title="Event Types" icon="bell">
+    Subscribe to various events like user registration, team updates, platform changes, and system alerts.
+  </Card>
+  <Card title="Security" icon="shield">
+    Webhook payloads are signed to ensure authenticity and prevent tampering.
+  </Card>
+</CardGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Implement Proper Error Handling" icon="exclamation-triangle">
+    Always handle both expected and unexpected errors gracefully. Check HTTP status codes and parse error responses.
+  </Step>
+  <Step title="Use Appropriate Authentication" icon="key">
+    Choose the right authentication method for your use case. Use Bearer tokens for stateless operations, Basic auth for simple integrations.
+  </Step>
+  <Step title="Respect Rate Limits" icon="clock">
+    Implement proper rate limiting and backoff strategies. Monitor rate limit headers and adjust your request patterns accordingly.
+  </Step>
+  <Step title="Cache When Appropriate" icon="database">
+    Cache responses when possible to reduce API calls and improve performance. Respect cache headers and implement proper cache invalidation.
+  </Step>
+  <Step title="Monitor and Log" icon="chart-line">
+    Implement comprehensive logging and monitoring for your API usage. Track success rates, error rates, and performance metrics.
+  </Step>
+  <Step title="Test Thoroughly" icon="flask">
+    Test your integration thoroughly, including error scenarios, edge cases, and rate limiting situations.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: Use the API Playground to test different scenarios and understand the API behavior before implementing your integration. This will save you time and help you build more robust applications.
+</Tip>

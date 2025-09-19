@@ -1,0 +1,215 @@
+---
+title: "Generate Access Token"
+api: "POST /auth/token"
+description: "Generate an access token for external API authentication using Basic Authentication"
+---
+
+Generate an access token for external API authentication. This endpoint uses Basic Authentication and is designed for third-party integrations and external applications.
+
+<Note>
+  **External API Endpoint**
+  
+  This endpoint is part of the External API category and uses Basic Authentication. It's designed for third-party integrations and external services.
+</Note>
+
+## Authentication
+
+This endpoint requires Basic Authentication. Include your username and password in the Authorization header:
+
+<CodeBlock lang="bash">
+{`Authorization: Basic <base64_encoded_credentials>`}
+</CodeBlock>
+
+## Request
+
+No request body required for this endpoint.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the access token information
+</ResponseField>
+
+<ResponseField name="data.access_token" type="string">
+  The JWT access token for API authentication
+</ResponseField>
+
+<ResponseField name="data.token_type" type="string">
+  The token type, always "Bearer"
+</ResponseField>
+
+<ResponseField name="data.expires_in" type="integer">
+  Token expiration time in seconds (typically 3600 seconds = 1 hour)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://external.example.com/auth/token" \
+  -H "Authorization: Basic $(echo -n 'username:password' | base64)" \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const credentials = btoa('username:password');
+const response = await fetch('https://external.example.com/auth/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Basic ${credentials}`,
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import base64
+import requests
+
+credentials = base64.b64encode(b'username:password').decode('ascii')
+response = requests.post(
+    'https://external.example.com/auth/token',
+    headers={
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$credentials = base64_encode('username:password');
+$response = file_get_contents('https://external.example.com/auth/token', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Basic ' . $credentials,
+            'Content-Type: application/json'
+        ]
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/base64"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    credentials := base64.StdEncoding.EncodeToString([]byte("username:password"))
+    
+    req, _ := http.NewRequest("POST", "https://external.example.com/auth/token", nil)
+    req.Header.Set("Authorization", "Basic "+credentials)
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    // Process response
+    fmt.Println("Access token generated")
+}
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{`{
+  "success": true,
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    "token_type": "Bearer",
+    "expires_in": 3600
+  },
+  "message": "Access token generated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid credentials provided
+</ResponseField>
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request format or missing required fields
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Response
+
+<CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Invalid username or password",
+    "details": {
+      "field": "credentials",
+      "reason": "Authentication failed"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Token Usage" icon="key">
+    The generated access token should be used in the `Authorization` header for subsequent API calls:
+    
+    ```
+    Authorization: Bearer <access_token>
+    ```
+  </Accordion>
+  
+  <Accordion title="Token Expiration" icon="clock">
+    Access tokens expire after 1 hour (3600 seconds). You'll need to generate a new token when it expires.
+  </Accordion>
+  
+  <Accordion title="Security Best Practices" icon="shield">
+    - Always use HTTPS when making requests
+    - Store credentials securely (environment variables, not in code)
+    - Rotate credentials regularly
+    - Never log or expose access tokens
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    This endpoint is subject to rate limiting. Check response headers for rate limit information:
+    - `X-RateLimit-Limit`: Maximum requests per hour
+    - `X-RateLimit-Remaining`: Remaining requests in current window
+    - `X-RateLimit-Reset`: Time when rate limit resets
+  </Accordion>
+</AccordionGroup>

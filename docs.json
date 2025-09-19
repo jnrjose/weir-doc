@@ -3,351 +3,10 @@
 	"theme": "palm",
 	"name": "Welcome to Weir",
 	"favicon": "/shared/logo/Weir_Symbol_Circle.svg",
-	"navigation": {
-		"versions": [
-			{
-				"version": "v0.0.2",
-				"default": true,
-				"tabs": [
-					{
-						"tab": "Getting Started",
-						"groups": [
-							{
-								"group": "Start Here",
-								"pages": [
-									"v0.0.2/index"
-								]
-							},
-							{
-								"group": "API Guide",
-								"pages": [
-									"v0.0.2/api-guide/getting-started",
-									"v0.0.2/api-guide/authentication"
-								]
-							}
-						]
-					},
-					{
-						"tab": "API Reference",
-						"groups": [
-							{
-								"group": "API Playground",
-								"pages": [
-									"v0.0.2/playground"
-								]
-							},
-							{
-								"group": "External APIs",
-								"pages": [
-									"v0.0.2/api-reference/external",
-									"v0.0.2/api-reference/external/generate-access-token"
-								]
-							},
-							{
-								"group": "Console APIs",
-								"pages": [
-									"v0.0.2/api-reference/console",
-									"v0.0.2/api-reference/console/team-management",
-									"v0.0.2/api-reference/console/team-management/create-team",
-									"v0.0.2/api-reference/console/team-management/invite-team-member",
-									"v0.0.2/api-reference/console/team-management/get-teams",
-									"v0.0.2/api-reference/console/team-management/delete-team",
-									"v0.0.2/api-reference/console/team-management/get-team-members"
-								]
-							},
-							{
-								"group": "Admin APIs",
-								"pages": [
-									"v0.0.2/api-reference/admin"
-								]
-							},
-							{
-								"group": "Organization APIs",
-								"pages": [
-									"v0.0.2/api-reference/org"
-								]
-							},
-							{
-								"group": "Authentication APIs",
-								"pages": [
-									"v0.0.2/api-reference/auth",
-									"v0.0.2/api-reference/auth/login",
-									"v0.0.2/api-reference/auth/register"
-								]
-							},
-							{
-								"group": "Trial APIs",
-								"pages": [
-									"v0.0.2/api-reference/trial"
-								]
-							},
-							{
-								"group": "Ad Detection APIs",
-								"pages": [
-									"v0.0.2/api-reference/ad"
-								]
-							},
-							{
-								"group": "Event & Logging APIs",
-								"pages": [
-									"v0.0.2/api-reference/event"
-								]
-							}
-						]
-					},
-					{
-						"tab": "Integration Guides",
-						"groups": [
-							{
-								"group": "Core Concepts",
-								"pages": [
-									"v0.0.2/integration-guides/core-api-concepts",
-									"v0.0.2/integration-guides/core-api-concepts/external-apis",
-									"v0.0.2/integration-guides/core-api-concepts/console-apis",
-									"v0.0.2/integration-guides/core-api-concepts/admin-apis",
-									"v0.0.2/integration-guides/core-api-concepts/organization-apis",
-									"v0.0.2/integration-guides/authentication",
-									"v0.0.2/integration-guides/request-construction",
-									"v0.0.2/integration-guides/response-interpretation"
-								]
-							},
-							{
-								"group": "Best Practices",
-								"pages": [
-									"v0.0.2/integration-guides/best-practices"
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"version": "v0.0.1",
-				"tabs": [
-					{
-						"tab": "Getting Started",
-						"groups": [
-							{
-								"group": "Start Here",
-								"pages": [
-									"v0.0.1/index",
-									"v0.0.1/weir",
-									"v0.0.1/quickstart"
-								]
-							},
-							{
-								"group": "NIL Detection & Interaction",
-								"pages": [
-									"v0.0.1/core/nil",
-									"v0.0.1/core/analysis"
-								]
-							}
-						]
-					},
-					{
-						"tab": "API Reference",
-						"groups": [
-							{
-								"group": "API Playground",
-								"pages": [
-									"v0.0.1/api-playground"
-								]
-							},
-							{
-								"group": "Ad Endpoints",
-								"pages": [
-									"v0.0.1/reference/ad/validateIdentity",
-									"v0.0.1/reference/ad/validation/status"
-								]
-							},
-							{
-								"group": "Auth Endpoints",
-								"pages": [
-									"v0.0.1/reference/auth/register",
-									"v0.0.1/reference/auth/login",
-									"v0.0.1/reference/auth/token",
-									"v0.0.1/reference/auth/refresh/token",
-									"v0.0.1/reference/auth/authenticate",
-									"v0.0.1/reference/auth/authenticateAPI",
-									"v0.0.1/reference/auth/authenticateForgotToken",
-									"v0.0.1/reference/auth/forgot",
-									"v0.0.1/reference/auth/forgot/resendOtp",
-									"v0.0.1/reference/auth/forgot/validateOtp",
-									"v0.0.1/reference/auth/update/password",
-									"v0.0.1/reference/auth/logout",
-									"v0.0.1/reference/auth/revoke/token",
-									"v0.0.1/reference/auth/register/invitee",
-									"v0.0.1/reference/auth/validate/invitee",
-									"v0.0.1/reference/auth/validate/invitee/otp"
-								]
-							},
-							{
-								"group": "Event Endpoints",
-								"pages": [
-									"v0.0.1/reference/event/logs"
-								]
-							},
-							{
-								"group": "Org Endpoints",
-								"pages": [
-									"v0.0.1/reference/org/create/client",
-									"v0.0.1/reference/org/create/platform",
-									"v0.0.1/reference/org/create/team",
-									"v0.0.1/reference/org/information",
-									"v0.0.1/reference/org/clients",
-									"v0.0.1/reference/org/platforms",
-									"v0.0.1/reference/org/teams",
-									"v0.0.1/reference/org/client/{clientId}",
-									"v0.0.1/reference/org/platform/{platformId}",
-									"v0.0.1/reference/org/team/{teamId}",
-									"v0.0.1/reference/org/team/members/{teamId}",
-									"v0.0.1/reference/org/invite/team/member/{teamId}",
-									"v0.0.1/reference/org/refresh/client"
-								]
-							},
-							{
-								"group": "Trial Endpoints",
-								"pages": [
-									"v0.0.1/reference/trial/register",
-									"v0.0.1/reference/trial/authenticate",
-									"v0.0.1/reference/trial/users",
-									"v0.0.1/reference/trial/user/{userId}",
-									"v0.0.1/reference/trial/fakeads/{requestId}",
-									"v0.0.1/reference/trial/fakead/{imageId}",
-									"v0.0.1/reference/trial/upload-selfie",
-									"v0.0.1/reference/trial/uploadImage",
-									"v0.0.1/reference/trial/selfie/{imageId}"
-								]
-							}
-						]
-					},
-					{
-						"tab": "Integration Guides",
-						"groups": [
-							{
-								"group": "General Best Practices",
-								"pages": [
-									"v0.0.1/integration/concept",
-									"v0.0.1/integration/auth",
-									"v0.0.1/integration/request",
-									"v0.0.1/integration/response"
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"version": "v0.0.0",
-				"tabs": [
-					{
-						"tab": "Getting Started",
-						"groups": [
-							{
-								"group": "Start Here",
-								"pages": [
-									"v0.0.0/index",
-									"v0.0.0/weir",
-									"v0.0.0/quickstart"
-								]
-							},
-							{
-								"group": "NIL Detection & Interaction",
-								"pages": [
-									"v0.0.0/core/nil",
-									"v0.0.0/core/analysis"
-								]
-							}
-						]
-					},
-					{
-						"tab": "API Reference",
-						"groups": [
-							{
-								"group": "API Playground",
-								"pages": [
-									"v0.0.0/api-playground"
-								]
-							},
-							{
-								"group": "Auth Endpoints",
-								"pages": [
-									"v0.0.0/reference/auth/authenticate",
-									"v0.0.0/reference/auth/authenticateAPI",
-									"v0.0.0/reference/auth/authenticateForgotToken",
-									"v0.0.0/reference/auth/login",
-									"v0.0.0/reference/auth/logout",
-									"v0.0.0/reference/auth/register",
-									"v0.0.0/reference/auth/token",
-									"v0.0.0/reference/auth/forgot",
-									"v0.0.0/reference/auth/forgot/resendOtp",
-									"v0.0.0/reference/auth/forgot/validateOtp",
-									"v0.0.0/reference/auth/update/password",
-									"v0.0.0/reference/auth/revoke/token",
-									"v0.0.0/reference/auth/register/invitee",
-									"v0.0.0/reference/auth/validate/invitee",
-									"v0.0.0/reference/auth/validate/invitee/otp",
-									"v0.0.0/reference/auth/refresh/token"
-								]
-							}
-						]
-					},
-					{
-						"tab": "Integration Guides",
-						"groups": [
-							{
-								"group": "General Best Practices",
-								"pages": [
-									"v0.0.0/integration/concept",
-									"v0.0.0/integration/auth",
-									"v0.0.0/integration/request",
-									"v0.0.0/integration/response"
-								]
-							}
-						]
-					}
-				]
-			}
-		]
-	},
-	"logo": {
-		"light": "/shared/logo/Weir_Logo_Outlined_Primary.svg",
-		"dark": "/shared/logo/Weir_Logo_Outlined_Inverted.svg"
-	},
-	"navbar": {
-		"links": [
-			{
-				"label": "Changelog",
-				"href": "https://weir.ai/changelogs"
-			},
-			{
-				"label": "Status",
-				"href": "https://status.weir.ai/"
-			}
-		],
-		"primary": {
-			"type": "button",
-			"label": "Support",
-			"href": "https://support@weir.ai"
-		}
-	},
-	"footer": {
-		"socials": {
-			"x": "https://x.com/weir_ai",
-			"instagram": "https://instagram.com/weir.ai",
-			"linkedin": "https://linkedin.com/company/weirpbc"
-		}
-	},
 	"colors": {
-		"primary": "#000000",
-		"light": "#DD836E",
-		"dark": "#142740"
-	},
-	"background": {
-		"color": {
-			"light": "#FFFFFF",
-			"dark": "#0C233E"
-		}
+		"primary": "#0D9373",
+		"light": "#07C983",
+		"dark": "#0A5D4A"
 	},
 	"api": {
 		"baseUrl": "https://api-dev.weir.ai/",
@@ -372,5 +31,343 @@
 			],
 			"defaults": "required"
 		}
+	},
+	"navigation": {
+		"versions": [
+			{
+				"version": "v0.0.0",
+				"default": true,
+				"tabs": [
+					{
+						"tab": "Getting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"v0.0.0/index"
+								]
+							},
+							{
+								"group": "Core Concepts",
+								"pages": [
+									"v0.0.0/core/analysis",
+									"v0.0.0/core/nil"
+								]
+							},
+							{
+								"group": "Design Principles",
+								"pages": [
+									"v0.0.0/design/concept",
+									"v0.0.0/design/auth",
+									"v0.0.0/design/request",
+									"v0.0.0/design/response",
+									"v0.0.0/design/error",
+									"v0.0.0/design/rate"
+								]
+							},
+							{
+								"group": "Integration Guides",
+								"pages": [
+									"v0.0.0/integration/concept",
+									"v0.0.0/integration/auth",
+									"v0.0.0/integration/request",
+									"v0.0.0/integration/response",
+									"v0.0.0/integration/error",
+									"v0.0.0/integration/rate"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Playground",
+								"pages": [
+									"v0.0.0/api-playground"
+								]
+							},
+							{
+								"group": "Authentication",
+								"pages": [
+									"v0.0.0/reference/auth/authenticate",
+									"v0.0.0/reference/auth/authenticateAPI",
+									"v0.0.0/reference/auth/authenticateForgotToken",
+									"v0.0.0/reference/auth/login",
+									"v0.0.0/reference/auth/register",
+									"v0.0.0/reference/auth/token",
+									"v0.0.0/reference/auth/logout",
+									"v0.0.0/reference/auth/refresh/token",
+									"v0.0.0/reference/auth/revoke/token",
+									"v0.0.0/reference/auth/forgot",
+									"v0.0.0/reference/auth/forgot/resendOtp",
+									"v0.0.0/reference/auth/forgot/validateOtp",
+									"v0.0.0/reference/auth/update/password",
+									"v0.0.0/reference/auth/validate/invitee",
+									"v0.0.0/reference/auth/validate/invitee/otp",
+									"v0.0.0/reference/auth/register/invitee"
+								]
+							},
+							{
+								"group": "Organization Management",
+								"pages": [
+									"v0.0.0/reference/org/information",
+									"v0.0.0/reference/org/teams",
+									"v0.0.0/reference/org/team/create",
+									"v0.0.0/reference/org/team/update",
+									"v0.0.0/reference/org/team/delete",
+									"v0.0.0/reference/org/team/members",
+									"v0.0.0/reference/org/team/invite",
+									"v0.0.0/reference/org/platforms",
+									"v0.0.0/reference/org/platform/create",
+									"v0.0.0/reference/org/platform/update",
+									"v0.0.0/reference/org/platform/delete",
+									"v0.0.0/reference/org/clients",
+									"v0.0.0/reference/org/client/create",
+									"v0.0.0/reference/org/client/update",
+									"v0.0.0/reference/org/client/delete",
+									"v0.0.0/reference/org/refresh/client"
+								]
+							},
+							{
+								"group": "Ad Validation",
+								"pages": [
+									"v0.0.0/reference/ad/validateIdentity",
+									"v0.0.0/reference/ad/validation/status"
+								]
+							},
+							{
+								"group": "Trial Features",
+								"pages": [
+									"v0.0.0/reference/trial/register",
+									"v0.0.0/reference/trial/authenticate",
+									"v0.0.0/reference/trial/users",
+									"v0.0.0/reference/trial/user/create",
+									"v0.0.0/reference/trial/uploadImage",
+									"v0.0.0/reference/trial/upload-selfie",
+									"v0.0.0/reference/trial/selfie/upload",
+									"v0.0.0/reference/trial/fakeads",
+									"v0.0.0/reference/trial/fakead/create"
+								]
+							},
+							{
+								"group": "Event Logging",
+								"pages": [
+									"v0.0.0/reference/event/logs"
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"version": "v0.0.1",
+				"tabs": [
+					{
+						"tab": "Getting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"v0.0.1/index"
+								]
+							},
+							{
+								"group": "Core Concepts",
+								"pages": [
+									"v0.0.1/core/analysis",
+									"v0.0.1/core/nil"
+								]
+							},
+							{
+								"group": "Design Principles",
+								"pages": [
+									"v0.0.1/design/concept",
+									"v0.0.1/design/auth",
+									"v0.0.1/design/request",
+									"v0.0.1/design/response",
+									"v0.0.1/design/error",
+									"v0.0.1/design/rate"
+								]
+							},
+							{
+								"group": "Integration Guides",
+								"pages": [
+									"v0.0.1/integration/concept",
+									"v0.0.1/integration/auth",
+									"v0.0.1/integration/request",
+									"v0.0.1/integration/response",
+									"v0.0.1/integration/error",
+									"v0.0.1/integration/rate"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Playground",
+								"pages": [
+									"v0.0.1/api-playground"
+								]
+							},
+							{
+								"group": "Authentication",
+								"pages": [
+									"v0.0.1/reference/auth/authenticate",
+									"v0.0.1/reference/auth/authenticateAPI",
+									"v0.0.1/reference/auth/authenticateForgotToken",
+									"v0.0.1/reference/auth/login",
+									"v0.0.1/reference/auth/register",
+									"v0.0.1/reference/auth/token",
+									"v0.0.1/reference/auth/logout",
+									"v0.0.1/reference/auth/refresh/token",
+									"v0.0.1/reference/auth/revoke/token",
+									"v0.0.1/reference/auth/forgot",
+									"v0.0.1/reference/auth/forgot/resendOtp",
+									"v0.0.1/reference/auth/forgot/validateOtp",
+									"v0.0.1/reference/auth/update/password",
+									"v0.0.1/reference/auth/validate/invitee",
+									"v0.0.1/reference/auth/validate/invitee/otp",
+									"v0.0.1/reference/auth/register/invitee"
+								]
+							},
+							{
+								"group": "Organization Management",
+								"pages": [
+									"v0.0.1/reference/org/information",
+									"v0.0.1/reference/org/teams",
+									"v0.0.1/reference/org/team/create",
+									"v0.0.1/reference/org/team/update",
+									"v0.0.1/reference/org/team/delete",
+									"v0.0.1/reference/org/team/members",
+									"v0.0.1/reference/org/team/invite",
+									"v0.0.1/reference/org/platforms",
+									"v0.0.1/reference/org/platform/create",
+									"v0.0.1/reference/org/platform/update",
+									"v0.0.1/reference/org/platform/delete",
+									"v0.0.1/reference/org/clients",
+									"v0.0.1/reference/org/client/create",
+									"v0.0.1/reference/org/client/update",
+									"v0.0.1/reference/org/client/delete",
+									"v0.0.1/reference/org/refresh/client"
+								]
+							},
+							{
+								"group": "Ad Validation",
+								"pages": [
+									"v0.0.1/reference/ad/validateIdentity",
+									"v0.0.1/reference/ad/validation/status"
+								]
+							},
+							{
+								"group": "Trial Features",
+								"pages": [
+									"v0.0.1/reference/trial/register",
+									"v0.0.1/reference/trial/authenticate",
+									"v0.0.1/reference/trial/users",
+									"v0.0.1/reference/trial/user/create",
+									"v0.0.1/reference/trial/uploadImage",
+									"v0.0.1/reference/trial/upload-selfie",
+									"v0.0.1/reference/trial/selfie/upload",
+									"v0.0.1/reference/trial/fakeads",
+									"v0.0.1/reference/trial/fakead/create"
+								]
+							},
+							{
+								"group": "Event Logging",
+								"pages": [
+									"v0.0.1/reference/event/logs"
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"version": "v1.0.0",
+				"tabs": [
+					{
+						"tab": "Getting Started",
+						"groups": [
+							{
+								"group": "Start Here",
+								"pages": [
+									"v1.0.0/index"
+								]
+							},
+							{
+								"group": "Quick Start",
+								"pages": [
+									"v1.0.0/quickstart"
+								]
+							},
+							{
+								"group": "Core Concepts",
+								"pages": [
+									"v1.0.0/core/concepts",
+									"v1.0.0/core/authentication"
+								]
+							},
+							{
+								"group": "Integration Guides",
+								"pages": [
+									"v1.0.0/integration/external-apis",
+									"v1.0.0/integration/console-apis"
+								]
+							}
+						]
+					},
+					{
+						"tab": "API Reference",
+						"groups": [
+							{
+								"group": "API Playground",
+								"pages": [
+									"v1.0.0/api-playground"
+								]
+							},
+							{
+								"group": "External APIs",
+								"pages": [
+									"v1.0.0/reference/external/generate-access-token"
+								]
+							},
+							{
+								"group": "Console APIs",
+								"pages": [
+									"v1.0.0/reference/console/create-team",
+									"v1.0.0/reference/console/get-organization-info"
+								]
+							},
+							{
+								"group": "Team Management",
+								"pages": [
+									"v1.0.0/reference/console/teams/invite-team-member",
+									"v1.0.0/reference/console/teams/get-teams",
+									"v1.0.0/reference/console/teams/delete-team",
+									"v1.0.0/reference/console/teams/get-team-members"
+								]
+							},
+							{
+								"group": "Admin APIs",
+								"pages": [
+									"v1.0.0/reference/admin/login",
+									"v1.0.0/reference/admin/get-organizations"
+								]
+							},
+							{
+								"group": "Admin Authentication",
+								"pages": [
+									"v1.0.0/reference/admin/auth/logout",
+									"v1.0.0/reference/admin/auth/refresh-token"
+								]
+							}
+						]
+					}
+				]
+			}
+		]
 	}
 }

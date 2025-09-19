@@ -1,0 +1,1124 @@
+---
+title: "Console API Integration Guide"
+description: "Complete guide for integrating with Weir AI Console APIs for organization and platform management"
+icon: "desktop"
+sidebarTitle: "Console APIs"
+---
+
+This guide covers everything you need to know about integrating with Weir AI Console APIs. These APIs are designed for organization management, team administration, and platform configuration.
+
+## Overview
+
+Console APIs provide comprehensive management capabilities for organizations, teams, platforms, and users. They use Bearer Token authentication and are designed for internal management applications.
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    **Method**: Bearer Token (JWT)
+    
+    **Security**: High - includes role-based access control
+    
+    **Use Case**: Organization management, admin dashboards
+  </Card>
+  <Card title="Base URL" icon="server">
+    **URL**: `https://api.example.com`
+    
+    **Protocol**: HTTPS only
+    
+    **Rate Limit**: 5000 requests/hour
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+### Step 1: User Registration and Authentication
+
+Console APIs require user registration and authentication. Here's the complete flow:
+
+<Steps>
+  <Step title="Register User" icon="user-plus">
+    Register a new user account using the mobile registration endpoint
+  </Step>
+  <Step title="Validate Registration" icon="check-circle">
+    Complete email verification and OTP validation
+  </Step>
+  <Step title="Obtain Access Token" icon="key">
+    Use login endpoint to get Bearer token for API access
+  </Step>
+  <Step title="Refresh Token" icon="refresh">
+    Implement token refresh mechanism for long-lived sessions
+  </Step>
+</Steps>
+
+### Step 2: Set Up Authentication
+
+<CodeBlock lang="javascript" title="Console API Authentication Setup">
+{`class ConsoleAPIClient {
+  constructor(baseURL) {
+    this.baseURL = baseURL;
+    this.accessToken = null;
+    this.refreshToken = null;
+    this.tokenExpiry = null;
+  }
+  
+  async registerUser(userData) {
+    const response = await fetch(\`\${this.baseURL}/auth/m/register\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(\`Registration failed: \${error.error.message}\`);
+    }
+    
+    return await response.json();
+  }
+  
+  async login(username, password) {
+    const response = await fetch(\`\${this.baseURL}/auth/login\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(\`Login failed: \${error.error.message}\`);
+    }
+    
+    const data = await response.json();
+    this.accessToken = data.data.access_token;
+    this.refreshToken = data.data.refresh_token;
+    this.tokenExpiry = Date.now() + (data.data.expires_in * 1000);
+    
+    return data;
+  }
+  
+  async refreshAccessToken() {
+    if (!this.refreshToken) {
+      throw new Error('No refresh token available. Please login again.');
+    }
+    
+    const response = await fetch(\`\${this.baseURL}/auth/refresh/token\`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ refresh_token: this.refreshToken })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Token refresh failed. Please login again.');
+    }
+    
+    const data = await response.json();
+    this.accessToken = data.data.access_token;
+    this.tokenExpiry = Date.now() + (data.data.expires_in * 1000);
+    
+    return this.accessToken;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    if (!this.accessToken || Date.now() >= this.tokenExpiry) {
+      await this.refreshAccessToken();
+    }
+    
+    return fetch(\`\${this.baseURL}\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${this.accessToken}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+  }
+}`}
+</CodeBlock>
+
+## Available API Categories
+
+### Authentication APIs
+
+<AccordionGroup>
+  <Accordion title="User Registration" icon="user-plus">
+    **Endpoint**: `POST /auth/m/register`
+    
+    **Purpose**: Register new users for console access
+    
+    **Features**:
+    - Email validation
+    - Password strength requirements
+    - Account activation workflow
+  </Accordion>
+  
+  <Accordion title="Registration Validation" icon="check-circle">
+    **Endpoint**: `POST /auth/validate/registration`
+    
+    **Purpose**: Validate email and complete registration
+    
+    **Features**:
+    - OTP verification
+    - Email confirmation
+    - Account activation
+  </Accordion>
+  
+  <Accordion title="OTP Management" icon="envelope">
+    **Endpoint**: `PUT /auth/resend/otp/{session}`
+    
+    **Purpose**: Resend OTP for registration validation
+    
+    **Features**:
+    - Rate limited resend
+    - Session management
+    - Expiration handling
+  </Accordion>
+</AccordionGroup>
+
+### Organization Management APIs
+
+<AccordionGroup>
+  <Accordion title="Organization Information" icon="building">
+    **Endpoints**: 
+    - `GET /org/information` - Get organization details
+    - `PATCH /org/information` - Update organization details
+    
+    **Features**:
+    - Complete organization profile
+    - Address and contact information
+    - Industry and company size
+    - Tax information
+  </Accordion>
+  
+  <Accordion title="Team Management" icon="users">
+    **Endpoints**:
+    - `GET /org/teams` - List teams
+    - `POST /org/create/team` - Create team
+    - `DELETE /org/team/{teamId}` - Delete team
+    - `GET /org/team/members/{teamId}` - Get team members
+    - `POST /org/invite/team/member/{teamId}` - Invite team member
+    
+    **Features**:
+    - Team creation and management
+    - Member invitation and management
+    - Role-based permissions
+    - Team hierarchy support
+  </Accordion>
+  
+  <Accordion title="Platform Management" icon="server">
+    **Endpoints**:
+    - `GET /org/platforms` - List platforms
+    - `POST /org/create/platform` - Create platform
+    - `DELETE /org/platform/{platformId}` - Delete platform
+    - `GET /org/verify/platform/{platformId}` - Verify platform
+    
+    **Features**:
+    - Platform creation and configuration
+    - Domain verification
+    - Platform settings management
+    - Integration testing
+  </Accordion>
+  
+  <Accordion title="Client Management" icon="key">
+    **Endpoints**:
+    - `GET /org/clients` - List clients
+    - `POST /org/create/client` - Create client
+    - `PATCH /org/refresh/client` - Refresh client
+    - `DELETE /org/client/{clientId}` - Delete client
+    
+    **Features**:
+    - API client management
+    - Client credentials
+    - Access control
+    - Usage monitoring
+  </Accordion>
+</AccordionGroup>
+
+### Talent and License Management APIs
+
+<AccordionGroup>
+  <Accordion title="Talent Roster" icon="user-tie">
+    **Endpoints**:
+    - `GET /org/talent/roster` - Get talent roster
+    - `POST /org/invite/talent` - Invite talent
+    - `GET /org/talent/name/search` - Search talent
+    
+    **Features**:
+    - Talent database management
+    - Search and filtering
+    - Invitation workflow
+    - Profile management
+  </Accordion>
+  
+  <Accordion title="License Management" icon="certificate">
+    **Endpoints**:
+    - `GET /org/licenses` - Get licenses
+    - `POST /org/talent/license/{talentId}` - Create license
+    - `PATCH /org/talent/license/{licenseId}/image` - Add license images
+    - `DELETE /org/talent/license/{licenseId}/image/{imageId}` - Remove license image
+    
+    **Features**:
+    - License creation and management
+    - Image upload and management
+    - License validation
+    - Usage tracking
+  </Accordion>
+</AccordionGroup>
+
+### Payment and Billing APIs
+
+<AccordionGroup>
+  <Accordion title="Card Management" icon="credit-card">
+    **Endpoints**:
+    - `GET /org/cards` - Get payment cards
+    - `POST /org/card` - Add payment card
+    - `DELETE /org/card/{cardId}` - Delete payment card
+    
+    **Features**:
+    - Payment method management
+    - Secure card storage
+    - Billing information
+    - Payment processing
+  </Accordion>
+</AccordionGroup>
+
+## Integration Patterns
+
+### Pattern 1: Organization Setup Workflow
+
+Complete organization setup and configuration:
+
+<CodeBlock lang="javascript" title="Organization Setup">
+{`class OrganizationSetup {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async setupOrganization(orgData) {
+    try {
+      // 1. Update organization information
+      await this.updateOrganizationInfo(orgData);
+      
+      // 2. Create initial teams
+      const teams = await this.createInitialTeams(orgData.teams);
+      
+      // 3. Set up platforms
+      const platforms = await this.setupPlatforms(orgData.platforms);
+      
+      // 4. Create API clients
+      const clients = await this.createAPIClients(orgData.clients);
+      
+      // 5. Configure payment methods
+      if (orgData.payment) {
+        await this.setupPaymentMethods(orgData.payment);
+      }
+      
+      return {
+        organization: orgData,
+        teams,
+        platforms,
+        clients
+      };
+      
+    } catch (error) {
+      console.error('Organization setup failed:', error);
+      throw error;
+    }
+  }
+  
+  async updateOrganizationInfo(orgData) {
+    const response = await this.apiClient.makeRequest('/org/information', {
+      method: 'PATCH',
+      body: JSON.stringify(orgData)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to update organization information');
+    }
+    
+    return await response.json();
+  }
+  
+  async createInitialTeams(teams) {
+    const createdTeams = [];
+    
+    for (const teamData of teams) {
+      const response = await this.apiClient.makeRequest('/org/create/team', {
+        method: 'POST',
+        body: JSON.stringify({ name: teamData.name })
+      });
+      
+      if (response.ok) {
+        const team = await response.json();
+        createdTeams.push(team.data);
+        
+        // Add team members if specified
+        if (teamData.members) {
+          await this.addTeamMembers(team.data.team_id, teamData.members);
+        }
+      }
+    }
+    
+    return createdTeams;
+  }
+  
+  async setupPlatforms(platforms) {
+    const createdPlatforms = [];
+    
+    for (const platformData of platforms) {
+      const response = await this.apiClient.makeRequest('/org/create/platform', {
+        method: 'POST',
+        body: JSON.stringify(platformData)
+      });
+      
+      if (response.ok) {
+        const platform = await response.json();
+        createdPlatforms.push(platform.data);
+      }
+    }
+    
+    return createdPlatforms;
+  }
+  
+  async createAPIClients(clients) {
+    const createdClients = [];
+    
+    for (const clientData of clients) {
+      const response = await this.apiClient.makeRequest('/org/create/client', {
+        method: 'POST',
+        body: JSON.stringify(clientData)
+      });
+      
+      if (response.ok) {
+        const client = await response.json();
+        createdClients.push(client.data);
+      }
+    }
+    
+    return createdClients;
+  }
+  
+  async addTeamMembers(teamId, members) {
+    for (const member of members) {
+      await this.apiClient.makeRequest(\`/org/invite/team/member/\${teamId}\`, {
+        method: 'POST',
+        body: JSON.stringify(member)
+      });
+    }
+  }
+}`}
+</CodeBlock>
+
+### Pattern 2: Team Management System
+
+Comprehensive team management with member administration:
+
+<CodeBlock lang="javascript" title="Team Management System">
+{`class TeamManagementSystem {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createTeamWithMembers(teamData) {
+    // Create team
+    const teamResponse = await this.apiClient.makeRequest('/org/create/team', {
+      method: 'POST',
+      body: JSON.stringify({ name: teamData.name })
+    });
+    
+    if (!teamResponse.ok) {
+      throw new Error('Failed to create team');
+    }
+    
+    const team = await teamResponse.json();
+    const teamId = team.data.team_id;
+    
+    // Add members
+    if (teamData.members && teamData.members.length > 0) {
+      await this.addMembersToTeam(teamId, teamData.members);
+    }
+    
+    // Set up team permissions
+    if (teamData.permissions) {
+      await this.setTeamPermissions(teamId, teamData.permissions);
+    }
+    
+    return team.data;
+  }
+  
+  async addMembersToTeam(teamId, members) {
+    const results = [];
+    
+    for (const member of members) {
+      try {
+        const response = await this.apiClient.makeRequest(\`/org/invite/team/member/\${teamId}\`, {
+          method: 'POST',
+          body: JSON.stringify({
+            firstname: member.firstname,
+            lastname: member.lastname,
+            email: member.email,
+            role: member.role || 'Organization_User'
+          })
+        });
+        
+        results.push({
+          member,
+          success: response.ok,
+          response: response.ok ? await response.json() : await response.json()
+        });
+        
+      } catch (error) {
+        results.push({
+          member,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return results;
+  }
+  
+  async getTeamWithMembers(teamId) {
+    // Get team details
+    const teamResponse = await this.apiClient.makeRequest(\`/org/team/members/\${teamId}\`);
+    
+    if (!teamResponse.ok) {
+      throw new Error('Failed to get team members');
+    }
+    
+    const teamData = await teamResponse.json();
+    
+    // Get team information
+    const teamsResponse = await this.apiClient.makeRequest('/org/teams');
+    const teams = await teamsResponse.json();
+    const teamInfo = teams.data.find(t => t.team_id === teamId);
+    
+    return {
+      ...teamInfo,
+      members: teamData.data
+    };
+  }
+  
+  async updateTeamMembers(teamId, memberUpdates) {
+    const results = [];
+    
+    for (const update of memberUpdates) {
+      try {
+        // Update member role or permissions
+        const response = await this.apiClient.makeRequest(\`/org/team/member/\${teamId}/\${update.memberId}\`, {
+          method: 'PATCH',
+          body: JSON.stringify(update.data)
+        });
+        
+        results.push({
+          memberId: update.memberId,
+          success: response.ok,
+          response: response.ok ? await response.json() : await response.json()
+        });
+        
+      } catch (error) {
+        results.push({
+          memberId: update.memberId,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return results;
+  }
+  
+  async removeMemberFromTeam(teamId, memberId) {
+    const response = await this.apiClient.makeRequest(\`/org/team/member/\${teamId}/\${memberId}\`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to remove member from team');
+    }
+    
+    return await response.json();
+  }
+}`}
+</CodeBlock>
+
+### Pattern 3: Platform Management System
+
+Platform creation, configuration, and management:
+
+<CodeBlock lang="javascript" title="Platform Management System">
+{`class PlatformManagementSystem {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createPlatform(platformData) {
+    const response = await this.apiClient.makeRequest('/org/create/platform', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: platformData.name,
+        teamId: platformData.teamId,
+        description: platformData.description,
+        type: platformData.type || 'Forum/Community',
+        domain: platformData.domain
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to create platform');
+    }
+    
+    const platform = await response.json();
+    
+    // Verify platform after creation
+    if (platformData.verify) {
+      await this.verifyPlatform(platform.data.platform_id);
+    }
+    
+    return platform.data;
+  }
+  
+  async verifyPlatform(platformId) {
+    const response = await this.apiClient.makeRequest(\`/org/verify/platform/\${platformId}\`);
+    
+    if (!response.ok) {
+      throw new Error('Platform verification failed');
+    }
+    
+    return await response.json();
+  }
+  
+  async getPlatforms() {
+    const response = await this.apiClient.makeRequest('/org/platforms');
+    
+    if (!response.ok) {
+      throw new Error('Failed to get platforms');
+    }
+    
+    return await response.json();
+  }
+  
+  async updatePlatform(platformId, updateData) {
+    const response = await this.apiClient.makeRequest(\`/org/platform/\${platformId}\`, {
+      method: 'PATCH',
+      body: JSON.stringify(updateData)
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to update platform');
+    }
+    
+    return await response.json();
+  }
+  
+  async deletePlatform(platformId) {
+    const response = await this.apiClient.makeRequest(\`/org/platform/\${platformId}\`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to delete platform');
+    }
+    
+    return await response.json();
+  }
+  
+  async getPlatformStatus(platformId) {
+    const platforms = await this.getPlatforms();
+    const platform = platforms.data.find(p => p.platform_id === platformId);
+    
+    if (!platform) {
+      throw new Error('Platform not found');
+    }
+    
+    return {
+      platform_id: platform.platform_id,
+      name: platform.name,
+      status: platform.status,
+      verified: platform.verified,
+      last_checked: platform.last_checked
+    };
+  }
+}`}
+</CodeBlock>
+
+## Error Handling and Retry Logic
+
+### Comprehensive Error Handling
+
+<CodeBlock lang="javascript" title="Console API Error Handling">
+{`class ConsoleAPIErrorHandler {
+  static async handleResponse(response, context = '') {
+    if (response.ok) {
+      return await response.json();
+    }
+    
+    const errorData = await response.json().catch(() => ({}));
+    
+    switch (response.status) {
+      case 400:
+        throw new ConsoleAPIError('Bad Request', {
+          status: 400,
+          message: errorData.error?.message || 'Invalid request data',
+          details: errorData.error?.details,
+          context
+        });
+        
+      case 401:
+        throw new ConsoleAPIError('Unauthorized', {
+          status: 401,
+          message: 'Authentication required or token expired',
+          context
+        });
+        
+      case 403:
+        throw new ConsoleAPIError('Forbidden', {
+          status: 403,
+          message: 'Insufficient permissions for this operation',
+          context
+        });
+        
+      case 404:
+        throw new ConsoleAPIError('Not Found', {
+          status: 404,
+          message: 'Resource not found',
+          context
+        });
+        
+      case 409:
+        throw new ConsoleAPIError('Conflict', {
+          status: 409,
+          message: errorData.error?.message || 'Resource already exists',
+          context
+        });
+        
+      case 429:
+        throw new ConsoleAPIError('Rate Limited', {
+          status: 429,
+          message: 'Too many requests',
+          retryAfter: response.headers.get('Retry-After'),
+          context
+        });
+        
+      case 500:
+        throw new ConsoleAPIError('Server Error', {
+          status: 500,
+          message: 'Internal server error',
+          context
+        });
+        
+      default:
+        throw new ConsoleAPIError('Unknown Error', {
+          status: response.status,
+          message: errorData.error?.message || 'Unknown error occurred',
+          context
+        });
+    }
+  }
+}
+
+class ConsoleAPIError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'ConsoleAPIError';
+    this.details = details;
+  }
+}`}
+</CodeBlock>
+
+### Retry Logic with Exponential Backoff
+
+<CodeBlock lang="javascript" title="Retry Logic">
+{`class ConsoleAPIRetryHandler {
+  constructor(maxRetries = 3, baseDelay = 1000) {
+    this.maxRetries = maxRetries;
+    this.baseDelay = baseDelay;
+  }
+  
+  async executeWithRetry(operation, context = '') {
+    let lastError;
+    
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        const response = await operation();
+        return await ConsoleAPIErrorHandler.handleResponse(response, context);
+        
+      } catch (error) {
+        lastError = error;
+        
+        // Don't retry on client errors (4xx)
+        if (error instanceof ConsoleAPIError && error.details.status >= 400 && error.details.status < 500) {
+          throw error;
+        }
+        
+        // Don't retry on last attempt
+        if (attempt === this.maxRetries) {
+          break;
+        }
+        
+        // Calculate delay with exponential backoff
+        const delay = this.calculateDelay(attempt, error);
+        console.log(\`Attempt \${attempt} failed: \${error.message}. Retrying in \${delay}ms...\`);
+        
+        await this.sleep(delay);
+      }
+    }
+    
+    throw new Error(\`Operation failed after \${this.maxRetries} attempts: \${lastError.message}\`);
+  }
+  
+  calculateDelay(attempt, error) {
+    // Handle rate limiting
+    if (error instanceof ConsoleAPIError && error.details.status === 429) {
+      return parseInt(error.details.retryAfter || '60') * 1000;
+    }
+    
+    // Exponential backoff with jitter
+    const baseDelay = this.baseDelay * Math.pow(2, attempt - 1);
+    const jitter = Math.random() * 0.1 * baseDelay;
+    
+    return Math.min(baseDelay + jitter, 30000); // Max 30 seconds
+  }
+  
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}`}
+</CodeBlock>
+
+## Security Best Practices
+
+### Token Management
+
+<Steps>
+  <Step title="Secure Token Storage" icon="vault">
+    Store tokens securely using:
+    - Encrypted local storage
+    - Secure HTTP-only cookies
+    - Memory storage for sensitive applications
+  </Step>
+  <Step title="Token Refresh" icon="refresh">
+    Implement automatic token refresh:
+    - Monitor token expiration
+    - Refresh before expiration
+    - Handle refresh failures gracefully
+  </Step>
+  <Step title="Token Revocation" icon="ban">
+    Implement token revocation:
+    - Logout functionality
+    - Token invalidation
+    - Session cleanup
+  </Step>
+</Steps>
+
+### Role-Based Access Control
+
+<CodeBlock lang="javascript" title="Role-Based Access Control">
+{`class RoleBasedAccessControl {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+    this.userPermissions = null;
+  }
+  
+  async loadUserPermissions() {
+    const response = await this.apiClient.makeRequest('/auth/user/permissions');
+    const data = await response.json();
+    this.userPermissions = data.data.permissions;
+    return this.userPermissions;
+  }
+  
+  hasPermission(permission) {
+    if (!this.userPermissions) {
+      throw new Error('User permissions not loaded');
+    }
+    
+    return this.userPermissions.includes(permission);
+  }
+  
+  canManageTeams() {
+    return this.hasPermission('manage_teams');
+  }
+  
+  canManagePlatforms() {
+    return this.hasPermission('manage_platforms');
+  }
+  
+  canManageUsers() {
+    return this.hasPermission('manage_users');
+  }
+  
+  canManageOrganization() {
+    return this.hasPermission('manage_organization');
+  }
+  
+  async executeWithPermissionCheck(permission, operation) {
+    if (!this.hasPermission(permission)) {
+      throw new Error(\`Insufficient permissions: \${permission} required\`);
+    }
+    
+    return await operation();
+  }
+}`}
+</CodeBlock>
+
+## Monitoring and Analytics
+
+### Request Monitoring
+
+<CodeBlock lang="javascript" title="Request Monitoring">
+{`class ConsoleAPIMonitor {
+  constructor(apiClient, metrics) {
+    this.apiClient = apiClient;
+    this.metrics = metrics;
+  }
+  
+  async makeMonitoredRequest(endpoint, options = {}) {
+    const startTime = Date.now();
+    const requestId = this.generateRequestId();
+    
+    try {
+      const response = await this.apiClient.makeRequest(endpoint, options);
+      const duration = Date.now() - startTime;
+      
+      this.metrics.recordRequest({
+        requestId,
+        endpoint,
+        method: options.method || 'GET',
+        status: response.status,
+        duration,
+        success: response.ok
+      });
+      
+      return response;
+      
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      
+      this.metrics.recordError({
+        requestId,
+        endpoint,
+        method: options.method || 'GET',
+        error: error.message,
+        duration
+      });
+      
+      throw error;
+    }
+  }
+  
+  generateRequestId() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+}`}
+</CodeBlock>
+
+## Testing Strategies
+
+### Unit Testing
+
+<CodeBlock lang="javascript" title="Unit Tests for Console APIs">
+{`describe('ConsoleAPIClient', () => {
+  let client;
+  let mockFetch;
+  
+  beforeEach(() => {
+    client = new ConsoleAPIClient('https://api.example.com');
+    mockFetch = jest.fn();
+    global.fetch = mockFetch;
+  });
+  
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  describe('Authentication', () => {
+    test('should login successfully', async () => {
+      const mockResponse = {
+        success: true,
+        data: {
+          access_token: 'test_token',
+          refresh_token: 'test_refresh',
+          expires_in: 3600
+        }
+      };
+      
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+      
+      const result = await client.login('test@example.com', 'password');
+      
+      expect(result).toEqual(mockResponse);
+      expect(client.accessToken).toBe('test_token');
+    });
+    
+    test('should handle login failure', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({
+          success: false,
+          error: { message: 'Invalid credentials' }
+        })
+      });
+      
+      await expect(client.login('test@example.com', 'wrong')).rejects.toThrow();
+    });
+  });
+  
+  describe('Team Management', () => {
+    test('should create team successfully', async () => {
+      const teamData = { name: 'Test Team' };
+      const mockResponse = {
+        success: true,
+        data: { team_id: 'team_123', name: 'Test Team' }
+      };
+      
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse
+      });
+      
+      // Mock authentication
+      client.accessToken = 'test_token';
+      
+      const result = await client.makeRequest('/org/create/team', {
+        method: 'POST',
+        body: JSON.stringify(teamData)
+      });
+      
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://api.example.com/org/create/team',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            'Authorization': 'Bearer test_token'
+          })
+        })
+      );
+    });
+  });
+});`}
+</CodeBlock>
+
+### Integration Testing
+
+<CodeBlock lang="javascript" title="Integration Tests">
+{`describe('Console API Integration', () => {
+  let client;
+  
+  beforeAll(async () => {
+    client = new ConsoleAPIClient(process.env.TEST_API_URL);
+    await client.login(
+      process.env.TEST_USERNAME,
+      process.env.TEST_PASSWORD
+    );
+  });
+  
+  afterAll(async () => {
+    if (client) {
+      await client.logout();
+    }
+  });
+  
+  test('should complete organization setup workflow', async () => {
+    const orgSetup = new OrganizationSetup(client);
+    
+    const orgData = {
+      basicInfo: {
+        website: 'https://testcompany.com',
+        industry: 'TECHNOLOGY',
+        companySize: 'SMALL'
+      },
+      teams: [
+        { name: 'Development Team', members: [] },
+        { name: 'Marketing Team', members: [] }
+      ],
+      platforms: [
+        { name: 'Test Platform', type: 'Forum/Community' }
+      ]
+    };
+    
+    const result = await orgSetup.setupOrganization(orgData);
+    
+    expect(result.organization).toBeDefined();
+    expect(result.teams).toHaveLength(2);
+    expect(result.platforms).toHaveLength(1);
+  });
+  
+  test('should handle team management operations', async () => {
+    const teamManager = new TeamManagementSystem(client);
+    
+    // Create team
+    const team = await teamManager.createTeamWithMembers({
+      name: 'Test Team',
+      members: [
+        {
+          firstname: 'John',
+          lastname: 'Doe',
+          email: 'john@example.com',
+          role: 'Organization_User'
+        }
+      ]
+    });
+    
+    expect(team.team_id).toBeDefined();
+    expect(team.name).toBe('Test Team');
+    
+    // Get team with members
+    const teamWithMembers = await teamManager.getTeamWithMembers(team.team_id);
+    expect(teamWithMembers.members).toBeDefined();
+  });
+});`}
+</CodeBlock>
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Admin Dashboard" icon="tachometer">
+    **Scenario**: Building an admin dashboard for organization management
+    
+    **Implementation**:
+    1. User authentication and session management
+    2. Organization information display and editing
+    3. Team management interface
+    4. Platform monitoring and configuration
+    5. User invitation and management
+    
+    **Example**: Web application for managing Weir AI organization settings
+  </Accordion>
+  
+  <Accordion title="Team Management System" icon="users">
+    **Scenario**: Internal tool for managing teams and members
+    
+    **Implementation**:
+    1. Team creation and configuration
+    2. Member invitation workflow
+    3. Role and permission management
+    4. Team analytics and reporting
+    
+    **Example**: HR system integration for team management
+  </Accordion>
+  
+  <Accordion title="Platform Configuration Tool" icon="cogs">
+    **Scenario**: Tool for configuring and managing platforms
+    
+    **Implementation**:
+    1. Platform creation and setup
+    2. Domain verification process
+    3. Platform settings management
+    4. Integration testing tools
+    
+    **Example**: DevOps tool for platform deployment and configuration
+  </Accordion>
+</AccordionGroup>
+
+<Callout type="info" title="Ready to Integrate?">
+  Console APIs provide powerful management capabilities for organizations. Start with the authentication flow, then explore the specific APIs you need for your use case. Use the API Playground to test endpoints before implementing in your application.
+</Callout>

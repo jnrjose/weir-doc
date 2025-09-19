@@ -1,0 +1,708 @@
+---
+title: "External API Integration Guide"
+description: "Complete guide for integrating with Weir AI External APIs for third-party applications"
+icon: "globe"
+sidebarTitle: "External APIs"
+---
+
+This guide covers everything you need to know about integrating with Weir AI External APIs. These APIs are designed for third-party applications, external services, and public integrations.
+
+## Overview
+
+External APIs provide a simplified interface for external applications to access Weir AI capabilities. They use Basic Authentication and are designed for public consumption.
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    **Method**: Basic Authentication
+    
+    **Security**: Medium - suitable for external integrations
+    
+    **Use Case**: Third-party applications, external services
+  </Card>
+  <Card title="Base URL" icon="server">
+    **URL**: `https://external.example.com`
+    
+    **Protocol**: HTTPS only
+    
+    **Rate Limit**: 1000 requests/hour
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+### Step 1: Obtain Credentials
+
+You'll need Basic Authentication credentials (username and password) for external API access.
+
+<Note>
+  **Credential Management**
+  
+  Store your credentials securely using environment variables or secure credential stores. Never hardcode credentials in your application code.
+</Note>
+
+### Step 2: Set Up Authentication
+
+<CodeBlock lang="javascript" title="Basic Authentication Setup">
+{`// Encode credentials for Basic Auth
+const credentials = btoa('username:password');
+
+// Use in API requests
+const response = await fetch('https://external.example.com/auth/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': \`Basic \${credentials}\`,
+    'Content-Type': 'application/json'
+  }
+});`}
+</CodeBlock>
+
+### Step 3: Make Your First API Call
+
+<CodeBlock lang="javascript" title="Generate Access Token">
+{`async function generateAccessToken() {
+  const credentials = btoa('username:password');
+  
+  try {
+    const response = await fetch('https://external.example.com/auth/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Basic \${credentials}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(\`HTTP error! status: \${response.status}\`);
+    }
+    
+    const data = await response.json();
+    console.log('Access token:', data.data.access_token);
+    return data.data.access_token;
+    
+  } catch (error) {
+    console.error('Error generating access token:', error);
+    throw error;
+  }
+}`}
+</CodeBlock>
+
+## Available Endpoints
+
+### Authentication
+
+<AccordionGroup>
+  <Accordion title="Generate Access Token" icon="key">
+    **Endpoint**: `POST /auth/token`
+    
+    **Purpose**: Generate JWT access token for API authentication
+    
+    **Authentication**: Basic Authentication
+    
+    **Response**: Access token with 1-hour expiration
+  </Accordion>
+</AccordionGroup>
+
+## Integration Patterns
+
+### Pattern 1: Simple Token Generation
+
+For applications that need occasional access to Weir AI services:
+
+<CodeBlock lang="javascript" title="Simple Integration">
+{`class SimpleWeirClient {
+  constructor(username, password) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+  }
+  
+  async getAccessToken() {
+    const response = await fetch('https://external.example.com/auth/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Basic \${this.credentials}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(\`Failed to get access token: \${response.status}\`);
+    }
+    
+    const data = await response.json();
+    return data.data.access_token;
+  }
+  
+  async makeAuthenticatedRequest(endpoint, options = {}) {
+    const token = await this.getAccessToken();
+    
+    return fetch(\`https://external.example.com\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${token}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+  }
+}
+
+// Usage
+const client = new SimpleWeirClient('username', 'password');
+const response = await client.makeAuthenticatedRequest('/some-endpoint');`}
+</CodeBlock>
+
+### Pattern 2: Cached Token Management
+
+For applications that make frequent API calls:
+
+<CodeBlock lang="javascript" title="Cached Token Integration">
+{`class CachedWeirClient {
+  constructor(username, password) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+    this.accessToken = null;
+    this.tokenExpiry = null;
+  }
+  
+  async getValidToken() {
+    // Check if current token is still valid
+    if (this.accessToken && this.tokenExpiry > Date.now()) {
+      return this.accessToken;
+    }
+    
+    // Generate new token
+    return await this.generateNewToken();
+  }
+  
+  async generateNewToken() {
+    const response = await fetch('https://external.example.com/auth/token', {
+      method: 'POST',
+      headers: {
+        'Authorization': \`Basic \${this.credentials}\`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(\`Failed to generate token: \${response.status}\`);
+    }
+    
+    const data = await response.json();
+    this.accessToken = data.data.access_token;
+    this.tokenExpiry = Date.now() + (data.data.expires_in * 1000);
+    
+    return this.accessToken;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    const token = await this.getValidToken();
+    
+    return fetch(\`https://external.example.com\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${token}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+  }
+}`}
+</CodeBlock>
+
+## Error Handling
+
+### Common Error Scenarios
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors" icon="exclamation-triangle">
+    **401 Unauthorized**
+    
+    - Invalid credentials
+    - Expired credentials
+    - Malformed authorization header
+    
+    **Solution**: Verify credentials and authorization header format
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    **429 Too Many Requests**
+    
+    - Exceeded rate limit (1000 requests/hour)
+    - Check `Retry-After` header for retry timing
+    
+    **Solution**: Implement exponential backoff and respect rate limits
+  </Accordion>
+  
+  <Accordion title="Network Errors" icon="wifi">
+    **Network Issues**
+    
+    - Connection timeouts
+    - DNS resolution failures
+    - SSL certificate issues
+    
+    **Solution**: Implement retry logic with exponential backoff
+  </Accordion>
+</AccordionGroup>
+
+### Robust Error Handling
+
+<CodeBlock lang="javascript" title="Comprehensive Error Handling">
+{`class RobustWeirClient {
+  constructor(username, password, options = {}) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+    this.maxRetries = options.maxRetries || 3;
+    this.retryDelay = options.retryDelay || 1000;
+  }
+  
+  async makeRequestWithRetry(endpoint, options = {}) {
+    let lastError;
+    
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        const response = await this.makeRequest(endpoint, options);
+        
+        // Handle rate limiting
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = retryAfter ? parseInt(retryAfter) * 1000 : this.retryDelay * attempt;
+          
+          console.log(\`Rate limited. Waiting \${delay}ms before retry \${attempt}\`);
+          await this.sleep(delay);
+          continue;
+        }
+        
+        // Handle authentication errors
+        if (response.status === 401) {
+          throw new Error('Authentication failed. Please check your credentials.');
+        }
+        
+        // Handle other client errors
+        if (response.status >= 400 && response.status < 500) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(\`Client error \${response.status}: \${errorData.message || 'Unknown error'}\`);
+        }
+        
+        // Handle server errors
+        if (response.status >= 500) {
+          if (attempt === this.maxRetries) {
+            throw new Error(\`Server error \${response.status} after \${this.maxRetries} attempts\`);
+          }
+          
+          console.log(\`Server error \${response.status}. Retrying in \${this.retryDelay * attempt}ms...\`);
+          await this.sleep(this.retryDelay * attempt);
+          continue;
+        }
+        
+        return response;
+        
+      } catch (error) {
+        lastError = error;
+        
+        if (attempt === this.maxRetries) {
+          break;
+        }
+        
+        console.log(\`Attempt \${attempt} failed: \${error.message}. Retrying...\`);
+        await this.sleep(this.retryDelay * attempt);
+      }
+    }
+    
+    throw new Error(\`Request failed after \${this.maxRetries} attempts: \${lastError.message}\`);
+  }
+  
+  async sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    const token = await this.getValidToken();
+    
+    return fetch(\`https://external.example.com\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${token}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+  }
+  
+  async getValidToken() {
+    // Implementation from previous example
+    // ... token management logic
+  }
+}`}
+</CodeBlock>
+
+## Security Best Practices
+
+### Credential Security
+
+<Steps>
+  <Step title="Environment Variables" icon="code">
+    Store credentials in environment variables, never in code:
+    
+    ```bash
+    export WEIR_USERNAME=your_username
+    export WEIR_PASSWORD=your_password
+    ```
+  </Step>
+  <Step title="Secure Storage" icon="vault">
+    Use secure credential stores in production:
+    - AWS Secrets Manager
+    - HashiCorp Vault
+    - Azure Key Vault
+    - Google Secret Manager
+  </Step>
+  <Step title="Credential Rotation" icon="refresh">
+    Regularly rotate credentials and implement automated rotation where possible.
+  </Step>
+  <Step title="Network Security" icon="lock">
+    Always use HTTPS and validate SSL certificates.
+  </Step>
+</Steps>
+
+### Code Security
+
+<CodeBlock lang="javascript" title="Secure Credential Handling">
+{`// ❌ NEVER do this
+const username = 'admin';
+const password = 'password123';
+
+// ✅ DO this instead
+const username = process.env.WEIR_USERNAME;
+const password = process.env.WEIR_PASSWORD;
+
+// ✅ Even better - use a secure credential store
+class SecureWeirClient {
+  constructor(credentialProvider) {
+    this.credentialProvider = credentialProvider;
+  }
+  
+  async getCredentials() {
+    return await this.credentialProvider.getCredentials('weir-api');
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    const credentials = await this.getCredentials();
+    const encodedCredentials = btoa(\`\${credentials.username}:\${credentials.password}\`);
+    
+    // Use credentials for request
+    // ...
+  }
+}`}
+</CodeBlock>
+
+## Monitoring and Logging
+
+### Request Logging
+
+<CodeBlock lang="javascript" title="Request Logging">
+{`class LoggingWeirClient {
+  constructor(username, password, logger) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+    this.logger = logger;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    const startTime = Date.now();
+    const requestId = this.generateRequestId();
+    
+    this.logger.info('Making Weir API request', {
+      requestId,
+      endpoint,
+      method: options.method || 'GET'
+    });
+    
+    try {
+      const response = await this.makeActualRequest(endpoint, options);
+      const duration = Date.now() - startTime;
+      
+      this.logger.info('Weir API request completed', {
+        requestId,
+        endpoint,
+        status: response.status,
+        duration
+      });
+      
+      return response;
+      
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      
+      this.logger.error('Weir API request failed', {
+        requestId,
+        endpoint,
+        error: error.message,
+        duration
+      });
+      
+      throw error;
+    }
+  }
+  
+  generateRequestId() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+}`}
+</CodeBlock>
+
+### Performance Monitoring
+
+<CodeBlock lang="javascript" title="Performance Monitoring">
+{`class MonitoredWeirClient {
+  constructor(username, password, metrics) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+    this.metrics = metrics;
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    const timer = this.metrics.startTimer('weir_api_request_duration', {
+      endpoint: endpoint.replace(/\/[^\/]+$/, '/:id'), // Normalize endpoint
+      method: options.method || 'GET'
+    });
+    
+    try {
+      const response = await this.makeActualRequest(endpoint, options);
+      
+      this.metrics.increment('weir_api_requests_total', {
+        endpoint: endpoint.replace(/\/[^\/]+$/, '/:id'),
+        method: options.method || 'GET',
+        status: response.status
+      });
+      
+      return response;
+      
+    } catch (error) {
+      this.metrics.increment('weir_api_requests_failed_total', {
+        endpoint: endpoint.replace(/\/[^\/]+$/, '/:id'),
+        method: options.method || 'GET',
+        error_type: error.constructor.name
+      });
+      
+      throw error;
+      
+    } finally {
+      timer();
+    }
+  }
+}`}
+</CodeBlock>
+
+## Testing
+
+### Unit Testing
+
+<CodeBlock lang="javascript" title="Unit Tests">
+{`// Mock fetch for testing
+global.fetch = jest.fn();
+
+describe('WeirClient', () => {
+  let client;
+  
+  beforeEach(() => {
+    client = new WeirClient('test_user', 'test_pass');
+    fetch.mockClear();
+  });
+  
+  test('should generate access token successfully', async () => {
+    const mockResponse = {
+      success: true,
+      data: {
+        access_token: 'test_token',
+        expires_in: 3600
+      }
+    };
+    
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse
+    });
+    
+    const token = await client.getAccessToken();
+    
+    expect(token).toBe('test_token');
+    expect(fetch).toHaveBeenCalledWith(
+      'https://external.example.com/auth/token',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'Authorization': expect.stringContaining('Basic')
+        })
+      })
+    );
+  });
+  
+  test('should handle authentication errors', async () => {
+    fetch.mockResolvedValueOnce({
+      ok: false,
+      status: 401,
+      json: async () => ({
+        success: false,
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Invalid username or password'
+        }
+      })
+    });
+    
+    await expect(client.getAccessToken()).rejects.toThrow('Authentication failed');
+  });
+});`}
+</CodeBlock>
+
+### Integration Testing
+
+<CodeBlock lang="javascript" title="Integration Tests">
+{`describe('Weir API Integration', () => {
+  let client;
+  
+  beforeAll(() => {
+    client = new WeirClient(
+      process.env.TEST_WEIR_USERNAME,
+      process.env.TEST_WEIR_PASSWORD
+    );
+  });
+  
+  test('should successfully authenticate and make requests', async () => {
+    // Test real API integration
+    const token = await client.getAccessToken();
+    expect(token).toBeDefined();
+    expect(typeof token).toBe('string');
+  });
+  
+  test('should handle rate limiting gracefully', async () => {
+    // Test rate limiting behavior
+    const promises = Array(10).fill().map(() => client.getAccessToken());
+    
+    const results = await Promise.allSettled(promises);
+    const successful = results.filter(r => r.status === 'fulfilled');
+    const failed = results.filter(r => r.status === 'rejected');
+    
+    // Some requests should succeed, some might be rate limited
+    expect(successful.length).toBeGreaterThan(0);
+  });
+});`}
+</CodeBlock>
+
+## Common Use Cases
+
+<AccordionGroup>
+  <Accordion title="Third-Party Integration" icon="puzzle-piece">
+    **Scenario**: Integrating Weir AI into a third-party application
+    
+    **Implementation**:
+    1. Use Basic Authentication for token generation
+    2. Cache access tokens to reduce API calls
+    3. Implement proper error handling and retry logic
+    4. Monitor API usage and performance
+    
+    **Example**: E-commerce platform integrating NIL detection for product images
+  </Accordion>
+  
+  <Accordion title="Mobile Application" icon="mobile">
+    **Scenario**: Mobile app that needs Weir AI capabilities
+    
+    **Implementation**:
+    1. Store credentials securely on device
+    2. Implement token refresh mechanism
+    3. Handle network connectivity issues
+    4. Optimize for mobile data usage
+    
+    **Example**: Mobile app for content creators to check image rights
+  </Accordion>
+  
+  <Accordion title="Microservice Integration" icon="server">
+    **Scenario**: Microservice that processes content and needs NIL detection
+    
+    **Implementation**:
+    1. Use service-to-service authentication
+    2. Implement circuit breaker pattern
+    3. Add comprehensive logging and monitoring
+    4. Handle service discovery and load balancing
+    
+    **Example**: Content processing pipeline that validates images
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+### Common Issues
+
+<CardGroup cols={2}>
+  <Card title="Authentication Failures" icon="exclamation-triangle">
+    - Verify credentials are correct
+    - Check authorization header format
+    - Ensure HTTPS is being used
+    - Validate credential encoding
+  </Card>
+  <Card title="Rate Limiting" icon="clock">
+    - Implement exponential backoff
+    - Monitor rate limit headers
+    - Consider upgrading API plan
+    - Optimize request patterns
+  </Card>
+  <Card title="Network Issues" icon="wifi">
+    - Check network connectivity
+    - Validate DNS resolution
+    - Verify SSL certificates
+    - Implement retry logic
+  </Card>
+  <Card title="Token Management" icon="key">
+    - Handle token expiration
+    - Implement token refresh
+    - Store tokens securely
+    - Monitor token usage
+  </Card>
+</CardGroup>
+
+### Debug Tools
+
+<CodeBlock lang="javascript" title="Debug Client">
+{`class DebugWeirClient {
+  constructor(username, password, debug = false) {
+    this.username = username;
+    this.password = password;
+    this.credentials = btoa(\`\${username}:\${password}\`);
+    this.debug = debug;
+  }
+  
+  log(message, data = {}) {
+    if (this.debug) {
+      console.log(\`[WeirClient] \${message}\`, data);
+    }
+  }
+  
+  async makeRequest(endpoint, options = {}) {
+    this.log('Making request', { endpoint, options });
+    
+    const response = await fetch(\`https://external.example.com\${endpoint}\`, {
+      ...options,
+      headers: {
+        'Authorization': \`Bearer \${await this.getValidToken()}\`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+    
+    this.log('Response received', {
+      status: response.status,
+      headers: Object.fromEntries(response.headers.entries())
+    });
+    
+    return response;
+  }
+}`}
+</CodeBlock>
+
+<Callout type="info" title="Need Help?">
+  If you encounter issues with External API integration, check the troubleshooting section above or contact our support team. The API Playground is also available for testing endpoints interactively.
+</Callout>
