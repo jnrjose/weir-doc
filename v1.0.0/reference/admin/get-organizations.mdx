@@ -17,7 +17,7 @@ Retrieve a paginated list of all organizations in the system. This endpoint prov
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-Authorization: Bearer <your_jwt_token>
+{`Authorization: Bearer <your_jwt_token>`}
 </CodeBlock>
 
 ## Query Parameters
@@ -275,7 +275,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{
+{`{
   "success": true,
   "data": [
     {
@@ -346,7 +346,7 @@ func main() {
   },
   "message": "Organizations retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}
+}`}
 </CodeBlock>
 
 ## Error Responses
@@ -372,7 +372,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{
+{`{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -383,13 +383,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}
+}`}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
     <CodeBlock lang="json">
-{
+{`{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -400,13 +400,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}
+}`}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Validation Error (400)" icon="exclamation">
     <CodeBlock lang="json">
-{
+{`{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -417,7 +417,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}
+}`}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -466,7 +466,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Admin Dashboard" icon="tachometer">
     <CodeBlock lang="javascript">
-class AdminDashboard {
+{`class AdminDashboard {
   constructor(apiClient) {
     this.apiClient = apiClient;
     this.organizations = [];
@@ -488,7 +488,7 @@ class AdminDashboard {
         ...this.filters
       });
       
-      const response = await this.apiClient.makeRequest(`/admin/organizations?${params}`);
+      const response = await this.apiClient.makeRequest(\`/admin/organizations?\${params}\`);
       
       if (!response.ok) {
         throw new Error('Failed to load organizations');
@@ -523,47 +523,47 @@ class AdminDashboard {
   createOrganizationElement(org) {
     const div = document.createElement('div');
     div.className = 'organization-card';
-    div.innerHTML = `
+    div.innerHTML = \`
       <div class="org-header">
-        <h3>${org.name}</h3>
-        <span class="status status-${org.status}">${org.status}</span>
+        <h3>\${org.name}</h3>
+        <span class="status status-\${org.status}">\${org.status}</span>
       </div>
       <div class="org-details">
-        <p><strong>Domain:</strong> ${org.domain}</p>
-        <p><strong>Industry:</strong> ${org.industry}</p>
-        <p><strong>Size:</strong> ${org.company_size}</p>
-        <p><strong>Members:</strong> ${org.member_count}</p>
-        <p><strong>Teams:</strong> ${org.team_count}</p>
-        <p><strong>Created:</strong> ${new Date(org.created_at).toLocaleDateString()}</p>
-        <p><strong>Last Activity:</strong> ${new Date(org.last_activity).toLocaleDateString()}</p>
+        <p><strong>Domain:</strong> \${org.domain}</p>
+        <p><strong>Industry:</strong> \${org.industry}</p>
+        <p><strong>Size:</strong> \${org.company_size}</p>
+        <p><strong>Members:</strong> \${org.member_count}</p>
+        <p><strong>Teams:</strong> \${org.team_count}</p>
+        <p><strong>Created:</strong> \${new Date(org.created_at).toLocaleDateString()}</p>
+        <p><strong>Last Activity:</strong> \${new Date(org.last_activity).toLocaleDateString()}</p>
       </div>
       <div class="org-subscription">
-        <p><strong>Plan:</strong> ${org.subscription.plan}</p>
-        <p><strong>Status:</strong> ${org.subscription.status}</p>
-        <p><strong>Expires:</strong> ${new Date(org.subscription.expires_at).toLocaleDateString()}</p>
+        <p><strong>Plan:</strong> \${org.subscription.plan}</p>
+        <p><strong>Status:</strong> \${org.subscription.status}</p>
+        <p><strong>Expires:</strong> \${new Date(org.subscription.expires_at).toLocaleDateString()}</p>
       </div>
       <div class="org-actions">
-        <button onclick="viewOrganization('${org.organization_id}')">View Details</button>
-        <button onclick="editOrganization('${org.organization_id}')">Edit</button>
-        <button onclick="manageOrganization('${org.organization_id}')">Manage</button>
+        <button onclick="viewOrganization('\${org.organization_id}')">View Details</button>
+        <button onclick="editOrganization('\${org.organization_id}')">Edit</button>
+        <button onclick="manageOrganization('\${org.organization_id}')">Manage</button>
       </div>
-    `;
+    \`;
     
     return div;
   }
   
   updatePagination(pagination) {
     const paginationElement = document.getElementById('pagination');
-    paginationElement.innerHTML = `
+    paginationElement.innerHTML = \`
       <div class="pagination-info">
-        Showing ${(pagination.page - 1) * pagination.limit + 1} to ${Math.min(pagination.page * pagination.limit, pagination.total)} of ${pagination.total} organizations
+        Showing \${(pagination.page - 1) * pagination.limit + 1} to \${Math.min(pagination.page * pagination.limit, pagination.total)} of \${pagination.total} organizations
       </div>
       <div class="pagination-controls">
-        <button ${!pagination.has_prev ? 'disabled' : ''} onclick="loadPage(${pagination.page - 1})">Previous</button>
-        <span>Page ${pagination.page} of ${pagination.total_pages}</span>
-        <button ${!pagination.has_next ? 'disabled' : ''} onclick="loadPage(${pagination.page + 1})">Next</button>
+        <button \${!pagination.has_prev ? 'disabled' : ''} onclick="loadPage(\${pagination.page - 1})">Previous</button>
+        <span>Page \${pagination.page} of \${pagination.total_pages}</span>
+        <button \${!pagination.has_next ? 'disabled' : ''} onclick="loadPage(\${pagination.page + 1})">Next</button>
       </div>
-    `;
+    \`;
   }
   
   setFilter(filterName, value) {
@@ -574,13 +574,13 @@ class AdminDashboard {
   async loadPage(page) {
     await this.loadOrganizations(page);
   }
-}
+}`}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Organization Analytics" icon="chart-line">
     <CodeBlock lang="javascript">
-class OrganizationAnalytics {
+{`class OrganizationAnalytics {
   constructor(apiClient) {
     this.apiClient = apiClient;
   }
@@ -591,7 +591,7 @@ class OrganizationAnalytics {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await this.apiClient.makeRequest(`/admin/organizations?page=${page}&limit=100`);
+      const response = await this.apiClient.makeRequest(\`/admin/organizations?page=\${page}&limit=100\`);
       const data = await response.json();
       
       allOrganizations.push(...data.data);
@@ -672,7 +672,7 @@ class OrganizationAnalytics {
     
     return growthData;
   }
-}
+}`}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>

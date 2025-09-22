@@ -32,7 +32,7 @@ The Admin API is designed for system administrators and platform managers who ne
 All Admin API endpoints require Bearer Token authentication with administrative privileges:
 
 <CodeBlock lang="bash">
-Authorization: Bearer <admin_jwt_token>
+{`Authorization: Bearer <admin_jwt_token>`}
 </CodeBlock>
 
 ## Available Endpoints
@@ -116,7 +116,7 @@ Admin API endpoints have higher rate limits than standard API endpoints:
 All Admin API endpoints return consistent error responses:
 
 <CodeBlock lang="json">
-{
+{`{
   "success": false,
   "error": {
     "code": "ERROR_CODE",
@@ -127,7 +127,7 @@ All Admin API endpoints return consistent error responses:
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}
+}`}
 </CodeBlock>
 
 ## Common Error Codes
