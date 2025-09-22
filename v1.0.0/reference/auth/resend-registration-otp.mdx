@@ -1,0 +1,226 @@
+---
+title: "Resend Registration OTP"
+api: "PUT /auth/resend-registration-otp"
+description: "Resend OTP (One-Time Password) for user registration verification"
+---
+
+Resend the OTP (One-Time Password) for user registration verification. This endpoint is used when the original OTP has expired or was not received by the user.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and is used for user registration verification. It helps users complete their registration process when they need a new OTP.
+</Note>
+
+## Authentication
+
+This endpoint does not require authentication as it's used during the registration process.
+
+## Request
+
+<ParamField body="email" type="string" required>
+  Email address of the user requesting OTP resend
+  
+  **Example**: "user@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email format
+  - Must be associated with a pending registration
+</ParamField>
+
+<ParamField body="registration_id" type="string" required>
+  Registration ID from the initial registration request
+  
+  **Example**: "reg_1234567890abcdef"
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the OTP was resent successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains OTP resend information
+</ResponseField>
+
+<ResponseField name="data.registration_id" type="string">
+  Registration ID for tracking
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Email address where OTP was sent
+</ResponseField>
+
+<ResponseField name="data.otp_expires_at" type="string">
+  ISO 8601 timestamp when the OTP expires
+</ResponseField>
+
+<ResponseField name="data.retry_count" type="integer">
+  Number of OTP resend attempts
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PUT "https://api.example.com/auth/resend-registration-otp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "registration_id": "reg_1234567890abcdef"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/auth/resend-registration-otp', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    registration_id: 'reg_1234567890abcdef'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+data = {
+    'email': 'user@example.com',
+    'registration_id': 'reg_1234567890abcdef'
+}
+
+response = requests.put(
+    'https://api.example.com/auth/resend-registration-otp',
+    headers={'Content-Type': 'application/json'},
+    json=data
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "registration_id": "reg_1234567890abcdef",
+    "email": "user@example.com",
+    "otp_expires_at": "2024-01-15T11:00:00Z",
+    "retry_count": 2
+  },
+  "message": "OTP resent successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request data or validation errors
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Registration not found or already completed
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for OTP resend
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Registration Not Found (404)" icon="search">
+    <CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "REGISTRATION_NOT_FOUND",
+    "message": "Registration not found or already completed",
+    "details": {
+      "field": "registration_id",
+      "reason": "Invalid or expired registration ID"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    <CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMITED",
+    "message": "OTP resend rate limit exceeded",
+    "details": {
+      "field": "otp_resend",
+      "reason": "Maximum 3 resend attempts per hour",
+      "retry_after": 3600
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Rate Limiting" icon="clock">
+    OTP resend limits:
+    
+    - Maximum 3 resend attempts per hour per email
+    - Rate limit resets after 1 hour
+    - Exceeding limits requires waiting period
+  </Accordion>
+  
+  <Accordion title="OTP Expiration" icon="time">
+    OTP validity:
+    
+    - OTP expires after 10 minutes
+    - New OTP invalidates previous OTP
+    - Expired OTPs cannot be used for verification
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    Security considerations:
+    
+    - OTP is sent to registered email only
+    - Registration ID must match original request
+    - Failed attempts are logged for security monitoring
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Register User" icon="user-plus">
+    `POST /auth/register` - Initial user registration
+  </Card>
+  <Card title="Validate Registration" icon="check">
+    `POST /auth/validate-registration` - Verify OTP and complete registration
+  </Card>
+  <Card title="Mobile Register" icon="mobile">
+    `POST /auth/m/register` - Mobile user registration
+  </Card>
+</CardGroup>

@@ -1,0 +1,375 @@
+---
+title: "Add Card"
+api: "POST /org/cards"
+description: "Add a new payment method to the organization"
+---
+
+Add a new payment method (credit card, debit card, or other payment method) to the organization's account. This endpoint securely processes and stores payment method information.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization payment method management.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="card_number" type="string" required>
+  Card number (will be encrypted and stored securely)
+  
+  **Example**: "4242424242424242"
+  
+  **Constraints**: 
+  - Must be a valid card number
+  - Must pass Luhn algorithm validation
+  - Will be encrypted before storage
+</ParamField>
+
+<ParamField body="expiry_month" type="integer" required>
+  Card expiry month
+  
+  **Example**: 12
+  
+  **Constraints**: 
+  - Must be between 1 and 12
+  - Must not be in the past
+</ParamField>
+
+<ParamField body="expiry_year" type="integer" required>
+  Card expiry year
+  
+  **Example**: 2025
+  
+  **Constraints**: 
+  - Must be 4 digits
+  - Must not be in the past
+  - Must be within reasonable future range
+</ParamField>
+
+<ParamField body="cvv" type="string" required>
+  Card security code
+  
+  **Example**: "123"
+  
+  **Constraints**: 
+  - Must be 3-4 digits
+  - Will be used for validation only (not stored)
+</ParamField>
+
+<ParamField body="holder_name" type="string" required>
+  Cardholder name
+  
+  **Example**: "John Doe"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must contain only letters, spaces, hyphens, and apostrophes
+</ParamField>
+
+<ParamField body="billing_address" type="object" required>
+  Billing address for the card
+  
+  **Properties**:
+  - `street` (string): Street address
+  - `city` (string): City name
+  - `state` (string): State or province
+  - `postal_code` (string): Postal or ZIP code
+  - `country` (string): Country code (ISO 3166-1 alpha-2)
+</ParamField>
+
+<ParamField body="is_default" type="boolean" required="false">
+  Whether to set this card as the default payment method
+  
+  **Example**: false
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the card was added successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains card information
+</ResponseField>
+
+<ResponseField name="data.card_id" type="string">
+  Unique identifier for the added card
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Card type (credit, debit, prepaid, virtual)
+</ResponseField>
+
+<ResponseField name="data.brand" type="string">
+  Card brand (visa, mastercard, amex, discover)
+</ResponseField>
+
+<ResponseField name="data.last_four" type="string">
+  Last four digits of the card number
+</ResponseField>
+
+<ResponseField name="data.expiry_month" type="integer">
+  Expiry month
+</ResponseField>
+
+<ResponseField name="data.expiry_year" type="integer">
+  Expiry year
+</ResponseField>
+
+<ResponseField name="data.holder_name" type="string">
+  Cardholder name
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Card status (active, pending, failed)
+</ResponseField>
+
+<ResponseField name="data.is_default" type="boolean">
+  Whether this is the default payment method
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the card was added
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/cards" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "card_number": "4242424242424242",
+    "expiry_month": 12,
+    "expiry_year": 2025,
+    "cvv": "123",
+    "holder_name": "John Doe",
+    "billing_address": {
+      "street": "123 Main Street",
+      "city": "New York",
+      "state": "NY",
+      "postal_code": "10001",
+      "country": "US"
+    },
+    "is_default": false
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/cards', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    card_number: '4242424242424242',
+    expiry_month: 12,
+    expiry_year: 2025,
+    cvv: '123',
+    holder_name: 'John Doe',
+    billing_address: {
+      street: '123 Main Street',
+      city: 'New York',
+      state: 'NY',
+      postal_code: '10001',
+      country: 'US'
+    },
+    is_default: false
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+data = {
+    'card_number': '4242424242424242',
+    'expiry_month': 12,
+    'expiry_year': 2025,
+    'cvv': '123',
+    'holder_name': 'John Doe',
+    'billing_address': {
+        'street': '123 Main Street',
+        'city': 'New York',
+        'state': 'NY',
+        'postal_code': '10001',
+        'country': 'US'
+    },
+    'is_default': False
+}
+
+response = requests.post(
+    'https://api.example.com/org/cards',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=data
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "card_id": "card_1234567890abcdef",
+    "type": "credit",
+    "brand": "visa",
+    "last_four": "4242",
+    "expiry_month": 12,
+    "expiry_year": 2025,
+    "holder_name": "John Doe",
+    "status": "active",
+    "is_default": false,
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Card added successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request data or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to add cards
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Validation errors in the request data
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Card (422)" icon="exclamation">
+    <CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CARD",
+    "message": "Card validation failed",
+    "details": {
+      "field": "card_number",
+      "reason": "Invalid card number format"
+    },
+    "validation_errors": [
+      {
+        "field": "card_number",
+        "message": "Card number must be valid",
+        "code": "INVALID_CARD_NUMBER"
+      },
+      {
+        "field": "expiry_month",
+        "message": "Card has expired",
+        "code": "CARD_EXPIRED"
+      }
+    ]
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Permission Error (403)" icon="user-slash">
+    <CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions to add cards",
+    "details": {
+      "field": "permissions",
+      "reason": "Organization admin or billing manager access required"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Security" icon="shield">
+    Security features:
+    
+    - Card numbers are encrypted before storage
+    - CVV is validated but not stored
+    - PCI DSS compliance maintained
+    - All transactions are logged
+  </Accordion>
+  
+  <Accordion title="Card Validation" icon="check">
+    Validation process:
+    
+    - Luhn algorithm validation
+    - Expiry date verification
+    - CVV format validation
+    - Address verification (AVS)
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="key">
+    Required permissions:
+    
+    - Organization admin role
+    - Billing management permissions
+    - Valid authentication token
+    - Appropriate access level
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Cards" icon="list">
+    `GET /org/cards` - List organization cards
+  </Card>
+  <Card title="Delete Card" icon="trash">
+    `DELETE /org/cards/{cardId}` - Remove payment method
+  </Card>
+  <Card title="Update Card" icon="edit">
+    `PUT /org/cards/{cardId}` - Update card information
+  </Card>
+  <Card title="Set Default Card" icon="star">
+    `PATCH /org/cards/{cardId}/default` - Set as default payment method
+  </Card>
+</CardGroup>

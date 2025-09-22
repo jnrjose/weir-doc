@@ -345,6 +345,21 @@
 								]
 							},
 							{
+								"group": "Authentication & Registration",
+								"pages": [
+									"v1.0.0/reference/auth/register",
+									"v1.0.0/reference/auth/validate-registration",
+									"v1.0.0/reference/auth/resend-registration-otp"
+								]
+							},
+							{
+								"group": "Organization Cards",
+								"pages": [
+									"v1.0.0/reference/org/cards/get-cards",
+									"v1.0.0/reference/org/cards/add-card"
+								]
+							},
+							{
 								"group": "Team Management",
 								"pages": [
 									"v1.0.0/reference/console/teams/get-teams",
