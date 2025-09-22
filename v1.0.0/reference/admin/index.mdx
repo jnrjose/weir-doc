@@ -1,0 +1,222 @@
+---
+title: "Admin API"
+description: "Administrative API endpoints for system management and oversight"
+icon: "shield"
+---
+
+The Admin API provides comprehensive administrative capabilities for managing the Weir AI platform, including user management, system monitoring, and organizational oversight.
+
+## Overview
+
+The Admin API is designed for system administrators and platform managers who need elevated privileges to manage users, organizations, and system-wide operations. These endpoints require administrative authentication and provide access to sensitive system data and operations.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="User Management" icon="users">
+    Manage admin users, roles, and permissions across the platform
+  </Card>
+  <Card title="Organization Oversight" icon="building">
+    Monitor and manage all organizations in the system
+  </Card>
+  <Card title="System Monitoring" icon="chart">
+    Access system logs, metrics, and performance data
+  </Card>
+  <Card title="Security Management" icon="shield">
+    Manage authentication, authorization, and security policies
+  </Card>
+</CardGroup>
+
+## Authentication
+
+All Admin API endpoints require Bearer Token authentication with administrative privileges:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <admin_jwt_token>
+</CodeBlock>
+
+## Available Endpoints
+
+### Authentication & Security
+
+<CardGroup cols={2}>
+  <Card title="Admin Login" icon="sign-in">
+    `POST /auth/login` - Authenticate admin user and receive access token
+  </Card>
+  <Card title="Admin Logout" icon="sign-out">
+    `POST /auth/logout` - Logout and invalidate admin session
+  </Card>
+  <Card title="Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh expired access token
+  </Card>
+</CardGroup>
+
+### Organization Management
+
+<CardGroup cols={2}>
+  <Card title="Get Organizations" icon="building">
+    `GET /admin/organizations` - List all organizations in the system
+  </Card>
+  <Card title="Get Organization Details" icon="info">
+    `GET /admin/organizations/{orgId}` - Get detailed organization information
+  </Card>
+  <Card title="Update Organization" icon="edit">
+    `PUT /admin/organizations/{orgId}` - Update organization settings
+  </Card>
+  <Card title="Suspend Organization" icon="pause">
+    `POST /admin/organizations/{orgId}/suspend` - Suspend organization access
+  </Card>
+</CardGroup>
+
+### User Management
+
+<CardGroup cols={2}>
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List all admin users
+  </Card>
+  <Card title="Create Admin User" icon="user-plus">
+    `POST /admin/members` - Create new admin user
+  </Card>
+  <Card title="Update Admin User" icon="edit">
+    `PUT /admin/members/{userId}` - Update admin user details
+  </Card>
+  <Card title="Delete Admin User" icon="user-minus">
+    `DELETE /admin/members/{userId}` - Remove admin user
+  </Card>
+</CardGroup>
+
+### System Monitoring
+
+<CardGroup cols={2}>
+  <Card title="Get System Logs" icon="list">
+    `GET /admin/logs` - Retrieve system and application logs
+  </Card>
+  <Card title="Get System Metrics" icon="chart">
+    `GET /admin/metrics` - View system performance metrics
+  </Card>
+  <Card title="Get Health Status" icon="heart">
+    `GET /admin/health` - Check system health status
+  </Card>
+  <Card title="Get Usage Statistics" icon="bar-chart">
+    `GET /admin/statistics` - View platform usage statistics
+  </Card>
+</CardGroup>
+
+## Rate Limiting
+
+Admin API endpoints have higher rate limits than standard API endpoints:
+
+- **Standard Admin Operations**: 1000 requests per hour
+- **Log Retrieval**: 100 requests per hour
+- **Bulk Operations**: 50 requests per hour
+- **System Monitoring**: 200 requests per hour
+
+## Error Handling
+
+All Admin API endpoints return consistent error responses:
+
+<CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": {
+      "field": "field_name",
+      "reason": "Detailed error reason"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Common Error Codes
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors" icon="exclamation-triangle">
+    - `UNAUTHORIZED`: Invalid or expired token
+    - `INVALID_CREDENTIALS`: Invalid username or password
+    - `TOKEN_EXPIRED`: Access token has expired
+    - `INSUFFICIENT_PRIVILEGES`: User lacks required permissions
+  </Accordion>
+  
+  <Accordion title="Validation Errors" icon="exclamation">
+    - `VALIDATION_ERROR`: Request data validation failed
+    - `REQUIRED_FIELD`: Missing required field
+    - `INVALID_FORMAT`: Invalid data format
+    - `CONSTRAINT_VIOLATION`: Data constraint violation
+  </Accordion>
+  
+  <Accordion title="Resource Errors" icon="search">
+    - `NOT_FOUND`: Resource not found
+    - `ALREADY_EXISTS`: Resource already exists
+    - `CONFLICT`: Resource conflict
+    - `GONE`: Resource no longer available
+  </Accordion>
+  
+  <Accordion title="System Errors" icon="server">
+    - `INTERNAL_ERROR`: Internal server error
+    - `SERVICE_UNAVAILABLE`: Service temporarily unavailable
+    - `RATE_LIMITED`: Rate limit exceeded
+    - `MAINTENANCE_MODE`: System in maintenance mode
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS for all API calls
+    - Store admin credentials securely
+    - Implement proper token rotation
+    - Monitor admin access patterns
+    - Use least privilege principle
+  </Accordion>
+  
+  <Accordion title="Performance" icon="tachometer">
+    - Implement proper caching strategies
+    - Use pagination for large datasets
+    - Batch operations when possible
+    - Monitor API response times
+    - Implement retry logic with exponential backoff
+  </Accordion>
+  
+  <Accordion title="Monitoring" icon="chart">
+    - Log all admin operations
+    - Monitor API usage patterns
+    - Set up alerts for critical operations
+    - Track error rates and response times
+    - Implement audit trails
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling
+    - Provide meaningful error messages
+    - Log errors for debugging
+    - Implement graceful degradation
+    - Use appropriate HTTP status codes
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+1. **Obtain Admin Credentials**: Contact your system administrator for admin API credentials
+2. **Authenticate**: Use the login endpoint to obtain an access token
+3. **Explore Endpoints**: Start with basic operations like getting organizations
+4. **Implement Error Handling**: Add proper error handling for all API calls
+5. **Monitor Usage**: Set up monitoring and logging for your admin operations
+
+## Support
+
+For technical support with the Admin API:
+
+- **Documentation**: Refer to individual endpoint documentation
+- **API Playground**: Use the interactive API playground for testing
+- **Support Team**: Contact support@weir.ai for assistance
+- **Status Page**: Check system status at status.weir.ai
+
+<Note>
+  **Admin Access Required**
+  
+  All Admin API endpoints require administrative privileges. Ensure you have the appropriate permissions before attempting to use these endpoints.
+</Note>

@@ -1,0 +1,411 @@
+---
+title: "Register (Mobile)"
+api: "POST /auth/m/register"
+description: "Register a new user account (mobile/web)"
+---
+
+Register a new user account for mobile or web applications. This endpoint creates a new user account with the provided information and returns authentication tokens for immediate use.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and does not require authentication. It's designed for user registration in mobile and web applications.
+</Note>
+
+## Request
+
+<ParamField body="fullname" type="string" required>
+  Full name of the user
+  
+  **Example**: "John Doe"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must contain only letters, spaces, hyphens, and apostrophes
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Email address for the account
+  
+  **Example**: "john.doe@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email address
+  - Must be unique across the platform
+  - Maximum length: 255 characters
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Password for the account
+  
+  **Example**: "SecurePassword123!"
+  
+  **Constraints**: 
+  - Minimum length: 8 characters
+  - Must contain at least one uppercase letter
+  - Must contain at least one lowercase letter
+  - Must contain at least one number
+  - Must contain at least one special character
+</ParamField>
+
+<ParamField body="phone" type="string" required="false">
+  Phone number for the account
+  
+  **Example**: "+1234567890"
+  
+  **Constraints**: 
+  - Must be a valid phone number
+  - International format preferred
+</ParamField>
+
+<ParamField body="organization_name" type="string" required="false">
+  Name of the organization (if creating new organization)
+  
+  **Example**: "Acme Corporation"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Must be unique if provided
+</ParamField>
+
+<ParamField body="invite_code" type="string" required="false">
+  Invitation code to join existing organization
+  
+  **Example**: "INVITE123456"
+  
+  **Constraints**: 
+  - Must be a valid invitation code
+  - Must not be expired
+</ParamField>
+
+<ParamField body="terms_accepted" type="boolean" required>
+  Whether the user accepts the terms of service
+  
+  **Example**: true
+  
+  **Constraints**: 
+  - Must be true to proceed with registration
+</ParamField>
+
+<ParamField body="marketing_consent" type="boolean" required="false">
+  Whether the user consents to marketing communications
+  
+  **Example**: false
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Registration result data
+</ResponseField>
+
+<ResponseField name="data.user_id" type="string">
+  Unique identifier for the created user
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Email address of the created user
+</ResponseField>
+
+<ResponseField name="data.fullname" type="string">
+  Full name of the created user
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Organization ID (if applicable)
+</ResponseField>
+
+<ResponseField name="data.organization_name" type="string">
+  Organization name (if applicable)
+</ResponseField>
+
+<ResponseField name="data.access_token" type="string">
+  JWT access token for authentication
+</ResponseField>
+
+<ResponseField name="data.refresh_token" type="string">
+  Refresh token for obtaining new access tokens
+</ResponseField>
+
+<ResponseField name="data.token_expires_in" type="integer">
+  Access token expiration time in seconds
+</ResponseField>
+
+<ResponseField name="data.requires_verification" type="boolean">
+  Whether email verification is required
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/auth/m/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "SecurePassword123!",
+    "phone": "+1234567890",
+    "organization_name": "Acme Corporation",
+    "terms_accepted": true,
+    "marketing_consent": false
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/auth/m/register', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    fullname: 'John Doe',
+    email: 'john.doe@example.com',
+    password: 'SecurePassword123!',
+    phone: '+1234567890',
+    organization_name: 'Acme Corporation',
+    terms_accepted: true,
+    marketing_consent: false
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "fullname": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "SecurePassword123!",
+    "phone": "+1234567890",
+    "organization_name": "Acme Corporation",
+    "terms_accepted": True,
+    "marketing_consent": False
+}
+
+response = requests.post(
+    'https://api.example.com/auth/m/register',
+    headers={'Content-Type': 'application/json'},
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "user_id": "user_1234567890abcdef",
+    "email": "john.doe@example.com",
+    "fullname": "John Doe",
+    "organization_id": "org_1234567890abcdef",
+    "organization_name": "Acme Corporation",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "rt_1234567890abcdef",
+    "token_expires_in": 3600,
+    "requires_verification": true
+  },
+  "message": "User registered successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Email already exists or organization name already taken
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Password does not meet requirements or invalid invitation code
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for registration attempts
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Registration Flow" icon="user-plus">
+    Registration process:
+    
+    1. User provides required information
+    2. System validates input data
+    3. User account is created
+    4. Organization is created (if specified)
+    5. Authentication tokens are generated
+    6. Email verification is sent (if required)
+  </Accordion>
+  
+  <Accordion title="Password Requirements" icon="lock">
+    Password must contain:
+    
+    - At least 8 characters
+    - One uppercase letter
+    - One lowercase letter
+    - One number
+    - One special character
+  </Accordion>
+  
+  <Accordion title="Organization Creation" icon="building">
+    Organization options:
+    
+    - Create new organization with provided name
+    - Join existing organization with invite code
+    - Register without organization (personal account)
+  </Accordion>
+  
+  <Accordion title="Email Verification" icon="mail">
+    Email verification:
+    
+    - Required for most accounts
+    - Verification email sent automatically
+    - Account limited until verification complete
+    - Resend verification available
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Mobile App Registration" icon="smartphone">
+    <CodeBlock lang="javascript">
+class AuthService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async registerUser(userData) {
+    try {
+      const response = await this.apiClient.makeRequest('/auth/m/register', {
+        method: 'POST',
+        body: JSON.stringify({
+          fullname: userData.fullname,
+          email: userData.email,
+          password: userData.password,
+          phone: userData.phone,
+          organization_name: userData.organizationName,
+          terms_accepted: true,
+          marketing_consent: userData.marketingConsent || false
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Registration failed');
+      }
+      
+      const result = await response.json();
+      
+      // Store tokens securely
+      await this.storeTokens(result.data.access_token, result.data.refresh_token);
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  }
+  
+  async storeTokens(accessToken, refreshToken) {
+    // Store tokens in secure storage
+    await SecureStore.setItemAsync('access_token', accessToken);
+    await SecureStore.setItemAsync('refresh_token', refreshToken);
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Web App Registration" icon="globe">
+    <CodeBlock lang="python">
+import requests
+import json
+
+class WebAuthService:
+    def __init__(self, base_url):
+        self.base_url = base_url
+    
+    def register_user(self, user_data):
+        """Register a new user for web application"""
+        try:
+            payload = {
+                "fullname": user_data["fullname"],
+                "email": user_data["email"],
+                "password": user_data["password"],
+                "phone": user_data.get("phone"),
+                "organization_name": user_data.get("organization_name"),
+                "terms_accepted": True,
+                "marketing_consent": user_data.get("marketing_consent", False)
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/auth/m/register",
+                headers={"Content-Type": "application/json"},
+                json=payload
+            )
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # Store tokens in session
+            self.store_tokens(result["data"]["access_token"], result["data"]["refresh_token"])
+            
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Registration failed: {e}")
+            raise
+    
+    def store_tokens(self, access_token, refresh_token):
+        """Store authentication tokens"""
+        # Store in session or secure storage
+        session["access_token"] = access_token
+        session["refresh_token"] = refresh_token
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Login" icon="log-in">
+    `POST /auth/login` - Authenticate existing user
+  </Card>
+  <Card title="Verify Email" icon="mail">
+    `POST /auth/verify-email` - Verify email address
+  </Card>
+  <Card title="Resend Verification" icon="refresh-cw">
+    `POST /auth/resend-verification` - Resend verification email
+  </Card>
+  <Card title="Forgot Password" icon="key">
+    `POST /auth/forgot-password` - Request password reset
+  </Card>
+</CardGroup>

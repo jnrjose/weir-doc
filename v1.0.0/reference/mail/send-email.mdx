@@ -1,0 +1,433 @@
+---
+title: "Send Email"
+api: "POST /mail/send"
+description: "Send email notifications and communications"
+---
+
+Send email notifications, invitations, alerts, and other communications through the Weir AI platform. This endpoint supports various email types including team invitations, system notifications, and custom messages.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for email communication and notifications.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="to" type="array" required>
+  List of recipient email addresses
+  
+  **Example**: ["user@example.com", "admin@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 50 recipients per request
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  Email subject line
+  
+  **Example**: "Welcome to Weir AI Platform"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Must not be empty
+</ParamField>
+
+<ParamField body="template" type="string" required>
+  Email template to use
+  
+  **Options**: "welcome", "invitation", "notification", "alert", "custom"
+  
+  **Example**: "welcome"
+</ParamField>
+
+<ParamField body="variables" type="object" required="false">
+  Template variables for dynamic content
+  
+  **Example**: {"user_name": "John Doe", "team_name": "Development Team"}
+</ParamField>
+
+<ParamField body="priority" type="string" required="false">
+  Email priority level
+  
+  **Options**: "low", "normal", "high", "urgent"
+  
+  **Default**: "normal"
+  
+  **Example**: "high"
+</ParamField>
+
+<ParamField body="cc" type="array" required="false">
+  List of CC email addresses
+  
+  **Example**: ["manager@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 10 CC recipients
+</ParamField>
+
+<ParamField body="bcc" type="array" required="false">
+  List of BCC email addresses
+  
+  **Example**: ["audit@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 10 BCC recipients
+</ParamField>
+
+<ParamField body="attachments" type="array" required="false">
+  List of file attachments
+  
+  **Example**: [{"filename": "document.pdf", "content": "base64_encoded_content", "type": "application/pdf"}]
+</ParamField>
+
+<ParamField body="schedule" type="string" required="false">
+  Schedule email for future delivery (ISO 8601 format)
+  
+  **Example**: "2024-01-20T09:00:00Z"
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Email sending result data
+</ResponseField>
+
+<ResponseField name="data.message_id" type="string">
+  Unique identifier for the sent email
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Email sending status
+</ResponseField>
+
+<ResponseField name="data.recipients" type="array">
+  List of recipient email addresses
+</ResponseField>
+
+<ResponseField name="data.scheduled_for" type="string">
+  Scheduled delivery time (if applicable)
+</ResponseField>
+
+<ResponseField name="data.template_used" type="string">
+  Email template that was used
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/mail/send" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": ["newuser@example.com"],
+    "subject": "Welcome to Weir AI Platform",
+    "template": "welcome",
+    "variables": {
+      "user_name": "John Doe",
+      "team_name": "Development Team"
+    },
+    "priority": "normal"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/mail/send', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    to: ['newuser@example.com'],
+    subject: 'Welcome to Weir AI Platform',
+    template: 'welcome',
+    variables: {
+      user_name: 'John Doe',
+      team_name: 'Development Team'
+    },
+    priority: 'normal'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "to": ["newuser@example.com"],
+    "subject": "Welcome to Weir AI Platform",
+    "template": "welcome",
+    "variables": {
+        "user_name": "John Doe",
+        "team_name": "Development Team"
+    },
+    "priority": "normal"
+}
+
+response = requests.post(
+    'https://api.example.com/mail/send',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "message_id": "msg_1234567890abcdef",
+    "status": "sent",
+    "recipients": ["newuser@example.com"],
+    "scheduled_for": null,
+    "template_used": "welcome"
+  },
+  "message": "Email sent successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing required fields
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to send emails
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Email validation failed (invalid email addresses, template errors)
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for email sending
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Email Templates" icon="file-text">
+    Available email templates:
+    
+    - **welcome**: Welcome new users to the platform
+    - **invitation**: Team and organization invitations
+    - **notification**: System notifications and alerts
+    - **alert**: Critical alerts and warnings
+    - **custom**: Custom email content
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    Email sending limits:
+    
+    - **Free tier**: 100 emails per day
+    - **Pro tier**: 1,000 emails per day
+    - **Enterprise**: 10,000 emails per day
+    - **Burst limit**: 50 emails per minute
+  </Accordion>
+  
+  <Accordion title="Template Variables" icon="code">
+    Common template variables:
+    
+    - `user_name`: Recipient's name
+    - `team_name`: Team or organization name
+    - `inviter_name`: Name of person sending invitation
+    - `platform_url`: Link to the platform
+    - `support_email`: Support contact email
+  </Accordion>
+  
+  <Accordion title="Delivery Status" icon="check">
+    Email delivery tracking:
+    
+    - **sent**: Email queued for delivery
+    - **delivered**: Email successfully delivered
+    - **failed**: Email delivery failed
+    - **bounced**: Email bounced back
+    - **opened**: Email was opened by recipient
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Send Team Invitation" icon="users">
+    <CodeBlock lang="javascript">
+class EmailService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async sendWelcomeEmail(userEmail, userName, teamName) {
+    try {
+      const response = await this.apiClient.makeRequest('/mail/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: [userEmail],
+          subject: 'Welcome to Weir AI Platform',
+          template: 'welcome',
+          variables: {
+            user_name: userName,
+            team_name: teamName
+          },
+          priority: 'normal'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send welcome email');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      throw error;
+    }
+  }
+  
+  async sendTeamInvitation(emails, teamName, inviterName) {
+    try {
+      const response = await this.apiClient.makeRequest('/mail/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: emails,
+          subject: 'Invitation to join ' + teamName,
+          template: 'invitation',
+          variables: {
+            team_name: teamName,
+            inviter_name: inviterName
+          },
+          priority: 'normal'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to send team invitation');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error sending team invitation:', error);
+      throw error;
+    }
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Send System Alert" icon="alert-triangle">
+    <CodeBlock lang="python">
+import requests
+from datetime import datetime
+
+class AlertService:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def send_system_alert(self, alert_type, message, recipients):
+        """Send system alert to administrators"""
+        try:
+            payload = {
+                "to": recipients,
+                "subject": f"System Alert: {alert_type}",
+                "template": "alert",
+                "variables": {
+                    "alert_type": alert_type,
+                    "message": message,
+                    "timestamp": datetime.utcnow().isoformat()
+                },
+                "priority": "high"
+            }
+            
+            response = self.api_client.post('/mail/send', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to send system alert: {e}")
+            raise
+    
+    def send_maintenance_notification(self, maintenance_time, affected_services):
+        """Send maintenance notification to users"""
+        try:
+            payload = {
+                "to": ["all-users@example.com"],
+                "subject": "Scheduled Maintenance Notification",
+                "template": "notification",
+                "variables": {
+                    "maintenance_time": maintenance_time,
+                    "affected_services": ", ".join(affected_services)
+                },
+                "priority": "normal"
+            }
+            
+            response = self.api_client.post('/mail/send', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to send maintenance notification: {e}")
+            raise
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Email Status" icon="eye">
+    `GET /mail/status/{messageId}` - Check email delivery status
+  </Card>
+  <Card title="Get Email Templates" icon="file-text">
+    `GET /mail/templates` - List available email templates
+  </Card>
+  <Card title="Get Email History" icon="history">
+    `GET /mail/history` - View sent email history
+  </Card>
+  <Card title="Cancel Scheduled Email" icon="x">
+    `DELETE /mail/send/{messageId}` - Cancel scheduled email
+  </Card>
+</CardGroup>

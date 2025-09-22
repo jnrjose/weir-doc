@@ -1,0 +1,454 @@
+---
+title: "Update Organization Information"
+api: "PATCH /org/information"
+description: "Update organization details and settings"
+---
+
+Update organization information including basic details, contact information, address, and configuration settings. This endpoint allows you to modify all aspects of your organization's profile and settings.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization management and settings updates.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="basicInfo" type="object" required="false">
+  Basic organization information
+  
+  **Properties**:
+  - `website` (string): Organization website URL
+  - `industry` (string): Industry classification
+  - `description` (string): Organization description
+  - `size` (string): Organization size category
+</ParamField>
+
+<ParamField body="contactInfo" type="object" required="false">
+  Contact information
+  
+  **Properties**:
+  - `phone` (string): Primary phone number
+  - `email` (string): Contact email address
+  - `support_email` (string): Support email address
+</ParamField>
+
+<ParamField body="address" type="object" required="false">
+  Organization address
+  
+  **Properties**:
+  - `street` (string): Street address
+  - `city` (string): City
+  - `state` (string): State or province
+  - `country` (string): Country
+  - `postal_code` (string): Postal or ZIP code
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Organization settings
+  
+  **Properties**:
+  - `timezone` (string): Default timezone
+  - `currency` (string): Default currency
+  - `language` (string): Default language
+  - `date_format` (string): Date format preference
+</ParamField>
+
+<ParamField body="billing" type="object" required="false">
+  Billing information
+  
+  **Properties**:
+  - `billing_email` (string): Billing email address
+  - `billing_address` (object): Billing address
+  - `payment_method` (string): Preferred payment method
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Updated organization information
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the organization
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Organization name
+</ResponseField>
+
+<ResponseField name="data.basic_info" type="object">
+  Basic organization information
+</ResponseField>
+
+<ResponseField name="data.contact_info" type="object">
+  Contact information
+</ResponseField>
+
+<ResponseField name="data.address" type="object">
+  Organization address
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Organization settings
+</ResponseField>
+
+<ResponseField name="data.billing" type="object">
+  Billing information
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp of the update
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "https://api.example.com/org/information" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "basicInfo": {
+      "website": "https://example.com",
+      "industry": "Technology",
+      "description": "Leading technology company",
+      "size": "50-200"
+    },
+    "contactInfo": {
+      "phone": "+1234567890",
+      "email": "contact@example.com",
+      "support_email": "support@example.com"
+    },
+    "settings": {
+      "timezone": "America/New_York",
+      "currency": "USD",
+      "language": "en",
+      "date_format": "MM/DD/YYYY"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/information', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    basicInfo: {
+      website: 'https://example.com',
+      industry: 'Technology',
+      description: 'Leading technology company',
+      size: '50-200'
+    },
+    contactInfo: {
+      phone: '+1234567890',
+      email: 'contact@example.com',
+      support_email: 'support@example.com'
+    },
+    settings: {
+      timezone: 'America/New_York',
+      currency: 'USD',
+      language: 'en',
+      date_format: 'MM/DD/YYYY'
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "basicInfo": {
+        "website": "https://example.com",
+        "industry": "Technology",
+        "description": "Leading technology company",
+        "size": "50-200"
+    },
+    "contactInfo": {
+        "phone": "+1234567890",
+        "email": "contact@example.com",
+        "support_email": "support@example.com"
+    },
+    "settings": {
+        "timezone": "America/New_York",
+        "currency": "USD",
+        "language": "en",
+        "date_format": "MM/DD/YYYY"
+    }
+}
+
+response = requests.patch(
+    'https://api.example.com/org/information',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890abcdef",
+    "name": "Acme Corporation",
+    "basic_info": {
+      "website": "https://example.com",
+      "industry": "Technology",
+      "description": "Leading technology company",
+      "size": "50-200"
+    },
+    "contact_info": {
+      "phone": "+1234567890",
+      "email": "contact@example.com",
+      "support_email": "support@example.com"
+    },
+    "address": {
+      "street": "123 Main Street",
+      "city": "New York",
+      "state": "NY",
+      "country": "United States",
+      "postal_code": "10001"
+    },
+    "settings": {
+      "timezone": "America/New_York",
+      "currency": "USD",
+      "language": "en",
+      "date_format": "MM/DD/YYYY"
+    },
+    "billing": {
+      "billing_email": "billing@example.com",
+      "payment_method": "credit_card"
+    },
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Organization information updated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to update organization information
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Data validation failed (invalid email, phone, etc.)
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Partial Updates" icon="edit">
+    Update behavior:
+    
+    - Only provided fields are updated
+    - Missing fields remain unchanged
+    - Nested objects are merged, not replaced
+    - Empty strings clear the field value
+  </Accordion>
+  
+  <Accordion title="Validation Rules" icon="check">
+    Field validation:
+    
+    - Email addresses must be valid format
+    - Phone numbers must be valid format
+    - URLs must be valid format
+    - Required fields cannot be empty
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Required permissions:
+    
+    - Organization admin role
+    - Or specific update permissions
+    - Billing updates require billing admin role
+  </Accordion>
+  
+  <Accordion title="Audit Trail" icon="history">
+    Change tracking:
+    
+    - All changes are logged
+    - Previous values are stored
+    - Change history is available
+    - Audit logs include user and timestamp
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Update Basic Info" icon="info">
+    <CodeBlock lang="javascript">
+class OrganizationService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async updateBasicInfo(orgId, basicInfo) {
+    try {
+      const response = await this.apiClient.makeRequest('/org/information', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          basicInfo: {
+            website: basicInfo.website,
+            industry: basicInfo.industry,
+            description: basicInfo.description,
+            size: basicInfo.size
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update organization basic info');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error updating organization basic info:', error);
+      throw error;
+    }
+  }
+  
+  async updateContactInfo(orgId, contactInfo) {
+    try {
+      const response = await this.apiClient.makeRequest('/org/information', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          contactInfo: {
+            phone: contactInfo.phone,
+            email: contactInfo.email,
+            support_email: contactInfo.supportEmail
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update organization contact info');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error updating organization contact info:', error);
+      throw error;
+    }
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Update Settings" icon="settings">
+    <CodeBlock lang="python">
+import requests
+
+class OrganizationManager:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def update_organization_settings(self, settings):
+        """Update organization settings"""
+        try:
+            payload = {
+                "settings": {
+                    "timezone": settings.get("timezone"),
+                    "currency": settings.get("currency"),
+                    "language": settings.get("language"),
+                    "date_format": settings.get("date_format")
+                }
+            }
+            
+            response = self.api_client.patch('/org/information', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to update organization settings: {e}")
+            raise
+    
+    def update_billing_info(self, billing_info):
+        """Update organization billing information"""
+        try:
+            payload = {
+                "billing": {
+                    "billing_email": billing_info.get("billing_email"),
+                    "payment_method": billing_info.get("payment_method")
+                }
+            }
+            
+            response = self.api_client.patch('/org/information', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to update billing info: {e}")
+            raise
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Organization Info" icon="info">
+    `GET /org/information` - Get current organization information
+  </Card>
+  <Card title="Get Organization Settings" icon="settings">
+    `GET /org/settings` - Get organization settings
+  </Card>
+  <Card title="Update Organization Logo" icon="image">
+    `POST /org/logo` - Update organization logo
+  </Card>
+  <Card title="Get Organization History" icon="history">
+    `GET /org/history` - View organization change history
+  </Card>
+</CardGroup>
