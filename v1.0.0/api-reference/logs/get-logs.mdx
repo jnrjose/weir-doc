@@ -1,0 +1,352 @@
+---
+title: "Get Logs"
+api: "GET /logs"
+description: "Retrieve system and application logs with filtering and search capabilities"
+---
+
+Retrieve system logs, application logs, and audit trails with comprehensive filtering, search, and pagination capabilities. This endpoint provides detailed logging information for monitoring, debugging, and compliance purposes.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for system monitoring and audit trail access.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+{`Authorization: Bearer <your_jwt_token>`}
+</CodeBlock>
+
+## Query Parameters
+
+<ParamField query="page" type="string" required="false">
+  Page number for pagination (default: 1)
+  
+  **Example**: "1"
+</ParamField>
+
+<ParamField query="limit" type="string" required="false">
+  Number of logs per page (default: 50, max: 1000)
+  
+  **Example**: "50"
+</ParamField>
+
+<ParamField query="level" type="string" required="false">
+  Filter logs by severity level
+  
+  **Options**: "debug", "info", "warn", "error", "fatal"
+  
+  **Example**: "error"
+</ParamField>
+
+<ParamField query="source" type="string" required="false">
+  Filter logs by source component
+  
+  **Options**: "api", "auth", "database", "external", "system"
+  
+  **Example**: "api"
+</ParamField>
+
+<ParamField query="start_date" type="string" required="false">
+  Start date for log filtering (ISO 8601 format)
+  
+  **Example**: "2024-01-01T00:00:00Z"
+</ParamField>
+
+<ParamField query="end_date" type="string" required="false">
+  End date for log filtering (ISO 8601 format)
+  
+  **Example**: "2024-01-31T23:59:59Z"
+</ParamField>
+
+<ParamField query="search" type="string" required="false">
+  Search logs by message content
+  
+  **Example**: "authentication failed"
+</ParamField>
+
+<ParamField query="user_id" type="string" required="false">
+  Filter logs by user ID
+  
+  **Example**: "user_1234567890"
+</ParamField>
+
+<ParamField query="ip_address" type="string" required="false">
+  Filter logs by IP address
+  
+  **Example**: "192.168.1.100"
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of log entry objects
+</ResponseField>
+
+<ResponseField name="data[].log_id" type="string">
+  Unique identifier for the log entry
+</ResponseField>
+
+<ResponseField name="data[].timestamp" type="string">
+  ISO 8601 timestamp of the log entry
+</ResponseField>
+
+<ResponseField name="data[].level" type="string">
+  Log severity level
+</ResponseField>
+
+<ResponseField name="data[].source" type="string">
+  Source component that generated the log
+</ResponseField>
+
+<ResponseField name="data[].message" type="string">
+  Log message content
+</ResponseField>
+
+<ResponseField name="data[].user_id" type="string">
+  User ID associated with the log entry (if applicable)
+</ResponseField>
+
+<ResponseField name="data[].ip_address" type="string">
+  IP address associated with the log entry
+</ResponseField>
+
+<ResponseField name="data[].request_id" type="string">
+  Request ID for tracing related log entries
+</ResponseField>
+
+<ResponseField name="data[].metadata" type="object">
+  Additional metadata for the log entry
+</ResponseField>
+
+<ResponseField name="data[].metadata.endpoint" type="string">
+  API endpoint that generated the log
+</ResponseField>
+
+<ResponseField name="data[].metadata.method" type="string">
+  HTTP method used
+</ResponseField>
+
+<ResponseField name="data[].metadata.status_code" type="integer">
+  HTTP status code returned
+</ResponseField>
+
+<ResponseField name="data[].metadata.response_time" type="integer">
+  Response time in milliseconds
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination information
+</ResponseField>
+
+<ResponseField name="pagination.page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="pagination.limit" type="integer">
+  Number of items per page
+</ResponseField>
+
+<ResponseField name="pagination.total" type="integer">
+  Total number of log entries
+</ResponseField>
+
+<ResponseField name="pagination.total_pages" type="integer">
+  Total number of pages
+</ResponseField>
+
+<ResponseField name="pagination.has_next" type="boolean">
+  Whether there are more pages
+</ResponseField>
+
+<ResponseField name="pagination.has_prev" type="boolean">
+  Whether there are previous pages
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/logs?level=error&start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/logs?level=error&start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'level': 'error',
+    'start_date': '2024-01-01T00:00:00Z',
+    'end_date': '2024-01-31T23:59:59Z'
+}
+
+response = requests.get(
+    'https://api.example.com/logs',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    params=params
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{`{
+  "success": true,
+  "data": [
+    {
+      "log_id": "log_1234567890abcdef",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "level": "error",
+      "source": "api",
+      "message": "Authentication failed for user user_1234567890",
+      "user_id": "user_1234567890",
+      "ip_address": "192.168.1.100",
+      "request_id": "req_1234567890abcdef",
+      "metadata": {
+        "endpoint": "/auth/login",
+        "method": "POST",
+        "status_code": 401,
+        "response_time": 150
+      }
+    },
+    {
+      "log_id": "log_0987654321fedcba",
+      "timestamp": "2024-01-15T10:25:00Z",
+      "level": "error",
+      "source": "database",
+      "message": "Database connection timeout",
+      "user_id": null,
+      "ip_address": "10.0.0.1",
+      "request_id": "req_0987654321fedcba",
+      "metadata": {
+        "endpoint": "/org/teams",
+        "method": "GET",
+        "status_code": 500,
+        "response_time": 5000
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 50,
+    "total": 2,
+    "total_pages": 1,
+    "has_next": false,
+    "has_prev": false
+  },
+  "message": "Logs retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view logs
+</ResponseField>
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Log Levels" icon="info">
+    Available log levels:
+    
+    - **debug**: Detailed information for debugging
+    - **info**: General information about system operation
+    - **warn**: Warning messages for potential issues
+    - **error**: Error messages for failed operations
+    - **fatal**: Critical errors that may cause system failure
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    To view logs, you need:
+    
+    - Valid authentication token
+    - Admin role with log viewing permissions
+    - Appropriate access level for sensitive data
+  </Accordion>
+  
+  <Accordion title="Log Retention" icon="clock">
+    Log retention policies:
+    
+    - Debug logs: 7 days
+    - Info logs: 30 days
+    - Warning logs: 90 days
+    - Error logs: 1 year
+    - Fatal logs: 2 years
+  </Accordion>
+  
+  <Accordion title="Search Capabilities" icon="search">
+    Advanced search features:
+    
+    - Full-text search across log messages
+    - Filter by date ranges
+    - Filter by user, IP, or source
+    - Combine multiple filters
+    - Export search results
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get System Logs" icon="server">
+    `GET /logs/system` - Retrieve system-level logs
+  </Card>
+  <Card title="Get Audit Logs" icon="shield">
+    `GET /logs/audit` - Retrieve audit trail logs
+  </Card>
+  <Card title="Export Logs" icon="download">
+    `POST /logs/export` - Export logs to file
+  </Card>
+  <Card title="Get Log Statistics" icon="chart">
+    `GET /logs/statistics` - View log statistics and metrics
+  </Card>
+</CardGroup>

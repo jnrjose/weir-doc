@@ -1,0 +1,814 @@
+---
+title: "Invite Team Member"
+api: "POST /org/invite/team/member/{teamId}"
+description: "Invite a new member to join a team"
+---
+
+Invite a new member to join a specific team within your organization. This endpoint sends an invitation to the specified email address with the assigned role and permissions.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for team member management and invitations.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+{`Authorization: Bearer <your_jwt_token>`}
+</CodeBlock>
+
+## Path Parameters
+
+<ParamField path="teamId" type="string" required>
+  ID of the team to invite member to
+  
+  **Example**: "team_1234567890abcdef"
+</ParamField>
+
+## Request
+
+<ParamField body="firstname" type="string" required>
+  First name of the person being invited
+  
+  **Example**: "John"
+  
+  **Constraints**: 
+  - Minimum length: 1 character
+  - Maximum length: 50 characters
+  - Must contain only letters, spaces, hyphens, and apostrophes
+</ParamField>
+
+<ParamField body="lastname" type="string" required>
+  Last name of the person being invited
+  
+  **Example**: "Doe"
+  
+  **Constraints**: 
+  - Minimum length: 1 character
+  - Maximum length: 50 characters
+  - Must contain only letters, spaces, hyphens, and apostrophes
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Email address to send the invitation to
+  
+  **Example**: "john.doe@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email format
+  - Must be unique within the organization
+  - Will receive the invitation email
+</ParamField>
+
+<ParamField body="role" type="string" required>
+  Role to assign to the invited member
+  
+  **Options**: "Organization_User", "Team_Admin", "Viewer"
+  
+  **Example**: "Organization_User"
+  
+  **Constraints**: 
+  - Must be one of the predefined role values
+  - Determines permissions and access level
+</ParamField>
+
+<ParamField body="message" type="string" required="false">
+  Personal message to include with the invitation
+  
+  **Example**: "Welcome to our development team!"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional field
+</ParamField>
+
+<ParamField body="expires_at" type="string" required="false">
+  Invitation expiration date (ISO 8601 format)
+  
+  **Example**: "2024-02-15T23:59:59Z"
+  
+  **Constraints**: 
+  - Must be a valid ISO 8601 date
+  - Must be in the future
+  - Default: 7 days from now
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the invitation was sent successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains invitation information
+</ResponseField>
+
+<ResponseField name="data.invitation_id" type="string">
+  Unique identifier for the invitation
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the team the invitation is for
+</ResponseField>
+
+<ResponseField name="data.invitee_email" type="string">
+  Email address of the invited person
+</ResponseField>
+
+<ResponseField name="data.invitee_name" type="string">
+  Full name of the invited person
+</ResponseField>
+
+<ResponseField name="data.role" type="string">
+  Role assigned to the invited member
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Invitation status (pending, accepted, expired, cancelled)
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  ISO 8601 timestamp when the invitation expires
+</ResponseField>
+
+<ResponseField name="data.invited_by" type="string">
+  User ID of the person who sent the invitation
+</ResponseField>
+
+<ResponseField name="data.invited_at" type="string">
+  ISO 8601 timestamp when the invitation was sent
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/invite/team/member/team_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john.doe@example.com",
+    "role": "Organization_User",
+    "message": "Welcome to our development team!",
+    "expires_at": "2024-02-15T23:59:59Z"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/invite/team/member/team_1234567890abcdef', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    firstname: 'John',
+    lastname: 'Doe',
+    email: 'john.doe@example.com',
+    role: 'Organization_User',
+    message: 'Welcome to our development team!',
+    expires_at: '2024-02-15T23:59:59Z'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+invitation_data = {
+    'firstname': 'John',
+    'lastname': 'Doe',
+    'email': 'john.doe@example.com',
+    'role': 'Organization_User',
+    'message': 'Welcome to our development team!',
+    'expires_at': '2024-02-15T23:59:59Z'
+}
+
+response = requests.post(
+    'https://api.example.com/org/invite/team/member/team_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=invitation_data
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$invitationData = [
+    'firstname' => 'John',
+    'lastname' => 'Doe',
+    'email' => 'john.doe@example.com',
+    'role' => 'Organization_User',
+    'message' => 'Welcome to our development team!',
+    'expires_at' => '2024-02-15T23:59:59Z'
+];
+
+$data = json_encode($invitationData);
+
+$context = stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => $data
+    ]
+]);
+
+$response = file_get_contents('https://api.example.com/org/invite/team/member/team_1234567890abcdef', false, $context);
+$result = json_decode($response, true);
+print_r($result);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    invitationData := map[string]string{
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "john.doe@example.com",
+        "role": "Organization_User",
+        "message": "Welcome to our development team!",
+        "expires_at": "2024-02-15T23:59:59Z",
+    }
+    
+    jsonData, _ := json.Marshal(invitationData)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/invite/team/member/team_1234567890abcdef", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{`{
+  "success": true,
+  "data": {
+    "invitation_id": "inv_1234567890abcdef",
+    "team_id": "team_1234567890abcdef",
+    "invitee_email": "john.doe@example.com",
+    "invitee_name": "John Doe",
+    "role": "Organization_User",
+    "status": "pending",
+    "expires_at": "2024-02-15T23:59:59Z",
+    "invited_by": "user_1234567890",
+    "invited_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Invitation sent successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request data or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to invite team members
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Team not found
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  User already exists or invitation already sent
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Validation errors in the request data
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="User Already Exists (409)" icon="exclamation-triangle">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "USER_ALREADY_EXISTS",
+    "message": "User with this email already exists in the organization",
+    "details": {
+      "field": "email",
+      "reason": "User is already a member of the organization"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Invitation Already Sent (409)" icon="mail">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "INVITATION_ALREADY_SENT",
+    "message": "Invitation already sent to this email address",
+    "details": {
+      "field": "email",
+      "reason": "Pending invitation exists for this email"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Team Not Found (404)" icon="search">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "TEAM_NOT_FOUND",
+    "message": "Team not found",
+    "details": {
+      "field": "teamId",
+      "reason": "Team does not exist or has been deleted"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Validation Error (422)" icon="exclamation">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed for one or more fields",
+    "details": {
+      "field": "email",
+      "reason": "Invalid email format"
+    },
+    "validation_errors": [
+      {
+        "field": "email",
+        "message": "Invalid email format",
+        "code": "INVALID_EMAIL"
+      },
+      {
+        "field": "role",
+        "message": "Invalid role specified",
+        "code": "INVALID_ROLE"
+      }
+    ]
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Role Permissions" icon="shield">
+    Available roles and their permissions:
+    
+    - **Organization_User**: Standard team member with basic permissions
+    - **Team_Admin**: Can manage team members and settings
+    - **Viewer**: Read-only access to team resources
+  </Accordion>
+  
+  <Accordion title="Invitation Process" icon="mail">
+    Invitation workflow:
+    
+    - Invitation email is sent immediately
+    - Invitee has 7 days to accept (configurable)
+    - Invitation can be cancelled before acceptance
+    - Status updates are tracked and logged
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="key">
+    To invite team members, you need:
+    
+    - Valid authentication token
+    - Team management permissions
+    - Appropriate role level for the team
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    Invitation limits:
+    
+    - Maximum 10 invitations per hour per user
+    - Maximum 50 invitations per day per organization
+    - Rate limit resets after the specified time
+  </Accordion>
+</AccordionGroup>
+
+## Integration Examples
+
+<AccordionGroup>
+  <Accordion title="Team Invitation Form" icon="form">
+    <CodeBlock lang="javascript">
+{`class TeamInvitationForm {
+  constructor(apiClient, teamId) {
+    this.apiClient = apiClient;
+    this.teamId = teamId;
+    this.form = document.getElementById('invite-member-form');
+    this.setupEventListeners();
+  }
+  
+  setupEventListeners() {
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleSubmit();
+    });
+    
+    // Real-time validation
+    this.form.addEventListener('input', (e) => {
+      this.validateField(e.target);
+    });
+  }
+  
+  async handleSubmit() {
+    try {
+      this.showLoading();
+      
+      const formData = this.getFormData();
+      const validationErrors = this.validateForm(formData);
+      
+      if (validationErrors.length > 0) {
+        this.showValidationErrors(validationErrors);
+        return;
+      }
+      
+      const response = await this.apiClient.makeRequest(\`/org/invite/team/member/\${this.teamId}\`, {
+        method: 'POST',
+        body: JSON.stringify(formData)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error.message);
+      }
+      
+      const data = await response.json();
+      this.handleInvitationSuccess(data.data);
+      
+    } catch (error) {
+      console.error('Invitation error:', error);
+      this.showError(error.message);
+    } finally {
+      this.hideLoading();
+    }
+  }
+  
+  getFormData() {
+    const formData = new FormData(this.form);
+    
+    return {
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      email: formData.get('email'),
+      role: formData.get('role'),
+      message: formData.get('message'),
+      expires_at: formData.get('expires_at')
+    };
+  }
+  
+  validateForm(data) {
+    const errors = [];
+    
+    // Validate first name
+    if (!data.firstname || data.firstname.length < 1) {
+      errors.push({ field: 'firstname', message: 'First name is required' });
+    }
+    
+    // Validate last name
+    if (!data.lastname || data.lastname.length < 1) {
+      errors.push({ field: 'lastname', message: 'Last name is required' });
+    }
+    
+    // Validate email
+    if (!data.email || !this.isValidEmail(data.email)) {
+      errors.push({ field: 'email', message: 'Invalid email format' });
+    }
+    
+    // Validate role
+    const validRoles = ['Organization_User', 'Team_Admin', 'Viewer'];
+    if (!data.role || !validRoles.includes(data.role)) {
+      errors.push({ field: 'role', message: 'Invalid role selected' });
+    }
+    
+    // Validate expiration date
+    if (data.expires_at && !this.isValidDate(data.expires_at)) {
+      errors.push({ field: 'expires_at', message: 'Invalid expiration date' });
+    }
+    
+    return errors;
+  }
+  
+  validateField(field) {
+    const value = field.value;
+    const fieldName = field.name;
+    
+    // Clear previous error
+    this.clearFieldError(field);
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    switch (fieldName) {
+      case 'firstname':
+      case 'lastname':
+        if (!value || value.length < 1) {
+          isValid = false;
+          errorMessage = \`\${fieldName} is required\`;
+        }
+        break;
+      case 'email':
+        if (!value || !this.isValidEmail(value)) {
+          isValid = false;
+          errorMessage = 'Invalid email format';
+        }
+        break;
+      case 'role':
+        const validRoles = ['Organization_User', 'Team_Admin', 'Viewer'];
+        if (!value || !validRoles.includes(value)) {
+          isValid = false;
+          errorMessage = 'Invalid role selected';
+        }
+        break;
+      case 'expires_at':
+        if (value && !this.isValidDate(value)) {
+          isValid = false;
+          errorMessage = 'Invalid expiration date';
+        }
+        break;
+    }
+    
+    if (!isValid) {
+      this.showFieldError(field, errorMessage);
+    }
+  }
+  
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  isValidDate(dateString) {
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date) && date > new Date();
+  }
+  
+  showFieldError(field, message) {
+    const errorElement = field.parentNode.querySelector('.field-error');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+    
+    field.classList.add('error');
+  }
+  
+  clearFieldError(field) {
+    const errorElement = field.parentNode.querySelector('.field-error');
+    if (errorElement) {
+      errorElement.style.display = 'none';
+    }
+    
+    field.classList.remove('error');
+  }
+  
+  showValidationErrors(errors) {
+    errors.forEach(error => {
+      const field = this.form.querySelector(\`[name="\${error.field}"]\`);
+      if (field) {
+        this.showFieldError(field, error.message);
+      }
+    });
+  }
+  
+  handleInvitationSuccess(invitationData) {
+    // Show success message
+    this.showSuccess(\`Invitation sent to \${invitationData.invitee_email}\`);
+    
+    // Reset form
+    this.form.reset();
+    
+    // Update team member count or refresh list
+    this.updateTeamMemberCount();
+  }
+  
+  updateTeamMemberCount() {
+    // This would typically refresh the team member list
+    // or update a counter somewhere in the UI
+    const event = new CustomEvent('teamMemberInvited');
+    document.dispatchEvent(event);
+  }
+  
+  showLoading() {
+    const submitButton = this.form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending Invitation...';
+  }
+  
+  hideLoading() {
+    const submitButton = this.form.querySelector('button[type="submit"]');
+    submitButton.disabled = false;
+    submitButton.textContent = 'Send Invitation';
+  }
+  
+  showSuccess(message) {
+    this.showMessage(message, 'success');
+  }
+  
+  showError(message) {
+    this.showMessage(message, 'error');
+  }
+  
+  showMessage(message, type) {
+    const messageElement = document.getElementById('form-message');
+    messageElement.textContent = message;
+    messageElement.className = \`message message-\${type}\`;
+    messageElement.style.display = 'block';
+    
+    setTimeout(() => {
+      messageElement.style.display = 'none';
+    }, 5000);
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Bulk Team Invitations" icon="upload">
+    <CodeBlock lang="javascript">
+{`class BulkTeamInvitations {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async inviteMultipleMembers(teamId, invitations) {
+    const results = [];
+    const errors = [];
+    
+    for (const invitation of invitations) {
+      try {
+        const response = await this.apiClient.makeRequest(\`/org/invite/team/member/\${teamId}\`, {
+          method: 'POST',
+          body: JSON.stringify(invitation)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          results.push({
+            email: invitation.email,
+            success: true,
+            data: result.data
+          });
+        } else {
+          const error = await response.json();
+          errors.push({
+            email: invitation.email,
+            success: false,
+            error: error.error.message
+          });
+        }
+      } catch (error) {
+        errors.push({
+          email: invitation.email,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return {
+      results,
+      errors,
+      summary: {
+        total: invitations.length,
+        successful: results.length,
+        failed: errors.length
+      }
+    };
+  }
+  
+  async inviteFromCSV(teamId, csvData) {
+    const invitations = this.parseCSV(csvData);
+    return await this.inviteMultipleMembers(teamId, invitations);
+  }
+  
+  parseCSV(csvData) {
+    const lines = csvData.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const invitations = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      const invitation = {
+        firstname: values[0],
+        lastname: values[1],
+        email: values[2],
+        role: values[3] || 'Organization_User',
+        message: values[4] || '',
+        expires_at: values[5] || this.getDefaultExpiration()
+      };
+      
+      invitations.push(invitation);
+    }
+    
+    return invitations;
+  }
+  
+  getDefaultExpiration() {
+    const date = new Date();
+    date.setDate(date.getDate() + 7); // 7 days from now
+    return date.toISOString();
+  }
+  
+  async generateInvitationReport(results) {
+    const report = {
+      timestamp: new Date().toISOString(),
+      summary: results.summary,
+      successful_invitations: results.results.map(r => ({
+        email: r.email,
+        invitation_id: r.data.invitation_id,
+        status: r.data.status
+      })),
+      failed_invitations: results.errors.map(e => ({
+        email: e.email,
+        error: e.error
+      }))
+    };
+    
+    return report;
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Team Members" icon="users">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List all teams
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create a new team
+  </Card>
+  <Card title="Delete Team" icon="trash">
+    `DELETE /org/team/{teamId}` - Remove a team
+  </Card>
+</CardGroup>

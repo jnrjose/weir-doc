@@ -1,0 +1,347 @@
+---
+title: "External API"
+description: "External API endpoints for third-party integrations and public access"
+icon: "globe"
+---
+
+The External API provides public-facing endpoints for third-party integrations, external applications, and public access to Weir AI services. These endpoints are designed for external developers and partners who need to integrate with the Weir AI platform.
+
+## Overview
+
+The External API is designed for third-party developers, partners, and external applications that need to integrate with Weir AI services. These endpoints use Basic Authentication and provide access to core platform functionality without requiring full user authentication.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Public Access" icon="globe">
+    Access core Weir AI services without user authentication
+  </Card>
+  <Card title="Third-party Integration" icon="puzzle">
+    Integrate with external applications and services
+  </Card>
+  <Card title="API Key Management" icon="key">
+    Manage API keys and access credentials
+  </Card>
+  <Card title="Rate Limiting" icon="clock">
+    Built-in rate limiting and usage monitoring
+  </Card>
+</CardGroup>
+
+## Authentication
+
+External API endpoints use Basic Authentication:
+
+<CodeBlock lang="bash">
+{`Authorization: Basic <base64_encoded_credentials>`}
+</CodeBlock>
+
+Where credentials are encoded as `base64(username:password)`.
+
+## Available Endpoints
+
+### Authentication & Access
+
+<CardGroup cols={2}>
+  <Card title="Generate Access Token" icon="key">
+    `POST /auth/token` - Generate access token for external API authentication
+  </Card>
+  <Card title="Validate API Key" icon="check">
+    `POST /auth/validate` - Validate API key and get access information
+  </Card>
+  <Card title="Refresh Access Token" icon="refresh">
+    `POST /auth/refresh` - Refresh expired access token
+  </Card>
+  <Card title="Revoke Access Token" icon="ban">
+    `POST /auth/revoke` - Revoke access token and invalidate session
+  </Card>
+</CardGroup>
+
+### Core Services
+
+<CardGroup cols={2}>
+  <Card title="NIL Detection" icon="search">
+    `POST /ai/detect` - Detect Name, Image, and Likeness in content
+  </Card>
+  <Card title="Content Analysis" icon="analyze">
+    `POST /ai/analyze` - Analyze content for various attributes
+  </Card>
+  <Card title="Face Recognition" icon="user">
+    `POST /ai/recognize` - Recognize faces in images
+  </Card>
+  <Card title="Content Moderation" icon="shield">
+    `POST /ai/moderate` - Moderate content for inappropriate material
+  </Card>
+</CardGroup>
+
+### Data Management
+
+<CardGroup cols={2}>
+  <Card title="Upload Content" icon="upload">
+    `POST /data/upload` - Upload content for processing
+  </Card>
+  <Card title="Get Processing Status" icon="info">
+    `GET /data/status/{jobId}` - Check processing status
+  </Card>
+  <Card title="Download Results" icon="download">
+    `GET /data/results/{jobId}` - Download processing results
+  </Card>
+  <Card title="Delete Content" icon="trash">
+    `DELETE /data/content/{contentId}` - Delete uploaded content
+  </Card>
+</CardGroup>
+
+### Webhooks & Notifications
+
+<CardGroup cols={2}>
+  <Card title="Register Webhook" icon="webhook">
+    `POST /webhooks/register` - Register webhook endpoint
+  </Card>
+  <Card title="List Webhooks" icon="list">
+    `GET /webhooks` - List registered webhooks
+  </Card>
+  <Card title="Update Webhook" icon="edit">
+    `PUT /webhooks/{webhookId}` - Update webhook configuration
+  </Card>
+  <Card title="Delete Webhook" icon="trash">
+    `DELETE /webhooks/{webhookId}` - Remove webhook endpoint
+  </Card>
+</CardGroup>
+
+## Rate Limiting
+
+External API endpoints have specific rate limits based on your subscription tier:
+
+- **Free Tier**: 100 requests per hour
+- **Basic Tier**: 1,000 requests per hour
+- **Professional Tier**: 10,000 requests per hour
+- **Enterprise Tier**: Custom limits
+
+## Error Handling
+
+All External API endpoints return consistent error responses:
+
+<CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": {
+      "field": "field_name",
+      "reason": "Detailed error reason"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Common Error Codes
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors" icon="exclamation-triangle">
+    - `UNAUTHORIZED`: Invalid or missing credentials
+    - `INVALID_CREDENTIALS`: Invalid username or password
+    - `TOKEN_EXPIRED`: Access token has expired
+    - `INVALID_API_KEY`: Invalid or revoked API key
+  </Accordion>
+  
+  <Accordion title="Validation Errors" icon="exclamation">
+    - `VALIDATION_ERROR`: Request data validation failed
+    - `REQUIRED_FIELD`: Missing required field
+    - `INVALID_FORMAT`: Invalid data format
+    - `FILE_TOO_LARGE`: Uploaded file exceeds size limit
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    - `RATE_LIMITED`: Rate limit exceeded
+    - `QUOTA_EXCEEDED`: API quota exceeded
+    - `THROTTLED`: Request throttled
+    - `SERVICE_UNAVAILABLE`: Service temporarily unavailable
+  </Accordion>
+  
+  <Accordion title="Processing Errors" icon="cog">
+    - `PROCESSING_FAILED`: Content processing failed
+    - `UNSUPPORTED_FORMAT`: Unsupported file format
+    - `CONTENT_TOO_LARGE`: Content exceeds processing limits
+    - `INVALID_CONTENT`: Content validation failed
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Store credentials securely
+    - Implement token refresh logic
+    - Handle authentication errors gracefully
+    - Use HTTPS for all API calls
+    - Implement proper credential rotation
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    - Implement exponential backoff
+    - Monitor rate limit headers
+    - Cache responses when appropriate
+    - Batch requests when possible
+    - Implement retry logic
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling
+    - Provide meaningful error messages
+    - Log errors for debugging
+    - Implement retry logic for transient errors
+    - Use appropriate HTTP status codes
+  </Accordion>
+  
+  <Accordion title="Performance" icon="tachometer">
+    - Use asynchronous processing when available
+    - Implement proper caching strategies
+    - Monitor API response times
+    - Optimize request payloads
+    - Use compression when appropriate
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+1. **Get API Credentials**: Sign up for a Weir AI account and obtain API credentials
+2. **Test Authentication**: Use the token generation endpoint to test your credentials
+3. **Explore Endpoints**: Start with basic operations like content upload
+4. **Implement Error Handling**: Add proper error handling for all API calls
+5. **Monitor Usage**: Set up monitoring and logging for your API usage
+
+## Integration Examples
+
+<AccordionGroup>
+  <Accordion title="JavaScript SDK" icon="code">
+    <CodeBlock lang="javascript">
+{`// Initialize the Weir External API client
+const weirClient = new WeirExternalClient({
+  baseURL: 'https://external.example.com',
+  username: 'your_username',
+  password: 'your_password'
+});
+
+// Generate access token
+const token = await weirClient.generateToken();
+
+// Upload content for processing
+const uploadResult = await weirClient.uploadContent({
+  file: fileData,
+  type: 'image',
+  options: {
+    detectNIL: true,
+    moderateContent: true
+  }
+});
+
+// Check processing status
+const status = await weirClient.getProcessingStatus(uploadResult.jobId);
+
+// Download results when ready
+if (status.status === 'completed') {
+  const results = await weirClient.downloadResults(uploadResult.jobId);
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python SDK" icon="code">
+    <CodeBlock lang="python">
+{`from weir_external import WeirExternalClient
+
+# Initialize the client
+client = WeirExternalClient(
+    base_url='https://external.example.com',
+    username='your_username',
+    password='your_password'
+)
+
+# Generate access token
+token = client.generate_token()
+
+# Upload content for processing
+upload_result = client.upload_content(
+    file_data=file_data,
+    file_type='image',
+    options={
+        'detect_nil': True,
+        'moderate_content': True
+    }
+)
+
+# Check processing status
+status = client.get_processing_status(upload_result['job_id'])
+
+# Download results when ready
+if status['status'] == 'completed':
+    results = client.download_results(upload_result['job_id'])`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="cURL Examples" icon="terminal">
+    <CodeBlock lang="bash">
+{`# Generate access token
+curl -X POST "https://external.example.com/auth/token" \
+  -H "Authorization: Basic $(echo -n 'username:password' | base64)" \
+  -H "Content-Type: application/json"
+
+# Upload content
+curl -X POST "https://external.example.com/data/upload" \
+  -H "Authorization: Bearer <access_token>" \
+  -F "file=@image.jpg" \
+  -F "type=image" \
+  -F "options={\"detectNIL\":true}"
+
+# Check processing status
+curl -X GET "https://external.example.com/data/status/job_123" \
+  -H "Authorization: Bearer <access_token>"`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Webhook Integration
+
+<AccordionGroup>
+  <Accordion title="Webhook Setup" icon="webhook">
+    <CodeBlock lang="javascript">
+{`// Register webhook endpoint
+const webhook = await weirClient.registerWebhook({
+  url: 'https://your-app.com/webhooks/weir',
+  events: ['processing.completed', 'processing.failed'],
+  secret: 'your_webhook_secret'
+});
+
+// Handle webhook events
+app.post('/webhooks/weir', (req, res) => {
+  const signature = req.headers['x-weir-signature'];
+  const payload = req.body;
+  
+  // Verify webhook signature
+  if (weirClient.verifyWebhookSignature(payload, signature, webhook.secret)) {
+    // Process webhook event
+    handleWebhookEvent(payload);
+    res.status(200).send('OK');
+  } else {
+    res.status(401).send('Unauthorized');
+  }
+});`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Support
+
+For technical support with the External API:
+
+- **Documentation**: Refer to individual endpoint documentation
+- **API Playground**: Use the interactive API playground for testing
+- **Support Team**: Contact support@weir.ai for assistance
+- **Status Page**: Check system status at status.weir.ai
+- **Developer Portal**: Access additional resources at developers.weir.ai
+
+<Note>
+  **API Key Required**
+  
+  All External API endpoints require valid API credentials. Ensure you have obtained the necessary credentials before attempting to use these endpoints.
+</Note>

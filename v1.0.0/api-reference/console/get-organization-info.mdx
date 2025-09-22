@@ -1,0 +1,596 @@
+---
+title: "Get Organization Information"
+api: "GET /org/information"
+description: "Retrieve organization details and settings"
+---
+
+Retrieve comprehensive information about your organization including basic details, contact information, address, and configuration settings. This endpoint provides all the data needed to display and manage organization information.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization management and settings display.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+{`Authorization: Bearer <your_jwt_token>`}
+</CodeBlock>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains organization information
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the organization
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the organization
+</ResponseField>
+
+<ResponseField name="data.website" type="string">
+  Organization website URL
+</ResponseField>
+
+<ResponseField name="data.industry" type="string">
+  Industry classification
+</ResponseField>
+
+<ResponseField name="data.company_size" type="string">
+  Company size category
+</ResponseField>
+
+<ResponseField name="data.founded" type="string">
+  Year the organization was founded
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Organization description
+</ResponseField>
+
+<ResponseField name="data.address" type="object">
+  Organization address information
+</ResponseField>
+
+<ResponseField name="data.address.address1" type="string">
+  Primary address line
+</ResponseField>
+
+<ResponseField name="data.address.address2" type="string">
+  Secondary address line (optional)
+</ResponseField>
+
+<ResponseField name="data.address.city" type="string">
+  City name
+</ResponseField>
+
+<ResponseField name="data.address.state" type="string">
+  State or province
+</ResponseField>
+
+<ResponseField name="data.address.postal_code" type="string">
+  Postal or ZIP code
+</ResponseField>
+
+<ResponseField name="data.address.country" type="string">
+  Country name
+</ResponseField>
+
+<ResponseField name="data.contact" type="object">
+  Contact information
+</ResponseField>
+
+<ResponseField name="data.contact.phone" type="string">
+  Primary phone number
+</ResponseField>
+
+<ResponseField name="data.contact.email" type="string">
+  Primary contact email
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Organization settings and preferences
+</ResponseField>
+
+<ResponseField name="data.settings.timezone" type="string">
+  Organization timezone
+</ResponseField>
+
+<ResponseField name="data.settings.language" type="string">
+  Default language
+</ResponseField>
+
+<ResponseField name="data.settings.currency" type="string">
+  Default currency
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the organization was created
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when the organization was last updated
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/information" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/information', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.example.com/org/information',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$context = stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ]
+    ]
+]);
+
+$response = file_get_contents('https://api.example.com/org/information', false, $context);
+$result = json_decode($response, true);
+print_r($result);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    req, _ := http.NewRequest("GET", "https://api.example.com/org/information", nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    // Process response
+    fmt.Println("Organization information retrieved")
+}
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{`{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890abcdef",
+    "name": "Acme Corporation",
+    "website": "https://acme.com",
+    "industry": "TECHNOLOGY",
+    "company_size": "LARGE",
+    "founded": "2010",
+    "description": "A leading technology company specializing in innovative solutions",
+    "address": {
+      "address1": "123 Tech Street",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acme.com"
+    },
+    "settings": {
+      "timezone": "America/Los_Angeles",
+      "language": "en",
+      "currency": "USD"
+    },
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Organization information retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view organization information
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Organization not found
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or expired authentication token",
+    "details": {
+      "field": "authorization",
+      "reason": "Token validation failed"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Permission Error (403)" icon="user-slash">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions to view organization information",
+    "details": {
+      "field": "permissions",
+      "reason": "Organization access required"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Not Found (404)" icon="search">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "ORGANIZATION_NOT_FOUND",
+    "message": "Organization not found",
+    "details": {
+      "field": "organization",
+      "reason": "Organization does not exist or has been deleted"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Permissions" icon="shield">
+    To view organization information, you need:
+    
+    - Valid authentication token
+    - Organization membership
+    - Appropriate access level for the data
+  </Accordion>
+  
+  <Accordion title="Data Privacy" icon="lock">
+    Organization information includes:
+    
+    - Public information (name, website, industry)
+    - Contact details (phone, email)
+    - Address information
+    - Internal settings and preferences
+  </Accordion>
+  
+  <Accordion title="Caching" icon="clock">
+    For optimal performance:
+    
+    - Cache organization information when possible
+    - Refresh data when settings are updated
+    - Handle offline scenarios gracefully
+    - Implement proper error handling
+  </Accordion>
+  
+  <Accordion title="Data Validation" icon="check">
+    Ensure data integrity:
+    
+    - Validate all returned fields
+    - Handle missing optional fields
+    - Format data appropriately for display
+    - Sanitize user-facing content
+  </Accordion>
+</AccordionGroup>
+
+## Integration Examples
+
+<AccordionGroup>
+  <Accordion title="Organization Profile Component" icon="building">
+    <CodeBlock lang="javascript">
+{`class OrganizationProfile {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+    this.organization = null;
+  }
+  
+  async loadOrganizationInfo() {
+    try {
+      const response = await this.apiClient.makeRequest('/org/information');
+      
+      if (!response.ok) {
+        throw new Error('Failed to load organization information');
+      }
+      
+      const data = await response.json();
+      this.organization = data.data;
+      
+      this.displayOrganizationInfo();
+      return data.data;
+      
+    } catch (error) {
+      console.error('Error loading organization info:', error);
+      this.displayError('Failed to load organization information');
+      throw error;
+    }
+  }
+  
+  displayOrganizationInfo() {
+    if (!this.organization) return;
+    
+    // Update basic information
+    document.getElementById('org-name').textContent = this.organization.name;
+    document.getElementById('org-website').textContent = this.organization.website;
+    document.getElementById('org-industry').textContent = this.organization.industry;
+    document.getElementById('org-size').textContent = this.organization.company_size;
+    document.getElementById('org-founded').textContent = this.organization.founded;
+    document.getElementById('org-description').textContent = this.organization.description;
+    
+    // Update address information
+    const address = this.organization.address;
+    const addressText = \`\${address.address1}\${address.address2 ? ', ' + address.address2 : ''}, \${address.city}, \${address.state} \${address.postal_code}, \${address.country}\`;
+    document.getElementById('org-address').textContent = addressText;
+    
+    // Update contact information
+    document.getElementById('org-phone').textContent = this.organization.contact.phone;
+    document.getElementById('org-email').textContent = this.organization.contact.email;
+    
+    // Update settings
+    document.getElementById('org-timezone').textContent = this.organization.settings.timezone;
+    document.getElementById('org-language').textContent = this.organization.settings.language;
+    document.getElementById('org-currency').textContent = this.organization.settings.currency;
+    
+    // Update timestamps
+    document.getElementById('org-created').textContent = new Date(this.organization.created_at).toLocaleDateString();
+    document.getElementById('org-updated').textContent = new Date(this.organization.updated_at).toLocaleDateString();
+  }
+  
+  displayError(message) {
+    const errorElement = document.getElementById('org-error');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+  }
+  
+  hideError() {
+    const errorElement = document.getElementById('org-error');
+    errorElement.style.display = 'none';
+  }
+  
+  async refresh() {
+    this.hideError();
+    await this.loadOrganizationInfo();
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Organization Settings Manager" icon="cog">
+    <CodeBlock lang="javascript">
+{`class OrganizationSettingsManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+    this.organization = null;
+  }
+  
+  async loadSettings() {
+    try {
+      const response = await this.apiClient.makeRequest('/org/information');
+      const data = await response.json();
+      
+      this.organization = data.data;
+      this.populateSettingsForm();
+      
+      return data.data;
+      
+    } catch (error) {
+      console.error('Error loading organization settings:', error);
+      throw error;
+    }
+  }
+  
+  populateSettingsForm() {
+    if (!this.organization) return;
+    
+    // Basic information
+    document.getElementById('org-name-input').value = this.organization.name || '';
+    document.getElementById('org-website-input').value = this.organization.website || '';
+    document.getElementById('org-industry-select').value = this.organization.industry || '';
+    document.getElementById('org-size-select').value = this.organization.company_size || '';
+    document.getElementById('org-founded-input').value = this.organization.founded || '';
+    document.getElementById('org-description-textarea').value = this.organization.description || '';
+    
+    // Address information
+    const address = this.organization.address || {};
+    document.getElementById('address1-input').value = address.address1 || '';
+    document.getElementById('address2-input').value = address.address2 || '';
+    document.getElementById('city-input').value = address.city || '';
+    document.getElementById('state-input').value = address.state || '';
+    document.getElementById('postal-code-input').value = address.postal_code || '';
+    document.getElementById('country-input').value = address.country || '';
+    
+    // Contact information
+    const contact = this.organization.contact || {};
+    document.getElementById('phone-input').value = contact.phone || '';
+    document.getElementById('email-input').value = contact.email || '';
+    
+    // Settings
+    const settings = this.organization.settings || {};
+    document.getElementById('timezone-select').value = settings.timezone || '';
+    document.getElementById('language-select').value = settings.language || '';
+    document.getElementById('currency-select').value = settings.currency || '';
+  }
+  
+  getFormData() {
+    return {
+      basicInfo: {
+        website: document.getElementById('org-website-input').value,
+        industry: document.getElementById('org-industry-select').value,
+        companySize: document.getElementById('org-size-select').value,
+        founded: document.getElementById('org-founded-input').value,
+        description: document.getElementById('org-description-textarea').value
+      },
+      address: {
+        address1: document.getElementById('address1-input').value,
+        address2: document.getElementById('address2-input').value,
+        city: document.getElementById('city-input').value,
+        state: document.getElementById('state-input').value,
+        postalCode: document.getElementById('postal-code-input').value,
+        country: document.getElementById('country-input').value
+      },
+      contact: {
+        phone: document.getElementById('phone-input').value,
+        email: document.getElementById('email-input').value
+      }
+    };
+  }
+  
+  validateFormData(data) {
+    const errors = [];
+    
+    // Validate required fields
+    if (!data.basicInfo.website) {
+      errors.push('Website is required');
+    }
+    
+    if (!data.contact.email) {
+      errors.push('Contact email is required');
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (data.contact.email && !emailRegex.test(data.contact.email)) {
+      errors.push('Invalid email format');
+    }
+    
+    // Validate website format
+    const websiteRegex = /^https?:\/\/.+/;
+    if (data.basicInfo.website && !websiteRegex.test(data.basicInfo.website)) {
+      errors.push('Website must start with http:// or https://');
+    }
+    
+    return errors;
+  }
+  
+  async saveSettings() {
+    try {
+      const formData = this.getFormData();
+      const errors = this.validateFormData(formData);
+      
+      if (errors.length > 0) {
+        throw new Error(\`Validation errors: \${errors.join(', ')}\`);
+      }
+      
+      const response = await this.apiClient.makeRequest('/org/information', {
+        method: 'PATCH',
+        body: JSON.stringify(formData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save organization settings');
+      }
+      
+      // Reload settings to get updated data
+      await this.loadSettings();
+      
+      return true;
+      
+    } catch (error) {
+      console.error('Error saving organization settings:', error);
+      throw error;
+    }
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Update Organization Info" icon="edit">
+    `PATCH /org/information` - Update organization details
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List organization teams
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create a new team
+  </Card>
+  <Card title="Get Team Members" icon="user-group">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+</CardGroup>

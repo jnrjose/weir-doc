@@ -1,0 +1,848 @@
+---
+title: "Update Organization Information"
+api: "PATCH /org/information"
+description: "Update organization details and settings"
+---
+
+Update organization information including basic details, contact information, address, and configuration settings. This endpoint allows you to modify all aspects of your organization's profile and settings.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization management and settings updates.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+{`Authorization: Bearer <your_jwt_token>`}
+</CodeBlock>
+
+## Request
+
+<ParamField body="basicInfo" type="object" required="false">
+  Basic organization information
+  
+  **Properties**:
+  - `website` (string): Organization website URL
+  - `industry` (string): Industry classification
+  - `companySize` (string): Company size category
+  - `founded` (string): Year the organization was founded
+  - `description` (string): Organization description
+</ParamField>
+
+<ParamField body="address" type="object" required="false">
+  Organization address information
+  
+  **Properties**:
+  - `address1` (string): Primary address line
+  - `address2` (string): Secondary address line (optional)
+  - `city` (string): City name
+  - `state` (string): State or province
+  - `postalCode` (string): Postal or ZIP code
+  - `country` (string): Country name
+</ParamField>
+
+<ParamField body="contact" type="object" required="false">
+  Contact information
+  
+  **Properties**:
+  - `phone` (string): Primary phone number
+  - `email` (string): Primary contact email
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the update was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains updated organization information
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the organization
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the organization
+</ResponseField>
+
+<ResponseField name="data.website" type="string">
+  Updated organization website URL
+</ResponseField>
+
+<ResponseField name="data.industry" type="string">
+  Updated industry classification
+</ResponseField>
+
+<ResponseField name="data.company_size" type="string">
+  Updated company size category
+</ResponseField>
+
+<ResponseField name="data.founded" type="string">
+  Updated year the organization was founded
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Updated organization description
+</ResponseField>
+
+<ResponseField name="data.address" type="object">
+  Updated organization address information
+</ResponseField>
+
+<ResponseField name="data.contact" type="object">
+  Updated contact information
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when the organization was last updated
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "https://api.example.com/org/information" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "basicInfo": {
+      "website": "https://acme.com",
+      "industry": "TECHNOLOGY",
+      "companySize": "LARGE",
+      "founded": "2010",
+      "description": "A leading technology company specializing in innovative solutions"
+    },
+    "address": {
+      "address1": "123 Tech Street",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acme.com"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/information', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    basicInfo: {
+      website: 'https://acme.com',
+      industry: 'TECHNOLOGY',
+      companySize: 'LARGE',
+      founded: '2010',
+      description: 'A leading technology company specializing in innovative solutions'
+    },
+    address: {
+      address1: '123 Tech Street',
+      address2: 'Suite 100',
+      city: 'San Francisco',
+      state: 'CA',
+      postalCode: '94105',
+      country: 'United States'
+    },
+    contact: {
+      phone: '+1-555-123-4567',
+      email: 'contact@acme.com'
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+update_data = {
+    "basicInfo": {
+        "website": "https://acme.com",
+        "industry": "TECHNOLOGY",
+        "companySize": "LARGE",
+        "founded": "2010",
+        "description": "A leading technology company specializing in innovative solutions"
+    },
+    "address": {
+        "address1": "123 Tech Street",
+        "address2": "Suite 100",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105",
+        "country": "United States"
+    },
+    "contact": {
+        "phone": "+1-555-123-4567",
+        "email": "contact@acme.com"
+    }
+}
+
+response = requests.patch(
+    'https://api.example.com/org/information',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=update_data
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$updateData = [
+    'basicInfo' => [
+        'website' => 'https://acme.com',
+        'industry' => 'TECHNOLOGY',
+        'companySize' => 'LARGE',
+        'founded' => '2010',
+        'description' => 'A leading technology company specializing in innovative solutions'
+    ],
+    'address' => [
+        'address1' => '123 Tech Street',
+        'address2' => 'Suite 100',
+        'city' => 'San Francisco',
+        'state' => 'CA',
+        'postalCode' => '94105',
+        'country' => 'United States'
+    ],
+    'contact' => [
+        'phone' => '+1-555-123-4567',
+        'email' => 'contact@acme.com'
+    ]
+];
+
+$data = json_encode($updateData);
+
+$context = stream_context_create([
+    'http' => [
+        'method' => 'PATCH',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => $data
+    ]
+]);
+
+$response = file_get_contents('https://api.example.com/org/information', false, $context);
+$result = json_decode($response, true);
+print_r($result);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    updateData := map[string]interface{}{
+        "basicInfo": map[string]interface{}{
+            "website": "https://acme.com",
+            "industry": "TECHNOLOGY",
+            "companySize": "LARGE",
+            "founded": "2010",
+            "description": "A leading technology company specializing in innovative solutions",
+        },
+        "address": map[string]interface{}{
+            "address1": "123 Tech Street",
+            "address2": "Suite 100",
+            "city": "San Francisco",
+            "state": "CA",
+            "postalCode": "94105",
+            "country": "United States",
+        },
+        "contact": map[string]interface{}{
+            "phone": "+1-555-123-4567",
+            "email": "contact@acme.com",
+        },
+    }
+    
+    jsonData, _ := json.Marshal(updateData)
+    
+    req, _ := http.NewRequest("PATCH", "https://api.example.com/org/information", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Println(result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{`{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890abcdef",
+    "name": "Acme Corporation",
+    "website": "https://acme.com",
+    "industry": "TECHNOLOGY",
+    "company_size": "LARGE",
+    "founded": "2010",
+    "description": "A leading technology company specializing in innovative solutions",
+    "address": {
+      "address1": "123 Tech Street",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acme.com"
+    },
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Organization information updated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request data or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to update organization information
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Validation errors in the request data
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (422)" icon="exclamation">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed for one or more fields",
+    "details": {
+      "field": "contact.email",
+      "reason": "Invalid email format"
+    },
+    "validation_errors": [
+      {
+        "field": "contact.email",
+        "message": "Invalid email format",
+        "code": "INVALID_EMAIL"
+      },
+      {
+        "field": "basicInfo.website",
+        "message": "Website must start with http:// or https://",
+        "code": "INVALID_URL"
+      }
+    ]
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Permission Error (403)" icon="user-slash">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "Insufficient permissions to update organization information",
+    "details": {
+      "field": "permissions",
+      "reason": "Organization admin access required"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
+    <CodeBlock lang="json">
+{`{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or expired authentication token",
+    "details": {
+      "field": "authorization",
+      "reason": "Token validation failed"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Partial Updates" icon="edit">
+    This endpoint supports partial updates:
+    
+    - Only include the fields you want to update
+    - Omitted fields will remain unchanged
+    - You can update basic info, address, or contact separately
+    - All fields within a section are optional
+  </Accordion>
+  
+  <Accordion title="Validation Rules" icon="check">
+    Field validation requirements:
+    
+    - Email must be valid format
+    - Website must start with http:// or https://
+    - Phone number should include country code
+    - Industry must be from predefined list
+    - Company size must be from predefined list
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    To update organization information, you need:
+    
+    - Valid authentication token
+    - Organization admin or owner role
+    - Appropriate permissions for the data being updated
+  </Accordion>
+  
+  <Accordion title="Data Sanitization" icon="broom">
+    Input data is automatically sanitized:
+    
+    - HTML tags are stripped from text fields
+    - URLs are validated and normalized
+    - Phone numbers are formatted consistently
+    - Special characters are properly escaped
+  </Accordion>
+</AccordionGroup>
+
+## Integration Examples
+
+<AccordionGroup>
+  <Accordion title="Organization Settings Form" icon="form">
+    <CodeBlock lang="javascript">
+{`class OrganizationSettingsForm {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+    this.form = document.getElementById('org-settings-form');
+    this.setupEventListeners();
+  }
+  
+  setupEventListeners() {
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleSubmit();
+    });
+    
+    // Real-time validation
+    this.form.addEventListener('input', (e) => {
+      this.validateField(e.target);
+    });
+  }
+  
+  async handleSubmit() {
+    try {
+      this.showLoading();
+      
+      const formData = this.getFormData();
+      const validationErrors = this.validateForm(formData);
+      
+      if (validationErrors.length > 0) {
+        this.showValidationErrors(validationErrors);
+        return;
+      }
+      
+      const response = await this.apiClient.makeRequest('/org/information', {
+        method: 'PATCH',
+        body: JSON.stringify(formData)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error.message);
+      }
+      
+      const data = await response.json();
+      this.showSuccess('Organization information updated successfully');
+      this.updateFormWithResponse(data.data);
+      
+    } catch (error) {
+      console.error('Error updating organization:', error);
+      this.showError(error.message);
+    } finally {
+      this.hideLoading();
+    }
+  }
+  
+  getFormData() {
+    const formData = new FormData(this.form);
+    
+    return {
+      basicInfo: {
+        website: formData.get('website'),
+        industry: formData.get('industry'),
+        companySize: formData.get('companySize'),
+        founded: formData.get('founded'),
+        description: formData.get('description')
+      },
+      address: {
+        address1: formData.get('address1'),
+        address2: formData.get('address2'),
+        city: formData.get('city'),
+        state: formData.get('state'),
+        postalCode: formData.get('postalCode'),
+        country: formData.get('country')
+      },
+      contact: {
+        phone: formData.get('phone'),
+        email: formData.get('email')
+      }
+    };
+  }
+  
+  validateForm(data) {
+    const errors = [];
+    
+    // Validate email
+    if (data.contact.email && !this.isValidEmail(data.contact.email)) {
+      errors.push({ field: 'email', message: 'Invalid email format' });
+    }
+    
+    // Validate website
+    if (data.basicInfo.website && !this.isValidUrl(data.basicInfo.website)) {
+      errors.push({ field: 'website', message: 'Website must start with http:// or https://' });
+    }
+    
+    // Validate phone
+    if (data.contact.phone && !this.isValidPhone(data.contact.phone)) {
+      errors.push({ field: 'phone', message: 'Invalid phone number format' });
+    }
+    
+    return errors;
+  }
+  
+  validateField(field) {
+    const value = field.value;
+    const fieldName = field.name;
+    
+    // Clear previous error
+    this.clearFieldError(field);
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    switch (fieldName) {
+      case 'email':
+        if (value && !this.isValidEmail(value)) {
+          isValid = false;
+          errorMessage = 'Invalid email format';
+        }
+        break;
+      case 'website':
+        if (value && !this.isValidUrl(value)) {
+          isValid = false;
+          errorMessage = 'Website must start with http:// or https://';
+        }
+        break;
+      case 'phone':
+        if (value && !this.isValidPhone(value)) {
+          isValid = false;
+          errorMessage = 'Invalid phone number format';
+        }
+        break;
+    }
+    
+    if (!isValid) {
+      this.showFieldError(field, errorMessage);
+    }
+  }
+  
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+  
+  isValidUrl(url) {
+    const urlRegex = /^https?:\/\/.+/;
+    return urlRegex.test(url);
+  }
+  
+  isValidPhone(phone) {
+    const phoneRegex = /^\+?[\d\s\-\(\)]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
+  }
+  
+  showFieldError(field, message) {
+    const errorElement = field.parentNode.querySelector('.field-error');
+    if (errorElement) {
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+    
+    field.classList.add('error');
+  }
+  
+  clearFieldError(field) {
+    const errorElement = field.parentNode.querySelector('.field-error');
+    if (errorElement) {
+      errorElement.style.display = 'none';
+    }
+    
+    field.classList.remove('error');
+  }
+  
+  showValidationErrors(errors) {
+    errors.forEach(error => {
+      const field = this.form.querySelector(\`[name="\${error.field}"]\`);
+      if (field) {
+        this.showFieldError(field, error.message);
+      }
+    });
+  }
+  
+  updateFormWithResponse(data) {
+    // Update form fields with response data
+    if (data.website) document.getElementById('website').value = data.website;
+    if (data.industry) document.getElementById('industry').value = data.industry;
+    if (data.company_size) document.getElementById('companySize').value = data.company_size;
+    if (data.founded) document.getElementById('founded').value = data.founded;
+    if (data.description) document.getElementById('description').value = data.description;
+    
+    if (data.address) {
+      if (data.address.address1) document.getElementById('address1').value = data.address.address1;
+      if (data.address.address2) document.getElementById('address2').value = data.address.address2;
+      if (data.address.city) document.getElementById('city').value = data.address.city;
+      if (data.address.state) document.getElementById('state').value = data.address.state;
+      if (data.address.postal_code) document.getElementById('postalCode').value = data.address.postal_code;
+      if (data.address.country) document.getElementById('country').value = data.address.country;
+    }
+    
+    if (data.contact) {
+      if (data.contact.phone) document.getElementById('phone').value = data.contact.phone;
+      if (data.contact.email) document.getElementById('email').value = data.contact.email;
+    }
+  }
+  
+  showLoading() {
+    const submitButton = this.form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Updating...';
+  }
+  
+  hideLoading() {
+    const submitButton = this.form.querySelector('button[type="submit"]');
+    submitButton.disabled = false;
+    submitButton.textContent = 'Update Organization';
+  }
+  
+  showSuccess(message) {
+    this.showMessage(message, 'success');
+  }
+  
+  showError(message) {
+    this.showMessage(message, 'error');
+  }
+  
+  showMessage(message, type) {
+    const messageElement = document.getElementById('form-message');
+    messageElement.textContent = message;
+    messageElement.className = \`message message-\${type}\`;
+    messageElement.style.display = 'block';
+    
+    setTimeout(() => {
+      messageElement.style.display = 'none';
+    }, 5000);
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Bulk Organization Update" icon="upload">
+    <CodeBlock lang="javascript">
+{`class BulkOrganizationUpdate {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async updateMultipleOrganizations(updates) {
+    const results = [];
+    const errors = [];
+    
+    for (const update of updates) {
+      try {
+        const response = await this.apiClient.makeRequest('/org/information', {
+          method: 'PATCH',
+          body: JSON.stringify(update.data)
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          results.push({
+            organizationId: update.organizationId,
+            success: true,
+            data: result.data
+          });
+        } else {
+          const error = await response.json();
+          errors.push({
+            organizationId: update.organizationId,
+            success: false,
+            error: error.error.message
+          });
+        }
+      } catch (error) {
+        errors.push({
+          organizationId: update.organizationId,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    return {
+      results,
+      errors,
+      summary: {
+        total: updates.length,
+        successful: results.length,
+        failed: errors.length
+      }
+    };
+  }
+  
+  async updateFromCSV(csvData) {
+    const updates = this.parseCSV(csvData);
+    return await this.updateMultipleOrganizations(updates);
+  }
+  
+  parseCSV(csvData) {
+    const lines = csvData.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    const updates = [];
+    
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map(v => v.trim());
+      const update = {
+        organizationId: values[0],
+        data: {}
+      };
+      
+      // Map CSV columns to API fields
+      for (let j = 1; j < headers.length; j++) {
+        const header = headers[j];
+        const value = values[j];
+        
+        if (value) {
+          this.mapCSVFieldToAPI(update.data, header, value);
+        }
+      }
+      
+      updates.push(update);
+    }
+    
+    return updates;
+  }
+  
+  mapCSVFieldToAPI(data, header, value) {
+    const fieldMap = {
+      'website': 'basicInfo.website',
+      'industry': 'basicInfo.industry',
+      'company_size': 'basicInfo.companySize',
+      'founded': 'basicInfo.founded',
+      'description': 'basicInfo.description',
+      'address1': 'address.address1',
+      'address2': 'address.address2',
+      'city': 'address.city',
+      'state': 'address.state',
+      'postal_code': 'address.postalCode',
+      'country': 'address.country',
+      'phone': 'contact.phone',
+      'email': 'contact.email'
+    };
+    
+    const fieldPath = fieldMap[header];
+    if (fieldPath) {
+      const parts = fieldPath.split('.');
+      let current = data;
+      
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!current[parts[i]]) {
+          current[parts[i]] = {};
+        }
+        current = current[parts[i]];
+      }
+      
+      current[parts[parts.length - 1]] = value;
+    }
+  }
+}`}
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Organization Info" icon="info">
+    `GET /org/information` - Retrieve organization details
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List organization teams
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create a new team
+  </Card>
+  <Card title="Get Team Members" icon="user-group">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+</CardGroup>
