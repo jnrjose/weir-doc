@@ -1,0 +1,305 @@
+---
+title: "Console API"
+description: "Console API endpoints for organization and team management"
+icon: "building"
+---
+
+The Console API provides comprehensive management capabilities for organizations, teams, and users within the Weir AI platform. These endpoints are designed for day-to-day platform operations and management tasks.
+
+## Overview
+
+The Console API is designed for organization administrators, team managers, and platform users who need to manage their workspace, teams, and organizational settings. These endpoints require user authentication and provide access to organization-specific data and operations.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Organization Management" icon="building">
+    Manage organization settings, information, and configurations
+  </Card>
+  <Card title="Team Management" icon="users">
+    Create, manage, and organize teams within your organization
+  </Card>
+  <Card title="User Management" icon="user">
+    Manage team members, roles, and permissions
+  </Card>
+  <Card title="Platform Integration" icon="puzzle">
+    Integrate with external platforms and services
+  </Card>
+</CardGroup>
+
+## Authentication
+
+All Console API endpoints require Bearer Token authentication:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <user_jwt_token>
+</CodeBlock>
+
+## Available Endpoints
+
+### Authentication & User Management
+
+<CardGroup cols={2}>
+  <Card title="Mobile Registration" icon="user-plus">
+    `POST /auth/m/register` - Register new user account (mobile/web)
+  </Card>
+  <Card title="User Login" icon="sign-in">
+    `POST /auth/login` - Authenticate user and receive access token
+  </Card>
+  <Card title="User Logout" icon="sign-out">
+    `POST /auth/logout` - Logout and invalidate user session
+  </Card>
+  <Card title="Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh expired access token
+  </Card>
+</CardGroup>
+
+### Organization Management
+
+<CardGroup cols={2}>
+  <Card title="Get Organization Info" icon="info">
+    `GET /org/information` - Retrieve organization details and settings
+  </Card>
+  <Card title="Update Organization Info" icon="edit">
+    `PATCH /org/information` - Update organization details and settings
+  </Card>
+  <Card title="Get Organization Settings" icon="cog">
+    `GET /org/settings` - Get organization configuration settings
+  </Card>
+  <Card title="Update Organization Settings" icon="settings">
+    `PUT /org/settings` - Update organization configuration
+  </Card>
+</CardGroup>
+
+### Team Management
+
+<CardGroup cols={2}>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List all teams in the organization
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create a new team
+  </Card>
+  <Card title="Get Team Members" icon="users">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+  <Card title="Invite Team Member" icon="user-plus">
+    `POST /org/invite/team/member/{teamId}` - Add members to team
+  </Card>
+  <Card title="Update Team" icon="edit">
+    `PUT /org/team/{teamId}` - Update team details
+  </Card>
+  <Card title="Delete Team" icon="trash">
+    `DELETE /org/team/{teamId}` - Remove a team
+  </Card>
+</CardGroup>
+
+### Platform Integration
+
+<CardGroup cols={2}>
+  <Card title="Get Platforms" icon="puzzle">
+    `GET /platforms` - List available platforms and integrations
+  </Card>
+  <Card title="Configure Platform" icon="cog">
+    `POST /platforms/{platformId}/configure` - Configure platform integration
+  </Card>
+  <Card title="Get Platform Status" icon="heart">
+    `GET /platforms/{platformId}/status` - Check platform health status
+  </Card>
+  <Card title="Get Platform Metrics" icon="chart">
+    `GET /platforms/{platformId}/metrics` - View platform usage metrics
+  </Card>
+</CardGroup>
+
+### Communication & Notifications
+
+<CardGroup cols={2}>
+  <Card title="Send Email" icon="mail">
+    `POST /mail/send` - Send email notifications and communications
+  </Card>
+  <Card title="Get Email Templates" icon="template">
+    `GET /mail/templates` - List available email templates
+  </Card>
+  <Card title="Get Email Status" icon="info">
+    `GET /mail/status/{messageId}` - Check email delivery status
+  </Card>
+  <Card title="Get Email History" icon="history">
+    `GET /mail/history` - View sent email history
+  </Card>
+</CardGroup>
+
+## Rate Limiting
+
+Console API endpoints have standard rate limits:
+
+- **Standard Operations**: 500 requests per hour
+- **Team Management**: 100 requests per hour
+- **Email Sending**: 50 requests per hour
+- **Platform Integration**: 200 requests per hour
+
+## Error Handling
+
+All Console API endpoints return consistent error responses:
+
+<CodeBlock lang="json">
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": {
+      "field": "field_name",
+      "reason": "Detailed error reason"
+    }
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Common Error Codes
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors" icon="exclamation-triangle">
+    - `UNAUTHORIZED`: Invalid or expired token
+    - `INVALID_CREDENTIALS`: Invalid username or password
+    - `TOKEN_EXPIRED`: Access token has expired
+    - `INSUFFICIENT_PRIVILEGES`: User lacks required permissions
+  </Accordion>
+  
+  <Accordion title="Validation Errors" icon="exclamation">
+    - `VALIDATION_ERROR`: Request data validation failed
+    - `REQUIRED_FIELD`: Missing required field
+    - `INVALID_FORMAT`: Invalid data format
+    - `CONSTRAINT_VIOLATION`: Data constraint violation
+  </Accordion>
+  
+  <Accordion title="Resource Errors" icon="search">
+    - `NOT_FOUND`: Resource not found
+    - `ALREADY_EXISTS`: Resource already exists
+    - `CONFLICT`: Resource conflict
+    - `GONE`: Resource no longer available
+  </Accordion>
+  
+  <Accordion title="Permission Errors" icon="user-slash">
+    - `FORBIDDEN`: Insufficient permissions
+    - `TEAM_ACCESS_REQUIRED`: Team access required
+    - `ORGANIZATION_ACCESS_REQUIRED`: Organization access required
+    - `ADMIN_ACCESS_REQUIRED`: Admin access required
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Implement automatic token refresh
+    - Store tokens securely
+    - Handle authentication errors gracefully
+    - Use appropriate token expiration times
+    - Implement logout functionality
+  </Accordion>
+  
+  <Accordion title="Data Management" icon="database">
+    - Use pagination for large datasets
+    - Implement proper caching strategies
+    - Validate all input data
+    - Handle data conflicts appropriately
+    - Implement data backup strategies
+  </Accordion>
+  
+  <Accordion title="Team Management" icon="users">
+    - Implement proper role-based access control
+    - Validate team member permissions
+    - Handle team creation and deletion carefully
+    - Implement team member invitation workflows
+    - Monitor team activity and usage
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling
+    - Provide meaningful error messages
+    - Log errors for debugging
+    - Implement retry logic for transient errors
+    - Use appropriate HTTP status codes
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+1. **Register or Login**: Create a user account or login with existing credentials
+2. **Explore Organization**: Get familiar with your organization settings
+3. **Create Teams**: Set up teams for your organization
+4. **Invite Members**: Add team members and assign appropriate roles
+5. **Configure Integrations**: Set up platform integrations as needed
+
+## Integration Examples
+
+<AccordionGroup>
+  <Accordion title="JavaScript SDK" icon="code">
+    <CodeBlock lang="javascript">
+// Initialize the Weir Console API client
+const weirClient = new WeirConsoleClient({
+  baseURL: 'https://api.example.com',
+  apiKey: 'your_api_key'
+});
+
+// Get organization information
+const orgInfo = await weirClient.getOrganizationInfo();
+
+// Create a new team
+const team = await weirClient.createTeam({
+  name: 'Development Team',
+  description: 'Core development team'
+});
+
+// Invite team members
+await weirClient.inviteTeamMember(team.id, {
+  email: 'member@example.com',
+  role: 'Organization_User'
+});
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python SDK" icon="code">
+    <CodeBlock lang="python">
+from weir_console import WeirConsoleClient
+
+# Initialize the client
+client = WeirConsoleClient(
+    base_url='https://api.example.com',
+    api_key='your_api_key'
+)
+
+# Get organization information
+org_info = client.get_organization_info()
+
+# Create a new team
+team = client.create_team(
+    name='Development Team',
+    description='Core development team'
+)
+
+# Invite team members
+client.invite_team_member(
+    team_id=team['id'],
+    email='member@example.com',
+    role='Organization_User'
+)
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Support
+
+For technical support with the Console API:
+
+- **Documentation**: Refer to individual endpoint documentation
+- **API Playground**: Use the interactive API playground for testing
+- **Support Team**: Contact support@weir.ai for assistance
+- **Status Page**: Check system status at status.weir.ai
+
+<Note>
+  **User Authentication Required**
+  
+  All Console API endpoints require user authentication. Ensure you have valid credentials and appropriate permissions before attempting to use these endpoints.
+</Note>

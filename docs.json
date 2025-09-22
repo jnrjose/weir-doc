@@ -331,17 +331,17 @@
 							{
 								"group": "External APIs",
 								"pages": [
-									"v1.0.0/api-reference/external/index",
+									"v1.0.0/reference/external/index",
 									"v1.0.0/reference/external/generate-access-token"
 								]
 							},
 							{
 								"group": "Console APIs",
 								"pages": [
-									"v1.0.0/api-reference/console/index",
-									"v1.0.0/api-reference/console/mobile-register",
+									"v1.0.0/reference/console/index",
+									"v1.0.0/reference/console/mobile-register",
 									"v1.0.0/reference/console/get-organization-info",
-									"v1.0.0/api-reference/console/update-organization-info"
+									"v1.0.0/reference/console/update-organization-info"
 								]
 							},
 							{
@@ -357,7 +357,7 @@
 							{
 								"group": "Admin APIs",
 								"pages": [
-									"v1.0.0/api-reference/admin/index",
+									"v1.0.0/reference/admin/index",
 									"v1.0.0/reference/admin/login",
 									"v1.0.0/reference/admin/auth/logout",
 									"v1.0.0/reference/admin/auth/refresh-token",
@@ -367,12 +367,12 @@
 							{
 								"group": "Additional APIs",
 								"pages": [
-									"v1.0.0/api-reference/clients/get-clients",
-									"v1.0.0/api-reference/logs/get-logs",
-									"v1.0.0/api-reference/mail/send-email",
-									"v1.0.0/api-reference/platforms/get-platforms",
-									"v1.0.0/api-reference/talent/get-talent",
-									"v1.0.0/api-reference/pax/get-pax"
+									"v1.0.0/reference/clients/get-clients",
+									"v1.0.0/reference/logs/get-logs",
+									"v1.0.0/reference/mail/send-email",
+									"v1.0.0/reference/platforms/get-platforms",
+									"v1.0.0/reference/talent/get-talent",
+									"v1.0.0/reference/pax/get-pax"
 								]
 							}
 						]
