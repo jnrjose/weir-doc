@@ -17,7 +17,7 @@ Generate an access token for external API authentication. This endpoint uses Bas
 This endpoint requires Basic Authentication. Include your username and password in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Basic <base64_encoded_credentials>`}
+Authorization: Basic <base64_encoded_credentials>
 </CodeBlock>
 
 ## Request
@@ -141,7 +141,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
@@ -150,7 +150,7 @@ func main() {
   },
   "message": "Access token generated successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -170,7 +170,7 @@ func main() {
 ### Example Error Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "INVALID_CREDENTIALS",
@@ -181,7 +181,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Usage Notes

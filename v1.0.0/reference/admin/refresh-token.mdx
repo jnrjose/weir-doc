@@ -17,7 +17,7 @@ Refresh an expired access token using a valid refresh token. This endpoint allow
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <admin_jwt_token>
 </CodeBlock>
 
 ## Request
@@ -170,7 +170,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbl9leGFtcGxlX2NvbSIsInJvbGUiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.NewAccessTokenHere",
@@ -180,7 +180,7 @@ func main() {
   },
   "message": "Token refreshed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -206,7 +206,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Invalid Refresh Token (403)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "INVALID_REFRESH_TOKEN",
@@ -217,13 +217,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Token Revoked (403)" icon="ban">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TOKEN_REVOKED",
@@ -234,13 +234,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Rate Limited (429)" icon="clock">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "RATE_LIMITED",
@@ -252,7 +252,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -393,7 +393,7 @@ func main() {
     this.refreshToken = localStorage.getItem('weir_refresh_token');
     this.tokenExpiry = parseInt(localStorage.getItem('weir_token_expiry') || '0');
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   
@@ -469,7 +469,7 @@ func main() {
       this.redirectToLogin();
     }
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   

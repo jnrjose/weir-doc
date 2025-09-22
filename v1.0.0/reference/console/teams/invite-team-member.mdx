@@ -17,7 +17,7 @@ Invite a new member to join a specific team. This endpoint allows you to add new
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Path Parameters
@@ -219,7 +219,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "invitation_id": "inv_1234567890abcdef",
@@ -231,7 +231,7 @@ func main() {
   },
   "message": "Team member invitation sent successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -265,7 +265,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Validation Error (400)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -276,13 +276,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Team Not Found (404)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TEAM_NOT_FOUND",
@@ -293,13 +293,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="User Already Exists (409)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "USER_ALREADY_EXISTS",
@@ -310,7 +310,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -478,7 +478,7 @@ const results = await invitationManager.inviteMultipleMembers('team_123', member
     
     return await response.json();
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>

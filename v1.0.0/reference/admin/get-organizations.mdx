@@ -17,7 +17,7 @@ Retrieve a paginated list of all organizations in the system. This endpoint prov
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Query Parameters
@@ -30,37 +30,37 @@ This endpoint requires Bearer Token authentication. Include your JWT token in th
 
 <ParamField query="limit" type="string" required="false">
   Number of organizations per page (default: 20, max: 100)
-  
+
   **Example**: "20"
 </ParamField>
 
 <ParamField query="status" type="string" required="false">
   Filter organizations by status
-  
+
   **Options**: "active", "inactive", "suspended", "pending"
-  
+
   **Example**: "active"
 </ParamField>
 
 <ParamField query="search" type="string" required="false">
   Search organizations by name or domain
-  
+
   **Example**: "acme"
 </ParamField>
 
 <ParamField query="sort" type="string" required="false">
   Sort organizations by field
-  
+
   **Options**: "name", "created_at", "updated_at", "member_count"
-  
+
   **Default**: "created_at"
 </ParamField>
 
 <ParamField query="order" type="string" required="false">
   Sort order
-  
+
   **Options**: "asc", "desc"
-  
+
   **Default**: "desc"
 </ParamField>
 
@@ -275,7 +275,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": [
     {
@@ -346,7 +346,7 @@ func main() {
   },
   "message": "Organizations retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -372,7 +372,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -383,13 +383,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -400,13 +400,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Validation Error (400)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -417,7 +417,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -574,7 +574,7 @@ func main() {
   async loadPage(page) {
     await this.loadOrganizations(page);
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   
@@ -672,7 +672,7 @@ func main() {
     
     return growthData;
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>

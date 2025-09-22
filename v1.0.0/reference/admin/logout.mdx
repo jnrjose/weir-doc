@@ -17,7 +17,7 @@ Logout from the admin panel and invalidate the current session. This endpoint en
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <admin_jwt_token>
 </CodeBlock>
 
 ## Request
@@ -149,11 +149,11 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "message": "Logout successful",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -175,7 +175,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Invalid Token (401)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -186,13 +186,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Missing Refresh Token (400)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -203,13 +203,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Token Not Found (404)" icon="search">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TOKEN_NOT_FOUND",
@@ -220,7 +220,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -325,7 +325,7 @@ func main() {
       }
     });
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   

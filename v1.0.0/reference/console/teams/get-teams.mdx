@@ -17,7 +17,7 @@ Retrieve a paginated list of all teams within your organization. This endpoint p
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Query Parameters
@@ -210,7 +210,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": [
     {
@@ -254,7 +254,7 @@ func main() {
   },
   "message": "Teams retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -280,7 +280,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -291,13 +291,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -308,13 +308,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Validation Error (400)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -325,7 +325,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -419,19 +419,19 @@ func main() {
     div.className = 'team-card';
     div.innerHTML = \`
       <div class="team-header">
-        <h3>\${team.name}</h3>
-        <span class="status status-\${team.status}">\${team.status}</span>
+        <h3>${team.name}</h3>
+        <span class="status status-${team.status}">${team.status}</span>
       </div>
       <div class="team-details">
-        <p><strong>Members:</strong> \${team.member_count}</p>
-        <p><strong>Created:</strong> \${new Date(team.created_at).toLocaleDateString()}</p>
-        <p><strong>Updated:</strong> \${new Date(team.updated_at).toLocaleDateString()}</p>
-        \${team.description ? \`<p><strong>Description:</strong> \${team.description}</p>\` : ''}
+        <p><strong>Members:</strong> ${team.member_count}</p>
+        <p><strong>Created:</strong> ${new Date(team.created_at).toLocaleDateString()}</p>
+        <p><strong>Updated:</strong> ${new Date(team.updated_at).toLocaleDateString()}</p>
+        ${team.description ? `<p><strong>Description:</strong> ${team.description}</p>` : ''}
       </div>
       <div class="team-actions">
-        <button onclick="viewTeam('\${team.team_id}')">View Details</button>
-        <button onclick="editTeam('\${team.team_id}')">Edit</button>
-        <button onclick="manageTeam('\${team.team_id}')">Manage</button>
+        <button onclick="viewTeam('${team.team_id}')">View Details</button>
+        <button onclick="editTeam('${team.team_id}')">Edit</button>
+        <button onclick="manageTeam('${team.team_id}')">Manage</button>
       </div>
     \`;
     
@@ -455,7 +455,7 @@ func main() {
   async loadPage(page) {
     await this.loadTeams(page);
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   
@@ -528,7 +528,7 @@ func main() {
     
     return growthData;
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>

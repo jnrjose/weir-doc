@@ -17,7 +17,7 @@ Create a new team within your organization. Teams are used to organize users and
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Request
@@ -172,7 +172,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "team_id": "team_1234567890abcdef",
@@ -183,7 +183,7 @@ func main() {
   },
   "message": "Team created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -213,7 +213,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Validation Error (400)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -224,13 +224,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Authentication Error (401)" icon="key">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -241,13 +241,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Conflict Error (409)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TEAM_NAME_EXISTS",
@@ -258,7 +258,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -386,7 +386,7 @@ const team = await teamManager.createTeam('Marketing Team');`}
       await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
     }
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>

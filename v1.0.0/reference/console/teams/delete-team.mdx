@@ -23,7 +23,7 @@ Permanently delete a team from your organization. This action cannot be undone a
 This endpoint requires Bearer Token authentication with team management permissions. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Path Parameters
@@ -154,7 +154,7 @@ func main() {
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "team_id": "team_1234567890",
@@ -168,7 +168,7 @@ func main() {
   },
   "message": "Team deleted successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -198,7 +198,7 @@ func main() {
 <AccordionGroup>
   <Accordion title="Team Not Found (404)" icon="exclamation-triangle">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TEAM_NOT_FOUND",
@@ -209,13 +209,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "INSUFFICIENT_PERMISSIONS",
@@ -226,13 +226,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Dependency Conflict (409)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "TEAM_HAS_DEPENDENCIES",
@@ -247,7 +247,7 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -372,7 +372,7 @@ func main() {
     
     return await this.deleteTeamSafely(teamId, { force: confirmationData.force });
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
   
@@ -449,7 +449,7 @@ func main() {
     const safeDeletion = new SafeTeamDeletion(this.apiClient);
     return await safeDeletion.checkTeamDependencies(teamId);
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
