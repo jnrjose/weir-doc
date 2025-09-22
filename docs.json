@@ -36,7 +36,6 @@
 		"versions": [
 			{
 				"version": "v0.0.0",
-				"default": true,
 				"tabs": [
 					{
 						"tab": "Getting Started",
@@ -287,6 +286,7 @@
 			},
 			{
 				"version": "v1.0.0",
+				"default": true,
 				"tabs": [
 					{
 						"tab": "Getting Started",
@@ -331,37 +331,48 @@
 							{
 								"group": "External APIs",
 								"pages": [
+									"v1.0.0/api-reference/external/index",
 									"v1.0.0/reference/external/generate-access-token"
 								]
 							},
 							{
 								"group": "Console APIs",
 								"pages": [
-									"v1.0.0/reference/console/create-team",
-									"v1.0.0/reference/console/get-organization-info"
+									"v1.0.0/api-reference/console/index",
+									"v1.0.0/api-reference/console/mobile-register",
+									"v1.0.0/reference/console/get-organization-info",
+									"v1.0.0/api-reference/console/update-organization-info"
 								]
 							},
 							{
 								"group": "Team Management",
 								"pages": [
-									"v1.0.0/reference/console/teams/invite-team-member",
 									"v1.0.0/reference/console/teams/get-teams",
-									"v1.0.0/reference/console/teams/delete-team",
-									"v1.0.0/reference/console/teams/get-team-members"
+									"v1.0.0/api-reference/console/create-team",
+									"v1.0.0/api-reference/console/delete-team",
+									"v1.0.0/api-reference/console/get-team-members",
+									"v1.0.0/api-reference/console/invite-team-member"
 								]
 							},
 							{
 								"group": "Admin APIs",
 								"pages": [
+									"v1.0.0/api-reference/admin/index",
 									"v1.0.0/reference/admin/login",
-									"v1.0.0/reference/admin/get-organizations"
+									"v1.0.0/api-reference/admin/logout",
+									"v1.0.0/api-reference/admin/refresh-token",
+									"v1.0.0/api-reference/admin/get-organizations"
 								]
 							},
 							{
-								"group": "Admin Authentication",
+								"group": "Additional APIs",
 								"pages": [
-									"v1.0.0/reference/admin/auth/logout",
-									"v1.0.0/reference/admin/auth/refresh-token"
+									"v1.0.0/api-reference/clients/get-clients",
+									"v1.0.0/api-reference/logs/get-logs",
+									"v1.0.0/api-reference/mail/send-email",
+									"v1.0.0/api-reference/platforms/get-platforms",
+									"v1.0.0/api-reference/talent/get-talent",
+									"v1.0.0/api-reference/pax/get-pax"
 								]
 							}
 						]
