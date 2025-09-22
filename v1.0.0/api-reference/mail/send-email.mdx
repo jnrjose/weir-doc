@@ -17,7 +17,7 @@ Send email notifications, invitations, alerts, and other communications through 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 <CodeBlock lang="bash">
-{`Authorization: Bearer <your_jwt_token>`}
+Authorization: Bearer <your_jwt_token>
 </CodeBlock>
 
 ## Request
@@ -209,7 +209,7 @@ print(response.json())
 ## Example Response
 
 <CodeBlock lang="json">
-{`{
+{
   "success": true,
   "data": {
     "message_id": "msg_1234567890abcdef",
@@ -225,7 +225,7 @@ print(response.json())
   },
   "message": "Email sent successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
 </CodeBlock>
 
 ## Error Responses
@@ -255,7 +255,7 @@ print(response.json())
 <AccordionGroup>
   <Accordion title="Validation Error (422)" icon="exclamation">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -278,13 +278,13 @@ print(response.json())
     ]
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
   
   <Accordion title="Rate Limited (429)" icon="clock">
     <CodeBlock lang="json">
-{`{
+{
   "success": false,
   "error": {
     "code": "RATE_LIMITED",
@@ -296,7 +296,7 @@ print(response.json())
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
@@ -345,7 +345,7 @@ print(response.json())
 <AccordionGroup>
   <Accordion title="Email Service Class" icon="code">
     <CodeBlock lang="javascript">
-{`class EmailService {
+class EmailService {
   constructor(apiClient) {
     this.apiClient = apiClient;
   }
@@ -384,7 +384,7 @@ print(response.json())
         method: 'POST',
         body: JSON.stringify({
           to: emails,
-          subject: `Invitation to join ${teamName}`,
+          subject: 'Invitation to join ' + teamName,
           template: 'invitation',
           variables: {
             team_name: teamName,
@@ -458,7 +458,7 @@ print(response.json())
       throw error;
     }
   }
-}`}
+}
     </CodeBlock>
   </Accordion>
 </AccordionGroup>
