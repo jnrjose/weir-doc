@@ -348,10 +348,10 @@
 								"group": "Team Management",
 								"pages": [
 									"v1.0.0/reference/console/teams/get-teams",
-									"v1.0.0/api-reference/console/create-team",
-									"v1.0.0/api-reference/console/delete-team",
-									"v1.0.0/api-reference/console/get-team-members",
-									"v1.0.0/api-reference/console/invite-team-member"
+									"v1.0.0/reference/console/create-team",
+									"v1.0.0/reference/console/teams/delete-team",
+									"v1.0.0/reference/console/teams/get-team-members",
+									"v1.0.0/reference/console/teams/invite-team-member"
 								]
 							},
 							{
@@ -359,9 +359,9 @@
 								"pages": [
 									"v1.0.0/api-reference/admin/index",
 									"v1.0.0/reference/admin/login",
-									"v1.0.0/api-reference/admin/logout",
-									"v1.0.0/api-reference/admin/refresh-token",
-									"v1.0.0/api-reference/admin/get-organizations"
+									"v1.0.0/reference/admin/auth/logout",
+									"v1.0.0/reference/admin/auth/refresh-token",
+									"v1.0.0/reference/admin/get-organizations"
 								]
 							},
 							{
