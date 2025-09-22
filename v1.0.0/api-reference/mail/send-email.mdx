@@ -384,7 +384,7 @@ print(response.json())
         method: 'POST',
         body: JSON.stringify({
           to: emails,
-          subject: \`Invitation to join \${teamName}\`,
+          subject: `Invitation to join ${teamName}`,
           template: 'invitation',
           variables: {
             team_name: teamName,
