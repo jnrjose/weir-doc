@@ -1,0 +1,618 @@
+---
+title: "Get Log Details"
+api: "GET /logs/{logId}"
+description: "Retrieve detailed information for a specific log entry"
+---
+
+Retrieve comprehensive details for a specific log entry including metadata, context, and related information. This endpoint provides in-depth analysis capabilities for debugging and monitoring purposes.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for detailed log analysis and debugging.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Path Parameters
+
+<ParamField path="logId" type="string" required>
+  Unique identifier for the log entry
+  
+  **Example**: "log_1234567890abcdef"
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="include_context" type="boolean" required="false">
+  Whether to include additional context information
+  
+  **Example**: true
+  
+  **Default**: true
+</ParamField>
+
+<ParamField query="include_related" type="boolean" required="false">
+  Whether to include related log entries
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField query="include_stack_trace" type="boolean" required="false">
+  Whether to include stack trace information (for error logs)
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Log entry details
+</ResponseField>
+
+<ResponseField name="data.log_id" type="string">
+  Unique identifier for the log entry
+</ResponseField>
+
+<ResponseField name="data.timestamp" type="string">
+  ISO 8601 timestamp of the log entry
+</ResponseField>
+
+<ResponseField name="data.level" type="string">
+  Log severity level
+</ResponseField>
+
+<ResponseField name="data.source" type="string">
+  Source component that generated the log
+</ResponseField>
+
+<ResponseField name="data.message" type="string">
+  Log message content
+</ResponseField>
+
+<ResponseField name="data.user_id" type="string">
+  User ID associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.ip_address" type="string">
+  IP address associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.request_id" type="string">
+  Request ID for tracing related log entries
+</ResponseField>
+
+<ResponseField name="data.session_id" type="string">
+  Session ID associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  Additional metadata for the log entry
+</ResponseField>
+
+<ResponseField name="data.metadata.endpoint" type="string">
+  API endpoint that generated the log
+</ResponseField>
+
+<ResponseField name="data.metadata.method" type="string">
+  HTTP method used
+</ResponseField>
+
+<ResponseField name="data.metadata.status_code" type="integer">
+  HTTP status code returned
+</ResponseField>
+
+<ResponseField name="data.metadata.response_time" type="integer">
+  Response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.metadata.user_agent" type="string">
+  User agent string
+</ResponseField>
+
+<ResponseField name="data.metadata.referer" type="string">
+  HTTP referer header
+</ResponseField>
+
+<ResponseField name="data.context" type="object">
+  Additional context information (if requested)
+</ResponseField>
+
+<ResponseField name="data.context.environment" type="string">
+  Environment where the log was generated
+</ResponseField>
+
+<ResponseField name="data.context.version" type="string">
+  Application version
+</ResponseField>
+
+<ResponseField name="data.context.build" type="string">
+  Build number or commit hash
+</ResponseField>
+
+<ResponseField name="data.context.server" type="string">
+  Server identifier
+</ResponseField>
+
+<ResponseField name="data.context.region" type="string">
+  Geographic region
+</ResponseField>
+
+<ResponseField name="data.stack_trace" type="array">
+  Stack trace information (if requested and available)
+</ResponseField>
+
+<ResponseField name="data.stack_trace[].file" type="string">
+  Source file name
+</ResponseField>
+
+<ResponseField name="data.stack_trace[].line" type="integer">
+  Line number
+</ResponseField>
+
+<ResponseField name="data.stack_trace[].function" type="string">
+  Function name
+</ResponseField>
+
+<ResponseField name="data.stack_trace[].code" type="string">
+  Source code line
+</ResponseField>
+
+<ResponseField name="data.related_logs" type="array">
+  Related log entries (if requested)
+</ResponseField>
+
+<ResponseField name="data.related_logs[].log_id" type="string">
+  Related log entry ID
+</ResponseField>
+
+<ResponseField name="data.related_logs[].timestamp" type="string">
+  Related log entry timestamp
+</ResponseField>
+
+<ResponseField name="data.related_logs[].level" type="string">
+  Related log entry level
+</ResponseField>
+
+<ResponseField name="data.related_logs[].message" type="string">
+  Related log entry message
+</ResponseField>
+
+<ResponseField name="data.tags" type="array">
+  Tags associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.severity_score" type="integer">
+  Calculated severity score (1-10)
+</ResponseField>
+
+<ResponseField name="data.anomaly_score" type="number">
+  Anomaly detection score (0-1)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/logs/log_1234567890abcdef?include_context=true&include_related=true" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/logs/log_1234567890abcdef?include_context=true&include_related=true', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'include_context': True,
+    'include_related': True
+}
+
+response = requests.get(
+    'https://api.example.com/logs/log_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    params=params
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "log_id": "log_1234567890abcdef",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "level": "error",
+    "source": "api",
+    "message": "Authentication failed for user user_1234567890",
+    "user_id": "user_1234567890",
+    "ip_address": "192.168.1.100",
+    "request_id": "req_1234567890abcdef",
+    "session_id": "session_1234567890abcdef",
+    "metadata": {
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "status_code": 401,
+      "response_time": 150,
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "referer": "https://app.example.com/login"
+    },
+    "context": {
+      "environment": "production",
+      "version": "1.2.3",
+      "build": "abc123def456",
+      "server": "api-server-01",
+      "region": "us-east-1"
+    },
+    "stack_trace": [
+      {
+        "file": "auth/controller.js",
+        "line": 45,
+        "function": "authenticateUser",
+        "code": "throw new Error('Invalid credentials');"
+      },
+      {
+        "file": "auth/middleware.js",
+        "line": 23,
+        "function": "validateCredentials",
+        "code": "const isValid = await bcrypt.compare(password, hash);"
+      }
+    ],
+    "related_logs": [
+      {
+        "log_id": "log_0987654321fedcba",
+        "timestamp": "2024-01-15T10:29:45Z",
+        "level": "warn",
+        "message": "Multiple failed login attempts detected"
+      },
+      {
+        "log_id": "log_5555555555aaaaaa",
+        "timestamp": "2024-01-15T10:30:15Z",
+        "level": "info",
+        "message": "User account locked due to failed attempts"
+      }
+    ],
+    "tags": ["authentication", "security", "failed_login"],
+    "severity_score": 7,
+    "anomaly_score": 0.85
+  },
+  "message": "Log details retrieved successfully",
+  "timestamp": "2024-01-15T12:00:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view log details
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Log entry not found
+</ResponseField>
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Log Levels" icon="info">
+    Available log levels:
+    
+    - **debug**: Detailed information for debugging
+    - **info**: General information about system operation
+    - **warn**: Warning messages for potential issues
+    - **error**: Error messages for failed operations
+    - **fatal**: Critical errors that may cause system failure
+  </Accordion>
+  
+  <Accordion title="Context Information" icon="info">
+    Context includes:
+    
+    - Environment details
+    - Application version
+    - Build information
+    - Server identification
+    - Geographic region
+  </Accordion>
+  
+  <Accordion title="Stack Traces" icon="code">
+    Stack trace features:
+    
+    - Source file and line numbers
+    - Function names and call stack
+    - Source code snippets
+    - Error propagation path
+  </Accordion>
+  
+  <Accordion title="Related Logs" icon="link">
+    Related log detection:
+    
+    - Same request ID
+    - Same session ID
+    - Same user ID
+    - Time-based correlation
+    - Error chain analysis
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Log Analyzer" icon="cog">
+    <CodeBlock lang="javascript">
+class LogAnalyzer {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async getLogDetails(logId, includeContext = true, includeRelated = true) {
+    try {
+      const response = await this.apiClient.makeRequest(`/logs/${logId}`, {
+        method: 'GET',
+        params: {
+          include_context: includeContext,
+          include_related: includeRelated,
+          include_stack_trace: true
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to get log details');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error getting log details:', error);
+      throw error;
+    }
+  }
+  
+  async analyzeErrorLog(logId) {
+    const result = await this.getLogDetails(logId, true, true);
+    const log = result.data;
+    
+    return {
+      logId: log.log_id,
+      level: log.level,
+      message: log.message,
+      severity: log.severity_score,
+      anomaly: log.anomaly_score,
+      hasStackTrace: log.stack_trace && log.stack_trace.length > 0,
+      relatedLogs: log.related_logs?.length || 0,
+      isHighSeverity: log.severity_score >= 7,
+      isAnomalous: log.anomaly_score >= 0.8
+    };
+  }
+  
+  async getErrorChain(logId) {
+    const result = await this.getLogDetails(logId, true, true);
+    const log = result.data;
+    
+    if (!log.related_logs) return [log];
+    
+    // Build error chain by analyzing related logs
+    const errorChain = [log];
+    const relatedLogs = log.related_logs;
+    
+    // Sort by timestamp to get chronological order
+    relatedLogs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    // Add related logs to chain
+    for (const relatedLog of relatedLogs) {
+      if (['error', 'fatal'].includes(relatedLog.level)) {
+        errorChain.push(relatedLog);
+      }
+    }
+    
+    return errorChain;
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Log Monitor" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Dict, List, Optional
+from datetime import datetime
+
+class LogMonitor:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def get_log_details(self, 
+                       log_id: str,
+                       include_context: bool = True,
+                       include_related: bool = True,
+                       include_stack_trace: bool = False) -> Dict:
+        """Get detailed log entry information"""
+        try:
+            params = {
+                "include_context": include_context,
+                "include_related": include_related,
+                "include_stack_trace": include_stack_trace
+            }
+            
+            response = self.api_client.get(f'/logs/{log_id}', params=params)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to get log details: {e}")
+            raise
+    
+    def analyze_log_severity(self, log_id: str) -> Dict:
+        """Analyze log severity and provide recommendations"""
+        result = self.get_log_details(log_id, True, True, True)
+        log = result.get("data", {})
+        
+        analysis = {
+            "log_id": log_id,
+            "severity_score": log.get("severity_score", 0),
+            "anomaly_score": log.get("anomaly_score", 0),
+            "level": log.get("level"),
+            "recommendation": "",
+            "priority": "low"
+        }
+        
+        severity = log.get("severity_score", 0)
+        anomaly = log.get("anomaly_score", 0)
+        
+        if severity >= 8 or anomaly >= 0.9:
+            analysis["priority"] = "critical"
+            analysis["recommendation"] = "Immediate attention required"
+        elif severity >= 6 or anomaly >= 0.7:
+            analysis["priority"] = "high"
+            analysis["recommendation"] = "Investigate within 1 hour"
+        elif severity >= 4 or anomaly >= 0.5:
+            analysis["priority"] = "medium"
+            analysis["recommendation"] = "Monitor and investigate if pattern continues"
+        else:
+            analysis["priority"] = "low"
+            analysis["recommendation"] = "No immediate action required"
+        
+        return analysis
+    
+    def get_error_context(self, log_id: str) -> Dict:
+        """Get comprehensive error context"""
+        result = self.get_log_details(log_id, True, True, True)
+        log = result.get("data", {})
+        
+        context = {
+            "error_details": {
+                "message": log.get("message"),
+                "level": log.get("level"),
+                "source": log.get("source"),
+                "timestamp": log.get("timestamp")
+            },
+            "user_context": {
+                "user_id": log.get("user_id"),
+                "ip_address": log.get("ip_address"),
+                "session_id": log.get("session_id")
+            },
+            "request_context": {
+                "request_id": log.get("request_id"),
+                "endpoint": log.get("metadata", {}).get("endpoint"),
+                "method": log.get("metadata", {}).get("method"),
+                "status_code": log.get("metadata", {}).get("status_code")
+            },
+            "technical_context": {
+                "environment": log.get("context", {}).get("environment"),
+                "version": log.get("context", {}).get("version"),
+                "server": log.get("context", {}).get("server"),
+                "region": log.get("context", {}).get("region")
+            },
+            "stack_trace": log.get("stack_trace", []),
+            "related_logs": log.get("related_logs", [])
+        }
+        
+        return context
+    
+    def detect_anomalies(self, log_id: str) -> List[Dict]:
+        """Detect anomalies in log entry"""
+        result = self.get_log_details(log_id, True, True)
+        log = result.get("data", {})
+        
+        anomalies = []
+        
+        # Check anomaly score
+        if log.get("anomaly_score", 0) >= 0.8:
+            anomalies.append({
+                "type": "high_anomaly_score",
+                "description": "Log entry has high anomaly score",
+                "score": log.get("anomaly_score")
+            })
+        
+        # Check severity score
+        if log.get("severity_score", 0) >= 8:
+            anomalies.append({
+                "type": "high_severity",
+                "description": "Log entry has high severity score",
+                "score": log.get("severity_score")
+            })
+        
+        # Check for related errors
+        related_logs = log.get("related_logs", [])
+        error_count = sum(1 for rl in related_logs if rl.get("level") in ["error", "fatal"])
+        if error_count >= 3:
+            anomalies.append({
+                "type": "error_chain",
+                "description": "Multiple related errors detected",
+                "count": error_count
+            })
+        
+        return anomalies
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Logs" icon="list">
+    `GET /logs` - List all log entries
+  </Card>
+  <Card title="Search Logs" icon="search">
+    `GET /logs/search` - Search log entries
+  </Card>
+  <Card title="Export Logs" icon="download">
+    `POST /logs/export` - Export log entries
+  </Card>
+  <Card title="Get Log Statistics" icon="chart">
+    `GET /logs/statistics` - View log statistics
+  </Card>
+</CardGroup>

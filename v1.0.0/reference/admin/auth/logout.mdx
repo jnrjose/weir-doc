@@ -1,0 +1,318 @@
+---
+title: "Admin Logout"
+api: "POST /auth/logout"
+description: "Logout admin user and invalidate session"
+---
+
+Logout an admin user and invalidate their current session. This endpoint terminates the admin session and invalidates the access token, ensuring secure logout functionality.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for secure admin session termination.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <admin_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="logout_all_sessions" type="boolean" required="false">
+  Whether to logout from all admin sessions
+  
+  **Example**: false
+  
+  **Default**: false
+  
+  **Note**: If true, invalidates all sessions for the admin user
+</ParamField>
+
+<ParamField body="reason" type="string" required="false">
+  Reason for logout (for audit purposes)
+  
+  **Example**: "User requested logout"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Logout result data
+</ResponseField>
+
+<ResponseField name="data.admin_id" type="string">
+  Admin user ID that was logged out
+</ResponseField>
+
+<ResponseField name="data.session_id" type="string">
+  Session ID that was invalidated
+</ResponseField>
+
+<ResponseField name="data.logout_type" type="string">
+  Type of logout performed
+</ResponseField>
+
+<ResponseField name="data.sessions_invalidated" type="integer">
+  Number of sessions invalidated
+</ResponseField>
+
+<ResponseField name="data.logout_time" type="string">
+  ISO 8601 timestamp of logout
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/auth/logout" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logout_all_sessions": false,
+    "reason": "User requested logout"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/auth/logout', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    logout_all_sessions: false,
+    reason: 'User requested logout'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "logout_all_sessions": False,
+    "reason": "User requested logout"
+}
+
+response = requests.post(
+    'https://api.example.com/auth/logout',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "admin_id": "admin_1234567890abcdef",
+    "session_id": "session_1234567890abcdef",
+    "logout_type": "single_session",
+    "sessions_invalidated": 1,
+    "logout_time": "2024-01-15T10:30:00Z"
+  },
+  "message": "Admin logout successful",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to logout
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Logout Types" icon="info">
+    Available logout types:
+    
+    - **single_session**: Logout from current session only
+    - **all_sessions**: Logout from all admin sessions
+    - **forced_logout**: System-initiated logout
+  </Accordion>
+  
+  <Accordion title="Session Management" icon="key">
+    Session handling:
+    
+    - Access tokens are immediately invalidated
+    - Refresh tokens are revoked
+    - Session data is cleared
+    - Audit logs are updated
+  </Accordion>
+  
+  <Accordion title="Security Features" icon="shield">
+    Security measures:
+    
+    - Immediate token invalidation
+    - Session cleanup
+    - Audit trail logging
+    - Security event tracking
+  </Accordion>
+  
+  <Accordion title="Audit Logging" icon="file-text">
+    Audit information:
+    
+    - Logout reason is recorded
+    - Session details are logged
+    - Timestamp is captured
+    - Admin ID is tracked
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Admin Logout Service" icon="cog">
+    <CodeBlock lang="javascript">
+class AdminLogoutService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async logout(logoutAllSessions = false, reason = null) {
+    try {
+      const response = await this.apiClient.makeRequest('/auth/logout', {
+        method: 'POST',
+        body: JSON.stringify({
+          logout_all_sessions: logoutAllSessions,
+          reason: reason
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to logout admin user');
+      }
+      
+      const result = await response.json();
+      
+      // Clear stored tokens
+      await this.clearStoredTokens();
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Error during admin logout:', error);
+      throw error;
+    }
+  }
+  
+  async clearStoredTokens() {
+    // Clear admin tokens from secure storage
+    await SecureStore.deleteItemAsync('admin_access_token');
+    await SecureStore.deleteItemAsync('admin_refresh_token');
+  }
+  
+  async forceLogoutAllSessions(reason = 'Security policy enforcement') {
+    return this.logout(true, reason);
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Admin Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Optional
+
+class AdminLogoutClient:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def logout(self, 
+               logout_all_sessions: bool = False,
+               reason: Optional[str] = None) -> dict:
+        """Logout admin user"""
+        try:
+            payload = {
+                "logout_all_sessions": logout_all_sessions,
+                "reason": reason
+            }
+            
+            response = self.api_client.post('/auth/logout', json=payload)
+            response.raise_for_status()
+            
+            # Clear stored tokens
+            self.clear_tokens()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Admin logout failed: {e}")
+            raise
+    
+    def clear_tokens(self):
+        """Clear stored authentication tokens"""
+        # Clear tokens from storage
+        if hasattr(self.api_client, 'access_token'):
+            self.api_client.access_token = None
+        if hasattr(self.api_client, 'refresh_token'):
+            self.api_client.refresh_token = None
+    
+    def logout_all_sessions(self, reason: str = "Security policy enforcement") -> dict:
+        """Logout from all admin sessions"""
+        return self.logout(logout_all_sessions=True, reason=reason)
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Admin Login" icon="sign-in">
+    `POST /auth/login` - Authenticate admin user
+  </Card>
+  <Card title="Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh expired access token
+  </Card>
+  <Card title="Get Admin Profile" icon="user">
+    `GET /admin/profile` - Get admin user profile
+  </Card>
+  <Card title="Change Password" icon="key">
+    `PUT /admin/password` - Change admin password
+  </Card>
+</CardGroup>

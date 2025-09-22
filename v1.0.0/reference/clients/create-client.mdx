@@ -1,0 +1,658 @@
+---
+title: "Create Client"
+api: "POST /clients"
+description: "Create a new API client for the organization"
+---
+
+Create a new API client with specified permissions and configurations. This endpoint allows you to set up API clients for different applications, integrations, or services that need to access your organization's APIs.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for API client management and configuration.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Name of the API client
+  
+  **Example**: "Mobile App Client"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must be unique within the organization
+</ParamField>
+
+<ParamField body="description" type="string" required="false">
+  Description of the API client's purpose
+  
+  **Example**: "API client for iOS and Android mobile applications"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of API client
+  
+  **Options**: "web", "mobile", "server", "integration", "desktop"
+  
+  **Example**: "mobile"
+</ParamField>
+
+<ParamField body="permissions" type="array" required>
+  List of permissions to grant to the client
+  
+  **Example**: ["read:teams", "write:teams", "read:members"]
+  
+  **Available Permissions**:
+  - `read:*` - Read access to all resources
+  - `write:*` - Write access to all resources
+  - `read:teams` - Read team information
+  - `write:teams` - Create and modify teams
+  - `read:members` - Read member information
+  - `write:members` - Create and modify members
+  - `read:organization` - Read organization information
+  - `write:organization` - Modify organization settings
+  - `admin:*` - Administrative access
+</ParamField>
+
+<ParamField body="redirect_uris" type="array" required="false">
+  List of allowed redirect URIs (for web clients)
+  
+  **Example**: ["https://app.example.com/callback", "https://localhost:3000/callback"]
+  
+  **Constraints**: 
+  - Must be valid URLs
+  - Maximum 10 redirect URIs
+</ParamField>
+
+<ParamField body="scopes" type="array" required="false">
+  OAuth scopes for the client
+  
+  **Example**: ["read", "write", "admin"]
+  
+  **Available Scopes**:
+  - `read` - Read access
+  - `write` - Write access
+  - `admin` - Administrative access
+  - `offline_access` - Offline access
+</ParamField>
+
+<ParamField body="rate_limits" type="object" required="false">
+  Rate limiting configuration for the client
+  
+  **Properties**:
+  - `requests_per_hour` (integer): Maximum requests per hour
+  - `requests_per_day` (integer): Maximum requests per day
+  - `burst_limit` (integer): Maximum burst requests
+</ParamField>
+
+<ParamField body="expires_at" type="string" required="false">
+  Client expiration date (ISO 8601 format)
+  
+  **Example**: "2024-12-31T23:59:59Z"
+  
+  **Note**: If not provided, client will not expire
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Additional client-specific settings
+  
+  **Properties**:
+  - `auto_approve` (boolean): Whether to auto-approve requests
+  - `require_https` (boolean): Whether to require HTTPS
+  - `allowed_ips` (array): List of allowed IP addresses
+  - `webhook_url` (string): Webhook URL for notifications
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Created client information
+</ResponseField>
+
+<ResponseField name="data.client_id" type="string">
+  Unique identifier for the client
+</ResponseField>
+
+<ResponseField name="data.client_secret" type="string">
+  Client secret for authentication
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the client
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Client description
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Type of client
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the client
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  List of granted permissions
+</ResponseField>
+
+<ResponseField name="data.redirect_uris" type="array">
+  Allowed redirect URIs
+</ResponseField>
+
+<ResponseField name="data.scopes" type="array">
+  OAuth scopes
+</ResponseField>
+
+<ResponseField name="data.rate_limits" type="object">
+  Rate limiting configuration
+</ResponseField>
+
+<ResponseField name="data.rate_limits.requests_per_hour" type="integer">
+  Maximum requests per hour
+</ResponseField>
+
+<ResponseField name="data.rate_limits.requests_per_day" type="integer">
+  Maximum requests per day
+</ResponseField>
+
+<ResponseField name="data.rate_limits.burst_limit" type="integer">
+  Maximum burst requests
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  Client expiration date
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Client-specific settings
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Organization ID the client belongs to
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the client creator
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the client was created
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/clients" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Mobile App Client",
+    "description": "API client for iOS and Android mobile applications",
+    "type": "mobile",
+    "permissions": [
+      "read:teams",
+      "write:teams",
+      "read:members"
+    ],
+    "redirect_uris": [
+      "https://app.example.com/callback",
+      "https://localhost:3000/callback"
+    ],
+    "scopes": ["read", "write"],
+    "rate_limits": {
+      "requests_per_hour": 1000,
+      "requests_per_day": 10000,
+      "burst_limit": 100
+    },
+    "settings": {
+      "auto_approve": false,
+      "require_https": true,
+      "allowed_ips": ["192.168.1.0/24"]
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/clients', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Mobile App Client',
+    description: 'API client for iOS and Android mobile applications',
+    type: 'mobile',
+    permissions: [
+      'read:teams',
+      'write:teams',
+      'read:members'
+    ],
+    redirect_uris: [
+      'https://app.example.com/callback',
+      'https://localhost:3000/callback'
+    ],
+    scopes: ['read', 'write'],
+    rate_limits: {
+      requests_per_hour: 1000,
+      requests_per_day: 10000,
+      burst_limit: 100
+    },
+    settings: {
+      auto_approve: false,
+      require_https: true,
+      allowed_ips: ['192.168.1.0/24']
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Mobile App Client",
+    "description": "API client for iOS and Android mobile applications",
+    "type": "mobile",
+    "permissions": [
+        "read:teams",
+        "write:teams",
+        "read:members"
+    ],
+    "redirect_uris": [
+        "https://app.example.com/callback",
+        "https://localhost:3000/callback"
+    ],
+    "scopes": ["read", "write"],
+    "rate_limits": {
+        "requests_per_hour": 1000,
+        "requests_per_day": 10000,
+        "burst_limit": 100
+    },
+    "settings": {
+        "auto_approve": False,
+        "require_https": True,
+        "allowed_ips": ["192.168.1.0/24"]
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/clients',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "client_id": "client_1234567890abcdef",
+    "client_secret": "cs_0987654321fedcba",
+    "name": "Mobile App Client",
+    "description": "API client for iOS and Android mobile applications",
+    "type": "mobile",
+    "status": "active",
+    "permissions": [
+      "read:teams",
+      "write:teams",
+      "read:members"
+    ],
+    "redirect_uris": [
+      "https://app.example.com/callback",
+      "https://localhost:3000/callback"
+    ],
+    "scopes": ["read", "write"],
+    "rate_limits": {
+      "requests_per_hour": 1000,
+      "requests_per_day": 10000,
+      "burst_limit": 100
+    },
+    "expires_at": null,
+    "settings": {
+      "auto_approve": false,
+      "require_https": true,
+      "allowed_ips": ["192.168.1.0/24"],
+      "webhook_url": null
+    },
+    "organization_id": "org_1234567890abcdef",
+    "created_by": "user_1234567890abcdef",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Client created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create clients
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Client name already exists in the organization
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Invalid client configuration or missing required fields
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Client Types" icon="grid">
+    Available client types:
+    
+    - **web**: Web applications and SPAs
+    - **mobile**: Mobile applications (iOS/Android)
+    - **server**: Server-to-server integrations
+    - **integration**: Third-party integrations
+    - **desktop**: Desktop applications
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Permission system:
+    
+    - Granular permission control
+    - Permission inheritance from organization
+    - Permission-specific rate limits
+    - Audit trail for permission changes
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    Rate limiting features:
+    
+    - Per-hour and per-day limits
+    - Burst limit for short-term spikes
+    - Different limits for different permissions
+    - Automatic rate limit reset
+  </Accordion>
+  
+  <Accordion title="Security" icon="lock">
+    Security features:
+    
+    - Client secret generation
+    - IP address restrictions
+    - HTTPS requirements
+    - Expiration dates
+    - Audit logging
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Client Manager" icon="cog">
+    <CodeBlock lang="javascript">
+class ClientManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createClient(config) {
+    try {
+      const response = await this.apiClient.makeRequest('/clients', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: config.name,
+          description: config.description,
+          type: config.type,
+          permissions: config.permissions,
+          redirect_uris: config.redirectUris || [],
+          scopes: config.scopes || [],
+          rate_limits: {
+            requests_per_hour: config.rateLimits?.requestsPerHour || 1000,
+            requests_per_day: config.rateLimits?.requestsPerDay || 10000,
+            burst_limit: config.rateLimits?.burstLimit || 100
+          },
+          settings: {
+            auto_approve: config.settings?.autoApprove || false,
+            require_https: config.settings?.requireHttps || true,
+            allowed_ips: config.settings?.allowedIps || [],
+            webhook_url: config.settings?.webhookUrl || null
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create client');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error creating client:', error);
+      throw error;
+    }
+  }
+  
+  async createMobileClient(name, description, permissions) {
+    return this.createClient({
+      name,
+      description,
+      type: 'mobile',
+      permissions,
+      scopes: ['read', 'write'],
+      rateLimits: {
+        requestsPerHour: 1000,
+        requestsPerDay: 10000,
+        burstLimit: 100
+      },
+      settings: {
+        autoApprove: false,
+        requireHttps: true
+      }
+    });
+  }
+  
+  async createWebClient(name, description, permissions, redirectUris) {
+    return this.createClient({
+      name,
+      description,
+      type: 'web',
+      permissions,
+      redirectUris,
+      scopes: ['read', 'write', 'offline_access'],
+      rateLimits: {
+        requestsPerHour: 2000,
+        requestsPerDay: 20000,
+        burstLimit: 200
+      },
+      settings: {
+        autoApprove: false,
+        requireHttps: true
+      }
+    });
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Client Manager" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Dict, List, Optional
+
+class ClientManager:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def create_client(self, 
+                     name: str,
+                     description: str,
+                     client_type: str,
+                     permissions: List[str],
+                     redirect_uris: Optional[List[str]] = None,
+                     scopes: Optional[List[str]] = None,
+                     rate_limits: Optional[Dict] = None,
+                     settings: Optional[Dict] = None) -> Dict:
+        """Create a new API client"""
+        try:
+            payload = {
+                "name": name,
+                "description": description,
+                "type": client_type,
+                "permissions": permissions,
+                "redirect_uris": redirect_uris or [],
+                "scopes": scopes or [],
+                "rate_limits": {
+                    "requests_per_hour": rate_limits.get("requests_per_hour", 1000) if rate_limits else 1000,
+                    "requests_per_day": rate_limits.get("requests_per_day", 10000) if rate_limits else 10000,
+                    "burst_limit": rate_limits.get("burst_limit", 100) if rate_limits else 100
+                },
+                "settings": {
+                    "auto_approve": settings.get("auto_approve", False) if settings else False,
+                    "require_https": settings.get("require_https", True) if settings else True,
+                    "allowed_ips": settings.get("allowed_ips", []) if settings else [],
+                    "webhook_url": settings.get("webhook_url") if settings else None
+                }
+            }
+            
+            response = self.api_client.post('/clients', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to create client: {e}")
+            raise
+    
+    def create_mobile_client(self, 
+                           name: str,
+                           description: str,
+                           permissions: List[str]) -> Dict:
+        """Create a mobile API client"""
+        return self.create_client(
+            name=name,
+            description=description,
+            client_type="mobile",
+            permissions=permissions,
+            scopes=["read", "write"],
+            rate_limits={
+                "requests_per_hour": 1000,
+                "requests_per_day": 10000,
+                "burst_limit": 100
+            },
+            settings={
+                "auto_approve": False,
+                "require_https": True
+            }
+        )
+    
+    def create_web_client(self, 
+                         name: str,
+                         description: str,
+                         permissions: List[str],
+                         redirect_uris: List[str]) -> Dict:
+        """Create a web API client"""
+        return self.create_client(
+            name=name,
+            description=description,
+            client_type="web",
+            permissions=permissions,
+            redirect_uris=redirect_uris,
+            scopes=["read", "write", "offline_access"],
+            rate_limits={
+                "requests_per_hour": 2000,
+                "requests_per_day": 20000,
+                "burst_limit": 200
+            },
+            settings={
+                "auto_approve": False,
+                "require_https": True
+            }
+        )
+    
+    def create_server_client(self, 
+                           name: str,
+                           description: str,
+                           permissions: List[str]) -> Dict:
+        """Create a server-to-server API client"""
+        return self.create_client(
+            name=name,
+            description=description,
+            client_type="server",
+            permissions=permissions,
+            scopes=["read", "write", "admin"],
+            rate_limits={
+                "requests_per_hour": 5000,
+                "requests_per_day": 50000,
+                "burst_limit": 500
+            },
+            settings={
+                "auto_approve": True,
+                "require_https": True
+            }
+        )
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Clients" icon="list">
+    `GET /clients` - List all API clients
+  </Card>
+  <Card title="Update Client" icon="edit">
+    `PUT /clients/{clientId}` - Update client configuration
+  </Card>
+  <Card title="Delete Client" icon="trash">
+    `DELETE /clients/{clientId}` - Remove API client
+  </Card>
+  <Card title="Get Client Usage" icon="chart">
+    `GET /clients/{clientId}/usage` - View client usage statistics
+  </Card>
+</CardGroup>

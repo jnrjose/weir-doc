@@ -1,0 +1,394 @@
+---
+title: "Admin Login"
+api: "POST /auth/login"
+description: "Authenticate admin user and receive access token"
+---
+
+Authenticate an admin user and receive an access token for administrative API access. This endpoint is specifically designed for system administrators and platform managers.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and does not require authentication. It's designed for administrative user authentication.
+</Note>
+
+## Request
+
+<ParamField body="username" type="string" required>
+  Admin username or email address
+  
+  **Example**: "admin@example.com"
+  
+  **Constraints**: 
+  - Must be a valid admin username or email
+  - Maximum length: 255 characters
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Admin password
+  
+  **Example**: "AdminPassword123!"
+  
+  **Constraints**: 
+  - Must be a valid admin password
+  - Minimum length: 8 characters
+</ParamField>
+
+<ParamField body="remember_me" type="boolean" required="false">
+  Whether to extend token expiration time
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField body="mfa_code" type="string" required="false">
+  Multi-factor authentication code (if enabled)
+  
+  **Example**: "123456"
+  
+  **Constraints**: 
+  - Must be a valid 6-digit MFA code
+  - Required if MFA is enabled for the admin account
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Authentication result data
+</ResponseField>
+
+<ResponseField name="data.admin_id" type="string">
+  Unique identifier for the admin user
+</ResponseField>
+
+<ResponseField name="data.username" type="string">
+  Admin username
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Admin email address
+</ResponseField>
+
+<ResponseField name="data.role" type="string">
+  Admin role level
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  List of admin permissions
+</ResponseField>
+
+<ResponseField name="data.access_token" type="string">
+  JWT access token for API authentication
+</ResponseField>
+
+<ResponseField name="data.refresh_token" type="string">
+  Refresh token for obtaining new access tokens
+</ResponseField>
+
+<ResponseField name="data.token_expires_in" type="integer">
+  Access token expiration time in seconds
+</ResponseField>
+
+<ResponseField name="data.last_login" type="string">
+  ISO 8601 timestamp of last successful login
+</ResponseField>
+
+<ResponseField name="data.requires_mfa" type="boolean">
+  Whether MFA is required for this admin account
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin@example.com",
+    "password": "AdminPassword123!",
+    "remember_me": true,
+    "mfa_code": "123456"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    username: 'admin@example.com',
+    password: 'AdminPassword123!',
+    remember_me: true,
+    mfa_code: '123456'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "username": "admin@example.com",
+    "password": "AdminPassword123!",
+    "remember_me": True,
+    "mfa_code": "123456"
+}
+
+response = requests.post(
+    'https://api.example.com/auth/login',
+    headers={'Content-Type': 'application/json'},
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "admin_id": "admin_1234567890abcdef",
+    "username": "admin@example.com",
+    "email": "admin@example.com",
+    "role": "super_admin",
+    "permissions": [
+      "admin:users:read",
+      "admin:users:write",
+      "admin:organizations:read",
+      "admin:organizations:write",
+      "admin:system:read",
+      "admin:system:write",
+      "admin:logs:read"
+    ],
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "rt_admin_1234567890abcdef",
+    "token_expires_in": 3600,
+    "last_login": "2024-01-15T09:30:00Z",
+    "requires_mfa": true
+  },
+  "message": "Admin authentication successful",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing required fields
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid credentials or authentication failed
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Account locked, suspended, or insufficient privileges
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  MFA code required or invalid MFA code
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for login attempts
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Admin Roles" icon="user-shield">
+    Available admin roles:
+    
+    - **super_admin**: Full system access
+    - **admin**: Standard administrative access
+    - **moderator**: Limited administrative access
+    - **auditor**: Read-only administrative access
+  </Accordion>
+  
+  <Accordion title="Multi-Factor Authentication" icon="shield">
+    MFA requirements:
+    
+    - Required for super_admin and admin roles
+    - Optional for moderator and auditor roles
+    - Uses TOTP (Time-based One-Time Password)
+    - 6-digit codes valid for 30 seconds
+  </Accordion>
+  
+  <Accordion title="Token Expiration" icon="clock">
+    Token expiration times:
+    
+    - **Standard**: 1 hour (3600 seconds)
+    - **Remember Me**: 24 hours (86400 seconds)
+    - **MFA Required**: 30 minutes (1800 seconds)
+  </Accordion>
+  
+  <Accordion title="Security Features" icon="lock">
+    Security measures:
+    
+    - Account lockout after 5 failed attempts
+    - IP-based rate limiting
+    - Suspicious activity monitoring
+    - Session management and tracking
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Admin Authentication Service" icon="cog">
+    <CodeBlock lang="javascript">
+class AdminAuthService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async login(username, password, rememberMe = false, mfaCode = null) {
+    try {
+      const response = await this.apiClient.makeRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          username,
+          password,
+          remember_me: rememberMe,
+          mfa_code: mfaCode
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Admin login failed');
+      }
+      
+      const result = await response.json();
+      
+      // Store admin tokens securely
+      await this.storeAdminTokens(result.data.access_token, result.data.refresh_token);
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Admin login error:', error);
+      throw error;
+    }
+  }
+  
+  async storeAdminTokens(accessToken, refreshToken) {
+    // Store tokens in secure admin storage
+    await SecureStore.setItemAsync('admin_access_token', accessToken);
+    await SecureStore.setItemAsync('admin_refresh_token', refreshToken);
+  }
+  
+  async logout() {
+    try {
+      await this.apiClient.makeRequest('/auth/logout', {
+        method: 'POST'
+      });
+      
+      // Clear stored tokens
+      await SecureStore.deleteItemAsync('admin_access_token');
+      await SecureStore.deleteItemAsync('admin_refresh_token');
+      
+    } catch (error) {
+      console.error('Admin logout error:', error);
+      throw error;
+    }
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Admin Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+import json
+from datetime import datetime
+
+class AdminClient:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.access_token = None
+        self.refresh_token = None
+    
+    def login(self, username, password, remember_me=False, mfa_code=None):
+        """Authenticate admin user"""
+        try:
+            payload = {
+                "username": username,
+                "password": password,
+                "remember_me": remember_me,
+                "mfa_code": mfa_code
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/auth/login",
+                headers={"Content-Type": "application/json"},
+                json=payload
+            )
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # Store tokens
+            self.access_token = result["data"]["access_token"]
+            self.refresh_token = result["data"]["refresh_token"]
+            
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Admin login failed: {e}")
+            raise
+    
+    def make_authenticated_request(self, endpoint, method="GET", **kwargs):
+        """Make authenticated API request"""
+        if not self.access_token:
+            raise Exception("Not authenticated. Please login first.")
+        
+        headers = kwargs.get('headers', {})
+        headers['Authorization'] = f'Bearer {self.access_token}'
+        kwargs['headers'] = headers
+        
+        response = requests.request(method, f"{self.base_url}{endpoint}", **kwargs)
+        response.raise_for_status()
+        
+        return response.json()
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Admin Logout" icon="sign-out">
+    `POST /auth/logout` - Logout and invalidate admin session
+  </Card>
+  <Card title="Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh expired access token
+  </Card>
+  <Card title="Get Admin Profile" icon="user">
+    `GET /admin/profile` - Get admin user profile
+  </Card>
+  <Card title="Change Password" icon="key">
+    `PUT /admin/password` - Change admin password
+  </Card>
+</CardGroup>

@@ -1,0 +1,477 @@
+---
+title: "Login"
+api: "POST /auth/login"
+description: "Authenticate user and receive access token"
+---
+
+Authenticate a user with their credentials and receive an access token for API access. This endpoint supports both email and username authentication with optional multi-factor authentication.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and does not require authentication. It's designed for user authentication and session management.
+</Note>
+
+## Request
+
+<ParamField body="email" type="string" required="false">
+  User email address
+  
+  **Example**: "user@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email address
+  - Required if username is not provided
+</ParamField>
+
+<ParamField body="username" type="string" required="false">
+  Username
+  
+  **Example**: "johndoe"
+  
+  **Constraints**: 
+  - Must be a valid username
+  - Required if email is not provided
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User password
+  
+  **Example**: "SecurePassword123!"
+  
+  **Constraints**: 
+  - Must be a valid password
+  - Minimum length: 8 characters
+</ParamField>
+
+<ParamField body="remember_me" type="boolean" required="false">
+  Whether to extend token expiration time
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField body="mfa_code" type="string" required="false">
+  Multi-factor authentication code (if enabled)
+  
+  **Example**: "123456"
+  
+  **Constraints**: 
+  - Must be a valid 6-digit MFA code
+  - Required if MFA is enabled for the user
+</ParamField>
+
+<ParamField body="device_info" type="object" required="false">
+  Device information for security tracking
+  
+  **Properties**:
+  - `device_name` (string): Name of the device
+  - `device_type` (string): Type of device (mobile, desktop, tablet)
+  - `os` (string): Operating system
+  - `browser` (string): Browser name and version
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Authentication result data
+</ResponseField>
+
+<ResponseField name="data.user_id" type="string">
+  Unique identifier for the user
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  User email address
+</ResponseField>
+
+<ResponseField name="data.username" type="string">
+  Username
+</ResponseField>
+
+<ResponseField name="data.fullname" type="string">
+  User's full name
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Organization ID the user belongs to
+</ResponseField>
+
+<ResponseField name="data.organization_name" type="string">
+  Organization name
+</ResponseField>
+
+<ResponseField name="data.role" type="string">
+  User role within the organization
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  List of user permissions
+</ResponseField>
+
+<ResponseField name="data.access_token" type="string">
+  JWT access token for API authentication
+</ResponseField>
+
+<ResponseField name="data.refresh_token" type="string">
+  Refresh token for obtaining new access tokens
+</ResponseField>
+
+<ResponseField name="data.token_expires_in" type="integer">
+  Access token expiration time in seconds
+</ResponseField>
+
+<ResponseField name="data.last_login" type="string">
+  ISO 8601 timestamp of last successful login
+</ResponseField>
+
+<ResponseField name="data.requires_mfa" type="boolean">
+  Whether MFA is required for this user account
+</ResponseField>
+
+<ResponseField name="data.mfa_enabled" type="boolean">
+  Whether MFA is enabled for this user account
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePassword123!",
+    "remember_me": true,
+    "mfa_code": "123456",
+    "device_info": {
+      "device_name": "My MacBook Pro",
+      "device_type": "desktop",
+      "os": "macOS 14.0",
+      "browser": "Chrome 120.0"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    password: 'SecurePassword123!',
+    remember_me: true,
+    mfa_code: '123456',
+    device_info: {
+      device_name: 'My MacBook Pro',
+      device_type: 'desktop',
+      os: 'macOS 14.0',
+      browser: 'Chrome 120.0'
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "email": "user@example.com",
+    "password": "SecurePassword123!",
+    "remember_me": True,
+    "mfa_code": "123456",
+    "device_info": {
+        "device_name": "My MacBook Pro",
+        "device_type": "desktop",
+        "os": "macOS 14.0",
+        "browser": "Chrome 120.0"
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/auth/login',
+    headers={'Content-Type': 'application/json'},
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "user_id": "user_1234567890abcdef",
+    "email": "user@example.com",
+    "username": "johndoe",
+    "fullname": "John Doe",
+    "organization_id": "org_1234567890abcdef",
+    "organization_name": "Acme Corporation",
+    "role": "admin",
+    "permissions": [
+      "read:teams",
+      "write:teams",
+      "read:members",
+      "write:members",
+      "read:organization",
+      "write:organization"
+    ],
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refresh_token": "rt_1234567890abcdef",
+    "token_expires_in": 3600,
+    "last_login": "2024-01-15T09:30:00Z",
+    "requires_mfa": true,
+    "mfa_enabled": true
+  },
+  "message": "Authentication successful",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing required fields
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid credentials or authentication failed
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Account locked, suspended, or insufficient privileges
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  MFA code required or invalid MFA code
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for login attempts
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Authentication Methods" icon="key">
+    Supported authentication methods:
+    
+    - **Email + Password**: Primary authentication method
+    - **Username + Password**: Alternative authentication method
+    - **Multi-Factor Authentication**: Additional security layer
+    - **Remember Me**: Extended session duration
+  </Accordion>
+  
+  <Accordion title="Multi-Factor Authentication" icon="shield">
+    MFA requirements:
+    
+    - Required for admin and manager roles
+    - Optional for regular users
+    - Uses TOTP (Time-based One-Time Password)
+    - 6-digit codes valid for 30 seconds
+    - Backup codes available
+  </Accordion>
+  
+  <Accordion title="Token Expiration" icon="clock">
+    Token expiration times:
+    
+    - **Standard**: 1 hour (3600 seconds)
+    - **Remember Me**: 24 hours (86400 seconds)
+    - **MFA Required**: 30 minutes (1800 seconds)
+    - **High Security**: 15 minutes (900 seconds)
+  </Accordion>
+  
+  <Accordion title="Security Features" icon="lock">
+    Security measures:
+    
+    - Account lockout after 5 failed attempts
+    - IP-based rate limiting
+    - Suspicious activity monitoring
+    - Session management and tracking
+    - Device fingerprinting
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Authentication Service" icon="cog">
+    <CodeBlock lang="javascript">
+class AuthService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async login(credentials, rememberMe = false, mfaCode = null) {
+    try {
+      const response = await this.apiClient.makeRequest('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email: credentials.email,
+          username: credentials.username,
+          password: credentials.password,
+          remember_me: rememberMe,
+          mfa_code: mfaCode,
+          device_info: this.getDeviceInfo()
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Login failed');
+      }
+      
+      const result = await response.json();
+      
+      // Store tokens securely
+      await this.storeTokens(result.data.access_token, result.data.refresh_token);
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
+  }
+  
+  async storeTokens(accessToken, refreshToken) {
+    // Store tokens in secure storage
+    await SecureStore.setItemAsync('access_token', accessToken);
+    await SecureStore.setItemAsync('refresh_token', refreshToken);
+  }
+  
+  getDeviceInfo() {
+    return {
+      device_name: navigator.platform,
+      device_type: this.getDeviceType(),
+      os: navigator.platform,
+      browser: navigator.userAgent
+    };
+  }
+  
+  getDeviceType() {
+    const userAgent = navigator.userAgent;
+    if (/Mobile|Android|iPhone|iPad/.test(userAgent)) {
+      return 'mobile';
+    } else if (/Tablet|iPad/.test(userAgent)) {
+      return 'tablet';
+    } else {
+      return 'desktop';
+    }
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Auth Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+import json
+from datetime import datetime
+
+class AuthClient:
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self.access_token = None
+        self.refresh_token = None
+    
+    def login(self, email=None, username=None, password=None, remember_me=False, mfa_code=None):
+        """Authenticate user"""
+        try:
+            payload = {
+                "password": password,
+                "remember_me": remember_me,
+                "mfa_code": mfa_code,
+                "device_info": self.get_device_info()
+            }
+            
+            if email:
+                payload["email"] = email
+            elif username:
+                payload["username"] = username
+            else:
+                raise ValueError("Either email or username must be provided")
+            
+            response = requests.post(
+                f"{self.base_url}/auth/login",
+                headers={"Content-Type": "application/json"},
+                json=payload
+            )
+            
+            response.raise_for_status()
+            result = response.json()
+            
+            # Store tokens
+            self.access_token = result["data"]["access_token"]
+            self.refresh_token = result["data"]["refresh_token"]
+            
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Login failed: {e}")
+            raise
+    
+    def get_device_info(self):
+        """Get device information"""
+        import platform
+        return {
+            "device_name": platform.node(),
+            "device_type": "desktop",
+            "os": platform.system(),
+            "browser": "Python Client"
+        }
+    
+    def make_authenticated_request(self, endpoint, method="GET", **kwargs):
+        """Make authenticated API request"""
+        if not self.access_token:
+            raise Exception("Not authenticated. Please login first.")
+        
+        headers = kwargs.get('headers', {})
+        headers['Authorization'] = f'Bearer {self.access_token}'
+        kwargs['headers'] = headers
+        
+        response = requests.request(method, f"{self.base_url}{endpoint}", **kwargs)
+        response.raise_for_status()
+        
+        return response.json()
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Register" icon="user-plus">
+    `POST /auth/register` - Register new user account
+  </Card>
+  <Card title="Logout" icon="sign-out">
+    `POST /auth/logout` - Logout and invalidate session
+  </Card>
+  <Card title="Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh expired access token
+  </Card>
+  <Card title="Forgot Password" icon="key">
+    `POST /auth/forgot-password` - Request password reset
+  </Card>
+</CardGroup>

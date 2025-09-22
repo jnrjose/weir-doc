@@ -1,0 +1,507 @@
+---
+title: "Get Email Status"
+api: "GET /mail/status/{messageId}"
+description: "Check email delivery status and tracking information"
+---
+
+Retrieve the current status and delivery information for a specific email message. This endpoint provides real-time tracking of email delivery, including delivery status, bounce information, and engagement metrics.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for email tracking and delivery monitoring.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Path Parameters
+
+<ParamField path="messageId" type="string" required>
+  Unique identifier for the email message
+  
+  **Example**: "msg_1234567890abcdef"
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="include_events" type="boolean" required="false">
+  Whether to include detailed delivery events
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField query="include_engagement" type="boolean" required="false">
+  Whether to include engagement metrics (opens, clicks)
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField query="include_recipients" type="boolean" required="false">
+  Whether to include recipient-specific status information
+  
+  **Example**: false
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Email status information
+</ResponseField>
+
+<ResponseField name="data.message_id" type="string">
+  Unique identifier for the email message
+</ResponseField>
+
+<ResponseField name="data.subject" type="string">
+  Email subject line
+</ResponseField>
+
+<ResponseField name="data.template" type="string">
+  Email template used
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current delivery status
+</ResponseField>
+
+<ResponseField name="data.priority" type="string">
+  Email priority level
+</ResponseField>
+
+<ResponseField name="data.sent_at" type="string">
+  ISO 8601 timestamp when the email was sent
+</ResponseField>
+
+<ResponseField name="data.delivered_at" type="string">
+  ISO 8601 timestamp when the email was delivered
+</ResponseField>
+
+<ResponseField name="data.recipients" type="array">
+  Recipient information (if requested)
+</ResponseField>
+
+<ResponseField name="data.recipients[].email" type="string">
+  Recipient email address
+</ResponseField>
+
+<ResponseField name="data.recipients[].status" type="string">
+  Delivery status for this recipient
+</ResponseField>
+
+<ResponseField name="data.recipients[].delivered_at" type="string">
+  Delivery timestamp for this recipient
+</ResponseField>
+
+<ResponseField name="data.recipients[].bounce_reason" type="string">
+  Bounce reason (if applicable)
+</ResponseField>
+
+<ResponseField name="data.events" type="array">
+  Delivery events (if requested)
+</ResponseField>
+
+<ResponseField name="data.events[].event_type" type="string">
+  Type of delivery event
+</ResponseField>
+
+<ResponseField name="data.events[].timestamp" type="string">
+  ISO 8601 timestamp of the event
+</ResponseField>
+
+<ResponseField name="data.events[].details" type="object">
+  Event-specific details
+</ResponseField>
+
+<ResponseField name="data.engagement" type="object">
+  Engagement metrics (if requested)
+</ResponseField>
+
+<ResponseField name="data.engagement.opens" type="integer">
+  Number of email opens
+</ResponseField>
+
+<ResponseField name="data.engagement.clicks" type="integer">
+  Number of link clicks
+</ResponseField>
+
+<ResponseField name="data.engagement.open_rate" type="number">
+  Email open rate (percentage)
+</ResponseField>
+
+<ResponseField name="data.engagement.click_rate" type="number">
+  Click-through rate (percentage)
+</ResponseField>
+
+<ResponseField name="data.engagement.last_opened" type="string">
+  ISO 8601 timestamp of last open
+</ResponseField>
+
+<ResponseField name="data.engagement.last_clicked" type="string">
+  ISO 8601 timestamp of last click
+</ResponseField>
+
+<ResponseField name="data.error" type="object">
+  Error information (if delivery failed)
+</ResponseField>
+
+<ResponseField name="data.error.code" type="string">
+  Error code
+</ResponseField>
+
+<ResponseField name="data.error.message" type="string">
+  Error message
+</ResponseField>
+
+<ResponseField name="data.error.details" type="object">
+  Additional error details
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/mail/status/msg_1234567890abcdef?include_events=true&include_engagement=true" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/mail/status/msg_1234567890abcdef?include_events=true&include_engagement=true', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'include_events': True,
+    'include_engagement': True
+}
+
+response = requests.get(
+    'https://api.example.com/mail/status/msg_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    params=params
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "message_id": "msg_1234567890abcdef",
+    "subject": "Welcome to Weir AI Platform",
+    "template": "welcome",
+    "status": "delivered",
+    "priority": "normal",
+    "sent_at": "2024-01-15T10:30:00Z",
+    "delivered_at": "2024-01-15T10:30:15Z",
+    "recipients": [
+      {
+        "email": "user@example.com",
+        "status": "delivered",
+        "delivered_at": "2024-01-15T10:30:15Z",
+        "bounce_reason": null
+      }
+    ],
+    "events": [
+      {
+        "event_type": "sent",
+        "timestamp": "2024-01-15T10:30:00Z",
+        "details": {
+          "server": "mail-server-01",
+          "queue_id": "queue_1234567890"
+        }
+      },
+      {
+        "event_type": "delivered",
+        "timestamp": "2024-01-15T10:30:15Z",
+        "details": {
+          "recipient": "user@example.com",
+          "server": "mail-server-01"
+        }
+      }
+    ],
+    "engagement": {
+      "opens": 1,
+      "clicks": 0,
+      "open_rate": 100.0,
+      "click_rate": 0.0,
+      "last_opened": "2024-01-15T11:45:00Z",
+      "last_clicked": null
+    },
+    "error": null
+  },
+  "message": "Email status retrieved successfully",
+  "timestamp": "2024-01-15T12:00:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view email status
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Email message not found
+</ResponseField>
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Delivery Status" icon="info">
+    Email delivery statuses:
+    
+    - **queued**: Email is queued for delivery
+    - **sent**: Email has been sent to the mail server
+    - **delivered**: Email has been successfully delivered
+    - **bounced**: Email bounced back
+    - **failed**: Email delivery failed
+    - **opened**: Email has been opened by recipient
+  </Accordion>
+  
+  <Accordion title="Engagement Tracking" icon="chart">
+    Engagement metrics:
+    
+    - **Opens**: Number of times email was opened
+    - **Clicks**: Number of link clicks
+    - **Open Rate**: Percentage of recipients who opened
+    - **Click Rate**: Percentage of recipients who clicked
+    - **Time Tracking**: When opens and clicks occurred
+  </Accordion>
+  
+  <Accordion title="Delivery Events" icon="list">
+    Event types:
+    
+    - **sent**: Email was sent to mail server
+    - **delivered**: Email was delivered to recipient
+    - **bounced**: Email bounced back
+    - **opened**: Email was opened
+    - **clicked**: Link in email was clicked
+    - **unsubscribed**: Recipient unsubscribed
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    Error information:
+    
+    - **Error codes**: Specific error identifiers
+    - **Error messages**: Human-readable error descriptions
+    - **Error details**: Additional context and troubleshooting
+    - **Retry information**: Whether the email will be retried
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Email Status Tracker" icon="cog">
+    <CodeBlock lang="javascript">
+class EmailStatusTracker {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async getEmailStatus(messageId, includeEngagement = true) {
+    try {
+      const response = await this.apiClient.makeRequest(`/mail/status/${messageId}`, {
+        method: 'GET',
+        params: {
+          include_events: true,
+          include_engagement: includeEngagement,
+          include_recipients: true
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to get email status');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error getting email status:', error);
+      throw error;
+    }
+  }
+  
+  async trackEmailDelivery(messageId) {
+    const status = await this.getEmailStatus(messageId);
+    const data = status.data;
+    
+    return {
+      messageId: data.message_id,
+      status: data.status,
+      delivered: data.status === 'delivered',
+      bounced: data.status === 'bounced',
+      failed: data.status === 'failed',
+      openRate: data.engagement?.open_rate || 0,
+      clickRate: data.engagement?.click_rate || 0,
+      lastOpened: data.engagement?.last_opened,
+      lastClicked: data.engagement?.last_clicked
+    };
+  }
+  
+  async getEmailEngagement(messageId) {
+    const status = await this.getEmailStatus(messageId, true);
+    return status.data.engagement;
+  }
+  
+  async getEmailEvents(messageId) {
+    const status = await this.getEmailStatus(messageId);
+    return status.data.events;
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Email Monitor" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Dict, List, Optional
+from datetime import datetime
+
+class EmailMonitor:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def get_email_status(self, 
+                        message_id: str,
+                        include_events: bool = True,
+                        include_engagement: bool = True,
+                        include_recipients: bool = False) -> Dict:
+        """Get email delivery status and tracking information"""
+        try:
+            params = {
+                "include_events": include_events,
+                "include_engagement": include_engagement,
+                "include_recipients": include_recipients
+            }
+            
+            response = self.api_client.get(f'/mail/status/{message_id}', params=params)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to get email status: {e}")
+            raise
+    
+    def is_email_delivered(self, message_id: str) -> bool:
+        """Check if email was successfully delivered"""
+        result = self.get_email_status(message_id)
+        return result.get("data", {}).get("status") == "delivered"
+    
+    def get_engagement_metrics(self, message_id: str) -> Dict:
+        """Get email engagement metrics"""
+        result = self.get_email_status(message_id, include_engagement=True)
+        return result.get("data", {}).get("engagement", {})
+    
+    def get_delivery_events(self, message_id: str) -> List[Dict]:
+        """Get email delivery events"""
+        result = self.get_email_status(message_id, include_events=True)
+        return result.get("data", {}).get("events", [])
+    
+    def get_bounce_reasons(self, message_id: str) -> List[str]:
+        """Get bounce reasons for failed deliveries"""
+        result = self.get_email_status(message_id, include_recipients=True)
+        recipients = result.get("data", {}).get("recipients", [])
+        
+        bounce_reasons = []
+        for recipient in recipients:
+            if recipient.get("status") == "bounced":
+                bounce_reason = recipient.get("bounce_reason")
+                if bounce_reason:
+                    bounce_reasons.append(bounce_reason)
+        
+        return bounce_reasons
+    
+    def get_email_summary(self, message_id: str) -> Dict:
+        """Get comprehensive email summary"""
+        result = self.get_email_status(message_id, True, True, True)
+        data = result.get("data", {})
+        
+        return {
+            "message_id": data.get("message_id"),
+            "subject": data.get("subject"),
+            "status": data.get("status"),
+            "sent_at": data.get("sent_at"),
+            "delivered_at": data.get("delivered_at"),
+            "open_rate": data.get("engagement", {}).get("open_rate", 0),
+            "click_rate": data.get("engagement", {}).get("click_rate", 0),
+            "total_opens": data.get("engagement", {}).get("opens", 0),
+            "total_clicks": data.get("engagement", {}).get("clicks", 0),
+            "has_errors": data.get("error") is not None
+        }
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Send Email" icon="send">
+    `POST /mail/send` - Send email notifications
+  </Card>
+  <Card title="Get Email History" icon="history">
+    `GET /mail/history` - View sent email history
+  </Card>
+  <Card title="Cancel Email" icon="x">
+    `DELETE /mail/send/{messageId}` - Cancel scheduled email
+  </Card>
+  <Card title="Get Email Templates" icon="file-text">
+    `GET /mail/templates` - List available email templates
+  </Card>
+</CardGroup>

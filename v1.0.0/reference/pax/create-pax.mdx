@@ -1,0 +1,611 @@
+---
+title: "Create PAX"
+api: "POST /pax"
+description: "Create a new PAX (Platform Access eXchange) configuration"
+---
+
+Create a new PAX configuration to establish platform access and data exchange between different systems and organizations. This endpoint allows you to set up secure data sharing and integration capabilities.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for platform access management and data exchange setup.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Name of the PAX configuration
+  
+  **Example**: "Customer Data Sync"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must be unique within the organization
+</ParamField>
+
+<ParamField body="description" type="string" required="false">
+  Description of the PAX configuration's purpose
+  
+  **Example**: "Synchronize customer data between CRM and analytics platform"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of PAX configuration
+  
+  **Options**: "data_exchange", "api_access", "webhook", "sso"
+  
+  **Example**: "data_exchange"
+</ParamField>
+
+<ParamField body="target_organization" type="string" required="false">
+  Target organization ID for the PAX
+  
+  **Example**: "org_0987654321fedcba"
+  
+  **Note**: Required for data_exchange and api_access types
+</ParamField>
+
+<ParamField body="permissions" type="array" required>
+  List of permissions to grant
+  
+  **Example**: ["read:customer_data", "write:analytics_data"]
+  
+  **Available Permissions**:
+  - `read:*` - Read access to all data
+  - `write:*` - Write access to all data
+  - `read:customer_data` - Read customer data
+  - `write:analytics_data` - Write analytics data
+  - `execute:operations` - Execute operations
+  - `admin:access` - Administrative access
+</ParamField>
+
+<ParamField body="data_schema" type="object" required="false">
+  Data schema configuration for data exchange
+  
+  **Example**: {"customer_id": "string", "name": "string", "email": "string"}
+  
+  **Note**: Required for data_exchange type
+</ParamField>
+
+<ParamField body="sync_frequency" type="string" required="false">
+  Data synchronization frequency
+  
+  **Options**: "real_time", "hourly", "daily", "weekly", "manual"
+  
+  **Default**: "hourly"
+  
+  **Example**: "hourly"
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Additional PAX-specific settings
+  
+  **Properties**:
+  - `encryption` (boolean): Whether to encrypt data in transit
+  - `compression` (boolean): Whether to compress data
+  - `retry_attempts` (integer): Number of retry attempts on failure
+  - `timeout` (integer): Request timeout in seconds
+</ParamField>
+
+<ParamField body="webhook_url" type="string" required="false">
+  Webhook URL for webhook type PAX
+  
+  **Example**: "https://api.example.com/webhooks/pax"
+  
+  **Note**: Required for webhook type
+</ParamField>
+
+<ParamField body="sso_provider" type="string" required="false">
+  SSO provider for SSO type PAX
+  
+  **Options**: "saml", "oauth2", "openid_connect"
+  
+  **Note**: Required for sso type
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Created PAX configuration
+</ResponseField>
+
+<ResponseField name="data.pax_id" type="string">
+  Unique identifier for the PAX configuration
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the PAX configuration
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  PAX configuration description
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Type of PAX configuration
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the PAX configuration
+</ResponseField>
+
+<ResponseField name="data.source_organization" type="string">
+  Source organization ID
+</ResponseField>
+
+<ResponseField name="data.target_organization" type="string">
+  Target organization ID
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  List of granted permissions
+</ResponseField>
+
+<ResponseField name="data.data_schema" type="object">
+  Data schema configuration
+</ResponseField>
+
+<ResponseField name="data.sync_frequency" type="string">
+  Data synchronization frequency
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  PAX-specific settings
+</ResponseField>
+
+<ResponseField name="data.webhook_url" type="string">
+  Webhook URL (if applicable)
+</ResponseField>
+
+<ResponseField name="data.sso_provider" type="string">
+  SSO provider (if applicable)
+</ResponseField>
+
+<ResponseField name="data.api_key" type="string">
+  Generated API key for the PAX (if applicable)
+</ResponseField>
+
+<ResponseField name="data.secret_key" type="string">
+  Generated secret key for the PAX (if applicable)
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the PAX was created
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/pax" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Data Sync",
+    "description": "Synchronize customer data between CRM and analytics platform",
+    "type": "data_exchange",
+    "target_organization": "org_0987654321fedcba",
+    "permissions": [
+      "read:customer_data",
+      "write:analytics_data"
+    ],
+    "data_schema": {
+      "customer_id": "string",
+      "name": "string",
+      "email": "string",
+      "created_at": "datetime"
+    },
+    "sync_frequency": "hourly",
+    "settings": {
+      "encryption": true,
+      "compression": true,
+      "retry_attempts": 3,
+      "timeout": 30
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Customer Data Sync',
+    description: 'Synchronize customer data between CRM and analytics platform',
+    type: 'data_exchange',
+    target_organization: 'org_0987654321fedcba',
+    permissions: [
+      'read:customer_data',
+      'write:analytics_data'
+    ],
+    data_schema: {
+      customer_id: 'string',
+      name: 'string',
+      email: 'string',
+      created_at: 'datetime'
+    },
+    sync_frequency: 'hourly',
+    settings: {
+      encryption: true,
+      compression: true,
+      retry_attempts: 3,
+      timeout: 30
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Customer Data Sync",
+    "description": "Synchronize customer data between CRM and analytics platform",
+    "type": "data_exchange",
+    "target_organization": "org_0987654321fedcba",
+    "permissions": [
+        "read:customer_data",
+        "write:analytics_data"
+    ],
+    "data_schema": {
+        "customer_id": "string",
+        "name": "string",
+        "email": "string",
+        "created_at": "datetime"
+    },
+    "sync_frequency": "hourly",
+    "settings": {
+        "encryption": True,
+        "compression": True,
+        "retry_attempts": 3,
+        "timeout": 30
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/pax',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "pax_id": "pax_1234567890abcdef",
+    "name": "Customer Data Sync",
+    "description": "Synchronize customer data between CRM and analytics platform",
+    "type": "data_exchange",
+    "status": "active",
+    "source_organization": "org_1234567890abcdef",
+    "target_organization": "org_0987654321fedcba",
+    "permissions": [
+      "read:customer_data",
+      "write:analytics_data"
+    ],
+    "data_schema": {
+      "customer_id": "string",
+      "name": "string",
+      "email": "string",
+      "created_at": "datetime"
+    },
+    "sync_frequency": "hourly",
+    "settings": {
+      "encryption": true,
+      "compression": true,
+      "retry_attempts": 3,
+      "timeout": 30
+    },
+    "webhook_url": null,
+    "sso_provider": null,
+    "api_key": "pax_ak_1234567890abcdef",
+    "secret_key": "pax_sk_0987654321fedcba",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "PAX configuration created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create PAX configurations
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  PAX name already exists in the organization
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Invalid PAX configuration or missing required fields
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="PAX Types" icon="link">
+    Available PAX types:
+    
+    - **data_exchange**: Bidirectional data synchronization
+    - **api_access**: API access and integration
+    - **webhook**: Event-driven notifications
+    - **sso**: Single Sign-On integration
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Permission system:
+    
+    - Granular permission control
+    - Permission inheritance from organization
+    - Permission-specific access control
+    - Audit trail for permission changes
+  </Accordion>
+  
+  <Accordion title="Data Schema" icon="database">
+    Schema requirements:
+    
+    - Required for data_exchange type
+    - Defines data structure and types
+    - Validates data before exchange
+    - Supports nested objects and arrays
+  </Accordion>
+  
+  <Accordion title="Security" icon="lock">
+    Security features:
+    
+    - End-to-end encryption
+    - Data compression
+    - Retry mechanisms
+    - Timeout handling
+    - Audit logging
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="PAX Manager" icon="cog">
+    <CodeBlock lang="javascript">
+class PAXManager {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createDataExchangePAX(config) {
+    try {
+      const response = await this.apiClient.makeRequest('/pax', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: config.name,
+          description: config.description,
+          type: 'data_exchange',
+          target_organization: config.targetOrganization,
+          permissions: config.permissions,
+          data_schema: config.dataSchema,
+          sync_frequency: config.syncFrequency || 'hourly',
+          settings: {
+            encryption: config.encryption || true,
+            compression: config.compression || true,
+            retry_attempts: config.retryAttempts || 3,
+            timeout: config.timeout || 30
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create PAX configuration');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error creating PAX:', error);
+      throw error;
+    }
+  }
+  
+  async createWebhookPAX(config) {
+    try {
+      const response = await this.apiClient.makeRequest('/pax', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: config.name,
+          description: config.description,
+          type: 'webhook',
+          permissions: config.permissions,
+          webhook_url: config.webhookUrl,
+          settings: {
+            encryption: config.encryption || true,
+            retry_attempts: config.retryAttempts || 3,
+            timeout: config.timeout || 30
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create webhook PAX');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error creating webhook PAX:', error);
+      throw error;
+    }
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python PAX Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Dict, List, Optional
+
+class PAXClient:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def create_pax(self, 
+                   name: str,
+                   description: str,
+                   pax_type: str,
+                   permissions: List[str],
+                   target_organization: Optional[str] = None,
+                   data_schema: Optional[Dict] = None,
+                   sync_frequency: str = "hourly",
+                   webhook_url: Optional[str] = None,
+                   sso_provider: Optional[str] = None,
+                   **settings) -> Dict:
+        """Create a new PAX configuration"""
+        try:
+            payload = {
+                "name": name,
+                "description": description,
+                "type": pax_type,
+                "permissions": permissions,
+                "sync_frequency": sync_frequency,
+                "settings": {
+                    "encryption": settings.get("encryption", True),
+                    "compression": settings.get("compression", True),
+                    "retry_attempts": settings.get("retry_attempts", 3),
+                    "timeout": settings.get("timeout", 30)
+                }
+            }
+            
+            if target_organization:
+                payload["target_organization"] = target_organization
+            if data_schema:
+                payload["data_schema"] = data_schema
+            if webhook_url:
+                payload["webhook_url"] = webhook_url
+            if sso_provider:
+                payload["sso_provider"] = sso_provider
+            
+            response = self.api_client.post('/pax', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to create PAX: {e}")
+            raise
+    
+    def create_data_exchange_pax(self, 
+                                name: str,
+                                description: str,
+                                target_organization: str,
+                                permissions: List[str],
+                                data_schema: Dict,
+                                sync_frequency: str = "hourly") -> Dict:
+        """Create a data exchange PAX configuration"""
+        return self.create_pax(
+            name=name,
+            description=description,
+            pax_type="data_exchange",
+            permissions=permissions,
+            target_organization=target_organization,
+            data_schema=data_schema,
+            sync_frequency=sync_frequency
+        )
+    
+    def create_webhook_pax(self, 
+                          name: str,
+                          description: str,
+                          webhook_url: str,
+                          permissions: List[str]) -> Dict:
+        """Create a webhook PAX configuration"""
+        return self.create_pax(
+            name=name,
+            description=description,
+            pax_type="webhook",
+            permissions=permissions,
+            webhook_url=webhook_url
+        )
+    
+    def create_sso_pax(self, 
+                      name: str,
+                      description: str,
+                      sso_provider: str,
+                      permissions: List[str]) -> Dict:
+        """Create an SSO PAX configuration"""
+        return self.create_pax(
+            name=name,
+            description=description,
+            pax_type="sso",
+            permissions=permissions,
+            sso_provider=sso_provider
+        )
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get PAX" icon="list">
+    `GET /pax` - List all PAX configurations
+  </Card>
+  <Card title="Update PAX" icon="edit">
+    `PUT /pax/{paxId}` - Update PAX configuration
+  </Card>
+  <Card title="Delete PAX" icon="trash">
+    `DELETE /pax/{paxId}` - Remove PAX configuration
+  </Card>
+  <Card title="Sync PAX" icon="refresh">
+    `POST /pax/{paxId}/sync` - Trigger manual synchronization
+  </Card>
+</CardGroup>

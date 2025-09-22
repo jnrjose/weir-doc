@@ -1,0 +1,469 @@
+---
+title: "Create Team"
+api: "POST /org/create/team"
+description: "Create a new team within the organization"
+---
+
+Create a new team within your organization with specified settings and configurations. This endpoint allows you to set up teams for different projects, departments, or functional groups.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for team management and organization.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Name of the team
+  
+  **Example**: "Development Team"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must be unique within the organization
+</ParamField>
+
+<ParamField body="description" type="string" required="false">
+  Description of the team's purpose and responsibilities
+  
+  **Example**: "Responsible for developing and maintaining the core platform"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+</ParamField>
+
+<ParamField body="team_type" type="string" required="false">
+  Type of team being created
+  
+  **Options**: "development", "design", "marketing", "sales", "support", "management", "other"
+  
+  **Default**: "other"
+  
+  **Example**: "development"
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Team-specific settings and configurations
+  
+  **Properties**:
+  - `visibility` (string): Team visibility level ("public", "private", "restricted")
+  - `auto_approve_members` (boolean): Whether to auto-approve new member requests
+  - `allow_self_join` (boolean): Whether members can join without invitation
+  - `max_members` (integer): Maximum number of team members
+</ParamField>
+
+<ParamField body="permissions" type="array" required="false">
+  Default permissions for team members
+  
+  **Example**: ["read:projects", "write:tasks", "manage:members"]
+  
+  **Available Permissions**:
+  - `read:projects` - View team projects
+  - `write:projects` - Create and edit projects
+  - `read:tasks` - View team tasks
+  - `write:tasks` - Create and edit tasks
+  - `manage:members` - Invite and remove members
+  - `manage:settings` - Modify team settings
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Created team information
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  Unique identifier for the created team
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the team
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Team description
+</ResponseField>
+
+<ResponseField name="data.team_type" type="string">
+  Type of the team
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Organization ID the team belongs to
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the team creator
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Team settings and configurations
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  Default team permissions
+</ResponseField>
+
+<ResponseField name="data.member_count" type="integer">
+  Current number of team members
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the team was created
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/create/team" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Development Team",
+    "description": "Responsible for developing and maintaining the core platform",
+    "team_type": "development",
+    "settings": {
+      "visibility": "private",
+      "auto_approve_members": false,
+      "allow_self_join": false,
+      "max_members": 20
+    },
+    "permissions": [
+      "read:projects",
+      "write:projects",
+      "read:tasks",
+      "write:tasks"
+    ]
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/create/team', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Development Team',
+    description: 'Responsible for developing and maintaining the core platform',
+    team_type: 'development',
+    settings: {
+      visibility: 'private',
+      auto_approve_members: false,
+      allow_self_join: false,
+      max_members: 20
+    },
+    permissions: [
+      'read:projects',
+      'write:projects',
+      'read:tasks',
+      'write:tasks'
+    ]
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Development Team",
+    "description": "Responsible for developing and maintaining the core platform",
+    "team_type": "development",
+    "settings": {
+        "visibility": "private",
+        "auto_approve_members": False,
+        "allow_self_join": False,
+        "max_members": 20
+    },
+    "permissions": [
+        "read:projects",
+        "write:projects",
+        "read:tasks",
+        "write:tasks"
+    ]
+}
+
+response = requests.post(
+    'https://api.example.com/org/create/team',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "team_id": "team_1234567890abcdef",
+    "name": "Development Team",
+    "description": "Responsible for developing and maintaining the core platform",
+    "team_type": "development",
+    "organization_id": "org_1234567890abcdef",
+    "created_by": "user_1234567890abcdef",
+    "settings": {
+      "visibility": "private",
+      "auto_approve_members": false,
+      "allow_self_join": false,
+      "max_members": 20
+    },
+    "permissions": [
+      "read:projects",
+      "write:projects",
+      "read:tasks",
+      "write:tasks"
+    ],
+    "member_count": 1,
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Team created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create teams
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Team name already exists in the organization
+</ResponseField>
+
+<ResponseField name="422 Unprocessable Entity" type="object">
+  Team creation limits exceeded or invalid settings
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Team Types" icon="users">
+    Available team types:
+    
+    - **development**: Software development teams
+    - **design**: Design and UX teams
+    - **marketing**: Marketing and growth teams
+    - **sales**: Sales and business development
+    - **support**: Customer support teams
+    - **management**: Management and leadership
+    - **other**: Custom team types
+  </Accordion>
+  
+  <Accordion title="Team Visibility" icon="eye">
+    Visibility levels:
+    
+    - **public**: Visible to all organization members
+    - **private**: Visible only to team members
+    - **restricted**: Visible to team members and invited users
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Team permission system:
+    
+    - Permissions are inherited by all team members
+    - Can be overridden for individual members
+    - New permissions can be added after team creation
+    - Permissions are role-based and hierarchical
+  </Accordion>
+  
+  <Accordion title="Team Limits" icon="info">
+    Organization limits:
+    
+    - Maximum teams per organization: 50
+    - Maximum members per team: 100
+    - Team name must be unique within organization
+    - Team creator automatically becomes team admin
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Team Management Service" icon="cog">
+    <CodeBlock lang="javascript">
+class TeamService {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async createTeam(teamData) {
+    try {
+      const response = await this.apiClient.makeRequest('/org/create/team', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: teamData.name,
+          description: teamData.description,
+          team_type: teamData.teamType || 'other',
+          settings: {
+            visibility: teamData.visibility || 'private',
+            auto_approve_members: teamData.autoApproveMembers || false,
+            allow_self_join: teamData.allowSelfJoin || false,
+            max_members: teamData.maxMembers || 50
+          },
+          permissions: teamData.permissions || []
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create team');
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error creating team:', error);
+      throw error;
+    }
+  }
+  
+  async createDevelopmentTeam(name, description) {
+    return this.createTeam({
+      name,
+      description,
+      teamType: 'development',
+      visibility: 'private',
+      permissions: [
+        'read:projects',
+        'write:projects',
+        'read:tasks',
+        'write:tasks',
+        'manage:members'
+      ]
+    });
+  }
+  
+  async createDesignTeam(name, description) {
+    return this.createTeam({
+      name,
+      description,
+      teamType: 'design',
+      visibility: 'public',
+      permissions: [
+        'read:projects',
+        'write:projects',
+        'read:tasks',
+        'write:tasks'
+      ]
+    });
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Team Manager" icon="python">
+    <CodeBlock lang="python">
+import requests
+
+class TeamManager:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def create_team(self, name, description=None, team_type="other", **settings):
+        """Create a new team"""
+        try:
+            payload = {
+                "name": name,
+                "description": description,
+                "team_type": team_type,
+                "settings": {
+                    "visibility": settings.get("visibility", "private"),
+                    "auto_approve_members": settings.get("auto_approve_members", False),
+                    "allow_self_join": settings.get("allow_self_join", False),
+                    "max_members": settings.get("max_members", 50)
+                },
+                "permissions": settings.get("permissions", [])
+            }
+            
+            response = self.api_client.post('/org/create/team', json=payload)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to create team: {e}")
+            raise
+    
+    def create_project_team(self, project_name, team_size=10):
+        """Create a team for a specific project"""
+        return self.create_team(
+            name=f"{project_name} Team",
+            description=f"Development team for {project_name} project",
+            team_type="development",
+            visibility="private",
+            max_members=team_size,
+            permissions=[
+                "read:projects",
+                "write:projects",
+                "read:tasks",
+                "write:tasks",
+                "manage:members"
+            ]
+        )
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List all teams in the organization
+  </Card>
+  <Card title="Get Team Details" icon="info">
+    `GET /org/teams/{teamId}` - Get detailed team information
+  </Card>
+  <Card title="Update Team" icon="edit">
+    `PUT /org/teams/{teamId}` - Update team settings
+  </Card>
+  <Card title="Delete Team" icon="trash">
+    `DELETE /org/teams/{teamId}` - Remove team
+  </Card>
+</CardGroup>

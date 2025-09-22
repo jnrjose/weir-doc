@@ -1,0 +1,443 @@
+---
+title: "Validate API Key"
+api: "POST /auth/validate"
+description: "Validate API key and get access information"
+---
+
+Validate an API key and retrieve access information including permissions, rate limits, and usage statistics. This endpoint is used to verify API key validity and get detailed information about the key's capabilities.
+
+<Note>
+  **External API Endpoint**
+  
+  This endpoint is part of the External API category and uses Basic Authentication. It's designed for API key validation and access management.
+</Note>
+
+## Authentication
+
+This endpoint uses Basic Authentication. Include your API credentials in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Basic <base64_encoded_credentials>
+</CodeBlock>
+
+Where credentials are encoded as `base64(api_key:api_secret)`.
+
+## Request
+
+<ParamField body="api_key" type="string" required="false">
+  API key to validate (alternative to Basic Auth)
+  
+  **Example**: "ak_1234567890abcdef"
+  
+  **Note**: If provided, will override Basic Auth credentials
+</ParamField>
+
+<ParamField body="include_usage" type="boolean" required="false">
+  Whether to include usage statistics in the response
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField body="include_permissions" type="boolean" required="false">
+  Whether to include detailed permissions in the response
+  
+  **Example**: true
+  
+  **Default**: true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  API key validation result
+</ResponseField>
+
+<ResponseField name="data.api_key_id" type="string">
+  Unique identifier for the API key
+</ResponseField>
+
+<ResponseField name="data.api_key" type="string">
+  API key (masked for security)
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Human-readable name for the API key
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the API key's purpose
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the API key
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  List of permissions granted to the API key
+</ResponseField>
+
+<ResponseField name="data.rate_limits" type="object">
+  Rate limiting information
+</ResponseField>
+
+<ResponseField name="data.rate_limits.requests_per_hour" type="integer">
+  Maximum requests per hour
+</ResponseField>
+
+<ResponseField name="data.rate_limits.requests_per_day" type="integer">
+  Maximum requests per day
+</ResponseField>
+
+<ResponseField name="data.rate_limits.burst_limit" type="integer">
+  Maximum burst requests
+</ResponseField>
+
+<ResponseField name="data.usage" type="object">
+  Usage statistics (if requested)
+</ResponseField>
+
+<ResponseField name="data.usage.requests_today" type="integer">
+  Number of requests made today
+</ResponseField>
+
+<ResponseField name="data.usage.requests_this_month" type="integer">
+  Number of requests made this month
+</ResponseField>
+
+<ResponseField name="data.usage.last_used" type="string">
+  ISO 8601 timestamp of last API usage
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the API key was created
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  ISO 8601 timestamp when the API key expires
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Organization ID the API key belongs to
+</ResponseField>
+
+<ResponseField name="data.organization_name" type="string">
+  Organization name
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://external.example.com/auth/validate" \
+  -H "Authorization: Basic $(echo -n 'ak_1234567890abcdef:sk_0987654321fedcba' | base64)" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "include_usage": true,
+    "include_permissions": true
+  }'
+```
+
+```javascript JavaScript
+const apiKey = 'ak_1234567890abcdef';
+const apiSecret = 'sk_0987654321fedcba';
+const credentials = btoa(`${apiKey}:${apiSecret}`);
+
+const response = await fetch('https://external.example.com/auth/validate', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Basic ${credentials}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    include_usage: true,
+    include_permissions: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+import base64
+
+api_key = 'ak_1234567890abcdef'
+api_secret = 'sk_0987654321fedcba'
+credentials = base64.b64encode(f'{api_key}:{api_secret}'.encode()).decode()
+
+response = requests.post(
+    'https://external.example.com/auth/validate',
+    headers={
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'include_usage': True,
+        'include_permissions': True
+    }
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "api_key_id": "key_1234567890abcdef",
+    "api_key": "ak_1234****cdef",
+    "name": "Production API Key",
+    "description": "API key for production application",
+    "status": "active",
+    "permissions": [
+      "external:auth:token",
+      "external:ai:detect",
+      "external:ai:analyze",
+      "external:data:upload",
+      "external:data:status"
+    ],
+    "rate_limits": {
+      "requests_per_hour": 1000,
+      "requests_per_day": 10000,
+      "burst_limit": 100
+    },
+    "usage": {
+      "requests_today": 250,
+      "requests_this_month": 7500,
+      "last_used": "2024-01-15T10:30:00Z"
+    },
+    "created_at": "2024-01-01T00:00:00Z",
+    "expires_at": "2024-12-31T23:59:59Z",
+    "organization_id": "org_1234567890abcdef",
+    "organization_name": "Acme Corporation"
+  },
+  "message": "API key validated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing API key
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid API key or credentials
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  API key is disabled or expired
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  API key not found
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="API Key Status" icon="info">
+    API key statuses:
+    
+    - **active**: Key is valid and ready for use
+    - **inactive**: Key is disabled but not deleted
+    - **expired**: Key has passed expiration date
+    - **suspended**: Key is temporarily suspended
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Permission system:
+    
+    - Granular permission control
+    - Permission inheritance from organization
+    - Permission-specific rate limits
+    - Permission-based access control
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    Rate limiting features:
+    
+    - Per-hour and per-day limits
+    - Burst limit for short-term spikes
+    - Different limits for different permissions
+    - Automatic rate limit reset
+  </Accordion>
+  
+  <Accordion title="Usage Tracking" icon="chart">
+    Usage monitoring:
+    
+    - Real-time usage statistics
+    - Historical usage data
+    - Usage alerts and notifications
+    - Usage-based billing
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="API Key Validator" icon="cog">
+    <CodeBlock lang="javascript">
+class APIKeyValidator {
+  constructor(apiKey, apiSecret) {
+    this.apiKey = apiKey;
+    this.apiSecret = apiSecret;
+    this.baseUrl = 'https://external.example.com';
+  }
+  
+  async validateKey(includeUsage = false, includePermissions = true) {
+    try {
+      const credentials = btoa(`${this.apiKey}:${this.apiSecret}`);
+      
+      const response = await fetch(`${this.baseUrl}/auth/validate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${credentials}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          include_usage: includeUsage,
+          include_permissions: includePermissions
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API key validation failed: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      return result;
+      
+    } catch (error) {
+      console.error('Error validating API key:', error);
+      throw error;
+    }
+  }
+  
+  async checkRateLimits() {
+    const result = await this.validateKey(true, true);
+    return result.data.rate_limits;
+  }
+  
+  async getUsageStats() {
+    const result = await this.validateKey(true, false);
+    return result.data.usage;
+  }
+  
+  async hasPermission(permission) {
+    const result = await this.validateKey(false, true);
+    return result.data.permissions.includes(permission);
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python API Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+import base64
+from typing import Dict, List, Optional
+
+class ExternalAPIClient:
+    def __init__(self, api_key: str, api_secret: str, base_url: str = "https://external.example.com"):
+        self.api_key = api_key
+        self.api_secret = api_secret
+        self.base_url = base_url
+        self.credentials = base64.b64encode(f'{api_key}:{api_secret}'.encode()).decode()
+    
+    def validate_api_key(self, 
+                        include_usage: bool = False, 
+                        include_permissions: bool = True) -> Dict:
+        """Validate API key and get access information"""
+        try:
+            payload = {
+                "include_usage": include_usage,
+                "include_permissions": include_permissions
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/auth/validate",
+                headers={
+                    'Authorization': f'Basic {self.credentials}',
+                    'Content-Type': 'application/json'
+                },
+                json=payload
+            )
+            
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"API key validation failed: {e}")
+            raise
+    
+    def check_permissions(self) -> List[str]:
+        """Get list of API key permissions"""
+        result = self.validate_api_key(include_permissions=True)
+        return result.get("data", {}).get("permissions", [])
+    
+    def has_permission(self, permission: str) -> bool:
+        """Check if API key has specific permission"""
+        permissions = self.check_permissions()
+        return permission in permissions
+    
+    def get_rate_limits(self) -> Dict:
+        """Get API key rate limits"""
+        result = self.validate_api_key(include_permissions=True)
+        return result.get("data", {}).get("rate_limits", {})
+    
+    def get_usage_stats(self) -> Dict:
+        """Get API key usage statistics"""
+        result = self.validate_api_key(include_usage=True)
+        return result.get("data", {}).get("usage", {})
+    
+    def is_key_valid(self) -> bool:
+        """Check if API key is valid and active"""
+        try:
+            result = self.validate_api_key()
+            return result.get("success", False) and result.get("data", {}).get("status") == "active"
+        except:
+            return False
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Generate Access Token" icon="key">
+    `POST /auth/token` - Generate access token for API authentication
+  </Card>
+  <Card title="Refresh Access Token" icon="refresh">
+    `POST /auth/refresh` - Refresh expired access token
+  </Card>
+  <Card title="Revoke Access Token" icon="ban">
+    `POST /auth/revoke` - Revoke access token and invalidate session
+  </Card>
+  <Card title="Get API Key Usage" icon="chart">
+    `GET /auth/usage` - Get detailed API key usage statistics
+  </Card>
+</CardGroup>

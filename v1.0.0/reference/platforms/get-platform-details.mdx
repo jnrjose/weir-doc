@@ -1,0 +1,546 @@
+---
+title: "Get Platform Details"
+api: "GET /platforms/{platformId}"
+description: "Retrieve detailed information about a specific platform"
+---
+
+Retrieve comprehensive details about a specific platform including its capabilities, configuration options, pricing, and integration requirements. This endpoint provides in-depth information for platform evaluation and integration planning.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for platform evaluation and integration planning.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+<CodeBlock lang="bash">
+Authorization: Bearer <your_jwt_token>
+</CodeBlock>
+
+## Path Parameters
+
+<ParamField path="platformId" type="string" required>
+  Unique identifier for the platform
+  
+  **Example**: "platform_1234567890abcdef"
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="include_pricing" type="boolean" required="false">
+  Whether to include pricing information in the response
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+<ParamField query="include_documentation" type="boolean" required="false">
+  Whether to include documentation links and examples
+  
+  **Example**: true
+  
+  **Default**: true
+</ParamField>
+
+<ParamField query="include_integration" type="boolean" required="false">
+  Whether to include integration requirements and setup guides
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Platform details
+</ResponseField>
+
+<ResponseField name="data.platform_id" type="string">
+  Unique identifier for the platform
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the platform
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Detailed description of the platform
+</ResponseField>
+
+<ResponseField name="data.category" type="string">
+  Category of the platform
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the platform
+</ResponseField>
+
+<ResponseField name="data.version" type="string">
+  Current version of the platform
+</ResponseField>
+
+<ResponseField name="data.capabilities" type="array">
+  List of platform capabilities
+</ResponseField>
+
+<ResponseField name="data.features" type="array">
+  List of platform features
+</ResponseField>
+
+<ResponseField name="data.integration_options" type="object">
+  Available integration methods
+</ResponseField>
+
+<ResponseField name="data.integration_options.api" type="boolean">
+  Whether API integration is available
+</ResponseField>
+
+<ResponseField name="data.integration_options.sdk" type="boolean">
+  Whether SDK integration is available
+</ResponseField>
+
+<ResponseField name="data.integration_options.webhook" type="boolean">
+  Whether webhook integration is available
+</ResponseField>
+
+<ResponseField name="data.integration_options.cli" type="boolean">
+  Whether CLI integration is available
+</ResponseField>
+
+<ResponseField name="data.requirements" type="object">
+  Platform requirements
+</ResponseField>
+
+<ResponseField name="data.requirements.min_plan" type="string">
+  Minimum subscription plan required
+</ResponseField>
+
+<ResponseField name="data.requirements.permissions" type="array">
+  Required permissions
+</ResponseField>
+
+<ResponseField name="data.requirements.dependencies" type="array">
+  Required dependencies
+</ResponseField>
+
+<ResponseField name="data.pricing" type="object">
+  Pricing information (if requested)
+</ResponseField>
+
+<ResponseField name="data.pricing.tier" type="string">
+  Pricing tier
+</ResponseField>
+
+<ResponseField name="data.pricing.monthly_cost" type="number">
+  Monthly cost in USD
+</ResponseField>
+
+<ResponseField name="data.pricing.usage_based" type="boolean">
+  Whether pricing is usage-based
+</ResponseField>
+
+<ResponseField name="data.documentation" type="object">
+  Documentation links (if requested)
+</ResponseField>
+
+<ResponseField name="data.documentation.api_reference" type="string">
+  API reference documentation URL
+</ResponseField>
+
+<ResponseField name="data.documentation.integration_guide" type="string">
+  Integration guide URL
+</ResponseField>
+
+<ResponseField name="data.documentation.examples" type="string">
+  Code examples URL
+</ResponseField>
+
+<ResponseField name="data.integration" type="object">
+  Integration information (if requested)
+</ResponseField>
+
+<ResponseField name="data.integration.setup_steps" type="array">
+  Step-by-step setup instructions
+</ResponseField>
+
+<ResponseField name="data.integration.configuration" type="object">
+  Configuration options
+</ResponseField>
+
+<ResponseField name="data.integration.testing" type="object">
+  Testing and validation information
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the platform was created
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when the platform was last updated
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/platforms/platform_1234567890abcdef?include_pricing=true&include_integration=true" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/platforms/platform_1234567890abcdef?include_pricing=true&include_integration=true', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'include_pricing': True,
+    'include_integration': True
+}
+
+response = requests.get(
+    'https://api.example.com/platforms/platform_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    params=params
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+<CodeBlock lang="json">
+{
+  "success": true,
+  "data": {
+    "platform_id": "platform_1234567890abcdef",
+    "name": "AI Model Training",
+    "description": "Advanced machine learning model training platform with support for deep learning, natural language processing, and computer vision models",
+    "category": "ai",
+    "status": "active",
+    "version": "2.1.0",
+    "capabilities": [
+      "model_training",
+      "hyperparameter_tuning",
+      "model_evaluation",
+      "deployment",
+      "monitoring",
+      "scaling"
+    ],
+    "features": [
+      "AutoML capabilities",
+      "Distributed training",
+      "GPU acceleration",
+      "Model versioning",
+      "A/B testing",
+      "Real-time monitoring"
+    ],
+    "integration_options": {
+      "api": true,
+      "sdk": true,
+      "webhook": true,
+      "cli": false
+    },
+    "requirements": {
+      "min_plan": "professional",
+      "permissions": [
+        "platform:ai:read",
+        "platform:ai:write",
+        "platform:data:read"
+      ],
+      "dependencies": [
+        "Python 3.8+",
+        "TensorFlow 2.0+",
+        "PyTorch 1.8+"
+      ]
+    },
+    "pricing": {
+      "tier": "professional",
+      "monthly_cost": 299.99,
+      "usage_based": true
+    },
+    "documentation": {
+      "api_reference": "https://docs.example.com/platforms/ai-training/api",
+      "integration_guide": "https://docs.example.com/platforms/ai-training/integration",
+      "examples": "https://docs.example.com/platforms/ai-training/examples"
+    },
+    "integration": {
+      "setup_steps": [
+        "Install required dependencies",
+        "Configure API credentials",
+        "Set up data pipeline",
+        "Initialize training environment",
+        "Test with sample data"
+      ],
+      "configuration": {
+        "api_endpoint": "https://ai-training.example.com/api/v2",
+        "authentication": "bearer_token",
+        "rate_limits": {
+          "requests_per_hour": 1000,
+          "concurrent_requests": 10
+        }
+      },
+      "testing": {
+        "test_endpoint": "https://ai-training.example.com/api/v2/test",
+        "sample_data": "https://ai-training.example.com/samples",
+        "validation_checks": [
+          "authentication",
+          "data_format",
+          "model_compatibility"
+        ]
+      }
+    },
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  },
+  "message": "Platform details retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+</CodeBlock>
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view platform details
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Platform not found
+</ResponseField>
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Platform Categories" icon="grid">
+    Available platform categories:
+    
+    - **ai**: Artificial Intelligence and Machine Learning
+    - **analytics**: Data Analytics and Visualization
+    - **integration**: Third-party Integrations
+    - **storage**: Data Storage and Management
+    - **communication**: Communication and Collaboration
+  </Accordion>
+  
+  <Accordion title="Integration Methods" icon="link">
+    Integration options:
+    
+    - **API**: RESTful API access
+    - **SDK**: Software Development Kit
+    - **Webhook**: Event-driven notifications
+    - **CLI**: Command Line Interface
+  </Accordion>
+  
+  <Accordion title="Pricing Tiers" icon="dollar-sign">
+    Available pricing tiers:
+    
+    - **free**: Basic functionality
+    - **standard**: Enhanced features
+    - **professional**: Advanced capabilities
+    - **enterprise**: Custom solutions
+  </Accordion>
+  
+  <Accordion title="Requirements" icon="check">
+    Platform requirements:
+    
+    - Minimum subscription plan
+    - Required permissions
+    - Technical dependencies
+    - System requirements
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Platform Evaluator" icon="cog">
+    <CodeBlock lang="javascript">
+class PlatformEvaluator {
+  constructor(apiClient) {
+    this.apiClient = apiClient;
+  }
+  
+  async evaluatePlatform(platformId, includePricing = true, includeIntegration = true) {
+    try {
+      const response = await this.apiClient.makeRequest(`/platforms/${platformId}`, {
+        method: 'GET',
+        params: {
+          include_pricing: includePricing,
+          include_integration: includeIntegration,
+          include_documentation: true
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to get platform details');
+      }
+      
+      const result = await response.json();
+      return this.analyzePlatform(result.data);
+      
+    } catch (error) {
+      console.error('Error evaluating platform:', error);
+      throw error;
+    }
+  }
+  
+  analyzePlatform(platform) {
+    const analysis = {
+      id: platform.platform_id,
+      name: platform.name,
+      category: platform.category,
+      status: platform.status,
+      capabilities: platform.capabilities,
+      integrationOptions: platform.integration_options,
+      requirements: platform.requirements,
+      pricing: platform.pricing,
+      score: 0
+    };
+    
+    // Calculate compatibility score
+    analysis.score = this.calculateCompatibilityScore(platform);
+    
+    return analysis;
+  }
+  
+  calculateCompatibilityScore(platform) {
+    let score = 0;
+    
+    // Check integration options
+    if (platform.integration_options.api) score += 25;
+    if (platform.integration_options.sdk) score += 25;
+    if (platform.integration_options.webhook) score += 15;
+    
+    // Check capabilities
+    score += platform.capabilities.length * 5;
+    
+    // Check status
+    if (platform.status === 'active') score += 20;
+    
+    return Math.min(score, 100);
+  }
+}
+    </CodeBlock>
+  </Accordion>
+  
+  <Accordion title="Python Platform Client" icon="python">
+    <CodeBlock lang="python">
+import requests
+from typing import Dict, List, Optional
+
+class PlatformClient:
+    def __init__(self, api_client):
+        self.api_client = api_client
+    
+    def get_platform_details(self, 
+                           platform_id: str,
+                           include_pricing: bool = False,
+                           include_documentation: bool = True,
+                           include_integration: bool = False) -> Dict:
+        """Get detailed platform information"""
+        try:
+            params = {
+                "include_pricing": include_pricing,
+                "include_documentation": include_documentation,
+                "include_integration": include_integration
+            }
+            
+            response = self.api_client.get(f'/platforms/{platform_id}', params=params)
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            print(f"Failed to get platform details: {e}")
+            raise
+    
+    def check_platform_compatibility(self, platform_id: str, user_plan: str) -> Dict:
+        """Check if platform is compatible with user's plan"""
+        result = self.get_platform_details(platform_id, include_pricing=True)
+        platform = result.get("data", {})
+        
+        compatibility = {
+            "compatible": False,
+            "reason": "",
+            "required_plan": platform.get("requirements", {}).get("min_plan", "free")
+        }
+        
+        if user_plan == "enterprise" or user_plan == platform["required_plan"]:
+            compatibility["compatible"] = True
+        elif user_plan == "professional" and platform["required_plan"] in ["free", "standard", "professional"]:
+            compatibility["compatible"] = True
+        elif user_plan == "standard" and platform["required_plan"] in ["free", "standard"]:
+            compatibility["compatible"] = True
+        elif user_plan == "free" and platform["required_plan"] == "free":
+            compatibility["compatible"] = True
+        else:
+            compatibility["reason"] = f"Requires {platform['required_plan']} plan or higher"
+        
+        return compatibility
+    
+    def get_platform_integration_guide(self, platform_id: str) -> Dict:
+        """Get platform integration guide"""
+        result = self.get_platform_details(platform_id, include_integration=True)
+        platform = result.get("data", {})
+        
+        return {
+            "setup_steps": platform.get("integration", {}).get("setup_steps", []),
+            "configuration": platform.get("integration", {}).get("configuration", {}),
+            "testing": platform.get("integration", {}).get("testing", {}),
+            "documentation": platform.get("documentation", {})
+        }
+    </CodeBlock>
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Platforms" icon="list">
+    `GET /platforms` - List all available platforms
+  </Card>
+  <Card title="Integrate Platform" icon="plus">
+    `POST /platforms/{platformId}/integrate` - Integrate with a platform
+  </Card>
+  <Card title="Get Platform Usage" icon="chart">
+    `GET /platforms/{platformId}/usage` - View platform usage statistics
+  </Card>
+  <Card title="Update Platform Config" icon="settings">
+    `PUT /platforms/{platformId}/config` - Update platform configuration
+  </Card>
+</CardGroup>
