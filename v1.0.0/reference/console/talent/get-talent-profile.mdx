@@ -1,0 +1,965 @@
+---
+title: "Get Talent Profile"
+api: "GET /org/talent/{talentId}"
+description: "Retrieve detailed information for a specific talent profile"
+---
+
+Retrieve comprehensive detailed information for a specific talent profile within your organization. This endpoint provides in-depth information about a talent's skills, experience, portfolio, and performance metrics.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for detailed talent profile viewing and management within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="talentId" type="string" required>
+  Unique identifier of the talent profile to retrieve
+  
+  **Example**: "talent_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid talent ID
+  - Talent profile must exist in your organization
+  - You must have permission to view this talent profile
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the detailed talent profile information
+</ResponseField>
+
+<ResponseField name="data.talent_id" type="string">
+  Unique identifier for the talent profile
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Full name of the talent
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Email address of the talent
+</ResponseField>
+
+<ResponseField name="data.category" type="string">
+  Talent category (developer, designer, marketer, etc.)
+</ResponseField>
+
+<ResponseField name="data.skill_level" type="string">
+  Skill level (junior, mid, senior, lead, expert)
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the talent profile
+</ResponseField>
+
+<ResponseField name="data.availability" type="string">
+  Current availability status
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data.team_name" type="string">
+  Name of the associated team
+</ResponseField>
+
+<ResponseField name="data.skills" type="array">
+  List of skills and technologies
+</ResponseField>
+
+<ResponseField name="data.tags" type="array">
+  Tags associated with the talent profile
+</ResponseField>
+
+<ResponseField name="data.profile" type="object">
+  Detailed profile information
+</ResponseField>
+
+<ResponseField name="data.profile.bio" type="string">
+  Biography or description of the talent
+</ResponseField>
+
+<ResponseField name="data.profile.experience_years" type="integer">
+  Years of experience
+</ResponseField>
+
+<ResponseField name="data.profile.location" type="string">
+  Location of the talent
+</ResponseField>
+
+<ResponseField name="data.profile.timezone" type="string">
+  Timezone of the talent
+</ResponseField>
+
+<ResponseField name="data.profile.avatar_url" type="string">
+  URL to the talent's profile avatar
+</ResponseField>
+
+<ResponseField name="data.profile.linkedin_url" type="string">
+  LinkedIn profile URL
+</ResponseField>
+
+<ResponseField name="data.profile.github_url" type="string">
+  GitHub profile URL
+</ResponseField>
+
+<ResponseField name="data.profile.portfolio_url" type="string">
+  Portfolio website URL
+</ResponseField>
+
+<ResponseField name="data.profile.resume_url" type="string">
+  Resume/CV URL
+</ResponseField>
+
+<ResponseField name="data.profile.hourly_rate" type="number">
+  Hourly rate (if applicable)
+</ResponseField>
+
+<ResponseField name="data.profile.currency" type="string">
+  Currency for hourly rate
+</ResponseField>
+
+<ResponseField name="data.profile.languages" type="array">
+  Languages spoken by the talent
+</ResponseField>
+
+<ResponseField name="data.profile.education" type="array">
+  Educational background
+</ResponseField>
+
+<ResponseField name="data.profile.certifications" type="array">
+  Professional certifications
+</ResponseField>
+
+<ResponseField name="data.rating" type="number">
+  Overall rating (0-5)
+</ResponseField>
+
+<ResponseField name="data.rating_count" type="integer">
+  Number of ratings received
+</ResponseField>
+
+<ResponseField name="data.ratings" type="array">
+  Detailed ratings breakdown
+</ResponseField>
+
+<ResponseField name="data.ratings[].category" type="string">
+  Rating category (technical, communication, reliability, etc.)
+</ResponseField>
+
+<ResponseField name="data.ratings[].score" type="number">
+  Rating score for this category
+</ResponseField>
+
+<ResponseField name="data.ratings[].count" type="integer">
+  Number of ratings for this category
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the talent profile was created
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when the talent profile was last updated
+</ResponseField>
+
+<ResponseField name="data.last_active" type="string">
+  ISO 8601 timestamp of last activity
+</ResponseField>
+
+<ResponseField name="data.stats" type="object">
+  Detailed talent statistics and metrics
+</ResponseField>
+
+<ResponseField name="data.stats.projects_completed" type="integer">
+  Number of projects completed
+</ResponseField>
+
+<ResponseField name="data.stats.hours_worked" type="number">
+  Total hours worked
+</ResponseField>
+
+<ResponseField name="data.stats.client_satisfaction" type="number">
+  Average client satisfaction score
+</ResponseField>
+
+<ResponseField name="data.stats.on_time_delivery" type="number">
+  On-time delivery percentage
+</ResponseField>
+
+<ResponseField name="data.stats.repeat_client_rate" type="number">
+  Percentage of repeat clients
+</ResponseField>
+
+<ResponseField name="data.stats.avg_project_duration" type="number">
+  Average project duration in days
+</ResponseField>
+
+<ResponseField name="data.stats.total_earnings" type="number">
+  Total earnings (if applicable)
+</ResponseField>
+
+<ResponseField name="data.projects" type="array">
+  Recent projects worked on
+</ResponseField>
+
+<ResponseField name="data.projects[].project_id" type="string">
+  Unique identifier for the project
+</ResponseField>
+
+<ResponseField name="data.projects[].name" type="string">
+  Name of the project
+</ResponseField>
+
+<ResponseField name="data.projects[].description" type="string">
+  Project description
+</ResponseField>
+
+<ResponseField name="data.projects[].status" type="string">
+  Project status
+</ResponseField>
+
+<ResponseField name="data.projects[].start_date" type="string">
+  Project start date
+</ResponseField>
+
+<ResponseField name="data.projects[].end_date" type="string">
+  Project end date
+</ResponseField>
+
+<ResponseField name="data.projects[].client_rating" type="number">
+  Client rating for this project
+</ResponseField>
+
+<ResponseField name="data.reviews" type="array">
+  Recent client reviews
+</ResponseField>
+
+<ResponseField name="data.reviews[].review_id" type="string">
+  Unique identifier for the review
+</ResponseField>
+
+<ResponseField name="data.reviews[].client_name" type="string">
+  Name of the client who left the review
+</ResponseField>
+
+<ResponseField name="data.reviews[].rating" type="number">
+  Rating given (1-5)
+</ResponseField>
+
+<ResponseField name="data.reviews[].comment" type="string">
+  Review comment
+</ResponseField>
+
+<ResponseField name="data.reviews[].created_at" type="string">
+  ISO 8601 timestamp when the review was created
+</ResponseField>
+
+<ResponseField name="data.availability_schedule" type="object">
+  Availability schedule information
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.timezone" type="string">
+  Timezone for availability schedule
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.working_hours" type="object">
+  Working hours configuration
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.working_hours.start" type="string">
+  Start time of working hours
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.working_hours.end" type="string">
+  End time of working hours
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.working_days" type="array">
+  Days of the week available for work
+</ResponseField>
+
+<ResponseField name="data.availability_schedule.next_available" type="string">
+  Next available date/time
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/talent/talent_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/talent/talent_1234567890abcdef', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.example.com/org/talent/talent_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$response = file_get_contents('https://api.example.com/org/talent/talent_1234567890abcdef', false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    req, _ := http.NewRequest("GET", "https://api.example.com/org/talent/talent_1234567890abcdef", nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "talent_id": "talent_1234567890abcdef",
+    "name": "John Smith",
+    "email": "john.smith@example.com",
+    "category": "developer",
+    "skill_level": "senior",
+    "status": "active",
+    "availability": "available",
+    "team_id": "team_1234567890abcdef",
+    "team_name": "Development Team",
+    "skills": ["React", "TypeScript", "Node.js", "Python", "AWS", "Docker", "Kubernetes"],
+    "tags": ["frontend", "react", "typescript", "fullstack", "devops"],
+    "profile": {
+      "bio": "Senior full-stack developer with 8 years of experience in modern web technologies. Passionate about creating scalable and maintainable applications.",
+      "experience_years": 8,
+      "location": "San Francisco, CA",
+      "timezone": "America/Los_Angeles",
+      "avatar_url": "https://example.com/avatars/john_smith.jpg",
+      "linkedin_url": "https://linkedin.com/in/johnsmith",
+      "github_url": "https://github.com/johnsmith",
+      "portfolio_url": "https://johnsmith.dev",
+      "resume_url": "https://johnsmith.dev/resume.pdf",
+      "hourly_rate": 85,
+      "currency": "USD",
+      "languages": ["English", "Spanish"],
+      "education": [
+        {
+          "degree": "Bachelor of Science in Computer Science",
+          "institution": "University of California, Berkeley",
+          "year": 2016
+        }
+      ],
+      "certifications": [
+        {
+          "name": "AWS Certified Solutions Architect",
+          "issuer": "Amazon Web Services",
+          "year": 2023
+        },
+        {
+          "name": "Certified Kubernetes Administrator",
+          "issuer": "Cloud Native Computing Foundation",
+          "year": 2022
+        }
+      ]
+    },
+    "rating": 4.8,
+    "rating_count": 25,
+    "ratings": [
+      {
+        "category": "technical",
+        "score": 4.9,
+        "count": 25
+      },
+      {
+        "category": "communication",
+        "score": 4.7,
+        "count": 25
+      },
+      {
+        "category": "reliability",
+        "score": 4.8,
+        "count": 25
+      },
+      {
+        "category": "timeliness",
+        "score": 4.6,
+        "count": 25
+      }
+    ],
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "last_active": "2024-01-15T10:25:00Z",
+    "stats": {
+      "projects_completed": 45,
+      "hours_worked": 3200,
+      "client_satisfaction": 4.9,
+      "on_time_delivery": 96.5,
+      "repeat_client_rate": 78.3,
+      "avg_project_duration": 45,
+      "total_earnings": 272000
+    },
+    "projects": [
+      {
+        "project_id": "project_1234567890abcdef",
+        "name": "E-commerce Platform",
+        "description": "Full-stack e-commerce platform with React frontend and Node.js backend",
+        "status": "completed",
+        "start_date": "2024-01-01T00:00:00Z",
+        "end_date": "2024-01-15T00:00:00Z",
+        "client_rating": 5.0
+      },
+      {
+        "project_id": "project_0987654321fedcba",
+        "name": "Mobile App Backend",
+        "description": "RESTful API backend for mobile application",
+        "status": "completed",
+        "start_date": "2023-12-01T00:00:00Z",
+        "end_date": "2023-12-31T00:00:00Z",
+        "client_rating": 4.8
+      }
+    ],
+    "reviews": [
+      {
+        "review_id": "review_1234567890abcdef",
+        "client_name": "Jane Doe",
+        "rating": 5.0,
+        "comment": "John is an excellent developer. He delivered the project on time and exceeded our expectations. Highly recommended!",
+        "created_at": "2024-01-15T10:00:00Z"
+      },
+      {
+        "review_id": "review_0987654321fedcba",
+        "client_name": "Bob Wilson",
+        "rating": 4.8,
+        "comment": "Great communication and technical skills. The project was completed successfully and on schedule.",
+        "created_at": "2024-01-10T15:30:00Z"
+      }
+    ],
+    "availability_schedule": {
+      "timezone": "America/Los_Angeles",
+      "working_hours": {
+        "start": "09:00",
+        "end": "17:00"
+      },
+      "working_days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+      "next_available": "2024-01-16T09:00:00Z"
+    }
+  },
+  "message": "Talent profile retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view this talent profile
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Talent profile not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Talent Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TALENT_NOT_FOUND",
+        "message": "Talent profile not found",
+        "details": {
+          "field": "talentId",
+          "reason": "Talent profile with ID 'talent_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view talent profile",
+        "details": {
+          "field": "permissions",
+          "reason": "Talent profile access requires organization membership or team access"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before making another request",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Profile Information" icon="user">
+    Detailed profile data:
+    
+    - **Personal Information**: Name, email, location, timezone
+    - **Professional Details**: Bio, experience, skills, certifications
+    - **Contact Information**: LinkedIn, GitHub, portfolio, resume URLs
+    - **Financial Information**: Hourly rate, currency, total earnings
+  </Accordion>
+  
+  <Accordion title="Performance Metrics" icon="chart">
+    Performance tracking:
+    
+    - **Project Statistics**: Completed projects, hours worked, delivery rates
+    - **Client Satisfaction**: Average ratings, repeat client rates
+    - **Quality Metrics**: On-time delivery, project duration averages
+    - **Rating Breakdown**: Detailed ratings by category
+  </Accordion>
+  
+  <Accordion title="Project History" icon="briefcase">
+    Project information:
+    
+    - **Recent Projects**: List of recent projects worked on
+    - **Project Details**: Name, description, status, dates, ratings
+    - **Client Reviews**: Recent client feedback and ratings
+    - **Performance Tracking**: Project success metrics
+  </Accordion>
+  
+  <Accordion title="Availability" icon="calendar">
+    Availability information:
+    
+    - **Working Hours**: Start and end times for work
+    - **Working Days**: Days of the week available
+    - **Timezone**: Timezone for availability schedule
+    - **Next Available**: Next available date/time
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Talent Profile Service" icon="cog">
+    ```javascript
+    class TalentProfileService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getTalentProfile(talentId) {
+        try {
+          const response = await this.apiClient.makeRequest(`/org/talent/${talentId}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to get talent profile');
+          }
+          
+          const result = await response.json();
+          
+          // Log profile retrieval
+          console.log(`Talent profile retrieved: ${result.data.name}`);
+          console.log(`Rating: ${result.data.rating}/5 (${result.data.rating_count} reviews)`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error getting talent profile:', error);
+          throw error;
+        }
+      }
+      
+      async getTalentSkills(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.skills;
+      }
+      
+      async getTalentRating(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return {
+          overall: profile.data.rating,
+          count: profile.data.rating_count,
+          breakdown: profile.data.ratings
+        };
+      }
+      
+      async getTalentStats(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.stats;
+      }
+      
+      async getTalentProjects(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.projects;
+      }
+      
+      async getTalentReviews(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.reviews;
+      }
+      
+      async getTalentAvailability(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.availability_schedule;
+      }
+      
+      async isTalentAvailable(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.availability === 'available';
+      }
+      
+      async getTalentExperience(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.profile.experience_years;
+      }
+      
+      async getTalentLocation(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return profile.data.profile.location;
+      }
+      
+      async getTalentHourlyRate(talentId) {
+        const profile = await this.getTalentProfile(talentId);
+        return {
+          rate: profile.data.profile.hourly_rate,
+          currency: profile.data.profile.currency
+        };
+      }
+    }
+    
+    // Usage example
+    const talentService = new TalentProfileService(apiClient);
+    
+    // Get talent profile
+    const profile = await talentService.getTalentProfile('talent_1234567890abcdef');
+    console.log(`Talent: ${profile.data.name}`);
+    console.log(`Category: ${profile.data.category}`);
+    console.log(`Skill Level: ${profile.data.skill_level}`);
+    
+    // Get talent skills
+    const skills = await talentService.getTalentSkills('talent_1234567890abcdef');
+    console.log(`Skills: ${skills.join(', ')}`);
+    
+    // Get talent rating
+    const rating = await talentService.getTalentRating('talent_1234567890abcdef');
+    console.log(`Overall Rating: ${rating.overall}/5`);
+    console.log(`Total Reviews: ${rating.count}`);
+    
+    // Get talent stats
+    const stats = await talentService.getTalentStats('talent_1234567890abcdef');
+    console.log(`Projects Completed: ${stats.projects_completed}`);
+    console.log(`Hours Worked: ${stats.hours_worked}`);
+    console.log(`Client Satisfaction: ${stats.client_satisfaction}`);
+    
+    // Check availability
+    const isAvailable = await talentService.isTalentAvailable('talent_1234567890abcdef');
+    console.log(`Available: ${isAvailable}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Talent Profile Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class TalentProfileManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def get_talent_profile(self, talent_id: str) -> Dict:
+            """Get detailed talent profile information"""
+            try:
+                response = self.api_client.get(f'/org/talent/{talent_id}')
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Talent profile retrieved: {result['data']['name']}")
+                print(f"Rating: {result['data']['rating']}/5 ({result['data']['rating_count']} reviews)")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting talent profile: {e}")
+                raise
+        
+        def get_talent_skills(self, talent_id: str) -> List[str]:
+            """Get talent skills"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["skills"]
+        
+        def get_talent_rating(self, talent_id: str) -> Dict:
+            """Get talent rating information"""
+            profile = self.get_talent_profile(talent_id)
+            return {
+                "overall": profile["data"]["rating"],
+                "count": profile["data"]["rating_count"],
+                "breakdown": profile["data"]["ratings"]
+            }
+        
+        def get_talent_stats(self, talent_id: str) -> Dict:
+            """Get talent statistics"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["stats"]
+        
+        def get_talent_projects(self, talent_id: str) -> List[Dict]:
+            """Get talent projects"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["projects"]
+        
+        def get_talent_reviews(self, talent_id: str) -> List[Dict]:
+            """Get talent reviews"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["reviews"]
+        
+        def get_talent_availability(self, talent_id: str) -> Dict:
+            """Get talent availability schedule"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["availability_schedule"]
+        
+        def is_talent_available(self, talent_id: str) -> bool:
+            """Check if talent is available"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["availability"] == "available"
+        
+        def get_talent_experience(self, talent_id: str) -> int:
+            """Get talent experience in years"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["profile"]["experience_years"]
+        
+        def get_talent_location(self, talent_id: str) -> str:
+            """Get talent location"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["profile"]["location"]
+        
+        def get_talent_hourly_rate(self, talent_id: str) -> Dict:
+            """Get talent hourly rate"""
+            profile = self.get_talent_profile(talent_id)
+            return {
+                "rate": profile["data"]["profile"]["hourly_rate"],
+                "currency": profile["data"]["profile"]["currency"]
+            }
+        
+        def get_talent_education(self, talent_id: str) -> List[Dict]:
+            """Get talent education background"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["profile"]["education"]
+        
+        def get_talent_certifications(self, talent_id: str) -> List[Dict]:
+            """Get talent certifications"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["profile"]["certifications"]
+        
+        def get_talent_languages(self, talent_id: str) -> List[str]:
+            """Get talent languages"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["profile"]["languages"]
+        
+        def get_talent_contact_info(self, talent_id: str) -> Dict:
+            """Get talent contact information"""
+            profile = self.get_talent_profile(talent_id)
+            return {
+                "email": profile["data"]["email"],
+                "linkedin": profile["data"]["profile"]["linkedin_url"],
+                "github": profile["data"]["profile"]["github_url"],
+                "portfolio": profile["data"]["profile"]["portfolio_url"],
+                "resume": profile["data"]["profile"]["resume_url"]
+            }
+        
+        def get_talent_performance_summary(self, talent_id: str) -> Dict:
+            """Get talent performance summary"""
+            profile = self.get_talent_profile(talent_id)
+            stats = profile["data"]["stats"]
+            rating = profile["data"]["rating"]
+            
+            return {
+                "overall_rating": rating,
+                "projects_completed": stats["projects_completed"],
+                "hours_worked": stats["hours_worked"],
+                "client_satisfaction": stats["client_satisfaction"],
+                "on_time_delivery": stats["on_time_delivery"],
+                "repeat_client_rate": stats["repeat_client_rate"],
+                "avg_project_duration": stats["avg_project_duration"]
+            }
+        
+        def get_talent_skill_level(self, talent_id: str) -> str:
+            """Get talent skill level"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["skill_level"]
+        
+        def get_talent_category(self, talent_id: str) -> str:
+            """Get talent category"""
+            profile = self.get_talent_profile(talent_id)
+            return profile["data"]["category"]
+        
+        def get_talent_team(self, talent_id: str) -> Dict:
+            """Get talent team information"""
+            profile = self.get_talent_profile(talent_id)
+            return {
+                "team_id": profile["data"]["team_id"],
+                "team_name": profile["data"]["team_name"]
+            }
+    
+    # Usage example
+    talent_manager = TalentProfileManager(api_client)
+    
+    # Get talent profile
+    profile = talent_manager.get_talent_profile("talent_1234567890abcdef")
+    print(f"Talent: {profile['data']['name']}")
+    print(f"Category: {profile['data']['category']}")
+    print(f"Skill Level: {profile['data']['skill_level']}")
+    
+    # Get talent skills
+    skills = talent_manager.get_talent_skills("talent_1234567890abcdef")
+    print(f"Skills: {', '.join(skills)}")
+    
+    # Get talent rating
+    rating = talent_manager.get_talent_rating("talent_1234567890abcdef")
+    print(f"Overall Rating: {rating['overall']}/5")
+    print(f"Total Reviews: {rating['count']}")
+    
+    # Get talent stats
+    stats = talent_manager.get_talent_stats("talent_1234567890abcdef")
+    print(f"Projects Completed: {stats['projects_completed']}")
+    print(f"Hours Worked: {stats['hours_worked']}")
+    print(f"Client Satisfaction: {stats['client_satisfaction']}")
+    
+    # Check availability
+    is_available = talent_manager.is_talent_available("talent_1234567890abcdef")
+    print(f"Available: {is_available}")
+    
+    # Get performance summary
+    performance = talent_manager.get_talent_performance_summary("talent_1234567890abcdef")
+    print(f"Performance Summary: {performance}")
+    
+    # Get contact information
+    contact = talent_manager.get_talent_contact_info("talent_1234567890abcdef")
+    print(f"Contact Info: {contact}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Talent" icon="list">
+    `GET /org/talent` - List all talent profiles
+  </Card>
+  <Card title="Create Talent Profile" icon="plus">
+    `POST /org/create/talent` - Create new talent profile
+  </Card>
+  <Card title="Update Talent Profile" icon="edit">
+    `PATCH /org/talent/{talentId}` - Update talent profile
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for talent filtering
+  </Card>
+</CardGroup>

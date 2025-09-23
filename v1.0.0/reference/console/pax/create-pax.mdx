@@ -1,0 +1,1288 @@
+---
+title: "Create PAX"
+api: "POST /org/create/pax"
+description: "Create a new PAX (Platform Access eXtension) within the organization"
+---
+
+Create a new PAX (Platform Access eXtension) within your organization for managing platform integrations, extensions, and custom functionality. This endpoint allows you to set up PAX modules with different types and configurations.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for PAX management and platform extension development within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Name of the PAX to create
+  
+  **Example**: "Custom Analytics Extension"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must be unique within the organization
+  - Cannot contain special characters except spaces, hyphens, and underscores
+</ParamField>
+
+<ParamField body="teamId" type="string" required="false">
+  ID of the team to associate with this PAX
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID within your organization
+  - Team must exist and be accessible
+  - If not provided, PAX will be associated with the user's default team
+</ParamField>
+
+<ParamField body="description" type="string" required="false">
+  Description of the PAX's purpose and functionality
+  
+  **Example**: "Custom analytics extension for tracking user behavior and performance metrics"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for documentation
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of PAX being created
+  
+  **Options**: 
+  - `Analytics`: Analytics and reporting extensions
+  - `Integration`: Third-party service integrations
+  - `Custom Function`: Custom business logic functions
+  - `UI Component`: User interface components
+  - `API Extension`: API endpoint extensions
+  - `Data Processor`: Data processing and transformation
+  - `Notification`: Notification and alerting systems
+  - `Other`: Any other type of PAX
+  
+  **Example**: "Analytics"
+</ParamField>
+
+<ParamField body="platformId" type="string" required="false">
+  ID of the platform this PAX extends
+  
+  **Example**: "platform_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid platform ID
+  - Platform must exist in your organization
+  - You must have access to the platform
+</ParamField>
+
+<ParamField body="version" type="string" required="false">
+  Version of the PAX
+  
+  **Example**: "1.0.0"
+  
+  **Default**: "1.0.0"
+  
+  **Constraints**: 
+  - Must follow semantic versioning (semver) format
+  - Examples: "1.0.0", "2.1.3", "0.1.0-beta"
+</ParamField>
+
+<ParamField body="configuration" type="object" required="false">
+  PAX-specific configuration and settings
+  
+  **Properties**:
+  - `enabled` (boolean): Whether the PAX is enabled
+  - `auto_deploy` (boolean): Whether to auto-deploy on updates
+  - `environment` (string): Environment for deployment
+  - `dependencies` (array): List of required dependencies
+  - `permissions` (object): Required permissions and access levels
+  - `settings` (object): Custom configuration settings
+  
+  **Example**:
+  ```json
+  {
+    "enabled": true,
+    "auto_deploy": false,
+    "environment": "production",
+    "dependencies": ["react", "lodash", "moment"],
+    "permissions": {
+      "read_data": true,
+      "write_data": false,
+      "admin_access": false
+    },
+    "settings": {
+      "tracking_enabled": true,
+      "retention_days": 90,
+      "export_format": "json"
+    }
+  }
+  ```
+</ParamField>
+
+<ParamField body="code" type="object" required="false">
+  PAX code and implementation details
+  
+  **Properties**:
+  - `language` (string): Programming language used
+  - `entry_point` (string): Main entry point file
+  - `source_files` (array): List of source files
+  - `build_commands` (array): Build commands to execute
+  - `test_commands` (array): Test commands to execute
+  
+  **Example**:
+  ```json
+  {
+    "language": "javascript",
+    "entry_point": "index.js",
+    "source_files": ["index.js", "utils.js", "config.js"],
+    "build_commands": ["npm install", "npm run build"],
+    "test_commands": ["npm test"]
+  }
+  ```
+</ParamField>
+
+<ParamField body="tags" type="array" required="false">
+  Tags for categorizing and organizing the PAX
+  
+  **Example**: ["analytics", "tracking", "production"]
+  
+  **Constraints**: 
+  - Maximum 10 tags per PAX
+  - Each tag maximum 50 characters
+  - Tags are case-insensitive
+</ParamField>
+
+<ParamField body="documentation" type="object" required="false">
+  Documentation and usage information
+  
+  **Properties**:
+  - `overview` (string): Overview of the PAX functionality
+  - `usage_examples` (array): Usage examples and code snippets
+  - `api_reference` (object): API reference documentation
+  - `changelog` (array): Version changelog
+  
+  **Example**:
+  ```json
+  {
+    "overview": "This PAX provides custom analytics tracking for user behavior and performance metrics",
+    "usage_examples": [
+      "// Initialize analytics tracking",
+      "const analytics = new CustomAnalytics(config);",
+      "analytics.track('user_action', { action: 'click', element: 'button' });"
+    ],
+    "api_reference": {
+      "methods": ["track", "getMetrics", "exportData"],
+      "events": ["user_action", "page_view", "custom_event"]
+    },
+    "changelog": [
+      {
+        "version": "1.0.0",
+        "date": "2024-01-15",
+        "changes": ["Initial release", "Basic tracking functionality"]
+      }
+    ]
+  }
+  ```
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the PAX was created successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the created PAX information
+</ResponseField>
+
+<ResponseField name="data.pax_id" type="string">
+  Unique identifier for the created PAX
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the created PAX
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the PAX
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Type of the PAX
+</ResponseField>
+
+<ResponseField name="data.version" type="string">
+  Version of the PAX
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data.platform_id" type="string">
+  ID of the associated platform
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the PAX (active, inactive, pending, error, building)
+</ResponseField>
+
+<ResponseField name="data.configuration" type="object">
+  PAX configuration and settings
+</ResponseField>
+
+<ResponseField name="data.code" type="object">
+  PAX code and implementation details
+</ResponseField>
+
+<ResponseField name="data.tags" type="array">
+  Tags associated with the PAX
+</ResponseField>
+
+<ResponseField name="data.documentation" type="object">
+  Documentation and usage information
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the PAX was created
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the person who created the PAX
+</ResponseField>
+
+<ResponseField name="data.deployment_url" type="string">
+  URL where the PAX is deployed (if applicable)
+</ResponseField>
+
+<ResponseField name="data.build_status" type="string">
+  Current build status (pending, building, success, failed)
+</ResponseField>
+
+<ResponseField name="data.build_logs" type="array">
+  Build logs and output (if available)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/create/pax" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Custom Analytics Extension",
+    "teamId": "team_1234567890abcdef",
+    "description": "Custom analytics extension for tracking user behavior and performance metrics",
+    "type": "Analytics",
+    "platformId": "platform_1234567890abcdef",
+    "version": "1.0.0",
+    "configuration": {
+      "enabled": true,
+      "auto_deploy": false,
+      "environment": "production",
+      "dependencies": ["react", "lodash", "moment"],
+      "permissions": {
+        "read_data": true,
+        "write_data": false,
+        "admin_access": false
+      },
+      "settings": {
+        "tracking_enabled": true,
+        "retention_days": 90,
+        "export_format": "json"
+      }
+    },
+    "code": {
+      "language": "javascript",
+      "entry_point": "index.js",
+      "source_files": ["index.js", "utils.js", "config.js"],
+      "build_commands": ["npm install", "npm run build"],
+      "test_commands": ["npm test"]
+    },
+    "tags": ["analytics", "tracking", "production"],
+    "documentation": {
+      "overview": "This PAX provides custom analytics tracking for user behavior and performance metrics",
+      "usage_examples": [
+        "// Initialize analytics tracking",
+        "const analytics = new CustomAnalytics(config);",
+        "analytics.track(\"user_action\", { action: \"click\", element: \"button\" });"
+      ],
+      "api_reference": {
+        "methods": ["track", "getMetrics", "exportData"],
+        "events": ["user_action", "page_view", "custom_event"]
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-15",
+          "changes": ["Initial release", "Basic tracking functionality"]
+        }
+      ]
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/create/pax', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Custom Analytics Extension',
+    teamId: 'team_1234567890abcdef',
+    description: 'Custom analytics extension for tracking user behavior and performance metrics',
+    type: 'Analytics',
+    platformId: 'platform_1234567890abcdef',
+    version: '1.0.0',
+    configuration: {
+      enabled: true,
+      auto_deploy: false,
+      environment: 'production',
+      dependencies: ['react', 'lodash', 'moment'],
+      permissions: {
+        read_data: true,
+        write_data: false,
+        admin_access: false
+      },
+      settings: {
+        tracking_enabled: true,
+        retention_days: 90,
+        export_format: 'json'
+      }
+    },
+    code: {
+      language: 'javascript',
+      entry_point: 'index.js',
+      source_files: ['index.js', 'utils.js', 'config.js'],
+      build_commands: ['npm install', 'npm run build'],
+      test_commands: ['npm test']
+    },
+    tags: ['analytics', 'tracking', 'production'],
+    documentation: {
+      overview: 'This PAX provides custom analytics tracking for user behavior and performance metrics',
+      usage_examples: [
+        '// Initialize analytics tracking',
+        'const analytics = new CustomAnalytics(config);',
+        'analytics.track("user_action", { action: "click", element: "button" });'
+      ],
+      api_reference: {
+        methods: ['track', 'getMetrics', 'exportData'],
+        events: ['user_action', 'page_view', 'custom_event']
+      },
+      changelog: [
+        {
+          version: '1.0.0',
+          date: '2024-01-15',
+          changes: ['Initial release', 'Basic tracking functionality']
+        }
+      ]
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Custom Analytics Extension",
+    "teamId": "team_1234567890abcdef",
+    "description": "Custom analytics extension for tracking user behavior and performance metrics",
+    "type": "Analytics",
+    "platformId": "platform_1234567890abcdef",
+    "version": "1.0.0",
+    "configuration": {
+        "enabled": True,
+        "auto_deploy": False,
+        "environment": "production",
+        "dependencies": ["react", "lodash", "moment"],
+        "permissions": {
+            "read_data": True,
+            "write_data": False,
+            "admin_access": False
+        },
+        "settings": {
+            "tracking_enabled": True,
+            "retention_days": 90,
+            "export_format": "json"
+        }
+    },
+    "code": {
+        "language": "javascript",
+        "entry_point": "index.js",
+        "source_files": ["index.js", "utils.js", "config.js"],
+        "build_commands": ["npm install", "npm run build"],
+        "test_commands": ["npm test"]
+    },
+    "tags": ["analytics", "tracking", "production"],
+    "documentation": {
+        "overview": "This PAX provides custom analytics tracking for user behavior and performance metrics",
+        "usage_examples": [
+            "# Initialize analytics tracking",
+            "analytics = CustomAnalytics(config)",
+            "analytics.track('user_action', {'action': 'click', 'element': 'button'})"
+        ],
+        "api_reference": {
+            "methods": ["track", "getMetrics", "exportData"],
+            "events": ["user_action", "page_view", "custom_event"]
+        },
+        "changelog": [
+            {
+                "version": "1.0.0",
+                "date": "2024-01-15",
+                "changes": ["Initial release", "Basic tracking functionality"]
+            }
+        ]
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/org/create/pax',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'name' => 'Custom Analytics Extension',
+    'teamId' => 'team_1234567890abcdef',
+    'description' => 'Custom analytics extension for tracking user behavior and performance metrics',
+    'type' => 'Analytics',
+    'platformId' => 'platform_1234567890abcdef',
+    'version' => '1.0.0',
+    'configuration' => [
+        'enabled' => true,
+        'auto_deploy' => false,
+        'environment' => 'production',
+        'dependencies' => ['react', 'lodash', 'moment'],
+        'permissions' => [
+            'read_data' => true,
+            'write_data' => false,
+            'admin_access' => false
+        ],
+        'settings' => [
+            'tracking_enabled' => true,
+            'retention_days' => 90,
+            'export_format' => 'json'
+        ]
+    ],
+    'code' => [
+        'language' => 'javascript',
+        'entry_point' => 'index.js',
+        'source_files' => ['index.js', 'utils.js', 'config.js'],
+        'build_commands' => ['npm install', 'npm run build'],
+        'test_commands' => ['npm test']
+    ],
+    'tags' => ['analytics', 'tracking', 'production'],
+    'documentation' => [
+        'overview' => 'This PAX provides custom analytics tracking for user behavior and performance metrics',
+        'usage_examples' => [
+            '// Initialize analytics tracking',
+            '$analytics = new CustomAnalytics($config);',
+            '$analytics->track("user_action", ["action" => "click", "element" => "button"]);'
+        ],
+        'api_reference' => [
+            'methods' => ['track', 'getMetrics', 'exportData'],
+            'events' => ['user_action', 'page_view', 'custom_event']
+        ],
+        'changelog' => [
+            [
+                'version' => '1.0.0',
+                'date' => '2024-01-15',
+                'changes' => ['Initial release', 'Basic tracking functionality']
+            ]
+        ]
+    ]
+];
+
+$response = file_get_contents('https://api.example.com/org/create/pax', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type CreatePAXRequest struct {
+    Name           string                 `json:"name"`
+    TeamID         string                 `json:"teamId,omitempty"`
+    Description    string                 `json:"description,omitempty"`
+    Type           string                 `json:"type"`
+    PlatformID     string                 `json:"platformId,omitempty"`
+    Version        string                 `json:"version,omitempty"`
+    Configuration  map[string]interface{} `json:"configuration,omitempty"`
+    Code           map[string]interface{} `json:"code,omitempty"`
+    Tags           []string               `json:"tags,omitempty"`
+    Documentation  map[string]interface{} `json:"documentation,omitempty"`
+}
+
+func main() {
+    payload := CreatePAXRequest{
+        Name:        "Custom Analytics Extension",
+        TeamID:      "team_1234567890abcdef",
+        Description: "Custom analytics extension for tracking user behavior and performance metrics",
+        Type:        "Analytics",
+        PlatformID:  "platform_1234567890abcdef",
+        Version:     "1.0.0",
+        Configuration: map[string]interface{}{
+            "enabled":      true,
+            "auto_deploy":  false,
+            "environment":  "production",
+            "dependencies": []string{"react", "lodash", "moment"},
+            "permissions": map[string]interface{}{
+                "read_data":   true,
+                "write_data":  false,
+                "admin_access": false,
+            },
+            "settings": map[string]interface{}{
+                "tracking_enabled": true,
+                "retention_days":   90,
+                "export_format":    "json",
+            },
+        },
+        Code: map[string]interface{}{
+            "language":      "javascript",
+            "entry_point":   "index.js",
+            "source_files":  []string{"index.js", "utils.js", "config.js"},
+            "build_commands": []string{"npm install", "npm run build"},
+            "test_commands":  []string{"npm test"},
+        },
+        Tags: []string{"analytics", "tracking", "production"},
+        Documentation: map[string]interface{}{
+            "overview": "This PAX provides custom analytics tracking for user behavior and performance metrics",
+            "usage_examples": []string{
+                "// Initialize analytics tracking",
+                "const analytics = new CustomAnalytics(config);",
+                "analytics.track(\"user_action\", { action: \"click\", element: \"button\" });",
+            },
+            "api_reference": map[string]interface{}{
+                "methods": []string{"track", "getMetrics", "exportData"},
+                "events":  []string{"user_action", "page_view", "custom_event"},
+            },
+            "changelog": []map[string]interface{}{
+                {
+                    "version": "1.0.0",
+                    "date":    "2024-01-15",
+                    "changes": []string{"Initial release", "Basic tracking functionality"},
+                },
+            },
+        },
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/create/pax", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "pax_id": "pax_1234567890abcdef",
+    "name": "Custom Analytics Extension",
+    "description": "Custom analytics extension for tracking user behavior and performance metrics",
+    "type": "Analytics",
+    "version": "1.0.0",
+    "team_id": "team_1234567890abcdef",
+    "platform_id": "platform_1234567890abcdef",
+    "status": "building",
+    "configuration": {
+      "enabled": true,
+      "auto_deploy": false,
+      "environment": "production",
+      "dependencies": ["react", "lodash", "moment"],
+      "permissions": {
+        "read_data": true,
+        "write_data": false,
+        "admin_access": false
+      },
+      "settings": {
+        "tracking_enabled": true,
+        "retention_days": 90,
+        "export_format": "json"
+      }
+    },
+    "code": {
+      "language": "javascript",
+      "entry_point": "index.js",
+      "source_files": ["index.js", "utils.js", "config.js"],
+      "build_commands": ["npm install", "npm run build"],
+      "test_commands": ["npm test"]
+    },
+    "tags": ["analytics", "tracking", "production"],
+    "documentation": {
+      "overview": "This PAX provides custom analytics tracking for user behavior and performance metrics",
+      "usage_examples": [
+        "// Initialize analytics tracking",
+        "const analytics = new CustomAnalytics(config);",
+        "analytics.track('user_action', { action: 'click', element: 'button' });"
+      ],
+      "api_reference": {
+        "methods": ["track", "getMetrics", "exportData"],
+        "events": ["user_action", "page_view", "custom_event"]
+      },
+      "changelog": [
+        {
+          "version": "1.0.0",
+          "date": "2024-01-15",
+          "changes": ["Initial release", "Basic tracking functionality"]
+        }
+      ]
+    },
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": "user_1234567890abcdef",
+    "deployment_url": "https://pax-1234567890abcdef.example.com",
+    "build_status": "building",
+    "build_logs": [
+      "Starting build process...",
+      "Installing dependencies...",
+      "Running build commands...",
+      "Build in progress..."
+    ]
+  },
+  "message": "PAX created successfully and build started",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create PAX modules
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  PAX name already exists or platform not found
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "name",
+          "reason": "PAX name is required and must be between 2 and 100 characters"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="PAX Name Conflict (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "PAX_NAME_EXISTS",
+        "message": "PAX name already exists",
+        "details": {
+          "field": "name",
+          "reason": "A PAX with this name already exists in the organization"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Platform Not Found (409)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "PLATFORM_NOT_FOUND",
+        "message": "Platform not found",
+        "details": {
+          "field": "platformId",
+          "reason": "Platform with ID 'platform_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to create PAX modules",
+        "details": {
+          "field": "permissions",
+          "reason": "PAX creation requires team_admin or organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="PAX Types" icon="puzzle">
+    Available PAX types:
+    
+    - **Analytics**: Analytics and reporting extensions
+    - **Integration**: Third-party service integrations
+    - **Custom Function**: Custom business logic functions
+    - **UI Component**: User interface components
+    - **API Extension**: API endpoint extensions
+    - **Data Processor**: Data processing and transformation
+    - **Notification**: Notification and alerting systems
+    - **Other**: Any other type of PAX
+  </Accordion>
+  
+  <Accordion title="Configuration Options" icon="cog">
+    Configuration features:
+    
+    - **Environment Settings**: Production, staging, development environments
+    - **Dependencies**: Required packages and libraries
+    - **Permissions**: Access control and security settings
+    - **Auto Deployment**: Automatic deployment on updates
+  </Accordion>
+  
+  <Accordion title="Code Management" icon="code">
+    Code features:
+    
+    - **Multiple Languages**: Support for various programming languages
+    - **Build Commands**: Custom build and deployment processes
+    - **Testing**: Automated testing and validation
+    - **Version Control**: Semantic versioning support
+  </Accordion>
+  
+  <Accordion title="Required Permissions" icon="shield">
+    Permissions needed:
+    
+    - **Team Admin**: Can create PAX modules for their teams
+    - **Organization Admin**: Can create PAX modules for any team
+    - **PAX Developer**: Can create PAX modules within their scope
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="PAX Management Service" icon="cog">
+    ```javascript
+    class PAXManagementService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async createPAX(paxData) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/create/pax', {
+            method: 'POST',
+            body: JSON.stringify(paxData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to create PAX');
+          }
+          
+          const result = await response.json();
+          
+          // Log PAX creation
+          console.log(`PAX created: ${result.data.name} (ID: ${result.data.pax_id})`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error creating PAX:', error);
+          throw error;
+        }
+      }
+      
+      async createAnalyticsPAX(name, teamId, platformId, description) {
+        return this.createPAX({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Analytics',
+          platformId: platformId,
+          version: '1.0.0',
+          configuration: {
+            enabled: true,
+            auto_deploy: false,
+            environment: 'production',
+            dependencies: ['react', 'lodash', 'moment'],
+            permissions: {
+              read_data: true,
+              write_data: false,
+              admin_access: false
+            },
+            settings: {
+              tracking_enabled: true,
+              retention_days: 90,
+              export_format: 'json'
+            }
+          },
+          code: {
+            language: 'javascript',
+            entry_point: 'index.js',
+            source_files: ['index.js', 'utils.js', 'config.js'],
+            build_commands: ['npm install', 'npm run build'],
+            test_commands: ['npm test']
+          },
+          tags: ['analytics', 'tracking', 'production']
+        });
+      }
+      
+      async createIntegrationPAX(name, teamId, platformId, description) {
+        return this.createPAX({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Integration',
+          platformId: platformId,
+          version: '1.0.0',
+          configuration: {
+            enabled: true,
+            auto_deploy: true,
+            environment: 'production',
+            dependencies: ['axios', 'lodash'],
+            permissions: {
+              read_data: true,
+              write_data: true,
+              admin_access: false
+            },
+            settings: {
+              api_endpoint: 'https://api.example.com',
+              timeout: 30000,
+              retry_attempts: 3
+            }
+          },
+          code: {
+            language: 'javascript',
+            entry_point: 'index.js',
+            source_files: ['index.js', 'api.js', 'config.js'],
+            build_commands: ['npm install', 'npm run build'],
+            test_commands: ['npm test']
+          },
+          tags: ['integration', 'api', 'production']
+        });
+      }
+      
+      async createCustomFunctionPAX(name, teamId, platformId, description) {
+        return this.createPAX({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Custom Function',
+          platformId: platformId,
+          version: '1.0.0',
+          configuration: {
+            enabled: true,
+            auto_deploy: false,
+            environment: 'production',
+            dependencies: ['lodash', 'moment'],
+            permissions: {
+              read_data: true,
+              write_data: true,
+              admin_access: false
+            },
+            settings: {
+              function_name: 'customProcessor',
+              timeout: 60000,
+              memory_limit: '512MB'
+            }
+          },
+          code: {
+            language: 'javascript',
+            entry_point: 'index.js',
+            source_files: ['index.js', 'functions.js', 'utils.js'],
+            build_commands: ['npm install', 'npm run build'],
+            test_commands: ['npm test']
+          },
+          tags: ['custom', 'function', 'production']
+        });
+      }
+    }
+    
+    // Usage example
+    const paxService = new PAXManagementService(apiClient);
+    
+    // Create analytics PAX
+    const analyticsPAX = await paxService.createAnalyticsPAX(
+      'User Behavior Analytics',
+      'team_1234567890abcdef',
+      'platform_1234567890abcdef',
+      'Advanced analytics for tracking user behavior patterns'
+    );
+    
+    // Create integration PAX
+    const integrationPAX = await paxService.createIntegrationPAX(
+      'CRM Integration',
+      'team_1234567890abcdef',
+      'platform_1234567890abcdef',
+      'Integration with external CRM system'
+    );
+    
+    // Create custom function PAX
+    const customFunctionPAX = await paxService.createCustomFunctionPAX(
+      'Data Processor',
+      'team_1234567890abcdef',
+      'platform_1234567890abcdef',
+      'Custom data processing and transformation functions'
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python PAX Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class PAXManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def create_pax(self, pax_data: Dict) -> Dict:
+            """Create a new PAX module"""
+            try:
+                response = self.api_client.post('/org/create/pax', json=pax_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"PAX created: {result['data']['name']} (ID: {result['data']['pax_id']})")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error creating PAX: {e}")
+                raise
+        
+        def create_analytics_pax(self, 
+                               name: str, 
+                               team_id: str, 
+                               platform_id: str, 
+                               description: str) -> Dict:
+            """Create an analytics PAX"""
+            pax_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Analytics",
+                "platformId": platform_id,
+                "version": "1.0.0",
+                "configuration": {
+                    "enabled": True,
+                    "auto_deploy": False,
+                    "environment": "production",
+                    "dependencies": ["react", "lodash", "moment"],
+                    "permissions": {
+                        "read_data": True,
+                        "write_data": False,
+                        "admin_access": False
+                    },
+                    "settings": {
+                        "tracking_enabled": True,
+                        "retention_days": 90,
+                        "export_format": "json"
+                    }
+                },
+                "code": {
+                    "language": "javascript",
+                    "entry_point": "index.js",
+                    "source_files": ["index.js", "utils.js", "config.js"],
+                    "build_commands": ["npm install", "npm run build"],
+                    "test_commands": ["npm test"]
+                },
+                "tags": ["analytics", "tracking", "production"]
+            }
+            
+            return self.create_pax(pax_data)
+        
+        def create_integration_pax(self, 
+                                 name: str, 
+                                 team_id: str, 
+                                 platform_id: str, 
+                                 description: str) -> Dict:
+            """Create an integration PAX"""
+            pax_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Integration",
+                "platformId": platform_id,
+                "version": "1.0.0",
+                "configuration": {
+                    "enabled": True,
+                    "auto_deploy": True,
+                    "environment": "production",
+                    "dependencies": ["axios", "lodash"],
+                    "permissions": {
+                        "read_data": True,
+                        "write_data": True,
+                        "admin_access": False
+                    },
+                    "settings": {
+                        "api_endpoint": "https://api.example.com",
+                        "timeout": 30000,
+                        "retry_attempts": 3
+                    }
+                },
+                "code": {
+                    "language": "javascript",
+                    "entry_point": "index.js",
+                    "source_files": ["index.js", "api.js", "config.js"],
+                    "build_commands": ["npm install", "npm run build"],
+                    "test_commands": ["npm test"]
+                },
+                "tags": ["integration", "api", "production"]
+            }
+            
+            return self.create_pax(pax_data)
+        
+        def create_custom_function_pax(self, 
+                                     name: str, 
+                                     team_id: str, 
+                                     platform_id: str, 
+                                     description: str) -> Dict:
+            """Create a custom function PAX"""
+            pax_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Custom Function",
+                "platformId": platform_id,
+                "version": "1.0.0",
+                "configuration": {
+                    "enabled": True,
+                    "auto_deploy": False,
+                    "environment": "production",
+                    "dependencies": ["lodash", "moment"],
+                    "permissions": {
+                        "read_data": True,
+                        "write_data": True,
+                        "admin_access": False
+                    },
+                    "settings": {
+                        "function_name": "customProcessor",
+                        "timeout": 60000,
+                        "memory_limit": "512MB"
+                    }
+                },
+                "code": {
+                    "language": "javascript",
+                    "entry_point": "index.js",
+                    "source_files": ["index.js", "functions.js", "utils.js"],
+                    "build_commands": ["npm install", "npm run build"],
+                    "test_commands": ["npm test"]
+                },
+                "tags": ["custom", "function", "production"]
+            }
+            
+            return self.create_pax(pax_data)
+        
+        def create_ui_component_pax(self, 
+                                  name: str, 
+                                  team_id: str, 
+                                  platform_id: str, 
+                                  description: str) -> Dict:
+            """Create a UI component PAX"""
+            pax_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "UI Component",
+                "platformId": platform_id,
+                "version": "1.0.0",
+                "configuration": {
+                    "enabled": True,
+                    "auto_deploy": True,
+                    "environment": "production",
+                    "dependencies": ["react", "styled-components"],
+                    "permissions": {
+                        "read_data": True,
+                        "write_data": False,
+                        "admin_access": False
+                    },
+                    "settings": {
+                        "component_name": "CustomComponent",
+                        "theme": "default",
+                        "responsive": True
+                    }
+                },
+                "code": {
+                    "language": "javascript",
+                    "entry_point": "index.js",
+                    "source_files": ["index.js", "Component.js", "styles.js"],
+                    "build_commands": ["npm install", "npm run build"],
+                    "test_commands": ["npm test"]
+                },
+                "tags": ["ui", "component", "react"]
+            }
+            
+            return self.create_pax(pax_data)
+        
+        def validate_pax_data(self, pax_data: Dict) -> bool:
+            """Validate PAX data before creation"""
+            required_fields = ['name', 'type']
+            
+            for field in required_fields:
+                if field not in pax_data:
+                    print(f"Missing required field: {field}")
+                    return False
+            
+            # Validate PAX type
+            valid_types = [
+                'Analytics', 'Integration', 'Custom Function', 'UI Component',
+                'API Extension', 'Data Processor', 'Notification', 'Other'
+            ]
+            
+            if pax_data['type'] not in valid_types:
+                print(f"Invalid PAX type: {pax_data['type']}")
+                return False
+            
+            # Validate name length
+            if len(pax_data['name']) < 2 or len(pax_data['name']) > 100:
+                print("PAX name must be between 2 and 100 characters")
+                return False
+            
+            return True
+        
+        def create_pax_safe(self, pax_data: Dict) -> Dict:
+            """Create PAX with validation"""
+            if not self.validate_pax_data(pax_data):
+                raise ValueError("Invalid PAX data")
+            
+            return self.create_pax(pax_data)
+    
+    # Usage example
+    pax_manager = PAXManager(api_client)
+    
+    # Create analytics PAX
+    analytics_pax = pax_manager.create_analytics_pax(
+        name="User Behavior Analytics",
+        team_id="team_1234567890abcdef",
+        platform_id="platform_1234567890abcdef",
+        description="Advanced analytics for tracking user behavior patterns"
+    )
+    
+    # Create integration PAX
+    integration_pax = pax_manager.create_integration_pax(
+        name="CRM Integration",
+        team_id="team_1234567890abcdef",
+        platform_id="platform_1234567890abcdef",
+        description="Integration with external CRM system"
+    )
+    
+    # Create custom function PAX
+    custom_function_pax = pax_manager.create_custom_function_pax(
+        name="Data Processor",
+        team_id="team_1234567890abcdef",
+        platform_id="platform_1234567890abcdef",
+        description="Custom data processing and transformation functions"
+    )
+    
+    # Create UI component PAX
+    ui_component_pax = pax_manager.create_ui_component_pax(
+        name="Custom Dashboard",
+        team_id="team_1234567890abcdef",
+        platform_id="platform_1234567890abcdef",
+        description="Custom dashboard component for data visualization"
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get PAX" icon="list">
+    `GET /org/pax` - List all PAX modules
+  </Card>
+  <Card title="Delete PAX" icon="trash">
+    `DELETE /org/pax/{paxId}` - Remove a PAX module
+  </Card>
+  <Card title="Update PAX" icon="edit">
+    `PATCH /org/pax/{paxId}` - Update PAX configuration
+  </Card>
+  <Card title="Get Platforms" icon="server">
+    `GET /org/platforms` - List platforms for PAX association
+  </Card>
+</CardGroup>
