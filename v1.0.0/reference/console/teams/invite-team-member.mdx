@@ -1,15 +1,15 @@
 ---
 title: "Invite Team Member"
 api: "POST /org/invite/team/member/{teamId}"
-description: "Invite a new member to join a team within the organization"
+description: "Invite a new member to join a team"
 ---
 
-Invite a new member to join a specific team. This endpoint allows you to add new members to existing teams with appropriate roles and permissions.
+Invite a new member to join an existing team within your organization. This endpoint allows you to send invitations to potential team members via email with specified roles and permissions.
 
 <Note>
   **Console API Endpoint**
   
-  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for team management and member administration.
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for team management and member invitation within the Weir AI platform.
 </Note>
 
 ## Authentication
@@ -23,40 +23,82 @@ Authorization: Bearer <your_jwt_token>
 ## Path Parameters
 
 <ParamField path="teamId" type="string" required>
-  The unique identifier of the team to invite the member to
+  Unique identifier of the team to invite the member to
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID
+  - Team must exist in your organization
+  - You must have permission to invite members to this team
 </ParamField>
 
 ## Request
 
 <ParamField body="firstname" type="string" required>
-  The first name of the person being invited
+  First name of the person to invite
   
   **Example**: "John"
+  
+  **Constraints**: 
+  - Minimum length: 1 character
+  - Maximum length: 50 characters
+  - Cannot contain special characters except hyphens and apostrophes
 </ParamField>
 
 <ParamField body="lastname" type="string" required>
-  The last name of the person being invited
+  Last name of the person to invite
   
   **Example**: "Doe"
+  
+  **Constraints**: 
+  - Minimum length: 1 character
+  - Maximum length: 50 characters
+  - Cannot contain special characters except hyphens and apostrophes
 </ParamField>
 
 <ParamField body="email" type="string" required>
-  The email address of the person being invited
+  Email address of the person to invite
   
   **Example**: "john.doe@example.com"
   
-  **Constraints**: Must be a valid email format
+  **Constraints**: 
+  - Must be a valid email address format
+  - Must be unique within the organization
+  - Cannot be an existing user's email
 </ParamField>
 
 <ParamField body="role" type="string" required>
-  The role to assign to the invited member
+  Role to assign to the invited member
   
-  **Options**:
-  - `Organization_User` - Standard organization user
-  - `Team_Admin` - Team administrator with elevated permissions
-  - `Viewer` - Read-only access to team resources
+  **Options**: 
+  - `Organization_User`: Standard organization member with basic permissions
+  - `Team_Admin`: Team administrator with team management permissions
+  - `Viewer`: Read-only access to team resources
   
   **Example**: "Organization_User"
+  
+  **Default**: "Organization_User"
+</ParamField>
+
+<ParamField body="message" type="string" required="false">
+  Personal message to include in the invitation email
+  
+  **Example**: "Welcome to our development team! We're excited to have you join us."
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional field
+</ParamField>
+
+<ParamField body="send_email" type="boolean" required="false">
+  Whether to send an email invitation immediately
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If false, the invitation will be created but no email will be sent
 </ParamField>
 
 ## Response
@@ -66,27 +108,35 @@ Authorization: Bearer <your_jwt_token>
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Contains the invitation details
+  Contains the invitation information
 </ResponseField>
 
 <ResponseField name="data.invitation_id" type="string">
   Unique identifier for the invitation
 </ResponseField>
 
-<ResponseField name="data.email" type="string">
-  Email address of the invited member
+<ResponseField name="data.team_id" type="string">
+  ID of the team the person was invited to
+</ResponseField>
+
+<ResponseField name="data.invitee_email" type="string">
+  Email address of the invited person
 </ResponseField>
 
 <ResponseField name="data.role" type="string">
   Role assigned to the invited member
 </ResponseField>
 
-<ResponseField name="data.team_id" type="string">
-  ID of the team the member was invited to
+<ResponseField name="data.status" type="string">
+  Status of the invitation (pending, accepted, declined, expired)
 </ResponseField>
 
-<ResponseField name="data.status" type="string">
-  Status of the invitation (pending, sent, accepted, expired)
+<ResponseField name="data.invited_by" type="string">
+  User ID of the person who sent the invitation
+</ResponseField>
+
+<ResponseField name="data.invited_at" type="string">
+  ISO 8601 timestamp when the invitation was sent
 </ResponseField>
 
 <ResponseField name="data.expires_at" type="string">
@@ -105,19 +155,21 @@ Authorization: Bearer <your_jwt_token>
 
 <CodeGroup>
 ```bash cURL
-curl -X POST "https://api.example.com/org/invite/team/member/team_1234567890" \
+curl -X POST "https://api.example.com/org/invite/team/member/team_1234567890abcdef" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
     "firstname": "John",
     "lastname": "Doe",
     "email": "john.doe@example.com",
-    "role": "Organization_User"
+    "role": "Organization_User",
+    "message": "Welcome to our development team! We are excited to have you join us.",
+    "send_email": true
   }'
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.example.com/org/invite/team/member/team_1234567890', {
+const response = await fetch('https://api.example.com/org/invite/team/member/team_1234567890abcdef', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
@@ -127,7 +179,9 @@ const response = await fetch('https://api.example.com/org/invite/team/member/tea
     firstname: 'John',
     lastname: 'Doe',
     email: 'john.doe@example.com',
-    role: 'Organization_User'
+    role: 'Organization_User',
+    message: 'Welcome to our development team! We are excited to have you join us.',
+    send_email: true
   })
 });
 
@@ -138,18 +192,22 @@ console.log(data);
 ```python Python
 import requests
 
+payload = {
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john.doe@example.com",
+    "role": "Organization_User",
+    "message": "Welcome to our development team! We are excited to have you join us.",
+    "send_email": True
+}
+
 response = requests.post(
-    'https://api.example.com/org/invite/team/member/team_1234567890',
+    'https://api.example.com/org/invite/team/member/team_1234567890abcdef',
     headers={
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         'Content-Type': 'application/json'
     },
-    json={
-        'firstname': 'John',
-        'lastname': 'Doe',
-        'email': 'john.doe@example.com',
-        'role': 'Organization_User'
-    }
+    json=payload
 )
 
 print(response.json())
@@ -157,27 +215,28 @@ print(response.json())
 
 ```php PHP
 <?php
-$data = json_encode([
+$payload = [
     'firstname' => 'John',
     'lastname' => 'Doe',
     'email' => 'john.doe@example.com',
-    'role' => 'Organization_User'
-]);
+    'role' => 'Organization_User',
+    'message' => 'Welcome to our development team! We are excited to have you join us.',
+    'send_email' => true
+];
 
-$context = stream_context_create([
+$response = file_get_contents('https://api.example.com/org/invite/team/member/team_1234567890abcdef', false, stream_context_create([
     'http' => [
         'method' => 'POST',
         'header' => [
             'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
             'Content-Type: application/json'
         ],
-        'content' => $data
+        'content' => json_encode($payload)
     ]
-]);
+]));
 
-$response = file_get_contents('https://api.example.com/org/invite/team/member/team_1234567890', false, $context);
-$result = json_decode($response, true);
-print_r($result);
+$data = json_decode($response, true);
+print_r($data);
 ?>
 ```
 
@@ -191,17 +250,28 @@ import (
     "net/http"
 )
 
+type InviteTeamMemberRequest struct {
+    Firstname string `json:"firstname"`
+    Lastname  string `json:"lastname"`
+    Email     string `json:"email"`
+    Role      string `json:"role"`
+    Message   string `json:"message,omitempty"`
+    SendEmail bool   `json:"send_email,omitempty"`
+}
+
 func main() {
-    inviteData := map[string]string{
-        "firstname": "John",
-        "lastname":  "Doe",
-        "email":     "john.doe@example.com",
-        "role":      "Organization_User",
+    payload := InviteTeamMemberRequest{
+        Firstname: "John",
+        Lastname:  "Doe",
+        Email:     "john.doe@example.com",
+        Role:      "Organization_User",
+        Message:   "Welcome to our development team! We are excited to have you join us.",
+        SendEmail: true,
     }
     
-    jsonData, _ := json.Marshal(inviteData)
+    jsonData, _ := json.Marshal(payload)
     
-    req, _ := http.NewRequest("POST", "https://api.example.com/org/invite/team/member/team_1234567890", bytes.NewBuffer(jsonData))
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/invite/team/member/team_1234567890abcdef", bytes.NewBuffer(jsonData))
     req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     req.Header.Set("Content-Type", "application/json")
     
@@ -211,7 +281,7 @@ func main() {
     
     var result map[string]interface{}
     json.NewDecoder(resp.Body).Decode(&result)
-    fmt.Println(result)
+    fmt.Printf("%+v\n", result)
 }
 ```
 </CodeGroup>
@@ -223,10 +293,12 @@ func main() {
   "success": true,
   "data": {
     "invitation_id": "inv_1234567890abcdef",
-    "email": "john.doe@example.com",
+    "team_id": "team_1234567890abcdef",
+    "invitee_email": "john.doe@example.com",
     "role": "Organization_User",
-    "team_id": "team_1234567890",
     "status": "pending",
+    "invited_by": "user_1234567890abcdef",
+    "invited_at": "2024-01-15T10:30:00Z",
     "expires_at": "2024-01-22T10:30:00Z"
   },
   "message": "Team member invitation sent successfully",
@@ -237,7 +309,7 @@ func main() {
 ## Error Responses
 
 <ResponseField name="400 Bad Request" type="object">
-  Invalid request data or validation errors
+  Invalid request parameters or validation errors
 </ResponseField>
 
 <ResponseField name="401 Unauthorized" type="object">
@@ -245,11 +317,11 @@ func main() {
 </ResponseField>
 
 <ResponseField name="403 Forbidden" type="object">
-  Insufficient permissions to invite team members
+  Insufficient permissions to invite members to this team
 </ResponseField>
 
 <ResponseField name="404 Not Found" type="object">
-  Team not found or user not associated with the team
+  Team not found or doesn't exist
 </ResponseField>
 
 <ResponseField name="409 Conflict" type="object">
@@ -265,221 +337,322 @@ func main() {
 <AccordionGroup>
   <Accordion title="Validation Error (400)" icon="exclamation-triangle">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid request parameters",
-    "details": {
-      "field": "email",
-      "reason": "Invalid email format"
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "email",
+          "reason": "Invalid email address format"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="Team Not Found (404)" icon="exclamation">
+  <Accordion title="Team Not Found (404)" icon="search">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "TEAM_NOT_FOUND",
-    "message": "Team not found or you don't have access to this team",
-    "details": {
-      "field": "teamId",
-      "reason": "Team does not exist or access denied"
+    {
+      "success": false,
+      "error": {
+        "code": "TEAM_NOT_FOUND",
+        "message": "Team not found",
+        "details": {
+          "field": "teamId",
+          "reason": "Team with ID 'team_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="User Already Exists (409)" icon="exclamation">
+  <Accordion title="User Already Exists (409)" icon="user-check">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "USER_ALREADY_EXISTS",
-    "message": "User with this email already exists in the organization",
-    "details": {
-      "field": "email",
-      "reason": "Email address already registered"
+    {
+      "success": false,
+      "error": {
+        "code": "USER_ALREADY_EXISTS",
+        "message": "User already exists in the organization",
+        "details": {
+          "field": "email",
+          "reason": "A user with this email address already exists"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to invite team members",
+        "details": {
+          "field": "permissions",
+          "reason": "Team invitation requires team_admin or organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Invitation Process" icon="envelope">
-    When you invite a team member:
+  <Accordion title="Team Roles" icon="users">
+    Available team roles:
     
-    1. An invitation email is sent to the specified email address
-    2. The invitation includes a secure link to accept the invitation
-    3. The invited person must accept the invitation to join the team
-    4. Invitations expire after 7 days if not accepted
+    - **Organization_User**: Standard member with basic team access
+    - **Team_Admin**: Can manage team members and settings
+    - **Viewer**: Read-only access to team resources and data
   </Accordion>
   
-  <Accordion title="Role Permissions" icon="shield">
-    Different roles have different permissions:
+  <Accordion title="Invitation Process" icon="mail">
+    How invitations work:
     
-    - **Organization_User**: Standard access to team resources
-    - **Team_Admin**: Can manage team settings and invite other members
-    - **Viewer**: Read-only access to team resources
+    - **Email Sent**: Invitation email sent to the specified address
+    - **Invitation Link**: Contains secure token for accepting invitation
+    - **Expiration**: Invitations expire after 7 days
+    - **Status Tracking**: Monitor invitation status (pending, accepted, declined)
   </Accordion>
   
-  <Accordion title="Permissions Required" icon="key">
-    To invite team members, you need:
+  <Accordion title="Permissions Required" icon="shield">
+    Required permissions:
     
-    - Team management permissions
-    - Organization user or admin role
-    - Access to the specific team
+    - **Team Admin**: Can invite members to their teams
+    - **Organization Admin**: Can invite members to any team
+    - **Team Creator**: Can invite members to teams they created
   </Accordion>
   
-  <Accordion title="Invitation Limits" icon="clock">
-    There are limits on invitations:
+  <Accordion title="Best Practices" icon="lightbulb">
+    Invitation best practices:
     
-    - Maximum 50 pending invitations per team
-    - Maximum 5 invitations per hour per user
-    - Invitations expire after 7 days
+    - **Personal Messages**: Include welcoming personal messages
+    - **Role Selection**: Choose appropriate roles for team members
+    - **Email Verification**: Ensure email addresses are correct
+    - **Follow-up**: Track invitation status and follow up if needed
   </Accordion>
 </AccordionGroup>
 
-## Integration Examples
+## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Bulk Team Invitations" icon="users">
+  <Accordion title="Team Invitation Service" icon="cog">
     ```javascript
-{`class TeamInvitationManager {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async inviteMultipleMembers(teamId, members) {
-    const results = [];
-    
-    for (const member of members) {
-      try {
-        const response = await this.apiClient.makeRequest(\`/org/invite/team/member/\${teamId}\`, {
-          method: 'POST',
-          body: JSON.stringify(member)
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          results.push({
-            member,
-            success: true,
-            invitation_id: data.data.invitation_id
+    class TeamInvitationService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async inviteTeamMember(teamId, memberData) {
+        try {
+          const response = await this.apiClient.makeRequest(`/org/invite/team/member/${teamId}`, {
+            method: 'POST',
+            body: JSON.stringify(memberData)
           });
-        } else {
-          const error = await response.json();
-          results.push({
-            member,
-            success: false,
-            error: error.error.message
-          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to invite team member');
+          }
+          
+          const result = await response.json();
+          
+          // Log invitation
+          console.log(`Invitation sent to ${memberData.email} for team ${teamId}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error inviting team member:', error);
+          throw error;
         }
-      } catch (error) {
-        results.push({
-          member,
-          success: false,
-          error: error.message
+      }
+      
+      async inviteDeveloper(teamId, email, firstName, lastName) {
+        return this.inviteTeamMember(teamId, {
+          firstname: firstName,
+          lastname: lastName,
+          email: email,
+          role: 'Organization_User',
+          message: 'Welcome to our development team! We are excited to have you join us.',
+          send_email: true
+        });
+      }
+      
+      async inviteTeamAdmin(teamId, email, firstName, lastName) {
+        return this.inviteTeamMember(teamId, {
+          firstname: firstName,
+          lastname: lastName,
+          email: email,
+          role: 'Team_Admin',
+          message: 'You have been invited as a team administrator. Welcome to the team!',
+          send_email: true
+        });
+      }
+      
+      async inviteViewer(teamId, email, firstName, lastName) {
+        return this.inviteTeamMember(teamId, {
+          firstname: firstName,
+          lastname: lastName,
+          email: email,
+          role: 'Viewer',
+          message: 'You have been granted read-only access to our team resources.',
+          send_email: true
         });
       }
     }
     
-    return results;
-  }
-  
-  async getInvitationStatus(teamId, invitationId) {
-    const response = await this.apiClient.makeRequest(\`/org/team/\${teamId}/invitation/\${invitationId}\`);
-    return await response.json();
-  }
-}
-
-// Usage
-const invitationManager = new TeamInvitationManager(apiClient);
-const members = [
-  {
-    firstname: 'John',
-    lastname: 'Doe',
-    email: 'john@example.com',
-    role: 'Organization_User'
-  },
-  {
-    firstname: 'Jane',
-    lastname: 'Smith',
-    email: 'jane@example.com',
-    role: 'Team_Admin'
-  }
-];
-
-const results = await invitationManager.inviteMultipleMembers('team_123', members);`}
-```
+    // Usage example
+    const invitationService = new TeamInvitationService(apiClient);
+    
+    // Invite a developer
+    const devInvitation = await invitationService.inviteDeveloper(
+      'team_1234567890abcdef',
+      'john.doe@example.com',
+      'John',
+      'Doe'
+    );
+    
+    // Invite a team admin
+    const adminInvitation = await invitationService.inviteTeamAdmin(
+      'team_1234567890abcdef',
+      'jane.smith@example.com',
+      'Jane',
+      'Smith'
+    );
+    ```
   </Accordion>
   
-  <Accordion title="Invitation Validation" icon="check-circle">
-    ```javascript
-{`class InvitationValidator {
-  validateInvitationData(memberData) {
-    const errors = [];
+  <Accordion title="Python Team Invitation Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
     
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(memberData.email)) {
-      errors.push('Invalid email format');
-    }
+    class TeamInvitationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def invite_team_member(self, 
+                              team_id: str,
+                              firstname: str,
+                              lastname: str,
+                              email: str,
+                              role: str = "Organization_User",
+                              message: Optional[str] = None,
+                              send_email: bool = True) -> Dict:
+            """Invite a new member to a team"""
+            try:
+                payload = {
+                    "firstname": firstname,
+                    "lastname": lastname,
+                    "email": email,
+                    "role": role,
+                    "send_email": send_email
+                }
+                
+                if message:
+                    payload["message"] = message
+                
+                response = self.api_client.post(f'/org/invite/team/member/{team_id}', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Invitation sent to {email} for team {team_id}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error inviting team member: {e}")
+                raise
+        
+        def invite_developer(self, team_id: str, email: str, firstname: str, lastname: str) -> Dict:
+            """Invite a developer to the team"""
+            return self.invite_team_member(
+                team_id=team_id,
+                firstname=firstname,
+                lastname=lastname,
+                email=email,
+                role="Organization_User",
+                message="Welcome to our development team! We are excited to have you join us."
+            )
+        
+        def invite_team_admin(self, team_id: str, email: str, firstname: str, lastname: str) -> Dict:
+            """Invite a team administrator"""
+            return self.invite_team_member(
+                team_id=team_id,
+                firstname=firstname,
+                lastname=lastname,
+                email=email,
+                role="Team_Admin",
+                message="You have been invited as a team administrator. Welcome to the team!"
+            )
+        
+        def invite_viewer(self, team_id: str, email: str, firstname: str, lastname: str) -> Dict:
+            """Invite a viewer to the team"""
+            return self.invite_team_member(
+                team_id=team_id,
+                firstname=firstname,
+                lastname=lastname,
+                email=email,
+                role="Viewer",
+                message="You have been granted read-only access to our team resources."
+            )
+        
+        def bulk_invite_developers(self, team_id: str, developers: list) -> list:
+            """Invite multiple developers to a team"""
+            results = []
+            for dev in developers:
+                try:
+                    result = self.invite_developer(
+                        team_id=team_id,
+                        email=dev['email'],
+                        firstname=dev['firstname'],
+                        lastname=dev['lastname']
+                    )
+                    results.append({"success": True, "data": result, "developer": dev})
+                except Exception as e:
+                    results.append({"success": False, "error": str(e), "developer": dev})
+            
+            return results
     
-    // Validate required fields
-    if (!memberData.firstname || memberData.firstname.trim().length === 0) {
-      errors.push('First name is required');
-    }
+    # Usage example
+    invitation_manager = TeamInvitationManager(api_client)
     
-    if (!memberData.lastname || memberData.lastname.trim().length === 0) {
-      errors.push('Last name is required');
-    }
+    # Invite individual members
+    dev_invitation = invitation_manager.invite_developer(
+        team_id="team_1234567890abcdef",
+        email="john.doe@example.com",
+        firstname="John",
+        lastname="Doe"
+    )
     
-    // Validate role
-    const validRoles = ['Organization_User', 'Team_Admin', 'Viewer'];
-    if (!validRoles.includes(memberData.role)) {
-      errors.push('Invalid role specified');
-    }
+    # Bulk invite developers
+    developers = [
+        {"email": "alice@example.com", "firstname": "Alice", "lastname": "Johnson"},
+        {"email": "bob@example.com", "firstname": "Bob", "lastname": "Wilson"},
+        {"email": "carol@example.com", "firstname": "Carol", "lastname": "Brown"}
+    ]
     
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
-  }
-  
-  async inviteMemberWithValidation(teamId, memberData) {
-    const validation = this.validateInvitationData(memberData);
+    bulk_results = invitation_manager.bulk_invite_developers(
+        team_id="team_1234567890abcdef",
+        developers=developers
+    )
     
-    if (!validation.isValid) {
-      throw new Error(\`Validation failed: \${validation.errors.join(', ')}\`);
-    }
-    
-    const response = await this.apiClient.makeRequest(\`/org/invite/team/member/\${teamId}\`, {
-      method: 'POST',
-      body: JSON.stringify(memberData)
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(\`Invitation failed: \${error.error.message}\`);
-    }
-    
-    return await response.json();
-  }
-}
-```
+    # Check results
+    for result in bulk_results:
+        if result["success"]:
+            print(f"Successfully invited {result['developer']['email']}")
+        else:
+            print(f"Failed to invite {result['developer']['email']}: {result['error']}")
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -489,11 +662,11 @@ const results = await invitationManager.inviteMultipleMembers('team_123', member
   <Card title="Get Team Members" icon="users">
     `GET /org/team/members/{teamId}` - View current team members
   </Card>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List all teams in organization
+  </Card>
   <Card title="Create Team" icon="plus">
     `POST /org/create/team` - Create a new team
-  </Card>
-  <Card title="Get Teams" icon="list">
-    `GET /org/teams` - List all teams
   </Card>
   <Card title="Delete Team" icon="trash">
     `DELETE /org/team/{teamId}` - Remove a team

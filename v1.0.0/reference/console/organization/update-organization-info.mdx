@@ -1,0 +1,953 @@
+---
+title: "Update Organization Information"
+api: "PATCH /org/information"
+description: "Update organization details and settings"
+---
+
+Update your organization's information, including basic details, contact information, address, and configuration settings. This endpoint allows you to modify various aspects of your organization profile.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization management and profile updates within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="basicInfo" type="object" required="false">
+  Basic organization information
+  
+  **Properties**:
+  - `website` (string): Organization's website URL
+  - `industry` (string): Industry category (TECHNOLOGY, HEALTHCARE, FINANCE, EDUCATION, OTHER)
+  - `companySize` (string): Company size (SMALL, MEDIUM, LARGE, ENTERPRISE)
+  - `founded` (string): Year the organization was founded
+  - `description` (string): Description of the organization
+  
+  **Example**:
+  ```json
+  {
+    "website": "https://www.acmecorp.com",
+    "industry": "TECHNOLOGY",
+    "companySize": "MEDIUM",
+    "founded": "2010",
+    "description": "A leading technology company specializing in innovative software solutions"
+  }
+  ```
+</ParamField>
+
+<ParamField body="address" type="object" required="false">
+  Organization's physical address
+  
+  **Properties**:
+  - `address1` (string): Primary address line
+  - `address2` (string): Secondary address line (optional)
+  - `city` (string): City name
+  - `state` (string): State or province
+  - `postalCode` (string): Postal or ZIP code
+  - `country` (string): Country name
+  
+  **Example**:
+  ```json
+  {
+    "address1": "123 Technology Drive",
+    "address2": "Suite 100",
+    "city": "San Francisco",
+    "state": "California",
+    "postalCode": "94105",
+    "country": "United States"
+  }
+  ```
+</ParamField>
+
+<ParamField body="contact" type="object" required="false">
+  Organization's contact information
+  
+  **Properties**:
+  - `phone` (string): Primary phone number
+  - `email` (string): Primary contact email address
+  
+  **Example**:
+  ```json
+  {
+    "phone": "+1-555-123-4567",
+    "email": "contact@acmecorp.com"
+  }
+  ```
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Organization settings and preferences
+  
+  **Properties**:
+  - `timezone` (string): Organization's timezone
+  - `currency` (string): Default currency for billing
+  - `language` (string): Default language for the organization
+  - `notifications` (object): Notification preferences
+  
+  **Example**:
+  ```json
+  {
+    "timezone": "America/Los_Angeles",
+    "currency": "USD",
+    "language": "en",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    }
+  }
+  ```
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the update was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the updated organization information
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the organization
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the organization
+</ResponseField>
+
+<ResponseField name="data.website" type="string">
+  Organization's website URL
+</ResponseField>
+
+<ResponseField name="data.industry" type="string">
+  Industry category the organization belongs to
+</ResponseField>
+
+<ResponseField name="data.company_size" type="string">
+  Size category of the company
+</ResponseField>
+
+<ResponseField name="data.founded" type="string">
+  Year the organization was founded
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the organization
+</ResponseField>
+
+<ResponseField name="data.address" type="object">
+  Organization's physical address
+</ResponseField>
+
+<ResponseField name="data.contact" type="object">
+  Organization's contact information
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Organization settings and preferences
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when the organization was updated
+</ResponseField>
+
+<ResponseField name="data.updated_by" type="string">
+  User ID of the person who updated the organization
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "https://api.example.com/org/information" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "basicInfo": {
+      "website": "https://www.acmecorp.com",
+      "industry": "TECHNOLOGY",
+      "companySize": "MEDIUM",
+      "founded": "2010",
+      "description": "A leading technology company specializing in innovative software solutions"
+    },
+    "address": {
+      "address1": "123 Technology Drive",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "California",
+      "postalCode": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acmecorp.com"
+    },
+    "settings": {
+      "timezone": "America/Los_Angeles",
+      "currency": "USD",
+      "language": "en",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/information', {
+  method: 'PATCH',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    basicInfo: {
+      website: 'https://www.acmecorp.com',
+      industry: 'TECHNOLOGY',
+      companySize: 'MEDIUM',
+      founded: '2010',
+      description: 'A leading technology company specializing in innovative software solutions'
+    },
+    address: {
+      address1: '123 Technology Drive',
+      address2: 'Suite 100',
+      city: 'San Francisco',
+      state: 'California',
+      postalCode: '94105',
+      country: 'United States'
+    },
+    contact: {
+      phone: '+1-555-123-4567',
+      email: 'contact@acmecorp.com'
+    },
+    settings: {
+      timezone: 'America/Los_Angeles',
+      currency: 'USD',
+      language: 'en',
+      notifications: {
+        email: true,
+        sms: false,
+        push: true
+      }
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "basicInfo": {
+        "website": "https://www.acmecorp.com",
+        "industry": "TECHNOLOGY",
+        "companySize": "MEDIUM",
+        "founded": "2010",
+        "description": "A leading technology company specializing in innovative software solutions"
+    },
+    "address": {
+        "address1": "123 Technology Drive",
+        "address2": "Suite 100",
+        "city": "San Francisco",
+        "state": "California",
+        "postalCode": "94105",
+        "country": "United States"
+    },
+    "contact": {
+        "phone": "+1-555-123-4567",
+        "email": "contact@acmecorp.com"
+    },
+    "settings": {
+        "timezone": "America/Los_Angeles",
+        "currency": "USD",
+        "language": "en",
+        "notifications": {
+            "email": True,
+            "sms": False,
+            "push": True
+        }
+    }
+}
+
+response = requests.patch(
+    'https://api.example.com/org/information',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'basicInfo' => [
+        'website' => 'https://www.acmecorp.com',
+        'industry' => 'TECHNOLOGY',
+        'companySize' => 'MEDIUM',
+        'founded' => '2010',
+        'description' => 'A leading technology company specializing in innovative software solutions'
+    ],
+    'address' => [
+        'address1' => '123 Technology Drive',
+        'address2' => 'Suite 100',
+        'city' => 'San Francisco',
+        'state' => 'California',
+        'postalCode' => '94105',
+        'country' => 'United States'
+    ],
+    'contact' => [
+        'phone' => '+1-555-123-4567',
+        'email' => 'contact@acmecorp.com'
+    ],
+    'settings' => [
+        'timezone' => 'America/Los_Angeles',
+        'currency' => 'USD',
+        'language' => 'en',
+        'notifications' => [
+            'email' => true,
+            'sms' => false,
+            'push' => true
+        ]
+    ]
+];
+
+$response = file_get_contents('https://api.example.com/org/information', false, stream_context_create([
+    'http' => [
+        'method' => 'PATCH',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type UpdateOrganizationRequest struct {
+    BasicInfo *BasicInfo `json:"basicInfo,omitempty"`
+    Address   *Address   `json:"address,omitempty"`
+    Contact   *Contact   `json:"contact,omitempty"`
+    Settings  *Settings  `json:"settings,omitempty"`
+}
+
+type BasicInfo struct {
+    Website     string `json:"website,omitempty"`
+    Industry    string `json:"industry,omitempty"`
+    CompanySize string `json:"companySize,omitempty"`
+    Founded     string `json:"founded,omitempty"`
+    Description string `json:"description,omitempty"`
+}
+
+type Address struct {
+    Address1   string `json:"address1,omitempty"`
+    Address2   string `json:"address2,omitempty"`
+    City       string `json:"city,omitempty"`
+    State      string `json:"state,omitempty"`
+    PostalCode string `json:"postalCode,omitempty"`
+    Country    string `json:"country,omitempty"`
+}
+
+type Contact struct {
+    Phone string `json:"phone,omitempty"`
+    Email string `json:"email,omitempty"`
+}
+
+type Settings struct {
+    Timezone      string                 `json:"timezone,omitempty"`
+    Currency      string                 `json:"currency,omitempty"`
+    Language      string                 `json:"language,omitempty"`
+    Notifications map[string]interface{} `json:"notifications,omitempty"`
+}
+
+func main() {
+    payload := UpdateOrganizationRequest{
+        BasicInfo: &BasicInfo{
+            Website:     "https://www.acmecorp.com",
+            Industry:    "TECHNOLOGY",
+            CompanySize: "MEDIUM",
+            Founded:     "2010",
+            Description: "A leading technology company specializing in innovative software solutions",
+        },
+        Address: &Address{
+            Address1:   "123 Technology Drive",
+            Address2:   "Suite 100",
+            City:       "San Francisco",
+            State:      "California",
+            PostalCode: "94105",
+            Country:    "United States",
+        },
+        Contact: &Contact{
+            Phone: "+1-555-123-4567",
+            Email: "contact@acmecorp.com",
+        },
+        Settings: &Settings{
+            Timezone: "America/Los_Angeles",
+            Currency: "USD",
+            Language: "en",
+            Notifications: map[string]interface{}{
+                "email": true,
+                "sms":   false,
+                "push":  true,
+            },
+        },
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("PATCH", "https://api.example.com/org/information", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890abcdef",
+    "name": "Acme Corporation",
+    "website": "https://www.acmecorp.com",
+    "industry": "TECHNOLOGY",
+    "company_size": "MEDIUM",
+    "founded": "2010",
+    "description": "A leading technology company specializing in innovative software solutions",
+    "address": {
+      "address1": "123 Technology Drive",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "California",
+      "postal_code": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acmecorp.com"
+    },
+    "settings": {
+      "timezone": "America/Los_Angeles",
+      "currency": "USD",
+      "language": "en",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "updated_at": "2024-01-15T10:30:00Z",
+    "updated_by": "user_1234567890abcdef"
+  },
+  "message": "Organization information updated successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to update organization information
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Organization not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "basicInfo.industry",
+          "reason": "Industry must be one of: TECHNOLOGY, HEALTHCARE, FINANCE, EDUCATION, OTHER"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to update organization information",
+        "details": {
+          "field": "permissions",
+          "reason": "Organization updates require organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Organization Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "ORGANIZATION_NOT_FOUND",
+        "message": "Organization not found",
+        "details": {
+          "field": "organization",
+          "reason": "Organization does not exist or has been deleted"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Partial Updates" icon="edit">
+    Update flexibility:
+    
+    - **Selective Updates**: You can update only specific sections
+    - **Partial Data**: Include only the fields you want to change
+    - **Nested Objects**: Update nested objects like address or settings
+    - **Validation**: Each field is validated independently
+  </Accordion>
+  
+  <Accordion title="Industry Categories" icon="industry">
+    Valid industry options:
+    
+    - **TECHNOLOGY**: Software, hardware, IT services
+    - **HEALTHCARE**: Medical, pharmaceutical, health services
+    - **FINANCE**: Banking, insurance, financial services
+    - **EDUCATION**: Schools, universities, training
+    - **OTHER**: Any other industry category
+  </Accordion>
+  
+  <Accordion title="Company Sizes" icon="users">
+    Valid company size options:
+    
+    - **SMALL**: 1-50 employees
+    - **MEDIUM**: 51-500 employees
+    - **LARGE**: 501-5000 employees
+    - **ENTERPRISE**: 5000+ employees
+  </Accordion>
+  
+  <Accordion title="Required Permissions" icon="shield">
+    Permissions needed:
+    
+    - **Organization Admin**: Can update all organization information
+    - **Organization Owner**: Can update all organization information
+    - **Team Admin**: Can update basic information only
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Organization Update Service" icon="cog">
+    ```javascript
+    class OrganizationUpdateService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async updateOrganizationInfo(updates) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/information', {
+            method: 'PATCH',
+            body: JSON.stringify(updates)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to update organization information');
+          }
+          
+          const result = await response.json();
+          
+          // Log update
+          console.log('Organization information updated successfully');
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error updating organization information:', error);
+          throw error;
+        }
+      }
+      
+      async updateBasicInfo(basicInfo) {
+        return this.updateOrganizationInfo({
+          basicInfo: basicInfo
+        });
+      }
+      
+      async updateAddress(address) {
+        return this.updateOrganizationInfo({
+          address: address
+        });
+      }
+      
+      async updateContact(contact) {
+        return this.updateOrganizationInfo({
+          contact: contact
+        });
+      }
+      
+      async updateSettings(settings) {
+        return this.updateOrganizationInfo({
+          settings: settings
+        });
+      }
+      
+      async updateWebsite(website) {
+        return this.updateBasicInfo({
+          website: website
+        });
+      }
+      
+      async updateIndustry(industry) {
+        return this.updateBasicInfo({
+          industry: industry
+        });
+      }
+      
+      async updateCompanySize(companySize) {
+        return this.updateBasicInfo({
+          companySize: companySize
+        });
+      }
+      
+      async updateDescription(description) {
+        return this.updateBasicInfo({
+          description: description
+        });
+      }
+      
+      async updateTimezone(timezone) {
+        return this.updateSettings({
+          timezone: timezone
+        });
+      }
+      
+      async updateCurrency(currency) {
+        return this.updateSettings({
+          currency: currency
+        });
+      }
+      
+      async updateLanguage(language) {
+        return this.updateSettings({
+          language: language
+        });
+      }
+      
+      async updateNotifications(notifications) {
+        return this.updateSettings({
+          notifications: notifications
+        });
+      }
+    }
+    
+    // Usage example
+    const updateService = new OrganizationUpdateService(apiClient);
+    
+    // Update basic information
+    const basicInfo = await updateService.updateBasicInfo({
+      website: 'https://www.acmecorp.com',
+      industry: 'TECHNOLOGY',
+      companySize: 'MEDIUM',
+      founded: '2010',
+      description: 'A leading technology company specializing in innovative software solutions'
+    });
+    
+    // Update address
+    const address = await updateService.updateAddress({
+      address1: '123 Technology Drive',
+      address2: 'Suite 100',
+      city: 'San Francisco',
+      state: 'California',
+      postalCode: '94105',
+      country: 'United States'
+    });
+    
+    // Update settings
+    const settings = await updateService.updateSettings({
+      timezone: 'America/Los_Angeles',
+      currency: 'USD',
+      language: 'en',
+      notifications: {
+        email: true,
+        sms: false,
+        push: true
+      }
+    });
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Organization Update Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
+    
+    class OrganizationUpdateManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def update_organization_info(self, updates: Dict) -> Dict:
+            """Update organization information with provided updates"""
+            try:
+                response = self.api_client.patch('/org/information', json=updates)
+                response.raise_for_status()
+                
+                result = response.json()
+                print('Organization information updated successfully')
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error updating organization information: {e}")
+                raise
+        
+        def update_basic_info(self, basic_info: Dict) -> Dict:
+            """Update basic organization information"""
+            return self.update_organization_info({
+                "basicInfo": basic_info
+            })
+        
+        def update_address(self, address: Dict) -> Dict:
+            """Update organization address"""
+            return self.update_organization_info({
+                "address": address
+            })
+        
+        def update_contact(self, contact: Dict) -> Dict:
+            """Update organization contact information"""
+            return self.update_organization_info({
+                "contact": contact
+            })
+        
+        def update_settings(self, settings: Dict) -> Dict:
+            """Update organization settings"""
+            return self.update_organization_info({
+                "settings": settings
+            })
+        
+        def update_website(self, website: str) -> Dict:
+            """Update organization website"""
+            return self.update_basic_info({
+                "website": website
+            })
+        
+        def update_industry(self, industry: str) -> Dict:
+            """Update organization industry"""
+            return self.update_basic_info({
+                "industry": industry
+            })
+        
+        def update_company_size(self, company_size: str) -> Dict:
+            """Update organization company size"""
+            return self.update_basic_info({
+                "companySize": company_size
+            })
+        
+        def update_description(self, description: str) -> Dict:
+            """Update organization description"""
+            return self.update_basic_info({
+                "description": description
+            })
+        
+        def update_timezone(self, timezone: str) -> Dict:
+            """Update organization timezone"""
+            return self.update_settings({
+                "timezone": timezone
+            })
+        
+        def update_currency(self, currency: str) -> Dict:
+            """Update organization currency"""
+            return self.update_settings({
+                "currency": currency
+            })
+        
+        def update_language(self, language: str) -> Dict:
+            """Update organization language"""
+            return self.update_settings({
+                "language": language
+            })
+        
+        def update_notifications(self, notifications: Dict) -> Dict:
+            """Update organization notification settings"""
+            return self.update_settings({
+                "notifications": notifications
+            })
+        
+        def bulk_update_organization(self, 
+                                   basic_info: Optional[Dict] = None,
+                                   address: Optional[Dict] = None,
+                                   contact: Optional[Dict] = None,
+                                   settings: Optional[Dict] = None) -> Dict:
+            """Update multiple organization sections at once"""
+            updates = {}
+            
+            if basic_info:
+                updates["basicInfo"] = basic_info
+            if address:
+                updates["address"] = address
+            if contact:
+                updates["contact"] = contact
+            if settings:
+                updates["settings"] = settings
+            
+            return self.update_organization_info(updates)
+    
+    # Usage example
+    update_manager = OrganizationUpdateManager(api_client)
+    
+    # Update basic information
+    basic_info = update_manager.update_basic_info({
+        "website": "https://www.acmecorp.com",
+        "industry": "TECHNOLOGY",
+        "companySize": "MEDIUM",
+        "founded": "2010",
+        "description": "A leading technology company specializing in innovative software solutions"
+    })
+    
+    # Update address
+    address = update_manager.update_address({
+        "address1": "123 Technology Drive",
+        "address2": "Suite 100",
+        "city": "San Francisco",
+        "state": "California",
+        "postalCode": "94105",
+        "country": "United States"
+    })
+    
+    # Update settings
+    settings = update_manager.update_settings({
+        "timezone": "America/Los_Angeles",
+        "currency": "USD",
+        "language": "en",
+        "notifications": {
+            "email": True,
+            "sms": False,
+            "push": True
+        }
+    })
+    
+    # Bulk update
+    bulk_update = update_manager.bulk_update_organization(
+        basic_info={
+            "website": "https://www.acmecorp.com",
+            "industry": "TECHNOLOGY"
+        },
+        settings={
+            "timezone": "America/Los_Angeles",
+            "currency": "USD"
+        }
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Organization Information" icon="info">
+    `GET /org/information` - View current organization details
+  </Card>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List organization teams
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create new teams
+  </Card>
+  <Card title="Get Team Members" icon="users">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+</CardGroup>

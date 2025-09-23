@@ -1,0 +1,651 @@
+---
+title: "Get Organization Information"
+api: "GET /org/information"
+description: "Retrieve organization details and settings"
+---
+
+Retrieve comprehensive information about your organization, including basic details, contact information, address, and configuration settings. This endpoint provides a complete overview of your organization's profile and settings.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for organization management and profile viewing within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+No request body or query parameters are required for this endpoint.
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the organization information
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the organization
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the organization
+</ResponseField>
+
+<ResponseField name="data.website" type="string">
+  Organization's website URL
+</ResponseField>
+
+<ResponseField name="data.industry" type="string">
+  Industry category the organization belongs to
+</ResponseField>
+
+<ResponseField name="data.company_size" type="string">
+  Size category of the company
+</ResponseField>
+
+<ResponseField name="data.founded" type="string">
+  Year the organization was founded
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the organization
+</ResponseField>
+
+<ResponseField name="data.address" type="object">
+  Organization's physical address
+</ResponseField>
+
+<ResponseField name="data.address.address1" type="string">
+  Primary address line
+</ResponseField>
+
+<ResponseField name="data.address.address2" type="string">
+  Secondary address line (optional)
+</ResponseField>
+
+<ResponseField name="data.address.city" type="string">
+  City name
+</ResponseField>
+
+<ResponseField name="data.address.state" type="string">
+  State or province
+</ResponseField>
+
+<ResponseField name="data.address.postal_code" type="string">
+  Postal or ZIP code
+</ResponseField>
+
+<ResponseField name="data.address.country" type="string">
+  Country name
+</ResponseField>
+
+<ResponseField name="data.contact" type="object">
+  Organization's contact information
+</ResponseField>
+
+<ResponseField name="data.contact.phone" type="string">
+  Primary phone number
+</ResponseField>
+
+<ResponseField name="data.contact.email" type="string">
+  Primary contact email address
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Organization settings and preferences
+</ResponseField>
+
+<ResponseField name="data.settings.timezone" type="string">
+  Organization's timezone
+</ResponseField>
+
+<ResponseField name="data.settings.currency" type="string">
+  Default currency for billing
+</ResponseField>
+
+<ResponseField name="data.settings.language" type="string">
+  Default language for the organization
+</ResponseField>
+
+<ResponseField name="data.settings.notifications" type="object">
+  Notification preferences
+</ResponseField>
+
+<ResponseField name="data.settings.notifications.email" type="boolean">
+  Whether email notifications are enabled
+</ResponseField>
+
+<ResponseField name="data.settings.notifications.sms" type="boolean">
+  Whether SMS notifications are enabled
+</ResponseField>
+
+<ResponseField name="data.settings.notifications.push" type="boolean">
+  Whether push notifications are enabled
+</ResponseField>
+
+<ResponseField name="data.stats" type="object">
+  Organization statistics
+</ResponseField>
+
+<ResponseField name="data.stats.total_teams" type="integer">
+  Total number of teams in the organization
+</ResponseField>
+
+<ResponseField name="data.stats.total_members" type="integer">
+  Total number of members in the organization
+</ResponseField>
+
+<ResponseField name="data.stats.total_projects" type="integer">
+  Total number of active projects
+</ResponseField>
+
+<ResponseField name="data.stats.created_at" type="string">
+  ISO 8601 timestamp when the organization was created
+</ResponseField>
+
+<ResponseField name="data.stats.last_updated" type="string">
+  ISO 8601 timestamp when the organization was last updated
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/information" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/information', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.example.com/org/information',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$response = file_get_contents('https://api.example.com/org/information', false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    req, _ := http.NewRequest("GET", "https://api.example.com/org/information", nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "organization_id": "org_1234567890abcdef",
+    "name": "Acme Corporation",
+    "website": "https://www.acmecorp.com",
+    "industry": "TECHNOLOGY",
+    "company_size": "MEDIUM",
+    "founded": "2010",
+    "description": "A leading technology company specializing in innovative software solutions",
+    "address": {
+      "address1": "123 Technology Drive",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "California",
+      "postal_code": "94105",
+      "country": "United States"
+    },
+    "contact": {
+      "phone": "+1-555-123-4567",
+      "email": "contact@acmecorp.com"
+    },
+    "settings": {
+      "timezone": "America/Los_Angeles",
+      "currency": "USD",
+      "language": "en",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "stats": {
+      "total_teams": 5,
+      "total_members": 45,
+      "total_projects": 12,
+      "created_at": "2020-01-15T00:00:00Z",
+      "last_updated": "2024-01-15T10:30:00Z"
+    }
+  },
+  "message": "Organization information retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view organization information
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Organization not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Forbidden (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view organization information",
+        "details": {
+          "field": "permissions",
+          "reason": "Organization access requires valid membership"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Organization Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "ORGANIZATION_NOT_FOUND",
+        "message": "Organization not found",
+        "details": {
+          "field": "organization",
+          "reason": "Organization does not exist or has been deleted"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before making another request",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Organization Data" icon="building">
+    Information included:
+    
+    - **Basic Details**: Name, website, industry, company size
+    - **Contact Information**: Phone, email, physical address
+    - **Settings**: Timezone, currency, language, notifications
+    - **Statistics**: Team count, member count, project count
+    - **Timestamps**: Creation date, last update date
+  </Accordion>
+  
+  <Accordion title="Industry Categories" icon="industry">
+    Available industry options:
+    
+    - **TECHNOLOGY**: Software, hardware, IT services
+    - **HEALTHCARE**: Medical, pharmaceutical, health services
+    - **FINANCE**: Banking, insurance, financial services
+    - **EDUCATION**: Schools, universities, training
+    - **OTHER**: Any other industry category
+  </Accordion>
+  
+  <Accordion title="Company Sizes" icon="users">
+    Company size categories:
+    
+    - **SMALL**: 1-50 employees
+    - **MEDIUM**: 51-500 employees
+    - **LARGE**: 501-5000 employees
+    - **ENTERPRISE**: 5000+ employees
+  </Accordion>
+  
+  <Accordion title="Permissions" icon="shield">
+    Required permissions:
+    
+    - **Organization Member**: Can view basic organization information
+    - **Team Admin**: Can view detailed organization information
+    - **Organization Admin**: Can view all organization data and settings
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Organization Information Service" icon="cog">
+    ```javascript
+    class OrganizationInfoService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getOrganizationInfo() {
+        try {
+          const response = await this.apiClient.makeRequest('/org/information');
+          
+          if (!response.ok) {
+            throw new Error('Failed to get organization information');
+          }
+          
+          const result = await response.json();
+          
+          // Log organization info
+          console.log(`Organization: ${result.data.name}`);
+          console.log(`Teams: ${result.data.stats.total_teams}`);
+          console.log(`Members: ${result.data.stats.total_members}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error getting organization information:', error);
+          throw error;
+        }
+      }
+      
+      async getOrganizationStats() {
+        const info = await this.getOrganizationInfo();
+        return info.data.stats;
+      }
+      
+      async getOrganizationSettings() {
+        const info = await this.getOrganizationInfo();
+        return info.data.settings;
+      }
+      
+      async getOrganizationContact() {
+        const info = await this.getOrganizationInfo();
+        return info.data.contact;
+      }
+      
+      async getOrganizationAddress() {
+        const info = await this.getOrganizationInfo();
+        return info.data.address;
+      }
+      
+      async isOrganizationActive() {
+        const info = await this.getOrganizationInfo();
+        return info.data.stats.total_members > 0;
+      }
+      
+      async getOrganizationSummary() {
+        const info = await this.getOrganizationInfo();
+        return {
+          name: info.data.name,
+          industry: info.data.industry,
+          size: info.data.company_size,
+          teams: info.data.stats.total_teams,
+          members: info.data.stats.total_members,
+          projects: info.data.stats.total_projects
+        };
+      }
+    }
+    
+    // Usage example
+    const orgService = new OrganizationInfoService(apiClient);
+    
+    // Get full organization information
+    const orgInfo = await orgService.getOrganizationInfo();
+    console.log('Organization:', orgInfo.data.name);
+    
+    // Get organization statistics
+    const stats = await orgService.getOrganizationStats();
+    console.log(`Total teams: ${stats.total_teams}`);
+    
+    // Get organization summary
+    const summary = await orgService.getOrganizationSummary();
+    console.log('Summary:', summary);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Organization Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
+    
+    class OrganizationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+            self._cached_info: Optional[Dict] = None
+        
+        def get_organization_info(self, use_cache: bool = True) -> Dict:
+            """Get organization information with optional caching"""
+            try:
+                if use_cache and self._cached_info:
+                    return self._cached_info
+                
+                response = self.api_client.get('/org/information')
+                response.raise_for_status()
+                
+                result = response.json()
+                
+                # Cache the result
+                if use_cache:
+                    self._cached_info = result
+                
+                print(f"Organization: {result['data']['name']}")
+                print(f"Teams: {result['data']['stats']['total_teams']}")
+                print(f"Members: {result['data']['stats']['total_members']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting organization information: {e}")
+                raise
+        
+        def get_organization_stats(self) -> Dict:
+            """Get organization statistics"""
+            info = self.get_organization_info()
+            return info["data"]["stats"]
+        
+        def get_organization_settings(self) -> Dict:
+            """Get organization settings"""
+            info = self.get_organization_info()
+            return info["data"]["settings"]
+        
+        def get_organization_contact(self) -> Dict:
+            """Get organization contact information"""
+            info = self.get_organization_info()
+            return info["data"]["contact"]
+        
+        def get_organization_address(self) -> Dict:
+            """Get organization address"""
+            info = self.get_organization_info()
+            return info["data"]["address"]
+        
+        def is_organization_active(self) -> bool:
+            """Check if organization is active"""
+            stats = self.get_organization_stats()
+            return stats["total_members"] > 0
+        
+        def get_organization_summary(self) -> Dict:
+            """Get organization summary"""
+            info = self.get_organization_info()
+            data = info["data"]
+            return {
+                "name": data["name"],
+                "industry": data["industry"],
+                "size": data["company_size"],
+                "teams": data["stats"]["total_teams"],
+                "members": data["stats"]["total_members"],
+                "projects": data["stats"]["total_projects"]
+            }
+        
+        def get_organization_timezone(self) -> str:
+            """Get organization timezone"""
+            settings = self.get_organization_settings()
+            return settings["timezone"]
+        
+        def get_organization_currency(self) -> str:
+            """Get organization currency"""
+            settings = self.get_organization_settings()
+            return settings["currency"]
+        
+        def get_organization_language(self) -> str:
+            """Get organization language"""
+            settings = self.get_organization_settings()
+            return settings["language"]
+        
+        def are_notifications_enabled(self, notification_type: str) -> bool:
+            """Check if specific notification type is enabled"""
+            settings = self.get_organization_settings()
+            return settings["notifications"].get(notification_type, False)
+        
+        def clear_cache(self):
+            """Clear cached organization information"""
+            self._cached_info = None
+        
+        def refresh_organization_info(self) -> Dict:
+            """Force refresh organization information"""
+            self.clear_cache()
+            return self.get_organization_info(use_cache=False)
+    
+    # Usage example
+    org_manager = OrganizationManager(api_client)
+    
+    # Get full organization information
+    org_info = org_manager.get_organization_info()
+    print(f"Organization: {org_info['data']['name']}")
+    
+    # Get organization statistics
+    stats = org_manager.get_organization_stats()
+    print(f"Total teams: {stats['total_teams']}")
+    
+    # Get organization summary
+    summary = org_manager.get_organization_summary()
+    print(f"Summary: {summary}")
+    
+    # Check notification settings
+    email_notifications = org_manager.are_notifications_enabled("email")
+    print(f"Email notifications enabled: {email_notifications}")
+    
+    # Get organization timezone
+    timezone = org_manager.get_organization_timezone()
+    print(f"Organization timezone: {timezone}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Update Organization Information" icon="edit">
+    `PATCH /org/information` - Update organization details
+  </Card>
+  <Card title="Get Teams" icon="list">
+    `GET /org/teams` - List organization teams
+  </Card>
+  <Card title="Get Team Members" icon="users">
+    `GET /org/team/members/{teamId}` - View team members
+  </Card>
+  <Card title="Create Team" icon="plus">
+    `POST /org/create/team` - Create new teams
+  </Card>
+</CardGroup>

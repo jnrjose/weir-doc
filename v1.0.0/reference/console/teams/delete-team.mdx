@@ -1,26 +1,26 @@
 ---
 title: "Delete Team"
 api: "DELETE /org/team/{teamId}"
-description: "Delete a team from the organization permanently"
+description: "Delete a team from the organization"
 ---
 
-Permanently delete a team from your organization. This action cannot be undone and will remove all team data, member associations, and related resources.
+Permanently delete a team and all its associated data from your organization. This action cannot be undone and will remove all team members, resources, and configurations.
 
 <Warning>
-  **Irreversible Action**
+  **Destructive Action**
   
-  Deleting a team is permanent and cannot be undone. All team data, member associations, and related resources will be permanently removed. Make sure you want to delete the team before proceeding.
+  This operation permanently deletes the team and all associated data. This action cannot be undone. Make sure you have backed up any important data before proceeding.
 </Warning>
 
 <Note>
   **Console API Endpoint**
   
-  This endpoint is part of the Console API category and requires Bearer Token authentication with elevated permissions for team management.
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for team management and organization cleanup within the Weir AI platform.
 </Note>
 
 ## Authentication
 
-This endpoint requires Bearer Token authentication with team management permissions. Include your JWT token in the Authorization header:
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 ```bash
 Authorization: Bearer <your_jwt_token>
@@ -29,12 +29,67 @@ Authorization: Bearer <your_jwt_token>
 ## Path Parameters
 
 <ParamField path="teamId" type="string" required>
-  The unique identifier of the team to delete
+  Unique identifier of the team to delete
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID
+  - Team must exist in your organization
+  - You must have permission to delete this team
 </ParamField>
 
 ## Request
 
-No request body required for this endpoint.
+<ParamField body="confirmation" type="string" required>
+  Confirmation text to verify the deletion intent
+  
+  **Example**: "DELETE_TEAM"
+  
+  **Constraints**: 
+  - Must be exactly "DELETE_TEAM" (case-sensitive)
+  - This is a safety measure to prevent accidental deletions
+</ParamField>
+
+<ParamField body="reason" type="string" required="false">
+  Reason for deleting the team
+  
+  **Example**: "Team is no longer needed after project completion"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="transfer_resources" type="object" required="false">
+  Configuration for transferring team resources to another team
+  
+  **Properties**:
+  - `target_team_id` (string): ID of the team to transfer resources to
+  - `transfer_members` (boolean): Whether to transfer team members
+  - `transfer_data` (boolean): Whether to transfer team data and files
+  - `transfer_permissions` (boolean): Whether to transfer permission settings
+  
+  **Example**:
+  ```json
+  {
+    "target_team_id": "team_0987654321fedcba",
+    "transfer_members": true,
+    "transfer_data": true,
+    "transfer_permissions": false
+  }
+  ```
+</ParamField>
+
+<ParamField body="notify_members" type="boolean" required="false">
+  Whether to notify team members about the team deletion
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, all team members will receive an email notification
+</ParamField>
 
 ## Response
 
@@ -43,14 +98,14 @@ No request body required for this endpoint.
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Contains deletion confirmation information
+  Contains information about the deletion operation
 </ResponseField>
 
 <ResponseField name="data.team_id" type="string">
   ID of the deleted team
 </ResponseField>
 
-<ResponseField name="data.name" type="string">
+<ResponseField name="data.team_name" type="string">
   Name of the deleted team
 </ResponseField>
 
@@ -58,12 +113,28 @@ No request body required for this endpoint.
   ISO 8601 timestamp when the team was deleted
 </ResponseField>
 
-<ResponseField name="data.members_affected" type="integer">
-  Number of members who were removed from the team
+<ResponseField name="data.deleted_by" type="string">
+  User ID of the person who deleted the team
 </ResponseField>
 
-<ResponseField name="data.resources_affected" type="array">
-  List of resources that were affected by the deletion
+<ResponseField name="data.members_affected" type="integer">
+  Number of team members who were affected by the deletion
+</ResponseField>
+
+<ResponseField name="data.resources_transferred" type="object">
+  Information about resources that were transferred (if applicable)
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.target_team_id" type="string">
+  ID of the team that received the transferred resources
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.members_transferred" type="integer">
+  Number of members transferred to the target team
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.data_transferred" type="boolean">
+  Whether team data was transferred
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -78,18 +149,40 @@ No request body required for this endpoint.
 
 <CodeGroup>
 ```bash cURL
-curl -X DELETE "https://api.example.com/org/team/team_1234567890" \
+curl -X DELETE "https://api.example.com/org/team/team_1234567890abcdef" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  -H "Content-Type: application/json"
+  -H "Content-Type: application/json" \
+  -d '{
+    "confirmation": "DELETE_TEAM",
+    "reason": "Team is no longer needed after project completion",
+    "transfer_resources": {
+      "target_team_id": "team_0987654321fedcba",
+      "transfer_members": true,
+      "transfer_data": true,
+      "transfer_permissions": false
+    },
+    "notify_members": true
+  }'
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.example.com/org/team/team_1234567890', {
+const response = await fetch('https://api.example.com/org/team/team_1234567890abcdef', {
   method: 'DELETE',
   headers: {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     'Content-Type': 'application/json'
-  }
+  },
+  body: JSON.stringify({
+    confirmation: 'DELETE_TEAM',
+    reason: 'Team is no longer needed after project completion',
+    transfer_resources: {
+      target_team_id: 'team_0987654321fedcba',
+      transfer_members: true,
+      transfer_data: true,
+      transfer_permissions: false
+    },
+    notify_members: true
+  })
 });
 
 const data = await response.json();
@@ -99,12 +192,25 @@ console.log(data);
 ```python Python
 import requests
 
+payload = {
+    "confirmation": "DELETE_TEAM",
+    "reason": "Team is no longer needed after project completion",
+    "transfer_resources": {
+        "target_team_id": "team_0987654321fedcba",
+        "transfer_members": True,
+        "transfer_data": True,
+        "transfer_permissions": False
+    },
+    "notify_members": True
+}
+
 response = requests.delete(
-    'https://api.example.com/org/team/team_1234567890',
+    'https://api.example.com/org/team/team_1234567890abcdef',
     headers={
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
         'Content-Type': 'application/json'
-    }
+    },
+    json=payload
 )
 
 print(response.json())
@@ -112,19 +218,31 @@ print(response.json())
 
 ```php PHP
 <?php
-$context = stream_context_create([
+$payload = [
+    'confirmation' => 'DELETE_TEAM',
+    'reason' => 'Team is no longer needed after project completion',
+    'transfer_resources' => [
+        'target_team_id' => 'team_0987654321fedcba',
+        'transfer_members' => true,
+        'transfer_data' => true,
+        'transfer_permissions' => false
+    ],
+    'notify_members' => true
+];
+
+$response = file_get_contents('https://api.example.com/org/team/team_1234567890abcdef', false, stream_context_create([
     'http' => [
         'method' => 'DELETE',
         'header' => [
             'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
             'Content-Type: application/json'
-        ]
+        ],
+        'content' => json_encode($payload)
     ]
-]);
+]));
 
-$response = file_get_contents('https://api.example.com/org/team/team_1234567890', false, $context);
-$result = json_decode($response, true);
-print_r($result);
+$data = json_decode($response, true);
+print_r($data);
 ?>
 ```
 
@@ -132,12 +250,42 @@ print_r($result);
 package main
 
 import (
+    "bytes"
+    "encoding/json"
     "fmt"
     "net/http"
 )
 
+type DeleteTeamRequest struct {
+    Confirmation     string                 `json:"confirmation"`
+    Reason           string                 `json:"reason,omitempty"`
+    TransferResources *TransferResources    `json:"transfer_resources,omitempty"`
+    NotifyMembers    bool                   `json:"notify_members,omitempty"`
+}
+
+type TransferResources struct {
+    TargetTeamID        string `json:"target_team_id"`
+    TransferMembers     bool   `json:"transfer_members"`
+    TransferData        bool   `json:"transfer_data"`
+    TransferPermissions bool   `json:"transfer_permissions"`
+}
+
 func main() {
-    req, _ := http.NewRequest("DELETE", "https://api.example.com/org/team/team_1234567890", nil)
+    payload := DeleteTeamRequest{
+        Confirmation: "DELETE_TEAM",
+        Reason:       "Team is no longer needed after project completion",
+        TransferResources: &TransferResources{
+            TargetTeamID:        "team_0987654321fedcba",
+            TransferMembers:     true,
+            TransferData:        true,
+            TransferPermissions: false,
+        },
+        NotifyMembers: true,
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("DELETE", "https://api.example.com/org/team/team_1234567890abcdef", bytes.NewBuffer(jsonData))
     req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     req.Header.Set("Content-Type", "application/json")
     
@@ -145,8 +293,9 @@ func main() {
     resp, _ := client.Do(req)
     defer resp.Body.Close()
     
-    // Process response
-    fmt.Println("Team deleted")
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
 }
 ```
 </CodeGroup>
@@ -157,36 +306,42 @@ func main() {
 {
   "success": true,
   "data": {
-    "team_id": "team_1234567890",
-    "name": "Old Project Team",
+    "team_id": "team_1234567890abcdef",
+    "team_name": "Development Team",
     "deleted_at": "2024-01-15T10:30:00Z",
-    "members_affected": 5,
-    "resources_affected": [
-      "platform_abc123",
-      "client_def456"
-    ]
+    "deleted_by": "user_1234567890abcdef",
+    "members_affected": 8,
+    "resources_transferred": {
+      "target_team_id": "team_0987654321fedcba",
+      "members_transferred": 8,
+      "data_transferred": true
+    }
   },
-  "message": "Team deleted successfully",
+  "message": "Team deleted successfully and resources transferred",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
 
 ## Error Responses
 
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing confirmation
+</ResponseField>
+
 <ResponseField name="401 Unauthorized" type="object">
   Invalid or expired authentication token
 </ResponseField>
 
 <ResponseField name="403 Forbidden" type="object">
-  Insufficient permissions to delete teams
+  Insufficient permissions to delete this team
 </ResponseField>
 
 <ResponseField name="404 Not Found" type="object">
-  Team not found or already deleted
+  Team not found or doesn't exist
 </ResponseField>
 
 <ResponseField name="409 Conflict" type="object">
-  Team cannot be deleted due to dependencies
+  Team cannot be deleted due to dependencies or active resources
 </ResponseField>
 
 <ResponseField name="429 Too Many Requests" type="object">
@@ -196,261 +351,331 @@ func main() {
 ### Example Error Responses
 
 <AccordionGroup>
-  <Accordion title="Team Not Found (404)" icon="exclamation-triangle">
+  <Accordion title="Missing Confirmation (400)" icon="exclamation-triangle">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "TEAM_NOT_FOUND",
-    "message": "Team not found or already deleted",
-    "details": {
-      "field": "teamId",
-      "reason": "Team does not exist or has already been deleted"
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Confirmation is required for team deletion",
+        "details": {
+          "field": "confirmation",
+          "reason": "Must provide 'DELETE_TEAM' confirmation to proceed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="Permission Error (403)" icon="user-slash">
+  <Accordion title="Team Not Found (404)" icon="search">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "INSUFFICIENT_PERMISSIONS",
-    "message": "You don't have permission to delete this team",
-    "details": {
-      "field": "permissions",
-      "reason": "Team deletion requires admin or team owner permissions"
+    {
+      "success": false,
+      "error": {
+        "code": "TEAM_NOT_FOUND",
+        "message": "Team not found",
+        "details": {
+          "field": "teamId",
+          "reason": "Team with ID 'team_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="Dependency Conflict (409)" icon="exclamation">
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "TEAM_HAS_DEPENDENCIES",
-    "message": "Cannot delete team with active dependencies",
-    "details": {
-      "field": "dependencies",
-      "reason": "Team has active platforms, clients, or other resources that must be removed first",
-      "dependencies": [
-        "platform_abc123",
-        "client_def456"
-      ]
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to delete team",
+        "details": {
+          "field": "permissions",
+          "reason": "Team deletion requires organization_admin or team_owner role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
+  </Accordion>
+  
+  <Accordion title="Team Has Dependencies (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TEAM_HAS_DEPENDENCIES",
+        "message": "Team cannot be deleted due to active dependencies",
+        "details": {
+          "field": "dependencies",
+          "reason": "Team has active projects, ongoing tasks, or critical resources",
+          "dependencies": [
+            "Active projects: 3",
+            "Ongoing tasks: 15",
+            "Critical resources: 2"
+          ]
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Deletion Requirements" icon="shield">
-    To delete a team, you must have:
+  <Accordion title="Deletion Process" icon="trash">
+    What happens when a team is deleted:
     
-    - Team management permissions
-    - Admin role or team owner permissions
-    - No active dependencies (platforms, clients, etc.)
-    - All team members must be removed or reassigned
+    - **Team Removal**: Team is permanently removed from the organization
+    - **Member Handling**: Members are either transferred or removed based on configuration
+    - **Data Cleanup**: Team data and resources are deleted or transferred
+    - **Notification**: Team members are notified of the deletion (if enabled)
+    - **Audit Log**: Deletion is logged for audit purposes
   </Accordion>
   
-  <Accordion title="What Gets Deleted" icon="trash">
-    When a team is deleted, the following are permanently removed:
+  <Accordion title="Resource Transfer" icon="exchange">
+    Resource transfer options:
     
-    - Team configuration and settings
-    - Team member associations
-    - Team-specific permissions
-    - Team history and logs
-    - Associated platforms and clients (if not reassigned)
+    - **Members**: Transfer team members to another team
+    - **Data**: Transfer team files, documents, and data
+    - **Permissions**: Transfer permission settings and configurations
+    - **Projects**: Transfer ongoing projects and tasks
   </Accordion>
   
-  <Accordion title="Dependencies Check" icon="link">
-    Before deletion, the system checks for:
+  <Accordion title="Required Permissions" icon="shield">
+    Permissions needed to delete teams:
     
-    - Active platforms associated with the team
-    - API clients owned by the team
-    - Pending invitations
-    - Active projects or resources
+    - **Organization Admin**: Can delete any team in the organization
+    - **Team Owner**: Can delete teams they own
+    - **Team Admin**: Can delete teams they administer (with restrictions)
   </Accordion>
   
-  <Accordion title="Recovery" icon="exclamation-triangle">
-    **Important**: Team deletion is irreversible:
+  <Accordion title="Safety Measures" icon="lock">
+    Safety features:
     
-    - No recovery mechanism available
-    - All data is permanently removed
-    - Consider archiving instead of deleting
-    - Backup important data before deletion
+    - **Confirmation Required**: Must provide "DELETE_TEAM" confirmation
+    - **Dependency Check**: System checks for active dependencies
+    - **Transfer Options**: Resources can be transferred instead of deleted
+    - **Audit Trail**: All deletions are logged and tracked
   </Accordion>
 </AccordionGroup>
 
-## Integration Examples
+## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Safe Team Deletion" icon="shield-check">
+  <Accordion title="Team Deletion Service" icon="cog">
     ```javascript
-{`class SafeTeamDeletion {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async checkTeamDependencies(teamId) {
-    try {
-      // Check for associated platforms
-      const platformsResponse = await this.apiClient.makeRequest(\`/org/platforms?teamId=\${teamId}\`);
-      const platforms = await platformsResponse.json();
+    class TeamDeletionService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
       
-      // Check for associated clients
-      const clientsResponse = await this.apiClient.makeRequest(\`/org/clients?teamId=\${teamId}\`);
-      const clients = await clientsResponse.json();
+      async deleteTeam(teamId, options = {}) {
+        try {
+          const payload = {
+            confirmation: 'DELETE_TEAM',
+            reason: options.reason || 'Team deletion requested',
+            notify_members: options.notifyMembers !== false
+          };
+          
+          // Add transfer resources if specified
+          if (options.transferResources) {
+            payload.transfer_resources = options.transferResources;
+          }
+          
+          const response = await this.apiClient.makeRequest(`/org/team/${teamId}`, {
+            method: 'DELETE',
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete team');
+          }
+          
+          const result = await response.json();
+          
+          // Log deletion
+          console.log(`Team ${teamId} deleted successfully`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error deleting team:', error);
+          throw error;
+        }
+      }
       
-      // Check team members
-      const membersResponse = await this.apiClient.makeRequest(\`/org/team/members/\${teamId}\`);
-      const members = await membersResponse.json();
+      async deleteTeamWithTransfer(teamId, targetTeamId, reason) {
+        return this.deleteTeam(teamId, {
+          reason: reason,
+          transferResources: {
+            target_team_id: targetTeamId,
+            transfer_members: true,
+            transfer_data: true,
+            transfer_permissions: false
+          },
+          notifyMembers: true
+        });
+      }
       
-      return {
-        hasPlatforms: platforms.data.length > 0,
-        hasClients: clients.data.length > 0,
-        hasMembers: members.data.length > 0,
-        platforms: platforms.data,
-        clients: clients.data,
-        members: members.data
-      };
+      async deleteTeamPermanently(teamId, reason) {
+        return this.deleteTeam(teamId, {
+          reason: reason,
+          notifyMembers: true
+        });
+      }
       
-    } catch (error) {
-      console.error('Error checking dependencies:', error);
-      throw error;
-    }
-  }
-  
-  async deleteTeamSafely(teamId, options = {}) {
-    const dependencies = await this.checkTeamDependencies(teamId);
-    
-    if (dependencies.hasPlatforms && !options.force) {
-      throw new Error(\`Team has \${dependencies.platforms.length} associated platforms. Remove them first or use force option.\`);
+      async deleteTeamSilently(teamId, reason) {
+        return this.deleteTeam(teamId, {
+          reason: reason,
+          notifyMembers: false
+        });
+      }
     }
     
-    if (dependencies.hasClients && !options.force) {
-      throw new Error(\`Team has \${dependencies.clients.length} associated clients. Remove them first or use force option.\`);
-    }
+    // Usage example
+    const deletionService = new TeamDeletionService(apiClient);
     
-    if (dependencies.hasMembers && !options.force) {
-      throw new Error(\`Team has \${dependencies.members.length} members. Remove them first or use force option.\`);
-    }
+    // Delete team with resource transfer
+    const transferResult = await deletionService.deleteTeamWithTransfer(
+      'team_1234567890abcdef',
+      'team_0987654321fedcba',
+      'Project completed, transferring resources to main team'
+    );
     
-    // Proceed with deletion
-    const response = await this.apiClient.makeRequest(\`/org/team/\${teamId}\`, {
-      method: 'DELETE'
-    });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(\`Failed to delete team: \${error.error.message}\`);
-    }
-    
-    return await response.json();
-  }
-  
-  async deleteTeamWithConfirmation(teamId, confirmationData) {
-    // This would typically be called from a UI with user confirmation
-    if (!confirmationData.confirmed) {
-      throw new Error('Team deletion not confirmed');
-    }
-    
-    if (!confirmationData.acknowledgeIrreversible) {
-      throw new Error('User must acknowledge that deletion is irreversible');
-    }
-    
-    return await this.deleteTeamSafely(teamId, { force: confirmationData.force });
-  }
-}
-```
+    // Delete team permanently
+    const deleteResult = await deletionService.deleteTeamPermanently(
+      'team_abcdef1234567890',
+      'Team no longer needed'
+    );
+    ```
   </Accordion>
   
-  <Accordion title="Bulk Team Management" icon="users">
-    ```javascript
-{`class BulkTeamManager {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async deleteMultipleTeams(teamIds, options = {}) {
-    const results = [];
+  <Accordion title="Python Team Deletion Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
     
-    for (const teamId of teamIds) {
-      try {
-        const result = await this.deleteTeamSafely(teamId, options);
-        results.push({
-          teamId,
-          success: true,
-          result
-        });
-      } catch (error) {
-        results.push({
-          teamId,
-          success: false,
-          error: error.message
-        });
-      }
-    }
-    
-    return results;
-  }
-  
-  async deleteTeamSafely(teamId, options = {}) {
-    const safeDeletion = new SafeTeamDeletion(this.apiClient);
-    return await safeDeletion.deleteTeamSafely(teamId, options);
-  }
-  
-  async getDeletionReport(teamIds) {
-    const report = {
-      total_teams: teamIds.length,
-      can_delete: [],
-      has_dependencies: [],
-      not_found: [],
-      permission_denied: []
-    };
-    
-    for (const teamId of teamIds) {
-      try {
-        const dependencies = await this.checkTeamDependencies(teamId);
+    class TeamDeletionManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
         
-        if (dependencies.hasPlatforms || dependencies.hasClients || dependencies.hasMembers) {
-          report.has_dependencies.push({
-            teamId,
-            dependencies
-          });
-        } else {
-          report.can_delete.push(teamId);
-        }
+        def delete_team(self, 
+                       team_id: str,
+                       reason: str = "Team deletion requested",
+                       transfer_resources: Optional[Dict] = None,
+                       notify_members: bool = True) -> Dict:
+            """Delete a team with optional resource transfer"""
+            try:
+                payload = {
+                    "confirmation": "DELETE_TEAM",
+                    "reason": reason,
+                    "notify_members": notify_members
+                }
+                
+                if transfer_resources:
+                    payload["transfer_resources"] = transfer_resources
+                
+                response = self.api_client.delete(f'/org/team/{team_id}', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Team {team_id} deleted successfully")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error deleting team: {e}")
+                raise
         
-      } catch (error) {
-        if (error.message.includes('not found')) {
-          report.not_found.push(teamId);
-        } else if (error.message.includes('permission')) {
-          report.permission_denied.push(teamId);
-        }
-      }
-    }
+        def delete_team_with_transfer(self, 
+                                    team_id: str, 
+                                    target_team_id: str, 
+                                    reason: str) -> Dict:
+            """Delete team and transfer resources to another team"""
+            transfer_resources = {
+                "target_team_id": target_team_id,
+                "transfer_members": True,
+                "transfer_data": True,
+                "transfer_permissions": False
+            }
+            
+            return self.delete_team(
+                team_id=team_id,
+                reason=reason,
+                transfer_resources=transfer_resources,
+                notify_members=True
+            )
+        
+        def delete_team_permanently(self, team_id: str, reason: str) -> Dict:
+            """Delete team permanently without resource transfer"""
+            return self.delete_team(
+                team_id=team_id,
+                reason=reason,
+                notify_members=True
+            )
+        
+        def delete_team_silently(self, team_id: str, reason: str) -> Dict:
+            """Delete team without notifying members"""
+            return self.delete_team(
+                team_id=team_id,
+                reason=reason,
+                notify_members=False
+            )
+        
+        def bulk_delete_teams(self, team_ids: list, reason: str) -> list:
+            """Delete multiple teams"""
+            results = []
+            for team_id in team_ids:
+                try:
+                    result = self.delete_team_permanently(team_id, reason)
+                    results.append({"success": True, "data": result, "team_id": team_id})
+                except Exception as e:
+                    results.append({"success": False, "error": str(e), "team_id": team_id})
+            
+            return results
+        
+        def delete_inactive_teams(self, days_inactive: int = 90) -> list:
+            """Delete teams that have been inactive for specified days"""
+            # This would require getting team list first and checking activity
+            # Implementation depends on available endpoints
+            pass
     
-    return report;
-  }
-  
-  async checkTeamDependencies(teamId) {
-    const safeDeletion = new SafeTeamDeletion(this.apiClient);
-    return await safeDeletion.checkTeamDependencies(teamId);
-  }
-}
-```
+    # Usage example
+    deletion_manager = TeamDeletionManager(api_client)
+    
+    # Delete team with resource transfer
+    transfer_result = deletion_manager.delete_team_with_transfer(
+        team_id="team_1234567890abcdef",
+        target_team_id="team_0987654321fedcba",
+        reason="Project completed, transferring resources to main team"
+    )
+    
+    # Delete team permanently
+    delete_result = deletion_manager.delete_team_permanently(
+        team_id="team_abcdef1234567890",
+        reason="Team no longer needed"
+    )
+    
+    # Bulk delete teams
+    team_ids = ["team_1", "team_2", "team_3"]
+    bulk_results = deletion_manager.bulk_delete_teams(
+        team_ids=team_ids,
+        reason="Cleanup of unused teams"
+    )
+    
+    # Check results
+    for result in bulk_results:
+        if result["success"]:
+            print(f"Successfully deleted team {result['team_id']}")
+        else:
+            print(f"Failed to delete team {result['team_id']}: {result['error']}")
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -458,15 +683,15 @@ func main() {
 
 <CardGroup cols={2}>
   <Card title="Get Teams" icon="list">
-    `GET /org/teams` - List all teams
+    `GET /org/teams` - List all teams before deletion
+  </Card>
+  <Card title="Get Team Members" icon="users">
+    `GET /org/team/members/{teamId}` - View team members before deletion
   </Card>
   <Card title="Create Team" icon="plus">
     `POST /org/create/team` - Create a new team
   </Card>
-  <Card title="Get Team Members" icon="users">
-    `GET /org/team/members/{teamId}` - View team members
-  </Card>
-  <Card title="Get Platforms" icon="server">
-    `GET /org/platforms` - List team platforms
+  <Card title="Invite Team Member" icon="user-plus">
+    `POST /org/invite/team/member/{teamId}` - Add members to teams
   </Card>
 </CardGroup>
