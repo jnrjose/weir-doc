@@ -1,0 +1,1105 @@
+---
+title: "Create Client"
+api: "POST /org/create/client"
+description: "Create a new client within the organization"
+---
+
+Create a new client within your organization for managing API access, authentication, and service integrations. This endpoint allows you to set up clients with different types and configurations.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for client management and API access control within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Name of the client to create
+  
+  **Example**: "Mobile App Client"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Maximum length: 100 characters
+  - Must be unique within the organization
+  - Cannot contain special characters except spaces, hyphens, and underscores
+</ParamField>
+
+<ParamField body="teamId" type="string" required="false">
+  ID of the team to associate with this client
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID within your organization
+  - Team must exist and be accessible
+  - If not provided, client will be associated with the user's default team
+</ParamField>
+
+<ParamField body="description" type="string" required="false">
+  Description of the client's purpose and functionality
+  
+  **Example**: "Client for mobile application API access"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for documentation
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of client being created
+  
+  **Options**: 
+  - `Web Application`: Web-based application client
+  - `Mobile Application`: Mobile app client
+  - `Server Application`: Server-side application client
+  - `API Client`: API integration client
+  - `Third Party`: Third-party service client
+  - `Other`: Any other type of client
+  
+  **Example**: "Mobile Application"
+</ParamField>
+
+<ParamField body="redirectUris" type="array" required="false">
+  List of redirect URIs for OAuth authentication
+  
+  **Example**: ["https://app.example.com/callback", "https://app.example.com/auth"]
+  
+  **Constraints**: 
+  - Must be valid HTTPS URLs
+  - Maximum 10 redirect URIs per client
+  - Required for OAuth-enabled clients
+</ParamField>
+
+<ParamField body="scopes" type="array" required="false">
+  List of OAuth scopes the client can request
+  
+  **Example**: ["read", "write", "admin"]
+  
+  **Available Scopes**:
+  - `read`: Read access to resources
+  - `write`: Write access to resources
+  - `admin`: Administrative access
+  - `user`: User management access
+  - `team`: Team management access
+  - `platform`: Platform management access
+  
+  **Constraints**: 
+  - Must be valid scope names
+  - Maximum 20 scopes per client
+</ParamField>
+
+<ParamField body="settings" type="object" required="false">
+  Client-specific settings and configurations
+  
+  **Properties**:
+  - `oauth_enabled` (boolean): Whether OAuth is enabled for this client
+  - `api_key_enabled` (boolean): Whether API key authentication is enabled
+  - `rate_limit` (object): Rate limiting configuration
+  - `security` (object): Security settings
+  - `notifications` (object): Notification preferences
+  
+  **Example**:
+  ```json
+  {
+    "oauth_enabled": true,
+    "api_key_enabled": true,
+    "rate_limit": {
+      "requests_per_minute": 1000,
+      "requests_per_hour": 10000,
+      "burst_limit": 100
+    },
+    "security": {
+      "require_https": true,
+      "ip_whitelist": ["192.168.1.0/24"],
+      "jwt_expiry": 3600
+    },
+    "notifications": {
+      "email_alerts": true,
+      "webhook_url": "https://app.example.com/webhooks/client"
+    }
+  }
+  ```
+</ParamField>
+
+<ParamField body="tags" type="array" required="false">
+  Tags for categorizing and organizing the client
+  
+  **Example**: ["production", "mobile", "customer-facing"]
+  
+  **Constraints**: 
+  - Maximum 10 tags per client
+  - Each tag maximum 50 characters
+  - Tags are case-insensitive
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the client was created successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the created client information
+</ResponseField>
+
+<ResponseField name="data.client_id" type="string">
+  Unique identifier for the created client
+</ResponseField>
+
+<ResponseField name="data.client_secret" type="string">
+  Client secret for authentication (only shown once)
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the created client
+</ResponseField>
+
+<ResponseField name="data.description" type="string">
+  Description of the client
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Type of the client
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the client (active, inactive, pending, suspended)
+</ResponseField>
+
+<ResponseField name="data.redirect_uris" type="array">
+  List of redirect URIs for OAuth authentication
+</ResponseField>
+
+<ResponseField name="data.scopes" type="array">
+  List of OAuth scopes the client can request
+</ResponseField>
+
+<ResponseField name="data.settings" type="object">
+  Client settings and configurations
+</ResponseField>
+
+<ResponseField name="data.tags" type="array">
+  Tags associated with the client
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the client was created
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the person who created the client
+</ResponseField>
+
+<ResponseField name="data.api_key" type="string">
+  API key for the client (if API key authentication is enabled)
+</ResponseField>
+
+<ResponseField name="data.oauth_config" type="object">
+  OAuth configuration details
+</ResponseField>
+
+<ResponseField name="data.oauth_config.authorization_url" type="string">
+  OAuth authorization URL
+</ResponseField>
+
+<ResponseField name="data.oauth_config.token_url" type="string">
+  OAuth token URL
+</ResponseField>
+
+<ResponseField name="data.oauth_config.client_id" type="string">
+  OAuth client ID
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/create/client" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Mobile App Client",
+    "teamId": "team_1234567890abcdef",
+    "description": "Client for mobile application API access",
+    "type": "Mobile Application",
+    "redirectUris": [
+      "https://app.example.com/callback",
+      "https://app.example.com/auth"
+    ],
+    "scopes": ["read", "write", "user"],
+    "settings": {
+      "oauth_enabled": true,
+      "api_key_enabled": true,
+      "rate_limit": {
+        "requests_per_minute": 1000,
+        "requests_per_hour": 10000,
+        "burst_limit": 100
+      },
+      "security": {
+        "require_https": true,
+        "ip_whitelist": ["192.168.1.0/24"],
+        "jwt_expiry": 3600
+      },
+      "notifications": {
+        "email_alerts": true,
+        "webhook_url": "https://app.example.com/webhooks/client"
+      }
+    },
+    "tags": ["production", "mobile", "customer-facing"]
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/create/client', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Mobile App Client',
+    teamId: 'team_1234567890abcdef',
+    description: 'Client for mobile application API access',
+    type: 'Mobile Application',
+    redirectUris: [
+      'https://app.example.com/callback',
+      'https://app.example.com/auth'
+    ],
+    scopes: ['read', 'write', 'user'],
+    settings: {
+      oauth_enabled: true,
+      api_key_enabled: true,
+      rate_limit: {
+        requests_per_minute: 1000,
+        requests_per_hour: 10000,
+        burst_limit: 100
+      },
+      security: {
+        require_https: true,
+        ip_whitelist: ['192.168.1.0/24'],
+        jwt_expiry: 3600
+      },
+      notifications: {
+        email_alerts: true,
+        webhook_url: 'https://app.example.com/webhooks/client'
+      }
+    },
+    tags: ['production', 'mobile', 'customer-facing']
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Mobile App Client",
+    "teamId": "team_1234567890abcdef",
+    "description": "Client for mobile application API access",
+    "type": "Mobile Application",
+    "redirectUris": [
+        "https://app.example.com/callback",
+        "https://app.example.com/auth"
+    ],
+    "scopes": ["read", "write", "user"],
+    "settings": {
+        "oauth_enabled": True,
+        "api_key_enabled": True,
+        "rate_limit": {
+            "requests_per_minute": 1000,
+            "requests_per_hour": 10000,
+            "burst_limit": 100
+        },
+        "security": {
+            "require_https": True,
+            "ip_whitelist": ["192.168.1.0/24"],
+            "jwt_expiry": 3600
+        },
+        "notifications": {
+            "email_alerts": True,
+            "webhook_url": "https://app.example.com/webhooks/client"
+        }
+    },
+    "tags": ["production", "mobile", "customer-facing"]
+}
+
+response = requests.post(
+    'https://api.example.com/org/create/client',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'name' => 'Mobile App Client',
+    'teamId' => 'team_1234567890abcdef',
+    'description' => 'Client for mobile application API access',
+    'type' => 'Mobile Application',
+    'redirectUris' => [
+        'https://app.example.com/callback',
+        'https://app.example.com/auth'
+    ],
+    'scopes' => ['read', 'write', 'user'],
+    'settings' => [
+        'oauth_enabled' => true,
+        'api_key_enabled' => true,
+        'rate_limit' => [
+            'requests_per_minute' => 1000,
+            'requests_per_hour' => 10000,
+            'burst_limit' => 100
+        ],
+        'security' => [
+            'require_https' => true,
+            'ip_whitelist' => ['192.168.1.0/24'],
+            'jwt_expiry' => 3600
+        ],
+        'notifications' => [
+            'email_alerts' => true,
+            'webhook_url' => 'https://app.example.com/webhooks/client'
+        ]
+    ],
+    'tags' => ['production', 'mobile', 'customer-facing']
+];
+
+$response = file_get_contents('https://api.example.com/org/create/client', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type CreateClientRequest struct {
+    Name         string                 `json:"name"`
+    TeamID       string                 `json:"teamId,omitempty"`
+    Description  string                 `json:"description,omitempty"`
+    Type         string                 `json:"type"`
+    RedirectUris []string               `json:"redirectUris,omitempty"`
+    Scopes       []string               `json:"scopes,omitempty"`
+    Settings     map[string]interface{} `json:"settings,omitempty"`
+    Tags         []string               `json:"tags,omitempty"`
+}
+
+func main() {
+    payload := CreateClientRequest{
+        Name:        "Mobile App Client",
+        TeamID:      "team_1234567890abcdef",
+        Description: "Client for mobile application API access",
+        Type:        "Mobile Application",
+        RedirectUris: []string{
+            "https://app.example.com/callback",
+            "https://app.example.com/auth",
+        },
+        Scopes: []string{"read", "write", "user"},
+        Settings: map[string]interface{}{
+            "oauth_enabled":   true,
+            "api_key_enabled": true,
+            "rate_limit": map[string]interface{}{
+                "requests_per_minute": 1000,
+                "requests_per_hour":   10000,
+                "burst_limit":         100,
+            },
+            "security": map[string]interface{}{
+                "require_https": true,
+                "ip_whitelist":  []string{"192.168.1.0/24"},
+                "jwt_expiry":    3600,
+            },
+            "notifications": map[string]interface{}{
+                "email_alerts": true,
+                "webhook_url":  "https://app.example.com/webhooks/client",
+            },
+        },
+        Tags: []string{"production", "mobile", "customer-facing"},
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/create/client", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "client_id": "client_1234567890abcdef",
+    "client_secret": "secret_1234567890abcdef",
+    "name": "Mobile App Client",
+    "description": "Client for mobile application API access",
+    "type": "Mobile Application",
+    "team_id": "team_1234567890abcdef",
+    "status": "active",
+    "redirect_uris": [
+      "https://app.example.com/callback",
+      "https://app.example.com/auth"
+    ],
+    "scopes": ["read", "write", "user"],
+    "settings": {
+      "oauth_enabled": true,
+      "api_key_enabled": true,
+      "rate_limit": {
+        "requests_per_minute": 1000,
+        "requests_per_hour": 10000,
+        "burst_limit": 100
+      },
+      "security": {
+        "require_https": true,
+        "ip_whitelist": ["192.168.1.0/24"],
+        "jwt_expiry": 3600
+      },
+      "notifications": {
+        "email_alerts": true,
+        "webhook_url": "https://app.example.com/webhooks/client"
+      }
+    },
+    "tags": ["production", "mobile", "customer-facing"],
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": "user_1234567890abcdef",
+    "api_key": "ak_1234567890abcdef",
+    "oauth_config": {
+      "authorization_url": "https://api.example.com/oauth/authorize",
+      "token_url": "https://api.example.com/oauth/token",
+      "client_id": "client_1234567890abcdef"
+    }
+  },
+  "message": "Client created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create clients
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Client name already exists or redirect URI is invalid
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "name",
+          "reason": "Client name is required and must be between 2 and 100 characters"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Client Name Conflict (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "CLIENT_NAME_EXISTS",
+        "message": "Client name already exists",
+        "details": {
+          "field": "name",
+          "reason": "A client with this name already exists in the organization"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Invalid Redirect URI (409)" icon="globe">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_REDIRECT_URI",
+        "message": "Invalid redirect URI",
+        "details": {
+          "field": "redirectUris",
+          "reason": "Redirect URI must be a valid HTTPS URL"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to create clients",
+        "details": {
+          "field": "permissions",
+          "reason": "Client creation requires team_admin or organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Client Types" icon="desktop">
+    Available client types:
+    
+    - **Web Application**: Web-based application clients
+    - **Mobile Application**: Mobile app clients
+    - **Server Application**: Server-side application clients
+    - **API Client**: API integration clients
+    - **Third Party**: Third-party service clients
+    - **Other**: Any other type of client
+  </Accordion>
+  
+  <Accordion title="OAuth Configuration" icon="key">
+    OAuth features:
+    
+    - **Authorization Code Flow**: Standard OAuth 2.0 authorization code flow
+    - **Redirect URIs**: Configure allowed redirect URIs for security
+    - **Scopes**: Define what permissions the client can request
+    - **Client Credentials**: Client ID and secret for authentication
+  </Accordion>
+  
+  <Accordion title="Security Features" icon="shield">
+    Security options:
+    
+    - **HTTPS Required**: Enforce HTTPS for all communications
+    - **IP Whitelisting**: Restrict access to specific IP ranges
+    - **Rate Limiting**: Control request frequency and burst limits
+    - **JWT Expiry**: Configure token expiration times
+  </Accordion>
+  
+  <Accordion title="Required Permissions" icon="users">
+    Permissions needed:
+    
+    - **Team Admin**: Can create clients for their teams
+    - **Organization Admin**: Can create clients for any team
+    - **Client Creator**: Can create clients within their scope
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Client Management Service" icon="cog">
+    ```javascript
+    class ClientManagementService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async createClient(clientData) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/create/client', {
+            method: 'POST',
+            body: JSON.stringify(clientData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to create client');
+          }
+          
+          const result = await response.json();
+          
+          // Log client creation
+          console.log(`Client created: ${result.data.name} (ID: ${result.data.client_id})`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error creating client:', error);
+          throw error;
+        }
+      }
+      
+      async createWebAppClient(name, teamId, description, redirectUris) {
+        return this.createClient({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Web Application',
+          redirectUris: redirectUris,
+          scopes: ['read', 'write'],
+          settings: {
+            oauth_enabled: true,
+            api_key_enabled: true,
+            rate_limit: {
+              requests_per_minute: 1000,
+              requests_per_hour: 10000,
+              burst_limit: 100
+            },
+            security: {
+              require_https: true,
+              jwt_expiry: 3600
+            }
+          },
+          tags: ['web', 'production']
+        });
+      }
+      
+      async createMobileAppClient(name, teamId, description, redirectUris) {
+        return this.createClient({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Mobile Application',
+          redirectUris: redirectUris,
+          scopes: ['read', 'write', 'user'],
+          settings: {
+            oauth_enabled: true,
+            api_key_enabled: true,
+            rate_limit: {
+              requests_per_minute: 500,
+              requests_per_hour: 5000,
+              burst_limit: 50
+            },
+            security: {
+              require_https: true,
+              jwt_expiry: 7200
+            }
+          },
+          tags: ['mobile', 'production']
+        });
+      }
+      
+      async createServerAppClient(name, teamId, description) {
+        return this.createClient({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'Server Application',
+          scopes: ['read', 'write', 'admin'],
+          settings: {
+            oauth_enabled: false,
+            api_key_enabled: true,
+            rate_limit: {
+              requests_per_minute: 2000,
+              requests_per_hour: 20000,
+              burst_limit: 200
+            },
+            security: {
+              require_https: true,
+              ip_whitelist: ['192.168.1.0/24'],
+              jwt_expiry: 1800
+            }
+          },
+          tags: ['server', 'production']
+        });
+      }
+      
+      async createAPIClient(name, teamId, description) {
+        return this.createClient({
+          name: name,
+          teamId: teamId,
+          description: description,
+          type: 'API Client',
+          scopes: ['read', 'write'],
+          settings: {
+            oauth_enabled: false,
+            api_key_enabled: true,
+            rate_limit: {
+              requests_per_minute: 5000,
+              requests_per_hour: 50000,
+              burst_limit: 500
+            },
+            security: {
+              require_https: true,
+              jwt_expiry: 900
+            }
+          },
+          tags: ['api', 'production']
+        });
+      }
+    }
+    
+    // Usage example
+    const clientService = new ClientManagementService(apiClient);
+    
+    // Create web app client
+    const webClient = await clientService.createWebAppClient(
+      'Customer Portal',
+      'team_1234567890abcdef',
+      'Web application for customer portal',
+      ['https://portal.example.com/callback']
+    );
+    
+    // Create mobile app client
+    const mobileClient = await clientService.createMobileAppClient(
+      'Customer Mobile App',
+      'team_1234567890abcdef',
+      'Mobile application for customer services',
+      ['https://app.example.com/callback']
+    );
+    
+    // Create server app client
+    const serverClient = await clientService.createServerAppClient(
+      'Backend Service',
+      'team_1234567890abcdef',
+      'Backend service for data processing'
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Client Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class ClientManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def create_client(self, client_data: Dict) -> Dict:
+            """Create a new client"""
+            try:
+                response = self.api_client.post('/org/create/client', json=client_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Client created: {result['data']['name']} (ID: {result['data']['client_id']})")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error creating client: {e}")
+                raise
+        
+        def create_web_app_client(self, 
+                                name: str, 
+                                team_id: str, 
+                                description: str, 
+                                redirect_uris: List[str]) -> Dict:
+            """Create a web application client"""
+            client_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Web Application",
+                "redirectUris": redirect_uris,
+                "scopes": ["read", "write"],
+                "settings": {
+                    "oauth_enabled": True,
+                    "api_key_enabled": True,
+                    "rate_limit": {
+                        "requests_per_minute": 1000,
+                        "requests_per_hour": 10000,
+                        "burst_limit": 100
+                    },
+                    "security": {
+                        "require_https": True,
+                        "jwt_expiry": 3600
+                    }
+                },
+                "tags": ["web", "production"]
+            }
+            
+            return self.create_client(client_data)
+        
+        def create_mobile_app_client(self, 
+                                   name: str, 
+                                   team_id: str, 
+                                   description: str, 
+                                   redirect_uris: List[str]) -> Dict:
+            """Create a mobile application client"""
+            client_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Mobile Application",
+                "redirectUris": redirect_uris,
+                "scopes": ["read", "write", "user"],
+                "settings": {
+                    "oauth_enabled": True,
+                    "api_key_enabled": True,
+                    "rate_limit": {
+                        "requests_per_minute": 500,
+                        "requests_per_hour": 5000,
+                        "burst_limit": 50
+                    },
+                    "security": {
+                        "require_https": True,
+                        "jwt_expiry": 7200
+                    }
+                },
+                "tags": ["mobile", "production"]
+            }
+            
+            return self.create_client(client_data)
+        
+        def create_server_app_client(self, 
+                                   name: str, 
+                                   team_id: str, 
+                                   description: str) -> Dict:
+            """Create a server application client"""
+            client_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Server Application",
+                "scopes": ["read", "write", "admin"],
+                "settings": {
+                    "oauth_enabled": False,
+                    "api_key_enabled": True,
+                    "rate_limit": {
+                        "requests_per_minute": 2000,
+                        "requests_per_hour": 20000,
+                        "burst_limit": 200
+                    },
+                    "security": {
+                        "require_https": True,
+                        "ip_whitelist": ["192.168.1.0/24"],
+                        "jwt_expiry": 1800
+                    }
+                },
+                "tags": ["server", "production"]
+            }
+            
+            return self.create_client(client_data)
+        
+        def create_api_client(self, 
+                            name: str, 
+                            team_id: str, 
+                            description: str) -> Dict:
+            """Create an API client"""
+            client_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "API Client",
+                "scopes": ["read", "write"],
+                "settings": {
+                    "oauth_enabled": False,
+                    "api_key_enabled": True,
+                    "rate_limit": {
+                        "requests_per_minute": 5000,
+                        "requests_per_hour": 50000,
+                        "burst_limit": 500
+                    },
+                    "security": {
+                        "require_https": True,
+                        "jwt_expiry": 900
+                    }
+                },
+                "tags": ["api", "production"]
+            }
+            
+            return self.create_client(client_data)
+        
+        def create_third_party_client(self, 
+                                    name: str, 
+                                    team_id: str, 
+                                    description: str, 
+                                    redirect_uris: List[str]) -> Dict:
+            """Create a third-party client"""
+            client_data = {
+                "name": name,
+                "teamId": team_id,
+                "description": description,
+                "type": "Third Party",
+                "redirectUris": redirect_uris,
+                "scopes": ["read"],
+                "settings": {
+                    "oauth_enabled": True,
+                    "api_key_enabled": False,
+                    "rate_limit": {
+                        "requests_per_minute": 100,
+                        "requests_per_hour": 1000,
+                        "burst_limit": 10
+                    },
+                    "security": {
+                        "require_https": True,
+                        "jwt_expiry": 3600
+                    }
+                },
+                "tags": ["third-party", "production"]
+            }
+            
+            return self.create_client(client_data)
+        
+        def validate_client_data(self, client_data: Dict) -> bool:
+            """Validate client data before creation"""
+            required_fields = ['name', 'type']
+            
+            for field in required_fields:
+                if field not in client_data:
+                    print(f"Missing required field: {field}")
+                    return False
+            
+            # Validate client type
+            valid_types = [
+                'Web Application', 'Mobile Application', 'Server Application',
+                'API Client', 'Third Party', 'Other'
+            ]
+            
+            if client_data['type'] not in valid_types:
+                print(f"Invalid client type: {client_data['type']}")
+                return False
+            
+            # Validate name length
+            if len(client_data['name']) < 2 or len(client_data['name']) > 100:
+                print("Client name must be between 2 and 100 characters")
+                return False
+            
+            # Validate redirect URIs if provided
+            if 'redirectUris' in client_data:
+                for uri in client_data['redirectUris']:
+                    if not uri.startswith('https://'):
+                        print(f"Invalid redirect URI: {uri} (must be HTTPS)")
+                        return False
+            
+            return True
+        
+        def create_client_safe(self, client_data: Dict) -> Dict:
+            """Create client with validation"""
+            if not self.validate_client_data(client_data):
+                raise ValueError("Invalid client data")
+            
+            return self.create_client(client_data)
+    
+    # Usage example
+    client_manager = ClientManager(api_client)
+    
+    # Create web app client
+    web_client = client_manager.create_web_app_client(
+        name="Customer Portal",
+        team_id="team_1234567890abcdef",
+        description="Web application for customer portal",
+        redirect_uris=["https://portal.example.com/callback"]
+    )
+    
+    # Create mobile app client
+    mobile_client = client_manager.create_mobile_app_client(
+        name="Customer Mobile App",
+        team_id="team_1234567890abcdef",
+        description="Mobile application for customer services",
+        redirect_uris=["https://app.example.com/callback"]
+    )
+    
+    # Create server app client
+    server_client = client_manager.create_server_app_client(
+        name="Backend Service",
+        team_id="team_1234567890abcdef",
+        description="Backend service for data processing"
+    )
+    
+    # Create API client
+    api_client = client_manager.create_api_client(
+        name="Data API Client",
+        team_id="team_1234567890abcdef",
+        description="Client for data API access"
+    )
+    
+    # Create third-party client
+    third_party_client = client_manager.create_third_party_client(
+        name="Partner Integration",
+        team_id="team_1234567890abcdef",
+        description="Client for partner service integration",
+        redirect_uris=["https://partner.example.com/callback"]
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Clients" icon="list">
+    `GET /org/clients` - List all clients
+  </Card>
+  <Card title="Delete Client" icon="trash">
+    `DELETE /org/client/{clientId}` - Remove a client
+  </Card>
+  <Card title="Update Client" icon="edit">
+    `PATCH /org/client/{clientId}` - Update client settings
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for client assignment
+  </Card>
+</CardGroup>
