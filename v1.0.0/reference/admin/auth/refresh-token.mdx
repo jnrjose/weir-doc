@@ -1,15 +1,15 @@
 ---
 title: "Admin Refresh Token"
 api: "POST /auth/refresh/token"
-description: "Refresh expired admin access token"
+description: "Refresh an expired admin access token using a refresh token"
 ---
 
-Refresh an expired admin access token using a valid refresh token. This endpoint allows you to obtain a new access token without requiring the admin to log in again.
+Refresh an expired admin access token using a valid refresh token. This endpoint allows seamless token renewal without requiring re-authentication.
 
 <Note>
   **Admin API Endpoint**
   
-  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for seamless token renewal and session management.
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for secure token management within the Weir AI platform.
 </Note>
 
 ## Authentication
@@ -17,17 +17,20 @@ Refresh an expired admin access token using a valid refresh token. This endpoint
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 ```bash
-Authorization: Bearer <admin_jwt_token>
+Authorization: Bearer <your_jwt_token>
 ```
 
 ## Request
 
 <ParamField body="refresh_token" type="string" required="false">
-  Refresh token for obtaining new access token
+  Refresh token to use for token renewal
   
-  **Example**: "rt_admin_1234567890abcdef"
+  **Example**: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   
-  **Note**: If not provided, will use the refresh token from the current session
+  **Constraints**: 
+  - Must be a valid refresh token
+  - Token must not be expired
+  - If not provided, uses the refresh token from the Authorization header
 </ParamField>
 
 <ParamField body="extend_session" type="boolean" required="false">
@@ -37,25 +40,25 @@ Authorization: Bearer <admin_jwt_token>
   
   **Default**: false
   
-  **Note**: If true, extends both access and refresh token expiration
+  **Note**: If true, extends both access and refresh token expiration times
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean">
-  Indicates if the request was successful
+  Indicates if the token refresh was successful
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Token refresh result data
+  Contains the new token information
 </ResponseField>
 
 <ResponseField name="data.access_token" type="string">
-  New JWT access token
+  New access token
 </ResponseField>
 
 <ResponseField name="data.refresh_token" type="string">
-  New refresh token (if rotated)
+  New refresh token
 </ResponseField>
 
 <ResponseField name="data.token_type" type="string">
@@ -70,20 +73,32 @@ Authorization: Bearer <admin_jwt_token>
   Refresh token expiration time in seconds
 </ResponseField>
 
-<ResponseField name="data.admin_id" type="string">
-  Admin user ID
+<ResponseField name="data.user_id" type="string">
+  ID of the admin user
+</ResponseField>
+
+<ResponseField name="data.roles" type="array">
+  Array of admin roles
 </ResponseField>
 
 <ResponseField name="data.permissions" type="array">
-  List of admin permissions
+  Array of admin permissions
 </ResponseField>
 
-<ResponseField name="data.role" type="string">
-  Admin role level
+<ResponseField name="data.session_id" type="string">
+  Current session ID
 </ResponseField>
 
 <ResponseField name="data.issued_at" type="string">
   ISO 8601 timestamp when the token was issued
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  ISO 8601 timestamp when the access token expires
+</ResponseField>
+
+<ResponseField name="data.refresh_expires_at" type="string">
+  ISO 8601 timestamp when the refresh token expires
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -102,7 +117,7 @@ curl -X POST "https://api.example.com/auth/refresh/token" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
-    "refresh_token": "rt_admin_1234567890abcdef",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "extend_session": true
   }'
 ```
@@ -115,7 +130,7 @@ const response = await fetch('https://api.example.com/auth/refresh/token', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    refresh_token: 'rt_admin_1234567890abcdef',
+    refresh_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     extend_session: true
   })
 });
@@ -128,7 +143,7 @@ console.log(data);
 import requests
 
 payload = {
-    "refresh_token": "rt_admin_1234567890abcdef",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "extend_session": True
 }
 
@@ -143,6 +158,66 @@ response = requests.post(
 
 print(response.json())
 ```
+
+```php PHP
+<?php
+$payload = [
+    'refresh_token' => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'extend_session' => true
+];
+
+$response = file_get_contents('https://api.example.com/auth/refresh/token', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type RefreshTokenRequest struct {
+    RefreshToken  string `json:"refresh_token,omitempty"`
+    ExtendSession bool   `json:"extend_session,omitempty"`
+}
+
+func main() {
+    payload := RefreshTokenRequest{
+        RefreshToken:  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        ExtendSession: true,
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/auth/refresh/token", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
 </CodeGroup>
 
 ## Example Response
@@ -151,23 +226,18 @@ print(response.json())
 {
   "success": true,
   "data": {
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "refresh_token": "rt_admin_0987654321fedcba",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbl8xMjM0NTY3ODkwYWJjZGVmIiwiaWF0IjoxNzA1MzI0NjAwLCJleHAiOjE3MDUzMjgyMDAsInJvbGVzIjpbImFkbWluIiwic3VwZXJfYWRtaW4iXSwicGVybWlzc2lvbnMiOlsiYWRtaW4ucmVhZCIsImFkbWluLndyaXRlIiwiYWRtaW4uZGVsZXRlIl19.signature",
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbl8xMjM0NTY3ODkwYWJjZGVmIiwiaWF0IjoxNzA1MzI0NjAwLCJleHAiOjE3MDUzMzE4MDAsInR5cGUiOiJyZWZyZXNoIn0.signature",
     "token_type": "Bearer",
     "expires_in": 3600,
-    "refresh_expires_in": 86400,
-    "admin_id": "admin_1234567890abcdef",
-    "permissions": [
-      "admin:users:read",
-      "admin:users:write",
-      "admin:organizations:read",
-      "admin:organizations:write",
-      "admin:system:read",
-      "admin:system:write",
-      "admin:logs:read"
-    ],
-    "role": "super_admin",
-    "issued_at": "2024-01-15T10:30:00Z"
+    "refresh_expires_in": 7200,
+    "user_id": "admin_1234567890abcdef",
+    "roles": ["admin", "super_admin"],
+    "permissions": ["admin.read", "admin.write", "admin.delete"],
+    "session_id": "sess_1234567890abcdef",
+    "issued_at": "2024-01-15T10:30:00Z",
+    "expires_at": "2024-01-15T11:30:00Z",
+    "refresh_expires_at": "2024-01-15T12:30:00Z"
   },
   "message": "Token refreshed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
@@ -176,189 +246,432 @@ print(response.json())
 
 ## Error Responses
 
-<ResponseField name="400 Bad Request" type="object">
-  Invalid request parameters or missing refresh token
-</ResponseField>
-
 <ResponseField name="401 Unauthorized" type="object">
   Invalid or expired refresh token
 </ResponseField>
 
 <ResponseField name="403 Forbidden" type="object">
-  Refresh token has been revoked or admin account is locked
-</ResponseField>
-
-<ResponseField name="422 Unprocessable Entity" type="object">
-  Refresh token is invalid or malformed
+  Insufficient permissions to refresh token
 </ResponseField>
 
 <ResponseField name="429 Too Many Requests" type="object">
-  Rate limit exceeded for token refresh
+  Rate limit exceeded
 </ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Refresh Token (401)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_REFRESH_TOKEN",
+        "message": "Invalid or expired refresh token",
+        "details": {
+          "field": "refresh_token",
+          "reason": "Refresh token has expired or is invalid"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to refresh token",
+        "details": {
+          "field": "permissions",
+          "reason": "Token refresh requires valid admin session"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many token refresh requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before requesting another token refresh",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Token Rotation" icon="refresh">
-    Token rotation features:
+  <Accordion title="Token Management" icon="key">
+    Token features:
     
-    - Refresh tokens are rotated on each use
-    - Old refresh tokens are invalidated
-    - New tokens have extended expiration
-    - Rotation enhances security
-  </Accordion>
-  
-  <Accordion title="Session Extension" icon="clock">
-    Session extension:
-    
-    - Extends both access and refresh tokens
-    - Maintains session continuity
-    - Reduces re-authentication needs
-    - Configurable extension duration
+    - **Automatic Refresh**: Refresh tokens before they expire
+    - **Session Extension**: Option to extend session duration
+    - **Secure Storage**: Store tokens securely on client side
+    - **Token Rotation**: New refresh token issued with each refresh
   </Accordion>
   
   <Accordion title="Security Features" icon="shield">
-    Security measures:
+    Security considerations:
     
-    - Refresh token validation
-    - Permission verification
-    - Rate limiting protection
-    - Audit trail logging
+    - **Token Rotation**: Refresh tokens are rotated on each use
+    - **Expiration Tracking**: Monitor token expiration times
+    - **Secure Storage**: Use secure storage for tokens
+    - **HTTPS Only**: Always use HTTPS for token transmission
   </Accordion>
   
-  <Accordion title="Error Handling" icon="exclamation-triangle">
-    Error scenarios:
+  <Accordion title="Best Practices" icon="check">
+    Recommended practices:
     
-    - Invalid refresh token
-    - Expired refresh token
-    - Revoked refresh token
-    - Account lockout
+    - **Proactive Refresh**: Refresh tokens before they expire
+    - **Error Handling**: Handle token refresh failures gracefully
+    - **Storage Security**: Use secure storage mechanisms
+    - **Session Management**: Track session state and expiration
   </Accordion>
 </AccordionGroup>
 
 ## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Token Refresh Service" icon="cog">
+  <Accordion title="Admin Token Manager" icon="cog">
     ```javascript
-class AdminTokenRefreshService {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async refreshToken(refreshToken = null, extendSession = false) {
-    try {
-      const response = await this.apiClient.makeRequest('/auth/refresh/token', {
-        method: 'POST',
-        body: JSON.stringify({
-          refresh_token: refreshToken,
-          extend_session: extendSession
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to refresh admin token');
+    class AdminTokenManager {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+        this.tokenRefreshTimer = null;
       }
       
-      const result = await response.json();
+      async refreshToken(extendSession = false) {
+        try {
+          const refreshToken = this.getRefreshToken();
+          
+          const response = await this.apiClient.makeRequest('/auth/refresh/token', {
+            method: 'POST',
+            body: JSON.stringify({
+              refresh_token: refreshToken,
+              extend_session: extendSession
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to refresh token');
+          }
+          
+          const result = await response.json();
+          
+          // Store new tokens
+          this.storeTokens(result.data);
+          
+          // Set up automatic refresh
+          this.scheduleTokenRefresh(result.data.expires_in);
+          
+          console.log('Token refreshed successfully');
+          return result;
+          
+        } catch (error) {
+          console.error('Error refreshing token:', error);
+          this.handleTokenRefreshError(error);
+          throw error;
+        }
+      }
       
-      // Store new tokens
-      await this.storeNewTokens(result.data.access_token, result.data.refresh_token);
+      async refreshTokenIfNeeded() {
+        const accessToken = this.getAccessToken();
+        
+        if (!accessToken || this.isTokenExpired(accessToken)) {
+          return await this.refreshToken();
+        }
+        
+        return null;
+      }
       
-      return result;
-      
-    } catch (error) {
-      console.error('Error refreshing admin token:', error);
-      throw error;
-    }
-  }
-  
-  async storeNewTokens(accessToken, refreshToken) {
-    // Store new tokens in secure storage
-    await SecureStore.setItemAsync('admin_access_token', accessToken);
-    await SecureStore.setItemAsync('admin_refresh_token', refreshToken);
-  }
-  
-  async autoRefreshToken() {
-    const refreshToken = await SecureStore.getItemAsync('admin_refresh_token');
-    if (!refreshToken) {
-      throw new Error('No refresh token available');
-    }
-    
-    return this.refreshToken(refreshToken, true);
-  }
-}
-```
-  </Accordion>
-  
-  <Accordion title="Python Token Manager" icon="python">
-    ```python
-import requests
-from typing import Optional
-from datetime import datetime, timedelta
-
-class AdminTokenManager:
-    def __init__(self, api_client):
-        self.api_client = api_client
-        self.access_token = None
-        self.refresh_token = None
-        self.token_expires_at = None
-    
-    def refresh_token(self, 
-                     refresh_token: Optional[str] = None,
-                     extend_session: bool = False) -> dict:
-        """Refresh admin access token"""
-        try:
-            payload = {
-                "refresh_token": refresh_token or self.refresh_token,
-                "extend_session": extend_session
+      async refreshTokenWithRetry(maxRetries = 3) {
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            return await this.refreshToken();
+          } catch (error) {
+            if (attempt === maxRetries) {
+              throw error;
             }
             
-            response = self.api_client.post('/auth/refresh/token', json=payload)
-            response.raise_for_status()
-            
-            result = response.json()
-            data = result.get("data", {})
-            
-            # Update stored tokens
-            self.access_token = data.get("access_token")
-            self.refresh_token = data.get("refresh_token")
-            
-            # Calculate expiration time
-            expires_in = data.get("expires_in", 3600)
-            self.token_expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
-            
-            return result
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Token refresh failed: {e}")
-            raise
-    
-    def is_token_expired(self) -> bool:
-        """Check if current access token is expired"""
-        if not self.token_expires_at:
-            return True
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          }
+        }
+      }
+      
+      storeTokens(tokenData) {
+        // Store access token
+        localStorage.setItem('admin_access_token', tokenData.access_token);
+        localStorage.setItem('admin_token_expires_at', tokenData.expires_at);
         
-        # Refresh token 5 minutes before expiration
-        return datetime.utcnow() >= (self.token_expires_at - timedelta(minutes=5))
+        // Store refresh token
+        localStorage.setItem('admin_refresh_token', tokenData.refresh_token);
+        localStorage.setItem('admin_refresh_expires_at', tokenData.refresh_expires_at);
+        
+        // Store user info
+        localStorage.setItem('admin_user_id', tokenData.user_id);
+        localStorage.setItem('admin_roles', JSON.stringify(tokenData.roles));
+        localStorage.setItem('admin_permissions', JSON.stringify(tokenData.permissions));
+      }
+      
+      getAccessToken() {
+        return localStorage.getItem('admin_access_token');
+      }
+      
+      getRefreshToken() {
+        return localStorage.getItem('admin_refresh_token');
+      }
+      
+      isTokenExpired(token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const now = Math.floor(Date.now() / 1000);
+          return payload.exp < now;
+        } catch (error) {
+          return true;
+        }
+      }
+      
+      scheduleTokenRefresh(expiresIn) {
+        // Clear existing timer
+        if (this.tokenRefreshTimer) {
+          clearTimeout(this.tokenRefreshTimer);
+        }
+        
+        // Schedule refresh 5 minutes before expiration
+        const refreshTime = (expiresIn - 300) * 1000;
+        
+        this.tokenRefreshTimer = setTimeout(async () => {
+          try {
+            await this.refreshToken();
+          } catch (error) {
+            console.error('Automatic token refresh failed:', error);
+            this.handleTokenRefreshError(error);
+          }
+        }, refreshTime);
+      }
+      
+      handleTokenRefreshError(error) {
+        // Clear tokens
+        this.clearTokens();
+        
+        // Redirect to login
+        window.location.href = '/admin/login';
+      }
+      
+      clearTokens() {
+        localStorage.removeItem('admin_access_token');
+        localStorage.removeItem('admin_refresh_token');
+        localStorage.removeItem('admin_token_expires_at');
+        localStorage.removeItem('admin_refresh_expires_at');
+        localStorage.removeItem('admin_user_id');
+        localStorage.removeItem('admin_roles');
+        localStorage.removeItem('admin_permissions');
+        
+        if (this.tokenRefreshTimer) {
+          clearTimeout(this.tokenRefreshTimer);
+          this.tokenRefreshTimer = null;
+        }
+      }
+      
+      async extendSession() {
+        return await this.refreshToken(true);
+      }
+    }
     
-    def auto_refresh_if_needed(self) -> bool:
-        """Automatically refresh token if needed"""
-        if self.is_token_expired():
+    // Usage example
+    const tokenManager = new AdminTokenManager(apiClient);
+    
+    // Refresh token
+    await tokenManager.refreshToken();
+    
+    // Refresh token if needed
+    await tokenManager.refreshTokenIfNeeded();
+    
+    // Extend session
+    await tokenManager.extendSession();
+    
+    // Refresh with retry
+    await tokenManager.refreshTokenWithRetry(3);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Admin Token Client" icon="python">
+    ```python
+    import requests
+    import json
+    import time
+    from typing import Optional, Dict
+    from datetime import datetime, timedelta
+    
+    class AdminTokenClient:
+        def __init__(self, api_client):
+            self.api_client = api_client
+            self.token_file = 'admin_tokens.json'
+        
+        def refresh_token(self, extend_session: bool = False) -> Dict:
+            """Refresh admin access token"""
             try:
-                self.refresh_token(extend_session=True)
+                refresh_token = self.get_refresh_token()
+                
+                payload = {
+                    "refresh_token": refresh_token,
+                    "extend_session": extend_session
+                }
+                
+                response = self.api_client.post('/auth/refresh/token', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                
+                # Store new tokens
+                self.store_tokens(result['data'])
+                
+                print("Token refreshed successfully")
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error refreshing token: {e}")
+                self.handle_token_refresh_error(e)
+                raise
+        
+        def refresh_token_if_needed(self) -> Optional[Dict]:
+            """Refresh token if it's expired or about to expire"""
+            access_token = self.get_access_token()
+            
+            if not access_token or self.is_token_expired(access_token):
+                return self.refresh_token()
+            
+            return None
+        
+        def refresh_token_with_retry(self, max_retries: int = 3) -> Dict:
+            """Refresh token with retry logic"""
+            for attempt in range(1, max_retries + 1):
+                try:
+                    return self.refresh_token()
+                except Exception as e:
+                    if attempt == max_retries:
+                        raise e
+                    
+                    # Wait before retry
+                    time.sleep(1 * attempt)
+        
+        def store_tokens(self, token_data: Dict):
+            """Store tokens securely"""
+            tokens = {
+                'access_token': token_data['access_token'],
+                'refresh_token': token_data['refresh_token'],
+                'expires_at': token_data['expires_at'],
+                'refresh_expires_at': token_data['refresh_expires_at'],
+                'user_id': token_data['user_id'],
+                'roles': token_data['roles'],
+                'permissions': token_data['permissions']
+            }
+            
+            with open(self.token_file, 'w') as f:
+                json.dump(tokens, f)
+        
+        def get_access_token(self) -> Optional[str]:
+            """Get stored access token"""
+            try:
+                with open(self.token_file, 'r') as f:
+                    tokens = json.load(f)
+                return tokens.get('access_token')
+            except FileNotFoundError:
+                return None
+        
+        def get_refresh_token(self) -> Optional[str]:
+            """Get stored refresh token"""
+            try:
+                with open(self.token_file, 'r') as f:
+                    tokens = json.load(f)
+                return tokens.get('refresh_token')
+            except FileNotFoundError:
+                return None
+        
+        def is_token_expired(self, token: str) -> bool:
+            """Check if token is expired"""
+            try:
+                import base64
+                payload = json.loads(base64.b64decode(token.split('.')[1]))
+                exp = payload.get('exp', 0)
+                return exp < time.time()
+            except Exception:
                 return True
-            except Exception as e:
-                print(f"Auto refresh failed: {e}")
-                return False
-        return True
+        
+        def handle_token_refresh_error(self, error: Exception):
+            """Handle token refresh errors"""
+            # Clear tokens
+            self.clear_tokens()
+            
+            # Log error
+            print(f"Token refresh failed: {error}")
+            
+            # Redirect to login (in web context)
+            # In API context, raise exception
+            raise Exception("Authentication failed. Please login again.")
+        
+        def clear_tokens(self):
+            """Clear stored tokens"""
+            try:
+                import os
+                if os.path.exists(self.token_file):
+                    os.remove(self.token_file)
+            except Exception:
+                pass
+        
+        def extend_session(self) -> Dict:
+            """Extend session duration"""
+            return self.refresh_token(extend_session=True)
+        
+        def get_token_info(self) -> Optional[Dict]:
+            """Get current token information"""
+            try:
+                with open(self.token_file, 'r') as f:
+                    return json.load(f)
+            except FileNotFoundError:
+                return None
+        
+        def is_session_valid(self) -> bool:
+            """Check if current session is valid"""
+            access_token = self.get_access_token()
+            return access_token is not None and not self.is_token_expired(access_token)
     
-    def get_valid_token(self) -> Optional[str]:
-        """Get a valid access token, refreshing if necessary"""
-        if self.auto_refresh_if_needed():
-            return self.access_token
-        return None
-```
+    # Usage example
+    admin_token_client = AdminTokenClient(api_client)
+    
+    # Refresh token
+    result = admin_token_client.refresh_token()
+    
+    # Refresh token if needed
+    result = admin_token_client.refresh_token_if_needed()
+    
+    # Extend session
+    result = admin_token_client.extend_session()
+    
+    # Refresh with retry
+    result = admin_token_client.refresh_token_with_retry(3)
+    
+    # Check session validity
+    is_valid = admin_token_client.is_session_valid()
+    print(f"Session valid: {is_valid}")
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -369,12 +682,12 @@ class AdminTokenManager:
     `POST /auth/login` - Authenticate admin user
   </Card>
   <Card title="Admin Logout" icon="sign-out">
-    `POST /auth/logout` - Logout and invalidate session
+    `POST /auth/logout` - Logout admin user
   </Card>
-  <Card title="Get Admin Profile" icon="user">
-    `GET /admin/profile` - Get admin user profile
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List admin members
   </Card>
-  <Card title="Change Password" icon="key">
-    `PUT /admin/password` - Change admin password
+  <Card title="Invite Admin Member" icon="user-plus">
+    `POST /admin/member/invite` - Invite new admin member
   </Card>
 </CardGroup>

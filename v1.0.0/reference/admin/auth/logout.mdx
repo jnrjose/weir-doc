@@ -1,15 +1,15 @@
 ---
 title: "Admin Logout"
 api: "POST /auth/logout"
-description: "Logout admin user and invalidate session"
+description: "Logout and invalidate the current admin session"
 ---
 
-Logout an admin user and invalidate their current session. This endpoint terminates the admin session and invalidates the access token, ensuring secure logout functionality.
+Logout from the admin system and invalidate the current session. This endpoint ensures secure session termination and clears authentication tokens.
 
 <Note>
   **Admin API Endpoint**
   
-  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for secure admin session termination.
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for secure admin session management within the Weir AI platform.
 </Note>
 
 ## Authentication
@@ -17,7 +17,7 @@ Logout an admin user and invalidate their current session. This endpoint termina
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
 ```bash
-Authorization: Bearer <admin_jwt_token>
+Authorization: Bearer <your_jwt_token>
 ```
 
 ## Request
@@ -25,11 +25,11 @@ Authorization: Bearer <admin_jwt_token>
 <ParamField body="logout_all_sessions" type="boolean" required="false">
   Whether to logout from all admin sessions
   
-  **Example**: false
+  **Example**: true
   
   **Default**: false
   
-  **Note**: If true, invalidates all sessions for the admin user
+  **Note**: If true, invalidates all admin sessions for the user
 </ParamField>
 
 <ParamField body="reason" type="string" required="false">
@@ -39,36 +39,29 @@ Authorization: Bearer <admin_jwt_token>
   
   **Constraints**: 
   - Maximum length: 200 characters
+  - Optional but recommended for audit trails
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean">
-  Indicates if the request was successful
+  Indicates if the logout was successful
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Logout result data
-</ResponseField>
-
-<ResponseField name="data.admin_id" type="string">
-  Admin user ID that was logged out
-</ResponseField>
-
-<ResponseField name="data.session_id" type="string">
-  Session ID that was invalidated
-</ResponseField>
-
-<ResponseField name="data.logout_type" type="string">
-  Type of logout performed
-</ResponseField>
-
-<ResponseField name="data.sessions_invalidated" type="integer">
-  Number of sessions invalidated
+  Contains logout information
 </ResponseField>
 
 <ResponseField name="data.logout_time" type="string">
-  ISO 8601 timestamp of logout
+  ISO 8601 timestamp when the logout occurred
+</ResponseField>
+
+<ResponseField name="data.sessions_invalidated" type="integer">
+  Number of sessions that were invalidated
+</ResponseField>
+
+<ResponseField name="data.logout_reason" type="string">
+  Reason for the logout (if provided)
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -87,7 +80,7 @@ curl -X POST "https://api.example.com/auth/logout" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
   -H "Content-Type: application/json" \
   -d '{
-    "logout_all_sessions": false,
+    "logout_all_sessions": true,
     "reason": "User requested logout"
   }'
 ```
@@ -100,7 +93,7 @@ const response = await fetch('https://api.example.com/auth/logout', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    logout_all_sessions: false,
+    logout_all_sessions: true,
     reason: 'User requested logout'
   })
 });
@@ -113,7 +106,7 @@ console.log(data);
 import requests
 
 payload = {
-    "logout_all_sessions": False,
+    "logout_all_sessions": True,
     "reason": "User requested logout"
 }
 
@@ -128,6 +121,66 @@ response = requests.post(
 
 print(response.json())
 ```
+
+```php PHP
+<?php
+$payload = [
+    'logout_all_sessions' => true,
+    'reason' => 'User requested logout'
+];
+
+$response = file_get_contents('https://api.example.com/auth/logout', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type LogoutRequest struct {
+    LogoutAllSessions bool   `json:"logout_all_sessions,omitempty"`
+    Reason            string `json:"reason,omitempty"`
+}
+
+func main() {
+    payload := LogoutRequest{
+        LogoutAllSessions: true,
+        Reason:            "User requested logout",
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/auth/logout", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
 </CodeGroup>
 
 ## Example Response
@@ -136,22 +189,16 @@ print(response.json())
 {
   "success": true,
   "data": {
-    "admin_id": "admin_1234567890abcdef",
-    "session_id": "session_1234567890abcdef",
-    "logout_type": "single_session",
-    "sessions_invalidated": 1,
-    "logout_time": "2024-01-15T10:30:00Z"
+    "logout_time": "2024-01-15T10:30:00Z",
+    "sessions_invalidated": 3,
+    "logout_reason": "User requested logout"
   },
-  "message": "Admin logout successful",
+  "message": "Logout successful",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
 
 ## Error Responses
-
-<ResponseField name="400 Bad Request" type="object">
-  Invalid request parameters
-</ResponseField>
 
 <ResponseField name="401 Unauthorized" type="object">
   Invalid or expired authentication token
@@ -165,42 +212,72 @@ print(response.json())
   Rate limit exceeded
 </ResponseField>
 
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to logout",
+        "details": {
+          "field": "permissions",
+          "reason": "Admin logout requires valid admin session"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Logout Types" icon="info">
-    Available logout types:
+  <Accordion title="Session Management" icon="users">
+    Session features:
     
-    - **single_session**: Logout from current session only
-    - **all_sessions**: Logout from all admin sessions
-    - **forced_logout**: System-initiated logout
-  </Accordion>
-  
-  <Accordion title="Session Management" icon="key">
-    Session handling:
-    
-    - Access tokens are immediately invalidated
-    - Refresh tokens are revoked
-    - Session data is cleared
-    - Audit logs are updated
+    - **Single Session Logout**: Logout from current session only
+    - **All Sessions Logout**: Invalidate all admin sessions for the user
+    - **Session Tracking**: Track logout events for audit purposes
+    - **Token Invalidation**: Immediately invalidate JWT tokens
   </Accordion>
   
   <Accordion title="Security Features" icon="shield">
-    Security measures:
+    Security considerations:
     
-    - Immediate token invalidation
-    - Session cleanup
-    - Audit trail logging
-    - Security event tracking
+    - **Immediate Invalidation**: Tokens are invalidated immediately
+    - **Audit Trail**: All logout events are logged
+    - **Session Cleanup**: Clean up server-side session data
+    - **Client Cleanup**: Clear client-side tokens and cookies
   </Accordion>
   
-  <Accordion title="Audit Logging" icon="file-text">
-    Audit information:
+  <Accordion title="Best Practices" icon="check">
+    Recommended practices:
     
-    - Logout reason is recorded
-    - Session details are logged
-    - Timestamp is captured
-    - Admin ID is tracked
+    - **Always Logout**: Logout when done with admin tasks
+    - **All Sessions**: Use logout_all_sessions for security
+    - **Audit Reason**: Provide reason for audit purposes
+    - **Client Cleanup**: Clear tokens from client storage
   </Accordion>
 </AccordionGroup>
 
@@ -209,94 +286,199 @@ print(response.json())
 <AccordionGroup>
   <Accordion title="Admin Logout Service" icon="cog">
     ```javascript
-class AdminLogoutService {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async logout(logoutAllSessions = false, reason = null) {
-    try {
-      const response = await this.apiClient.makeRequest('/auth/logout', {
-        method: 'POST',
-        body: JSON.stringify({
-          logout_all_sessions: logoutAllSessions,
-          reason: reason
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to logout admin user');
+    class AdminLogoutService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
       }
       
-      const result = await response.json();
+      async logout(logoutAllSessions = false, reason = null) {
+        try {
+          const response = await this.apiClient.makeRequest('/auth/logout', {
+            method: 'POST',
+            body: JSON.stringify({
+              logout_all_sessions: logoutAllSessions,
+              reason: reason
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to logout');
+          }
+          
+          const result = await response.json();
+          
+          // Clear client-side tokens
+          this.clearClientTokens();
+          
+          // Log logout success
+          console.log(`Logout successful: ${result.data.sessions_invalidated} sessions invalidated`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error during logout:', error);
+          throw error;
+        }
+      }
       
-      // Clear stored tokens
-      await this.clearStoredTokens();
+      async logoutCurrentSession(reason = null) {
+        return this.logout(false, reason);
+      }
       
-      return result;
+      async logoutAllSessions(reason = null) {
+        return this.logout(true, reason);
+      }
       
-    } catch (error) {
-      console.error('Error during admin logout:', error);
-      throw error;
+      clearClientTokens() {
+        // Clear localStorage
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_refresh_token');
+        
+        // Clear sessionStorage
+        sessionStorage.removeItem('admin_token');
+        sessionStorage.removeItem('admin_refresh_token');
+        
+        // Clear cookies (if using cookies)
+        document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'admin_refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      }
+      
+      async secureLogout(reason = 'Security logout') {
+        try {
+          // Logout from all sessions
+          const result = await this.logoutAllSessions(reason);
+          
+          // Clear all client-side data
+          this.clearClientTokens();
+          
+          // Redirect to login page
+          window.location.href = '/admin/login';
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error during secure logout:', error);
+          // Still clear client-side data even if server logout fails
+          this.clearClientTokens();
+          window.location.href = '/admin/login';
+          throw error;
+        }
+      }
     }
-  }
-  
-  async clearStoredTokens() {
-    // Clear admin tokens from secure storage
-    await SecureStore.deleteItemAsync('admin_access_token');
-    await SecureStore.deleteItemAsync('admin_refresh_token');
-  }
-  
-  async forceLogoutAllSessions(reason = 'Security policy enforcement') {
-    return this.logout(true, reason);
-  }
-}
-```
+    
+    // Usage example
+    const adminLogoutService = new AdminLogoutService(apiClient);
+    
+    // Logout from current session
+    await adminLogoutService.logoutCurrentSession('User requested logout');
+    
+    // Logout from all sessions
+    await adminLogoutService.logoutAllSessions('Security logout');
+    
+    // Secure logout with cleanup
+    await adminLogoutService.secureLogout('Session timeout');
+    ```
   </Accordion>
   
   <Accordion title="Python Admin Client" icon="python">
     ```python
-import requests
-from typing import Optional
-
-class AdminLogoutClient:
-    def __init__(self, api_client):
-        self.api_client = api_client
+    import requests
+    from typing import Optional
     
-    def logout(self, 
-               logout_all_sessions: bool = False,
-               reason: Optional[str] = None) -> dict:
-        """Logout admin user"""
-        try:
-            payload = {
-                "logout_all_sessions": logout_all_sessions,
-                "reason": reason
-            }
+    class AdminLogoutClient:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def logout(self, logout_all_sessions: bool = False, reason: Optional[str] = None) -> dict:
+            """Logout from admin system"""
+            try:
+                payload = {
+                    "logout_all_sessions": logout_all_sessions
+                }
+                
+                if reason:
+                    payload["reason"] = reason
+                
+                response = self.api_client.post('/auth/logout', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Logout successful: {result['data']['sessions_invalidated']} sessions invalidated")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error during logout: {e}")
+                raise
+        
+        def logout_current_session(self, reason: Optional[str] = None) -> dict:
+            """Logout from current session only"""
+            return self.logout(False, reason)
+        
+        def logout_all_sessions(self, reason: Optional[str] = None) -> dict:
+            """Logout from all sessions"""
+            return self.logout(True, reason)
+        
+        def secure_logout(self, reason: str = "Security logout") -> dict:
+            """Secure logout with cleanup"""
+            try:
+                # Logout from all sessions
+                result = self.logout_all_sessions(reason)
+                
+                # Clear client-side tokens
+                self.clear_client_tokens()
+                
+                return result
+                
+            except Exception as e:
+                print(f"Error during secure logout: {e}")
+                # Still clear client-side data
+                self.clear_client_tokens()
+                raise
+        
+        def clear_client_tokens(self):
+            """Clear client-side authentication tokens"""
+            # Clear from memory
+            if hasattr(self.api_client, 'token'):
+                self.api_client.token = None
+            if hasattr(self.api_client, 'refresh_token'):
+                self.api_client.refresh_token = None
             
-            response = self.api_client.post('/auth/logout', json=payload)
-            response.raise_for_status()
-            
-            # Clear stored tokens
-            self.clear_tokens()
-            
-            return response.json()
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Admin logout failed: {e}")
-            raise
+            # Clear from file storage (if applicable)
+            try:
+                import os
+                token_file = os.path.expanduser('~/.weir_admin_token')
+                if os.path.exists(token_file):
+                    os.remove(token_file)
+            except Exception:
+                pass
+        
+        def logout_on_timeout(self) -> dict:
+            """Logout when session times out"""
+            return self.secure_logout("Session timeout")
+        
+        def logout_on_security_breach(self) -> dict:
+            """Logout due to security breach"""
+            return self.secure_logout("Security breach detected")
     
-    def clear_tokens(self):
-        """Clear stored authentication tokens"""
-        # Clear tokens from storage
-        if hasattr(self.api_client, 'access_token'):
-            self.api_client.access_token = None
-        if hasattr(self.api_client, 'refresh_token'):
-            self.api_client.refresh_token = None
+    # Usage example
+    admin_logout_client = AdminLogoutClient(api_client)
     
-    def logout_all_sessions(self, reason: str = "Security policy enforcement") -> dict:
-        """Logout from all admin sessions"""
-        return self.logout(logout_all_sessions=True, reason=reason)
-```
+    # Logout from current session
+    result = admin_logout_client.logout_current_session("User requested logout")
+    
+    # Logout from all sessions
+    result = admin_logout_client.logout_all_sessions("Security logout")
+    
+    # Secure logout
+    result = admin_logout_client.secure_logout("Session timeout")
+    
+    # Logout on timeout
+    result = admin_logout_client.logout_on_timeout()
+    
+    # Logout on security breach
+    result = admin_logout_client.logout_on_security_breach()
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -306,13 +488,13 @@ class AdminLogoutClient:
   <Card title="Admin Login" icon="sign-in">
     `POST /auth/login` - Authenticate admin user
   </Card>
-  <Card title="Refresh Token" icon="refresh">
-    `POST /auth/refresh/token` - Refresh expired access token
+  <Card title="Admin Refresh Token" icon="refresh">
+    `POST /auth/refresh/token` - Refresh admin access token
   </Card>
-  <Card title="Get Admin Profile" icon="user">
-    `GET /admin/profile` - Get admin user profile
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List admin members
   </Card>
-  <Card title="Change Password" icon="key">
-    `PUT /admin/password` - Change admin password
+  <Card title="Invite Admin Member" icon="user-plus">
+    `POST /admin/member/invite` - Invite new admin member
   </Card>
 </CardGroup>
