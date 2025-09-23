@@ -1,0 +1,748 @@
+---
+title: "Stop All Pods"
+api: "POST /pax/stop/pods"
+description: "Stop all pods in the system completely"
+---
+
+Stop all pods in the system completely, terminating all processes and freeing up resources. This endpoint allows admins to shut down all pods permanently or temporarily.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for pod management and control within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="stop_reason" type="string" required="false">
+  Reason for stopping all pods
+  
+  **Example**: "System shutdown"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="environment" type="string" required="false">
+  Filter pods by environment to stop
+  
+  **Options**: "production", "staging", "development", "testing"
+  
+  **Example**: "production"
+  
+  **Note**: If not specified, stops pods from all environments
+</ParamField>
+
+<ParamField body="region" type="string" required="false">
+  Filter pods by region to stop
+  
+  **Example**: "us-east-1"
+  
+  **Note**: If not specified, stops pods from all regions
+</ParamField>
+
+<ParamField body="pod_type" type="string" required="false">
+  Filter pods by type to stop
+  
+  **Options**: "processing", "storage", "compute", "analytics", "custom"
+  
+  **Example**: "processing"
+  
+  **Note**: If not specified, stops pods of all types
+</ParamField>
+
+<ParamField body="tag_filter" type="string" required="false">
+  Filter pods by tag key-value pairs to stop
+  
+  **Example**: "department:engineering,priority:high"
+  
+  **Format**: "key:value,key:value"
+</ParamField>
+
+<ParamField body="graceful_stop" type="boolean" required="false">
+  Whether to stop gracefully
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, waits for current operations to complete
+</ParamField>
+
+<ParamField body="timeout_seconds" type="integer" required="false">
+  Timeout for graceful stop
+  
+  **Example**: 300
+  
+  **Default**: 60
+  
+  **Constraints**: 
+  - Must be between 30 and 1800 seconds
+  - Only used if graceful_stop is true
+</ParamField>
+
+<ParamField body="preserve_data" type="boolean" required="false">
+  Whether to preserve data during stop
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, preserves data for future restart
+</ParamField>
+
+<ParamField body="force_stop" type="boolean" required="false">
+  Force stop even if operations are running
+  
+  **Example**: false
+  
+  **Default**: false
+  
+  **Note**: If true, stops immediately without waiting
+</ParamField>
+
+<ParamField body="parallel_stop" type="boolean" required="false">
+  Stop pods in parallel
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, stops multiple pods simultaneously
+</ParamField>
+
+<ParamField body="max_parallel" type="integer" required="false">
+  Maximum number of pods to stop in parallel
+  
+  **Example**: 10
+  
+  **Default**: 5
+  
+  **Constraints**: 
+  - Must be between 1 and 20
+  - Only used if parallel_stop is true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the stop operation information
+</ResponseField>
+
+<ResponseField name="data.operation_id" type="string">
+  Unique identifier for the stop operation
+</ResponseField>
+
+<ResponseField name="data.stop_reason" type="string">
+  Reason for stopping all pods
+</ResponseField>
+
+<ResponseField name="data.stopped_at" type="string">
+  ISO 8601 timestamp when operation started
+</ResponseField>
+
+<ResponseField name="data.stopped_by" type="string">
+  ID of the admin who started the operation
+</ResponseField>
+
+<ResponseField name="data.filters" type="object">
+  Filters applied to the stop operation
+</ResponseField>
+
+<ResponseField name="data.filters.environment" type="string">
+  Environment filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.region" type="string">
+  Region filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.pod_type" type="string">
+  Pod type filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.tag_filter" type="string">
+  Tag filter applied
+</ResponseField>
+
+<ResponseField name="data.total_pods" type="integer">
+  Total number of pods found
+</ResponseField>
+
+<ResponseField name="data.pods_stopped" type="integer">
+  Number of pods successfully stopped
+</ResponseField>
+
+<ResponseField name="data.pods_failed" type="integer">
+  Number of pods that failed to stop
+</ResponseField>
+
+<ResponseField name="data.pods_skipped" type="integer">
+  Number of pods skipped (already stopped)
+</ResponseField>
+
+<ResponseField name="data.operation_time" type="number">
+  Total time taken for the operation in seconds
+</ResponseField>
+
+<ResponseField name="data.parallel_stop" type="boolean">
+  Whether pods were stopped in parallel
+</ResponseField>
+
+<ResponseField name="data.max_parallel" type="integer">
+  Maximum number of pods stopped in parallel
+</ResponseField>
+
+<ResponseField name="data.results" type="array">
+  Detailed results for each pod
+</ResponseField>
+
+<ResponseField name="data.results[].pod_id" type="string">
+  Pod ID
+</ResponseField>
+
+<ResponseField name="data.results[].name" type="string">
+  Pod name
+</ResponseField>
+
+<ResponseField name="data.results[].status" type="string">
+  Final pod status
+</ResponseField>
+
+<ResponseField name="data.results[].stop_successful" type="boolean">
+  Whether pod stop was successful
+</ResponseField>
+
+<ResponseField name="data.results[].stop_time" type="number">
+  Time taken to stop this pod in seconds
+</ResponseField>
+
+<ResponseField name="data.results[].error_message" type="string">
+  Error message if stop failed
+</ResponseField>
+
+<ResponseField name="data.results[].active_connections" type="integer">
+  Number of active connections when stopped
+</ResponseField>
+
+<ResponseField name="data.results[].pending_operations" type="integer">
+  Number of pending operations when stopped
+</ResponseField>
+
+<ResponseField name="data.results[].data_preserved" type="boolean">
+  Whether data was preserved for this pod
+</ResponseField>
+
+<ResponseField name="data.results[].backup_created" type="boolean">
+  Whether backup was created for this pod
+</ResponseField>
+
+<ResponseField name="data.results[].backup_id" type="string">
+  ID of the backup (if created)
+</ResponseField>
+
+<ResponseField name="data.summary" type="object">
+  Summary statistics
+</ResponseField>
+
+<ResponseField name="data.summary.environment_distribution" type="object">
+  Distribution of stopped pods by environment
+</ResponseField>
+
+<ResponseField name="data.summary.region_distribution" type="object">
+  Distribution of stopped pods by region
+</ResponseField>
+
+<ResponseField name="data.summary.type_distribution" type="object">
+  Distribution of stopped pods by type
+</ResponseField>
+
+<ResponseField name="data.summary.average_stop_time" type="number">
+  Average time taken to stop pods in seconds
+</ResponseField>
+
+<ResponseField name="data.summary.total_active_connections" type="integer">
+  Total active connections across all stopped pods
+</ResponseField>
+
+<ResponseField name="data.summary.total_pending_operations" type="integer">
+  Total pending operations across all stopped pods
+</ResponseField>
+
+<ResponseField name="data.summary.total_backups_created" type="integer">
+  Total number of backups created
+</ResponseField>
+
+<ResponseField name="data.summary.total_data_preserved" type="integer">
+  Total number of pods with data preserved
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/pax/stop/pods" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stop_reason": "System shutdown",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "graceful_stop": true,
+    "timeout_seconds": 300,
+    "preserve_data": true,
+    "force_stop": false,
+    "parallel_stop": true,
+    "max_parallel": 10
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax/stop/pods', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    stop_reason: 'System shutdown',
+    environment: 'production',
+    region: 'us-east-1',
+    pod_type: 'processing',
+    graceful_stop: true,
+    timeout_seconds: 300,
+    preserve_data: true,
+    force_stop: false,
+    parallel_stop: true,
+    max_parallel: 10
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "stop_reason": "System shutdown",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "graceful_stop": True,
+    "timeout_seconds": 300,
+    "preserve_data": True,
+    "force_stop": False,
+    "parallel_stop": True,
+    "max_parallel": 10
+}
+
+response = requests.post(
+    'https://api.example.com/pax/stop/pods',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "operation_id": "op_1234567890abcdef",
+    "stop_reason": "System shutdown",
+    "stopped_at": "2024-01-15T10:30:00Z",
+    "stopped_by": "admin_1234567890abcdef",
+    "filters": {
+      "environment": "production",
+      "region": "us-east-1",
+      "pod_type": "processing",
+      "tag_filter": null
+    },
+    "total_pods": 15,
+    "pods_stopped": 12,
+    "pods_failed": 2,
+    "pods_skipped": 1,
+    "operation_time": 180.5,
+    "parallel_stop": true,
+    "max_parallel": 10,
+    "results": [
+      {
+        "pod_id": "pod_1234567890abcdef",
+        "name": "processing-pod-001",
+        "status": "stopped",
+        "stop_successful": true,
+        "stop_time": 25.2,
+        "error_message": null,
+        "active_connections": 3,
+        "pending_operations": 1,
+        "data_preserved": true,
+        "backup_created": true,
+        "backup_id": "backup_1234567890abcdef"
+      },
+      {
+        "pod_id": "pod_0987654321fedcba",
+        "name": "processing-pod-002",
+        "status": "stopped",
+        "stop_successful": true,
+        "stop_time": 28.8,
+        "error_message": null,
+        "active_connections": 2,
+        "pending_operations": 0,
+        "data_preserved": true,
+        "backup_created": true,
+        "backup_id": "backup_0987654321fedcba"
+      },
+      {
+        "pod_id": "pod_fedcba0987654321",
+        "name": "processing-pod-003",
+        "status": "error",
+        "stop_successful": false,
+        "stop_time": 0,
+        "error_message": "Graceful stop timeout",
+        "active_connections": 0,
+        "pending_operations": 0,
+        "data_preserved": false,
+        "backup_created": false,
+        "backup_id": null
+      }
+    ],
+    "summary": {
+      "environment_distribution": {
+        "production": 12
+      },
+      "region_distribution": {
+        "us-east-1": 12
+      },
+      "type_distribution": {
+        "processing": 12
+      },
+      "average_stop_time": 26.8,
+      "total_active_connections": 25,
+      "total_pending_operations": 8,
+      "total_backups_created": 12,
+      "total_data_preserved": 12
+    }
+  },
+  "message": "Pod stop operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to stop pods
+</ResponseField>
+
+<ResponseField name="408 Request Timeout" type="object">
+  Operation exceeded timeout
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Operation Timeout (408)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "OPERATION_TIMEOUT",
+        "message": "Operation exceeded timeout",
+        "details": {
+          "field": "timeout",
+          "reason": "Not all pods stopped gracefully within timeout period",
+          "timeout_seconds": 300,
+          "pods_stopped": 8,
+          "pods_total": 15
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Rate limit exceeded",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Too many pod stop operations",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Bulk Operations" icon="layers">
+    Bulk stop features:
+    
+    - **Parallel Processing**: Stop multiple pods simultaneously
+    - **Filtering**: Stop pods based on environment, region, type, or tags
+    - **Progress Tracking**: Monitor progress of bulk operations
+    - **Error Handling**: Handle individual pod failures gracefully
+  </Accordion>
+  
+  <Accordion title="Data Management" icon="database">
+    Data features:
+    
+    - **Data Preservation**: Keep data for future restart
+    - **Backup Creation**: Automatic backup before stop
+    - **State Cleanup**: Clean up temporary state
+    - **Resource Release**: Free up allocated resources
+  </Accordion>
+  
+  <Accordion title="Graceful Operations" icon="handshake">
+    Graceful features:
+    
+    - **Operation Completion**: Wait for current operations to complete
+    - **Connection Handling**: Handle active connections appropriately
+    - **Timeout Control**: Control operation timeout for large deployments
+    - **Error Recovery**: Handle timeout and error scenarios
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Bulk Pod Stop Service" icon="cog">
+    ```javascript
+    class BulkPodStopService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async stopAllPods(options = {}) {
+        try {
+          const response = await this.apiClient.makeRequest('/pax/stop/pods', {
+            method: 'POST',
+            body: JSON.stringify({
+              stop_reason: options.stopReason || 'Bulk pod stop',
+              environment: options.environment,
+              region: options.region,
+              pod_type: options.podType,
+              tag_filter: options.tagFilter,
+              graceful_stop: options.gracefulStop !== false,
+              timeout_seconds: options.timeoutSeconds || 60,
+              preserve_data: options.preserveData !== false,
+              force_stop: options.forceStop || false,
+              parallel_stop: options.parallelStop !== false,
+              max_parallel: options.maxParallel || 5
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to stop all pods');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error stopping all pods:', error);
+          throw error;
+        }
+      }
+      
+      async stopProductionPods(reason = 'Production shutdown') {
+        return this.stopAllPods({
+          stopReason: reason,
+          environment: 'production',
+          gracefulStop: true,
+          timeoutSeconds: 300,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 10
+        });
+      }
+      
+      async stopPodsByRegion(region, reason) {
+        return this.stopAllPods({
+          stopReason: reason,
+          region: region,
+          gracefulStop: true,
+          timeoutSeconds: 180,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 8
+        });
+      }
+      
+      async stopPodsByType(podType, reason) {
+        return this.stopAllPods({
+          stopReason: reason,
+          podType: podType,
+          gracefulStop: true,
+          timeoutSeconds: 180,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 6
+        });
+      }
+      
+      async stopPodsByTag(tagKey, tagValue, reason) {
+        return this.stopAllPods({
+          stopReason: reason,
+          tagFilter: `${tagKey}:${tagValue}`,
+          gracefulStop: true,
+          timeoutSeconds: 120,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 5
+        });
+      }
+      
+      async stopAllPodsGraceful(reason, timeoutSeconds = 300) {
+        return this.stopAllPods({
+          stopReason: reason,
+          gracefulStop: true,
+          timeoutSeconds: timeoutSeconds,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 10
+        });
+      }
+      
+      async stopAllPodsForce(reason) {
+        return this.stopAllPods({
+          stopReason: reason,
+          gracefulStop: false,
+          forceStop: true,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 15
+        });
+      }
+      
+      async stopPodsForMaintenance(reason = 'Scheduled maintenance') {
+        return this.stopAllPods({
+          stopReason: reason,
+          gracefulStop: true,
+          timeoutSeconds: 300,
+          preserveData: true,
+          parallelStop: true,
+          maxParallel: 15
+        });
+      }
+      
+      async emergencyStopAllPods(reason = 'Emergency shutdown') {
+        return this.stopAllPods({
+          stopReason: reason,
+          gracefulStop: false,
+          forceStop: true,
+          preserveData: false,
+          parallelStop: true,
+          maxParallel: 20
+        });
+      }
+      
+      async stopPodsByDepartment(department, reason) {
+        return this.stopPodsByTag('department', department, reason);
+      }
+      
+      async stopPodsByProject(project, reason) {
+        return this.stopPodsByTag('project', project, reason);
+      }
+      
+      async stopPodsByPriority(priority, reason) {
+        return this.stopPodsByTag('priority', priority, reason);
+      }
+    }
+    
+    // Usage example
+    const bulkStopService = new BulkPodStopService(apiClient);
+    
+    // Stop all production pods
+    const productionResult = await bulkStopService.stopProductionPods('System shutdown');
+    console.log(`Stopped ${productionResult.data.pods_stopped} production pods`);
+    
+    // Stop pods by region
+    const regionResult = await bulkStopService.stopPodsByRegion('us-east-1', 'Regional shutdown');
+    console.log(`Stopped ${regionResult.data.pods_stopped} pods in us-east-1`);
+    
+    // Stop pods by type
+    const typeResult = await bulkStopService.stopPodsByType('processing', 'Processing shutdown');
+    console.log(`Stopped ${typeResult.data.pods_stopped} processing pods`);
+    
+    // Stop pods by department
+    const deptResult = await bulkStopService.stopPodsByDepartment('engineering', 'Engineering shutdown');
+    console.log(`Stopped ${deptResult.data.pods_stopped} engineering pods`);
+    
+    // Stop all pods gracefully
+    const gracefulResult = await bulkStopService.stopAllPodsGraceful('System-wide shutdown', 600);
+    console.log(`Stopped ${gracefulResult.data.pods_stopped} pods gracefully`);
+    
+    // Emergency stop all pods
+    const emergencyResult = await bulkStopService.emergencyStopAllPods();
+    console.log(`Emergency stop: ${emergencyResult.data.pods_stopped} pods stopped`);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Stop Pod" icon="stop">
+    `POST /pax/stop/pod/{podId}` - Stop a specific pod
+  </Card>
+  <Card title="Start All Pods" icon="play">
+    `POST /pax/start/pods` - Start all pods
+  </Card>
+  <Card title="Pause All Pods" icon="pause">
+    `POST /pax/pause/pods` - Pause all pods
+  </Card>
+  <Card title="Get Pods" icon="list">
+    `GET /pax/pods` - List all pods
+  </Card>
+</CardGroup>

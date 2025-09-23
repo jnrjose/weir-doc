@@ -1,0 +1,488 @@
+---
+title: "Start Pod"
+api: "POST /pax/start/pod/{podId}"
+description: "Start a specific pod for processing and execution"
+---
+
+Start a specific pod that is currently stopped or in maintenance mode. This endpoint allows admins to activate pods for processing tasks and workloads.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for pod management and control within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="podId" type="string" required>
+  Pod ID to start
+  
+  **Example**: "pod_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid pod ID
+  - Pod must exist in the system
+</ParamField>
+
+## Request
+
+<ParamField body="force_start" type="boolean" required="false">
+  Force start even if pod has issues
+  
+  **Example**: false
+  
+  **Default**: false
+  
+  **Note**: If true, starts pod even if health checks fail
+</ParamField>
+
+<ParamField body="start_reason" type="string" required="false">
+  Reason for starting the pod
+  
+  **Example**: "Scheduled maintenance completed"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="wait_for_ready" type="boolean" required="false">
+  Wait for pod to be ready before returning
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: If true, waits for pod to be fully operational
+</ParamField>
+
+<ParamField body="timeout_seconds" type="integer" required="false">
+  Timeout for waiting for pod to be ready
+  
+  **Example**: 300
+  
+  **Default**: 60
+  
+  **Constraints**: 
+  - Must be between 10 and 1800 seconds
+  - Only used if wait_for_ready is true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the pod was started successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the pod start information
+</ResponseField>
+
+<ResponseField name="data.pod_id" type="string">
+  ID of the started pod
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Pod name
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current pod status
+</ResponseField>
+
+<ResponseField name="data.previous_status" type="string">
+  Previous pod status
+</ResponseField>
+
+<ResponseField name="data.started_at" type="string">
+  ISO 8601 timestamp when pod was started
+</ResponseField>
+
+<ResponseField name="data.started_by" type="string">
+  ID of the admin who started the pod
+</ResponseField>
+
+<ResponseField name="data.start_reason" type="string">
+  Reason for starting the pod
+</ResponseField>
+
+<ResponseField name="data.ip_address" type="string">
+  Pod IP address
+</ResponseField>
+
+<ResponseField name="data.endpoint" type="string">
+  Pod endpoint URL
+</ResponseField>
+
+<ResponseField name="data.health_status" type="string">
+  Current health status
+</ResponseField>
+
+<ResponseField name="data.startup_time" type="number">
+  Time taken to start the pod in seconds
+</ResponseField>
+
+<ResponseField name="data.ready" type="boolean">
+  Whether the pod is ready for requests
+</ResponseField>
+
+<ResponseField name="data.resource_usage" type="object">
+  Current resource usage
+</ResponseField>
+
+<ResponseField name="data.resource_usage.cpu_percent" type="number">
+  CPU usage percentage
+</ResponseField>
+
+<ResponseField name="data.resource_usage.memory_percent" type="number">
+  Memory usage percentage
+</ResponseField>
+
+<ResponseField name="data.resource_usage.storage_percent" type="number">
+  Storage usage percentage
+</ResponseField>
+
+<ResponseField name="data.resource_usage.network_usage" type="number">
+  Network usage in Mbps
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/pax/start/pod/pod_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "force_start": false,
+    "start_reason": "Scheduled maintenance completed",
+    "wait_for_ready": true,
+    "timeout_seconds": 300
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax/start/pod/pod_1234567890abcdef', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    force_start: false,
+    start_reason: 'Scheduled maintenance completed',
+    wait_for_ready: true,
+    timeout_seconds: 300
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "force_start": False,
+    "start_reason": "Scheduled maintenance completed",
+    "wait_for_ready": True,
+    "timeout_seconds": 300
+}
+
+response = requests.post(
+    'https://api.example.com/pax/start/pod/pod_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "pod_id": "pod_1234567890abcdef",
+    "name": "processing-pod-001",
+    "status": "running",
+    "previous_status": "stopped",
+    "started_at": "2024-01-15T10:30:00Z",
+    "started_by": "admin_1234567890abcdef",
+    "start_reason": "Scheduled maintenance completed",
+    "ip_address": "10.0.1.100",
+    "endpoint": "https://pod-1234567890abcdef.example.com",
+    "health_status": "healthy",
+    "startup_time": 45.2,
+    "ready": true,
+    "resource_usage": {
+      "cpu_percent": 15.5,
+      "memory_percent": 32.8,
+      "storage_percent": 12.5,
+      "network_usage": 45.2
+    }
+  },
+  "message": "Pod started successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or pod cannot be started
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to start pods
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Pod not found
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Pod is already running or in invalid state
+</ResponseField>
+
+<ResponseField name="408 Request Timeout" type="object">
+  Pod did not become ready within timeout
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Pod Already Running (409)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "POD_ALREADY_RUNNING",
+        "message": "Pod is already running",
+        "details": {
+          "field": "status",
+          "reason": "Pod is already in running state",
+          "current_status": "running"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Pod Not Ready (408)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "POD_NOT_READY",
+        "message": "Pod did not become ready within timeout",
+        "details": {
+          "field": "timeout",
+          "reason": "Pod startup exceeded timeout period",
+          "timeout_seconds": 300,
+          "current_status": "starting"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Pod States" icon="info">
+    Pod state transitions:
+    
+    - **stopped** → **starting** → **running**
+    - **maintenance** → **starting** → **running**
+    - **error** → **starting** → **running** (with force_start)
+    - **running** → Cannot start (already running)
+  </Accordion>
+  
+  <Accordion title="Startup Process" icon="play">
+    Startup features:
+    
+    - **Health Checks**: Verify pod health before marking as ready
+    - **Resource Allocation**: Allocate required resources
+    - **Service Registration**: Register pod with load balancer
+    - **Ready State**: Wait for pod to be fully operational
+  </Accordion>
+  
+  <Accordion title="Monitoring" icon="monitor">
+    Monitoring features:
+    
+    - **Startup Time**: Track time taken to start pod
+    - **Health Status**: Monitor health during startup
+    - **Resource Usage**: Track resource consumption
+    - **Ready State**: Monitor when pod becomes ready
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Pod Control Service" icon="cog">
+    ```javascript
+    class PodControlService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async startPod(podId, options = {}) {
+        try {
+          const response = await this.apiClient.makeRequest(`/pax/start/pod/${podId}`, {
+            method: 'POST',
+            body: JSON.stringify({
+              force_start: options.forceStart || false,
+              start_reason: options.startReason || 'Pod started',
+              wait_for_ready: options.waitForReady || false,
+              timeout_seconds: options.timeoutSeconds || 60
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to start pod');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error starting pod:', error);
+          throw error;
+        }
+      }
+      
+      async startPodAndWait(podId, reason, timeoutSeconds = 300) {
+        return this.startPod(podId, {
+          startReason: reason,
+          waitForReady: true,
+          timeoutSeconds: timeoutSeconds
+        });
+      }
+      
+      async forceStartPod(podId, reason) {
+        return this.startPod(podId, {
+          forceStart: true,
+          startReason: reason,
+          waitForReady: false
+        });
+      }
+      
+      async startMultiplePods(podIds, reason) {
+        const results = [];
+        
+        for (const podId of podIds) {
+          try {
+            const result = await this.startPod(podId, {
+              startReason: reason,
+              waitForReady: true,
+              timeoutSeconds: 300
+            });
+            results.push({ success: true, podId, data: result.data });
+          } catch (error) {
+            results.push({ success: false, podId, error: error.message });
+          }
+        }
+        
+        return results;
+      }
+      
+      async startPodsByTag(tagKey, tagValue, reason) {
+        // First get pods with the tag
+        const podsResponse = await this.apiClient.makeRequest(`/pax/pods?tag_filter=${tagKey}:${tagValue}&status=stopped`);
+        const pods = await podsResponse.json();
+        
+        const podIds = pods.data.map(pod => pod.pod_id);
+        return this.startMultiplePods(podIds, reason);
+      }
+      
+      async startPodsByEnvironment(environment, reason) {
+        const podsResponse = await this.apiClient.makeRequest(`/pax/pods?environment=${environment}&status=stopped`);
+        const pods = await podsResponse.json();
+        
+        const podIds = pods.data.map(pod => pod.pod_id);
+        return this.startMultiplePods(podIds, reason);
+      }
+    }
+    
+    // Usage example
+    const podControlService = new PodControlService(apiClient);
+    
+    // Start pod and wait for ready
+    const startedPod = await podControlService.startPodAndWait(
+      'pod_1234567890abcdef',
+      'Scheduled maintenance completed',
+      300
+    );
+    console.log('Pod started:', startedPod.data.name);
+    
+    // Force start pod
+    const forceStarted = await podControlService.forceStartPod(
+      'pod_0987654321fedcba',
+      'Emergency restart required'
+    );
+    console.log('Pod force started:', forceStarted.data.name);
+    
+    // Start multiple pods
+    const multipleResults = await podControlService.startMultiplePods(
+      ['pod_1234567890abcdef', 'pod_0987654321fedcba'],
+      'Batch startup after maintenance'
+    );
+    console.log('Multiple pods started:', multipleResults.length);
+    
+    // Start pods by tag
+    const tagResults = await podControlService.startPodsByTag(
+      'department',
+      'engineering',
+      'Engineering pods startup'
+    );
+    console.log('Engineering pods started:', tagResults.length);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Pod" icon="plus">
+    `POST /pax/pod` - Create new pod
+  </Card>
+  <Card title="Get Pod" icon="info">
+    `GET /pax/pod/{podId}` - Get specific pod details
+  </Card>
+  <Card title="Stop Pod" icon="stop">
+    `POST /pax/stop/pod/{podId}` - Stop a pod
+  </Card>
+  <Card title="Pause Pod" icon="pause">
+    `POST /pax/pause/pod/{podId}` - Pause a pod
+  </Card>
+</CardGroup>

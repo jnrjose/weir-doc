@@ -1,0 +1,684 @@
+---
+title: "Pause All Pods"
+api: "POST /pax/pause/pods"
+description: "Pause all pods in the system temporarily"
+---
+
+Pause all pods in the system temporarily while preserving their state and configuration. This endpoint allows admins to temporarily suspend all pod operations without losing data or configuration.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for pod management and control within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="pause_reason" type="string" required="false">
+  Reason for pausing all pods
+  
+  **Example**: "System maintenance"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="environment" type="string" required="false">
+  Filter pods by environment to pause
+  
+  **Options**: "production", "staging", "development", "testing"
+  
+  **Example**: "production"
+  
+  **Note**: If not specified, pauses pods from all environments
+</ParamField>
+
+<ParamField body="region" type="string" required="false">
+  Filter pods by region to pause
+  
+  **Example**: "us-east-1"
+  
+  **Note**: If not specified, pauses pods from all regions
+</ParamField>
+
+<ParamField body="pod_type" type="string" required="false">
+  Filter pods by type to pause
+  
+  **Options**: "processing", "storage", "compute", "analytics", "custom"
+  
+  **Example**: "processing"
+  
+  **Note**: If not specified, pauses pods of all types
+</ParamField>
+
+<ParamField body="tag_filter" type="string" required="false">
+  Filter pods by tag key-value pairs to pause
+  
+  **Example**: "department:engineering,priority:high"
+  
+  **Format**: "key:value,key:value"
+</ParamField>
+
+<ParamField body="preserve_state" type="boolean" required="false">
+  Whether to preserve pod state during pause
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, preserves memory and processing state
+</ParamField>
+
+<ParamField body="graceful_pause" type="boolean" required="false">
+  Whether to pause gracefully
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, waits for current operations to complete
+</ParamField>
+
+<ParamField body="timeout_seconds" type="integer" required="false">
+  Timeout for graceful pause
+  
+  **Example**: 300
+  
+  **Default**: 60
+  
+  **Constraints**: 
+  - Must be between 30 and 1800 seconds
+  - Only used if graceful_pause is true
+</ParamField>
+
+<ParamField body="parallel_pause" type="boolean" required="false">
+  Pause pods in parallel
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, pauses multiple pods simultaneously
+</ParamField>
+
+<ParamField body="max_parallel" type="integer" required="false">
+  Maximum number of pods to pause in parallel
+  
+  **Example**: 10
+  
+  **Default**: 5
+  
+  **Constraints**: 
+  - Must be between 1 and 20
+  - Only used if parallel_pause is true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the pause operation information
+</ResponseField>
+
+<ResponseField name="data.operation_id" type="string">
+  Unique identifier for the pause operation
+</ResponseField>
+
+<ResponseField name="data.pause_reason" type="string">
+  Reason for pausing all pods
+</ResponseField>
+
+<ResponseField name="data.paused_at" type="string">
+  ISO 8601 timestamp when operation started
+</ResponseField>
+
+<ResponseField name="data.paused_by" type="string">
+  ID of the admin who started the operation
+</ResponseField>
+
+<ResponseField name="data.filters" type="object">
+  Filters applied to the pause operation
+</ResponseField>
+
+<ResponseField name="data.filters.environment" type="string">
+  Environment filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.region" type="string">
+  Region filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.pod_type" type="string">
+  Pod type filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.tag_filter" type="string">
+  Tag filter applied
+</ResponseField>
+
+<ResponseField name="data.total_pods" type="integer">
+  Total number of pods found
+</ResponseField>
+
+<ResponseField name="data.pods_paused" type="integer">
+  Number of pods successfully paused
+</ResponseField>
+
+<ResponseField name="data.pods_failed" type="integer">
+  Number of pods that failed to pause
+</ResponseField>
+
+<ResponseField name="data.pods_skipped" type="integer">
+  Number of pods skipped (already paused or stopped)
+</ResponseField>
+
+<ResponseField name="data.operation_time" type="number">
+  Total time taken for the operation in seconds
+</ResponseField>
+
+<ResponseField name="data.parallel_pause" type="boolean">
+  Whether pods were paused in parallel
+</ResponseField>
+
+<ResponseField name="data.max_parallel" type="integer">
+  Maximum number of pods paused in parallel
+</ResponseField>
+
+<ResponseField name="data.results" type="array">
+  Detailed results for each pod
+</ResponseField>
+
+<ResponseField name="data.results[].pod_id" type="string">
+  Pod ID
+</ResponseField>
+
+<ResponseField name="data.results[].name" type="string">
+  Pod name
+</ResponseField>
+
+<ResponseField name="data.results[].status" type="string">
+  Final pod status
+</ResponseField>
+
+<ResponseField name="data.results[].pause_successful" type="boolean">
+  Whether pod pause was successful
+</ResponseField>
+
+<ResponseField name="data.results[].pause_time" type="number">
+  Time taken to pause this pod in seconds
+</ResponseField>
+
+<ResponseField name="data.results[].error_message" type="string">
+  Error message if pause failed
+</ResponseField>
+
+<ResponseField name="data.results[].active_connections" type="integer">
+  Number of active connections when paused
+</ResponseField>
+
+<ResponseField name="data.results[].pending_operations" type="integer">
+  Number of pending operations when paused
+</ResponseField>
+
+<ResponseField name="data.summary" type="object">
+  Summary statistics
+</ResponseField>
+
+<ResponseField name="data.summary.environment_distribution" type="object">
+  Distribution of paused pods by environment
+</ResponseField>
+
+<ResponseField name="data.summary.region_distribution" type="object">
+  Distribution of paused pods by region
+</ResponseField>
+
+<ResponseField name="data.summary.type_distribution" type="object">
+  Distribution of paused pods by type
+</ResponseField>
+
+<ResponseField name="data.summary.average_pause_time" type="number">
+  Average time taken to pause pods in seconds
+</ResponseField>
+
+<ResponseField name="data.summary.total_active_connections" type="integer">
+  Total active connections across all paused pods
+</ResponseField>
+
+<ResponseField name="data.summary.total_pending_operations" type="integer">
+  Total pending operations across all paused pods
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/pax/pause/pods" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pause_reason": "System maintenance",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "preserve_state": true,
+    "graceful_pause": true,
+    "timeout_seconds": 300,
+    "parallel_pause": true,
+    "max_parallel": 10
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax/pause/pods', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    pause_reason: 'System maintenance',
+    environment: 'production',
+    region: 'us-east-1',
+    pod_type: 'processing',
+    preserve_state: true,
+    graceful_pause: true,
+    timeout_seconds: 300,
+    parallel_pause: true,
+    max_parallel: 10
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "pause_reason": "System maintenance",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "preserve_state": True,
+    "graceful_pause": True,
+    "timeout_seconds": 300,
+    "parallel_pause": True,
+    "max_parallel": 10
+}
+
+response = requests.post(
+    'https://api.example.com/pax/pause/pods',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "operation_id": "op_1234567890abcdef",
+    "pause_reason": "System maintenance",
+    "paused_at": "2024-01-15T10:30:00Z",
+    "paused_by": "admin_1234567890abcdef",
+    "filters": {
+      "environment": "production",
+      "region": "us-east-1",
+      "pod_type": "processing",
+      "tag_filter": null
+    },
+    "total_pods": 15,
+    "pods_paused": 12,
+    "pods_failed": 2,
+    "pods_skipped": 1,
+    "operation_time": 120.5,
+    "parallel_pause": true,
+    "max_parallel": 10,
+    "results": [
+      {
+        "pod_id": "pod_1234567890abcdef",
+        "name": "processing-pod-001",
+        "status": "paused",
+        "pause_successful": true,
+        "pause_time": 15.2,
+        "error_message": null,
+        "active_connections": 5,
+        "pending_operations": 2
+      },
+      {
+        "pod_id": "pod_0987654321fedcba",
+        "name": "processing-pod-002",
+        "status": "paused",
+        "pause_successful": true,
+        "pause_time": 18.8,
+        "error_message": null,
+        "active_connections": 3,
+        "pending_operations": 1
+      },
+      {
+        "pod_id": "pod_fedcba0987654321",
+        "name": "processing-pod-003",
+        "status": "running",
+        "pause_successful": false,
+        "pause_time": 0,
+        "error_message": "Graceful pause timeout",
+        "active_connections": 0,
+        "pending_operations": 0
+      }
+    ],
+    "summary": {
+      "environment_distribution": {
+        "production": 12
+      },
+      "region_distribution": {
+        "us-east-1": 12
+      },
+      "type_distribution": {
+        "processing": 12
+      },
+      "average_pause_time": 16.8,
+      "total_active_connections": 45,
+      "total_pending_operations": 18
+    }
+  },
+  "message": "Pod pause operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to pause pods
+</ResponseField>
+
+<ResponseField name="408 Request Timeout" type="object">
+  Operation exceeded timeout
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Operation Timeout (408)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "OPERATION_TIMEOUT",
+        "message": "Operation exceeded timeout",
+        "details": {
+          "field": "timeout",
+          "reason": "Not all pods paused gracefully within timeout period",
+          "timeout_seconds": 300,
+          "pods_paused": 8,
+          "pods_total": 15
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Rate limit exceeded",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Too many pod pause operations",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Bulk Operations" icon="layers">
+    Bulk pause features:
+    
+    - **Parallel Processing**: Pause multiple pods simultaneously
+    - **Filtering**: Pause pods based on environment, region, type, or tags
+    - **Progress Tracking**: Monitor progress of bulk operations
+    - **Error Handling**: Handle individual pod failures gracefully
+  </Accordion>
+  
+  <Accordion title="State Preservation" icon="database">
+    State features:
+    
+    - **Memory Preservation**: Keep data in memory during pause
+    - **Processing State**: Preserve current processing state
+    - **Connection State**: Maintain connection information
+    - **Configuration**: Preserve all configuration settings
+  </Accordion>
+  
+  <Accordion title="Graceful Operations" icon="handshake">
+    Graceful features:
+    
+    - **Operation Completion**: Wait for current operations to complete
+    - **Connection Handling**: Handle active connections appropriately
+    - **Timeout Control**: Control operation timeout for large deployments
+    - **Error Recovery**: Handle timeout and error scenarios
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Bulk Pod Pause Service" icon="cog">
+    ```javascript
+    class BulkPodPauseService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async pauseAllPods(options = {}) {
+        try {
+          const response = await this.apiClient.makeRequest('/pax/pause/pods', {
+            method: 'POST',
+            body: JSON.stringify({
+              pause_reason: options.pauseReason || 'Bulk pod pause',
+              environment: options.environment,
+              region: options.region,
+              pod_type: options.podType,
+              tag_filter: options.tagFilter,
+              preserve_state: options.preserveState !== false,
+              graceful_pause: options.gracefulPause !== false,
+              timeout_seconds: options.timeoutSeconds || 60,
+              parallel_pause: options.parallelPause !== false,
+              max_parallel: options.maxParallel || 5
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to pause all pods');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error pausing all pods:', error);
+          throw error;
+        }
+      }
+      
+      async pauseProductionPods(reason = 'Production maintenance') {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          environment: 'production',
+          gracefulPause: true,
+          timeoutSeconds: 300,
+          parallelPause: true,
+          maxParallel: 10
+        });
+      }
+      
+      async pausePodsByRegion(region, reason) {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          region: region,
+          gracefulPause: true,
+          timeoutSeconds: 180,
+          parallelPause: true,
+          maxParallel: 8
+        });
+      }
+      
+      async pausePodsByType(podType, reason) {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          podType: podType,
+          gracefulPause: true,
+          timeoutSeconds: 180,
+          parallelPause: true,
+          maxParallel: 6
+        });
+      }
+      
+      async pausePodsByTag(tagKey, tagValue, reason) {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          tagFilter: `${tagKey}:${tagValue}`,
+          gracefulPause: true,
+          timeoutSeconds: 120,
+          parallelPause: true,
+          maxParallel: 5
+        });
+      }
+      
+      async pauseAllPodsGraceful(reason, timeoutSeconds = 300) {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          gracefulPause: true,
+          timeoutSeconds: timeoutSeconds,
+          parallelPause: true,
+          maxParallel: 10
+        });
+      }
+      
+      async pauseAllPodsImmediate(reason) {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          gracefulPause: false,
+          parallelPause: true,
+          maxParallel: 15
+        });
+      }
+      
+      async pausePodsForMaintenance(reason = 'Scheduled maintenance') {
+        return this.pauseAllPods({
+          pauseReason: reason,
+          gracefulPause: true,
+          timeoutSeconds: 300,
+          parallelPause: true,
+          maxParallel: 15
+        });
+      }
+      
+      async pausePodsByDepartment(department, reason) {
+        return this.pausePodsByTag('department', department, reason);
+      }
+      
+      async pausePodsByProject(project, reason) {
+        return this.pausePodsByTag('project', project, reason);
+      }
+      
+      async pausePodsByPriority(priority, reason) {
+        return this.pausePodsByTag('priority', priority, reason);
+      }
+    }
+    
+    // Usage example
+    const bulkPauseService = new BulkPodPauseService(apiClient);
+    
+    // Pause all production pods
+    const productionResult = await bulkPauseService.pauseProductionPods('System maintenance');
+    console.log(`Paused ${productionResult.data.pods_paused} production pods`);
+    
+    // Pause pods by region
+    const regionResult = await bulkPauseService.pausePodsByRegion('us-east-1', 'Regional maintenance');
+    console.log(`Paused ${regionResult.data.pods_paused} pods in us-east-1`);
+    
+    // Pause pods by type
+    const typeResult = await bulkPauseService.pausePodsByType('processing', 'Processing maintenance');
+    console.log(`Paused ${typeResult.data.pods_paused} processing pods`);
+    
+    // Pause pods by department
+    const deptResult = await bulkPauseService.pausePodsByDepartment('engineering', 'Engineering maintenance');
+    console.log(`Paused ${deptResult.data.pods_paused} engineering pods`);
+    
+    // Pause all pods gracefully
+    const gracefulResult = await bulkPauseService.pauseAllPodsGraceful('System-wide maintenance', 600);
+    console.log(`Paused ${gracefulResult.data.pods_paused} pods gracefully`);
+    
+    // Pause pods for maintenance
+    const maintenanceResult = await bulkPauseService.pausePodsForMaintenance();
+    console.log(`Maintenance pause: ${maintenanceResult.data.pods_paused} pods paused`);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Pause Pod" icon="pause">
+    `POST /pax/pause/pod/{podId}` - Pause a specific pod
+  </Card>
+  <Card title="Start All Pods" icon="play">
+    `POST /pax/start/pods` - Start all pods
+  </Card>
+  <Card title="Stop All Pods" icon="stop">
+    `POST /pax/stop/pods` - Stop all pods
+  </Card>
+  <Card title="Get Pods" icon="list">
+    `GET /pax/pods` - List all pods
+  </Card>
+</CardGroup>

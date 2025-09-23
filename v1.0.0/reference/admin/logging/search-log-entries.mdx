@@ -1,0 +1,900 @@
+---
+title: "Search Log Entries"
+api: "POST /logs/search"
+description: "Search log entries with advanced filtering and query capabilities"
+---
+
+Search log entries with advanced filtering, query capabilities, and full-text search. This endpoint allows admins to find specific log entries based on various criteria and search terms.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for log analysis and monitoring within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="query" type="string" required="false">
+  Full-text search query
+  
+  **Example**: "authentication failed"
+  
+  **Note**: Searches across message, source, and metadata fields
+</ParamField>
+
+<ParamField body="filters" type="object" required="false">
+  Advanced filters for log entries
+</ParamField>
+
+<ParamField body="filters.level" type="array" required="false">
+  Filter by log levels
+  
+  **Example**: ["error", "critical"]
+  
+  **Options**: "debug", "info", "warning", "error", "critical"
+</ParamField>
+
+<ParamField body="filters.source" type="array" required="false">
+  Filter by source components
+  
+  **Example**: ["auth-service", "api-gateway"]
+</ParamField>
+
+<ParamField body="filters.category" type="array" required="false">
+  Filter by log categories
+  
+  **Example**: ["authentication", "security"]
+  
+  **Options**: "authentication", "authorization", "system", "database", "api", "security", "performance", "business", "audit"
+</ParamField>
+
+<ParamField body="filters.user_id" type="array" required="false">
+  Filter by user IDs
+  
+  **Example**: ["user_1234567890abcdef"]
+</ParamField>
+
+<ParamField body="filters.session_id" type="array" required="false">
+  Filter by session IDs
+  
+  **Example**: ["session_1234567890abcdef"]
+</ParamField>
+
+<ParamField body="filters.request_id" type="array" required="false">
+  Filter by request IDs
+  
+  **Example**: ["req_1234567890abcdef"]
+</ParamField>
+
+<ParamField body="filters.ip_address" type="array" required="false">
+  Filter by IP addresses
+  
+  **Example**: ["192.168.1.100", "10.0.0.1"]
+</ParamField>
+
+<ParamField body="filters.environment" type="array" required="false">
+  Filter by environments
+  
+  **Example**: ["production", "staging"]
+  
+  **Options**: "production", "staging", "development", "testing"
+</ParamField>
+
+<ParamField body="filters.region" type="array" required="false">
+  Filter by regions
+  
+  **Example**: ["us-east-1", "us-west-2"]
+</ParamField>
+
+<ParamField body="filters.tags" type="array" required="false">
+  Filter by tags
+  
+  **Example**: ["security", "authentication"]
+</ParamField>
+
+<ParamField body="filters.metadata" type="object" required="false">
+  Filter by metadata fields
+  
+  **Example**: {"status_code": 200, "method": "GET"}
+  
+  **Note**: Key-value pairs for metadata filtering
+</ParamField>
+
+<ParamField body="date_range" type="object" required="false">
+  Date range filter
+</ParamField>
+
+<ParamField body="date_range.start" type="string" required="false">
+  Start date for search
+  
+  **Example**: "2024-01-01T00:00:00Z"
+  
+  **Format**: ISO 8601 timestamp
+</ParamField>
+
+<ParamField body="date_range.end" type="string" required="false">
+  End date for search
+  
+  **Example**: "2024-01-31T23:59:59Z"
+  
+  **Format**: ISO 8601 timestamp
+</ParamField>
+
+<ParamField body="pagination" type="object" required="false">
+  Pagination settings
+</ParamField>
+
+<ParamField body="pagination.page" type="integer" required="false">
+  Page number
+  
+  **Example**: 1
+  
+  **Default**: 1
+  
+  **Constraints**: Must be greater than 0
+</ParamField>
+
+<ParamField body="pagination.limit" type="integer" required="false">
+  Number of results per page
+  
+  **Example**: 50
+  
+  **Default**: 20
+  
+  **Constraints**: Must be between 1 and 1000
+</ParamField>
+
+<ParamField body="sort" type="object" required="false">
+  Sort settings
+</ParamField>
+
+<ParamField body="sort.field" type="string" required="false">
+  Field to sort by
+  
+  **Options**: "timestamp", "level", "source", "category", "message"
+  
+  **Example**: "timestamp"
+  
+  **Default**: "timestamp"
+</ParamField>
+
+<ParamField body="sort.order" type="string" required="false">
+  Sort order
+  
+  **Options**: "asc", "desc"
+  
+  **Example**: "desc"
+  
+  **Default**: "desc"
+</ParamField>
+
+<ParamField body="aggregations" type="array" required="false">
+  Aggregation settings for analytics
+  
+  **Example**: ["level", "source", "category"]
+  
+  **Options**: "level", "source", "category", "environment", "region", "user_id"
+</ParamField>
+
+<ParamField body="highlight" type="boolean" required="false">
+  Whether to highlight search terms in results
+  
+  **Example**: true
+  
+  **Default**: false
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the search was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the search results
+</ResponseField>
+
+<ResponseField name="data.results" type="array">
+  Array of log entries matching the search criteria
+</ResponseField>
+
+<ResponseField name="data.results[].log_id" type="string">
+  Unique identifier for the log entry
+</ResponseField>
+
+<ResponseField name="data.results[].level" type="string">
+  Log level
+</ResponseField>
+
+<ResponseField name="data.results[].message" type="string">
+  Log message
+</ResponseField>
+
+<ResponseField name="data.results[].source" type="string">
+  Source component
+</ResponseField>
+
+<ResponseField name="data.results[].category" type="string">
+  Log category
+</ResponseField>
+
+<ResponseField name="data.results[].user_id" type="string">
+  User ID (if present)
+</ResponseField>
+
+<ResponseField name="data.results[].session_id" type="string">
+  Session ID (if present)
+</ResponseField>
+
+<ResponseField name="data.results[].request_id" type="string">
+  Request ID (if present)
+</ResponseField>
+
+<ResponseField name="data.results[].ip_address" type="string">
+  IP address (if present)
+</ResponseField>
+
+<ResponseField name="data.results[].user_agent" type="string">
+  User agent (if present)
+</ResponseField>
+
+<ResponseField name="data.results[].metadata" type="object">
+  Additional metadata
+</ResponseField>
+
+<ResponseField name="data.results[].tags" type="array">
+  Tags array
+</ResponseField>
+
+<ResponseField name="data.results[].timestamp" type="string">
+  ISO 8601 timestamp when log entry was created
+</ResponseField>
+
+<ResponseField name="data.results[].environment" type="string">
+  Environment
+</ResponseField>
+
+<ResponseField name="data.results[].region" type="string">
+  Region
+</ResponseField>
+
+<ResponseField name="data.results[].created_by" type="string">
+  ID of the admin who created the log entry
+</ResponseField>
+
+<ResponseField name="data.results[].highlight" type="object">
+  Highlighted search terms (if highlight=true)
+</ResponseField>
+
+<ResponseField name="data.results[].highlight.message" type="array">
+  Highlighted message fragments
+</ResponseField>
+
+<ResponseField name="data.results[].highlight.source" type="array">
+  Highlighted source fragments
+</ResponseField>
+
+<ResponseField name="data.pagination" type="object">
+  Pagination information
+</ResponseField>
+
+<ResponseField name="data.pagination.page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="data.pagination.limit" type="integer">
+  Number of items per page
+</ResponseField>
+
+<ResponseField name="data.pagination.total" type="integer">
+  Total number of matching log entries
+</ResponseField>
+
+<ResponseField name="data.pagination.total_pages" type="integer">
+  Total number of pages
+</ResponseField>
+
+<ResponseField name="data.pagination.has_next" type="boolean">
+  Whether there are more pages available
+</ResponseField>
+
+<ResponseField name="data.pagination.has_prev" type="boolean">
+  Whether there are previous pages available
+</ResponseField>
+
+<ResponseField name="data.aggregations" type="object">
+  Aggregation results (if requested)
+</ResponseField>
+
+<ResponseField name="data.aggregations.level" type="object">
+  Distribution of log entries by level
+</ResponseField>
+
+<ResponseField name="data.aggregations.source" type="object">
+  Distribution of log entries by source
+</ResponseField>
+
+<ResponseField name="data.aggregations.category" type="object">
+  Distribution of log entries by category
+</ResponseField>
+
+<ResponseField name="data.aggregations.environment" type="object">
+  Distribution of log entries by environment
+</ResponseField>
+
+<ResponseField name="data.aggregations.region" type="object">
+  Distribution of log entries by region
+</ResponseField>
+
+<ResponseField name="data.aggregations.user_id" type="object">
+  Distribution of log entries by user ID
+</ResponseField>
+
+<ResponseField name="data.query_info" type="object">
+  Information about the search query
+</ResponseField>
+
+<ResponseField name="data.query_info.execution_time" type="number">
+  Time taken to execute the search in milliseconds
+</ResponseField>
+
+<ResponseField name="data.query_info.total_hits" type="integer">
+  Total number of matching log entries
+</ResponseField>
+
+<ResponseField name="data.query_info.search_terms" type="array">
+  Search terms used in the query
+</ResponseField>
+
+<ResponseField name="data.query_info.filters_applied" type="array">
+  Filters applied to the search
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/logs/search" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "authentication failed",
+    "filters": {
+      "level": ["error", "warning"],
+      "source": ["auth-service"],
+      "category": ["authentication", "security"],
+      "environment": ["production"],
+      "tags": ["security", "authentication"]
+    },
+    "date_range": {
+      "start": "2024-01-01T00:00:00Z",
+      "end": "2024-01-31T23:59:59Z"
+    },
+    "pagination": {
+      "page": 1,
+      "limit": 50
+    },
+    "sort": {
+      "field": "timestamp",
+      "order": "desc"
+    },
+    "aggregations": ["level", "source", "category"],
+    "highlight": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/logs/search', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: 'authentication failed',
+    filters: {
+      level: ['error', 'warning'],
+      source: ['auth-service'],
+      category: ['authentication', 'security'],
+      environment: ['production'],
+      tags: ['security', 'authentication']
+    },
+    date_range: {
+      start: '2024-01-01T00:00:00Z',
+      end: '2024-01-31T23:59:59Z'
+    },
+    pagination: {
+      page: 1,
+      limit: 50
+    },
+    sort: {
+      field: 'timestamp',
+      order: 'desc'
+    },
+    aggregations: ['level', 'source', 'category'],
+    highlight: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "query": "authentication failed",
+    "filters": {
+        "level": ["error", "warning"],
+        "source": ["auth-service"],
+        "category": ["authentication", "security"],
+        "environment": ["production"],
+        "tags": ["security", "authentication"]
+    },
+    "date_range": {
+        "start": "2024-01-01T00:00:00Z",
+        "end": "2024-01-31T23:59:59Z"
+    },
+    "pagination": {
+        "page": 1,
+        "limit": 50
+    },
+    "sort": {
+        "field": "timestamp",
+        "order": "desc"
+    },
+    "aggregations": ["level", "source", "category"],
+    "highlight": True
+}
+
+response = requests.post(
+    'https://api.example.com/logs/search',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "results": [
+      {
+        "log_id": "log_1234567890abcdef",
+        "level": "error",
+        "message": "User authentication failed",
+        "source": "auth-service",
+        "category": "authentication",
+        "user_id": "user_1234567890abcdef",
+        "session_id": "session_1234567890abcdef",
+        "ip_address": "192.168.1.100",
+        "tags": ["security", "authentication", "failure"],
+        "timestamp": "2024-01-15T10:30:00Z",
+        "environment": "production",
+        "region": "us-east-1",
+        "created_by": "system",
+        "highlight": {
+          "message": ["User <em>authentication</em> <em>failed</em>"],
+          "source": ["<em>auth</em>-service"]
+        }
+      },
+      {
+        "log_id": "log_0987654321fedcba",
+        "level": "warning",
+        "message": "Multiple authentication attempts failed",
+        "source": "auth-service",
+        "category": "security",
+        "user_id": "user_0987654321fedcba",
+        "ip_address": "192.168.1.101",
+        "tags": ["security", "authentication", "brute_force"],
+        "timestamp": "2024-01-15T10:25:00Z",
+        "environment": "production",
+        "region": "us-east-1",
+        "created_by": "system",
+        "highlight": {
+          "message": ["Multiple <em>authentication</em> attempts <em>failed</em>"],
+          "source": ["<em>auth</em>-service"]
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 50,
+      "total": 25,
+      "total_pages": 1,
+      "has_next": false,
+      "has_prev": false
+    },
+    "aggregations": {
+      "level": {
+        "error": 15,
+        "warning": 10
+      },
+      "source": {
+        "auth-service": 20,
+        "security-service": 5
+      },
+      "category": {
+        "authentication": 18,
+        "security": 7
+      }
+    },
+    "query_info": {
+      "execution_time": 45.2,
+      "total_hits": 25,
+      "search_terms": ["authentication", "failed"],
+      "filters_applied": ["level", "source", "category", "environment", "tags"]
+    }
+  },
+  "message": "Log search completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or query syntax
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to search logs
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Query (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_QUERY",
+        "message": "Invalid search query syntax",
+        "details": {
+          "field": "query",
+          "reason": "Query contains invalid characters or syntax"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Rate limit exceeded",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Too many log search requests",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Search Features" icon="search">
+    Search capabilities:
+    
+    - **Full-text Search**: Search across message, source, and metadata
+    - **Advanced Filtering**: Filter by multiple criteria simultaneously
+    - **Date Range**: Search within specific time periods
+    - **Aggregations**: Get statistical summaries of search results
+  </Accordion>
+  
+  <Accordion title="Query Syntax" icon="code">
+    Query features:
+    
+    - **Boolean Operators**: Use AND, OR, NOT in queries
+    - **Wildcards**: Use * for partial matches
+    - **Phrase Search**: Use quotes for exact phrase matching
+    - **Field-specific**: Search specific fields with field:value syntax
+  </Accordion>
+  
+  <Accordion title="Performance" icon="zap">
+    Performance features:
+    
+    - **Indexed Search**: Fast search using indexed fields
+    - **Pagination**: Efficient handling of large result sets
+    - **Caching**: Frequently used queries are cached
+    - **Timeouts**: Automatic timeout for long-running queries
+  </Accordion>
+  
+  <Accordion title="Analytics" icon="chart">
+    Analytics features:
+    
+    - **Aggregations**: Statistical summaries by various fields
+    - **Trends**: Time-based analysis of log patterns
+    - **Distributions**: Distribution analysis across categories
+    - **Insights**: Automated insights from log patterns
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Log Search Service" icon="cog">
+    ```javascript
+    class LogSearchService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async searchLogs(searchOptions = {}) {
+        try {
+          const response = await this.apiClient.makeRequest('/logs/search', {
+            method: 'POST',
+            body: JSON.stringify(searchOptions)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to search logs');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error searching logs:', error);
+          throw error;
+        }
+      }
+      
+      async searchByLevel(levels, options = {}) {
+        return this.searchLogs({
+          filters: {
+            level: levels,
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchBySource(sources, options = {}) {
+        return this.searchLogs({
+          filters: {
+            source: sources,
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchByCategory(categories, options = {}) {
+        return this.searchLogs({
+          filters: {
+            category: categories,
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchByUser(userIds, options = {}) {
+        return this.searchLogs({
+          filters: {
+            user_id: userIds,
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchByDateRange(startDate, endDate, options = {}) {
+        return this.searchLogs({
+          date_range: {
+            start: startDate,
+            end: endDate
+          },
+          ...options
+        });
+      }
+      
+      async searchByQuery(query, options = {}) {
+        return this.searchLogs({
+          query: query,
+          highlight: true,
+          ...options
+        });
+      }
+      
+      async searchErrors(options = {}) {
+        return this.searchByLevel(['error', 'critical'], options);
+      }
+      
+      async searchSecurityEvents(options = {}) {
+        return this.searchLogs({
+          filters: {
+            category: ['security', 'authentication'],
+            tags: ['security'],
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchApiRequests(options = {}) {
+        return this.searchLogs({
+          filters: {
+            category: ['api'],
+            source: ['api-gateway'],
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchByIP(ipAddresses, options = {}) {
+        return this.searchLogs({
+          filters: {
+            ip_address: ipAddresses,
+            ...options.filters
+          },
+          ...options
+        });
+      }
+      
+      async searchWithAggregations(aggregations, options = {}) {
+        return this.searchLogs({
+          aggregations: aggregations,
+          ...options
+        });
+      }
+      
+      async getLogStatistics(dateRange, aggregations = ['level', 'source', 'category']) {
+        return this.searchLogs({
+          date_range: dateRange,
+          aggregations: aggregations,
+          pagination: {
+            page: 1,
+            limit: 1
+          }
+        });
+      }
+      
+      async searchRecentErrors(hours = 24, limit = 100) {
+        const endDate = new Date().toISOString();
+        const startDate = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+        
+        return this.searchErrors({
+          date_range: {
+            start: startDate,
+            end: endDate
+          },
+          pagination: {
+            page: 1,
+            limit: limit
+          },
+          sort: {
+            field: 'timestamp',
+            order: 'desc'
+          }
+        });
+      }
+      
+      async searchUserActivity(userId, dateRange, options = {}) {
+        return this.searchByUser([userId], {
+          date_range: dateRange,
+          ...options
+        });
+      }
+      
+      async searchFailedLogins(dateRange, options = {}) {
+        return this.searchLogs({
+          query: 'authentication failed',
+          filters: {
+            category: ['authentication', 'security'],
+            tags: ['authentication', 'failure'],
+            ...options.filters
+          },
+          date_range: dateRange,
+          ...options
+        });
+      }
+    }
+    
+    // Usage example
+    const logSearchService = new LogSearchService(apiClient);
+    
+    // Search for errors
+    const errors = await logSearchService.searchErrors({
+      pagination: { page: 1, limit: 50 },
+      sort: { field: 'timestamp', order: 'desc' }
+    });
+    console.log(`Found ${errors.data.pagination.total} errors`);
+    
+    // Search security events
+    const securityEvents = await logSearchService.searchSecurityEvents({
+      date_range: {
+        start: '2024-01-01T00:00:00Z',
+        end: '2024-01-31T23:59:59Z'
+      }
+    });
+    console.log(`Found ${securityEvents.data.pagination.total} security events`);
+    
+    // Search by query
+    const queryResults = await logSearchService.searchByQuery('database connection failed');
+    console.log(`Found ${queryResults.data.pagination.total} matching logs`);
+    
+    // Get log statistics
+    const stats = await logSearchService.getLogStatistics({
+      start: '2024-01-01T00:00:00Z',
+      end: '2024-01-31T23:59:59Z'
+    });
+    console.log('Log statistics:', stats.data.aggregations);
+    
+    // Search recent errors
+    const recentErrors = await logSearchService.searchRecentErrors(24, 100);
+    console.log(`Found ${recentErrors.data.results.length} recent errors`);
+    
+    // Search user activity
+    const userActivity = await logSearchService.searchUserActivity(
+      'user_1234567890abcdef',
+      {
+        start: '2024-01-01T00:00:00Z',
+        end: '2024-01-31T23:59:59Z'
+      }
+    );
+    console.log(`Found ${userActivity.data.pagination.total} user activities`);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Log Entry" icon="plus">
+    `POST /logs/create` - Create new log entry
+  </Card>
+  <Card title="Get Log Entries" icon="list">
+    `GET /logs` - List log entries
+  </Card>
+  <Card title="Get Log Entry" icon="info">
+    `GET /logs/{logId}` - Get specific log entry
+  </Card>
+  <Card title="Export Logs" icon="download">
+    `POST /logs/export` - Export log entries
+  </Card>
+</CardGroup>

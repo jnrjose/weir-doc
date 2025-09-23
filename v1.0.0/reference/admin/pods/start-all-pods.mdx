@@ -1,0 +1,684 @@
+---
+title: "Start All Pods"
+api: "POST /pax/start/pods"
+description: "Start all pods in the system"
+---
+
+Start all pods in the system that are currently stopped or in maintenance mode. This endpoint allows admins to activate all pods for processing tasks and workloads.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for pod management and control within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="start_reason" type="string" required="false">
+  Reason for starting all pods
+  
+  **Example**: "System maintenance completed"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="environment" type="string" required="false">
+  Filter pods by environment to start
+  
+  **Options**: "production", "staging", "development", "testing"
+  
+  **Example**: "production"
+  
+  **Note**: If not specified, starts pods from all environments
+</ParamField>
+
+<ParamField body="region" type="string" required="false">
+  Filter pods by region to start
+  
+  **Example**: "us-east-1"
+  
+  **Note**: If not specified, starts pods from all regions
+</ParamField>
+
+<ParamField body="pod_type" type="string" required="false">
+  Filter pods by type to start
+  
+  **Options**: "processing", "storage", "compute", "analytics", "custom"
+  
+  **Example**: "processing"
+  
+  **Note**: If not specified, starts pods of all types
+</ParamField>
+
+<ParamField body="tag_filter" type="string" required="false">
+  Filter pods by tag key-value pairs to start
+  
+  **Example**: "department:engineering,priority:high"
+  
+  **Format**: "key:value,key:value"
+</ParamField>
+
+<ParamField body="force_start" type="boolean" required="false">
+  Force start even if pods have issues
+  
+  **Example**: false
+  
+  **Default**: false
+  
+  **Note**: If true, starts pods even if health checks fail
+</ParamField>
+
+<ParamField body="wait_for_ready" type="boolean" required="false">
+  Wait for all pods to be ready before returning
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: If true, waits for all pods to be fully operational
+</ParamField>
+
+<ParamField body="timeout_seconds" type="integer" required="false">
+  Timeout for waiting for all pods to be ready
+  
+  **Example**: 600
+  
+  **Default**: 300
+  
+  **Constraints**: 
+  - Must be between 60 and 1800 seconds
+  - Only used if wait_for_ready is true
+</ParamField>
+
+<ParamField body="parallel_start" type="boolean" required="false">
+  Start pods in parallel
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, starts multiple pods simultaneously
+</ParamField>
+
+<ParamField body="max_parallel" type="integer" required="false">
+  Maximum number of pods to start in parallel
+  
+  **Example**: 10
+  
+  **Default**: 5
+  
+  **Constraints**: 
+  - Must be between 1 and 20
+  - Only used if parallel_start is true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the operation was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the start operation information
+</ResponseField>
+
+<ResponseField name="data.operation_id" type="string">
+  Unique identifier for the start operation
+</ResponseField>
+
+<ResponseField name="data.start_reason" type="string">
+  Reason for starting all pods
+</ResponseField>
+
+<ResponseField name="data.started_at" type="string">
+  ISO 8601 timestamp when operation started
+</ResponseField>
+
+<ResponseField name="data.started_by" type="string">
+  ID of the admin who started the operation
+</ResponseField>
+
+<ResponseField name="data.filters" type="object">
+  Filters applied to the start operation
+</ResponseField>
+
+<ResponseField name="data.filters.environment" type="string">
+  Environment filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.region" type="string">
+  Region filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.pod_type" type="string">
+  Pod type filter applied
+</ResponseField>
+
+<ResponseField name="data.filters.tag_filter" type="string">
+  Tag filter applied
+</ResponseField>
+
+<ResponseField name="data.total_pods" type="integer">
+  Total number of pods found
+</ResponseField>
+
+<ResponseField name="data.pods_started" type="integer">
+  Number of pods successfully started
+</ResponseField>
+
+<ResponseField name="data.pods_failed" type="integer">
+  Number of pods that failed to start
+</ResponseField>
+
+<ResponseField name="data.pods_skipped" type="integer">
+  Number of pods skipped (already running)
+</ResponseField>
+
+<ResponseField name="data.operation_time" type="number">
+  Total time taken for the operation in seconds
+</ResponseField>
+
+<ResponseField name="data.parallel_start" type="boolean">
+  Whether pods were started in parallel
+</ResponseField>
+
+<ResponseField name="data.max_parallel" type="integer">
+  Maximum number of pods started in parallel
+</ResponseField>
+
+<ResponseField name="data.results" type="array">
+  Detailed results for each pod
+</ResponseField>
+
+<ResponseField name="data.results[].pod_id" type="string">
+  Pod ID
+</ResponseField>
+
+<ResponseField name="data.results[].name" type="string">
+  Pod name
+</ResponseField>
+
+<ResponseField name="data.results[].status" type="string">
+  Final pod status
+</ResponseField>
+
+<ResponseField name="data.results[].start_successful" type="boolean">
+  Whether pod start was successful
+</ResponseField>
+
+<ResponseField name="data.results[].start_time" type="number">
+  Time taken to start this pod in seconds
+</ResponseField>
+
+<ResponseField name="data.results[].error_message" type="string">
+  Error message if start failed
+</ResponseField>
+
+<ResponseField name="data.results[].ip_address" type="string">
+  Pod IP address (if started successfully)
+</ResponseField>
+
+<ResponseField name="data.results[].endpoint" type="string">
+  Pod endpoint URL (if started successfully)
+</ResponseField>
+
+<ResponseField name="data.summary" type="object">
+  Summary statistics
+</ResponseField>
+
+<ResponseField name="data.summary.environment_distribution" type="object">
+  Distribution of started pods by environment
+</ResponseField>
+
+<ResponseField name="data.summary.region_distribution" type="object">
+  Distribution of started pods by region
+</ResponseField>
+
+<ResponseField name="data.summary.type_distribution" type="object">
+  Distribution of started pods by type
+</ResponseField>
+
+<ResponseField name="data.summary.average_start_time" type="number">
+  Average time taken to start pods in seconds
+</ResponseField>
+
+<ResponseField name="data.summary.total_cpu_cores" type="integer">
+  Total CPU cores across all started pods
+</ResponseField>
+
+<ResponseField name="data.summary.total_memory_gb" type="integer">
+  Total memory allocation across all started pods
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/pax/start/pods" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "start_reason": "System maintenance completed",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "force_start": false,
+    "wait_for_ready": true,
+    "timeout_seconds": 600,
+    "parallel_start": true,
+    "max_parallel": 10
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax/start/pods', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    start_reason: 'System maintenance completed',
+    environment: 'production',
+    region: 'us-east-1',
+    pod_type: 'processing',
+    force_start: false,
+    wait_for_ready: true,
+    timeout_seconds: 600,
+    parallel_start: true,
+    max_parallel: 10
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "start_reason": "System maintenance completed",
+    "environment": "production",
+    "region": "us-east-1",
+    "pod_type": "processing",
+    "force_start": False,
+    "wait_for_ready": True,
+    "timeout_seconds": 600,
+    "parallel_start": True,
+    "max_parallel": 10
+}
+
+response = requests.post(
+    'https://api.example.com/pax/start/pods',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "operation_id": "op_1234567890abcdef",
+    "start_reason": "System maintenance completed",
+    "started_at": "2024-01-15T10:30:00Z",
+    "started_by": "admin_1234567890abcdef",
+    "filters": {
+      "environment": "production",
+      "region": "us-east-1",
+      "pod_type": "processing",
+      "tag_filter": null
+    },
+    "total_pods": 15,
+    "pods_started": 12,
+    "pods_failed": 2,
+    "pods_skipped": 1,
+    "operation_time": 180.5,
+    "parallel_start": true,
+    "max_parallel": 10,
+    "results": [
+      {
+        "pod_id": "pod_1234567890abcdef",
+        "name": "processing-pod-001",
+        "status": "running",
+        "start_successful": true,
+        "start_time": 45.2,
+        "error_message": null,
+        "ip_address": "10.0.1.100",
+        "endpoint": "https://pod-1234567890abcdef.example.com"
+      },
+      {
+        "pod_id": "pod_0987654321fedcba",
+        "name": "processing-pod-002",
+        "status": "running",
+        "start_successful": true,
+        "start_time": 52.8,
+        "error_message": null,
+        "ip_address": "10.0.1.101",
+        "endpoint": "https://pod-0987654321fedcba.example.com"
+      },
+      {
+        "pod_id": "pod_fedcba0987654321",
+        "name": "processing-pod-003",
+        "status": "error",
+        "start_successful": false,
+        "start_time": 0,
+        "error_message": "Health check failed",
+        "ip_address": null,
+        "endpoint": null
+      }
+    ],
+    "summary": {
+      "environment_distribution": {
+        "production": 12
+      },
+      "region_distribution": {
+        "us-east-1": 12
+      },
+      "type_distribution": {
+        "processing": 12
+      },
+      "average_start_time": 48.5,
+      "total_cpu_cores": 48,
+      "total_memory_gb": 96
+    }
+  },
+  "message": "Pod start operation completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to start pods
+</ResponseField>
+
+<ResponseField name="408 Request Timeout" type="object">
+  Operation exceeded timeout
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Operation Timeout (408)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "OPERATION_TIMEOUT",
+        "message": "Operation exceeded timeout",
+        "details": {
+          "field": "timeout",
+          "reason": "Not all pods became ready within timeout period",
+          "timeout_seconds": 600,
+          "pods_ready": 8,
+          "pods_total": 15
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Rate limit exceeded",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Too many pod start operations",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Bulk Operations" icon="layers">
+    Bulk start features:
+    
+    - **Parallel Processing**: Start multiple pods simultaneously
+    - **Filtering**: Start pods based on environment, region, type, or tags
+    - **Progress Tracking**: Monitor progress of bulk operations
+    - **Error Handling**: Handle individual pod failures gracefully
+  </Accordion>
+  
+  <Accordion title="Performance Optimization" icon="zap">
+    Performance features:
+    
+    - **Parallel Start**: Start pods in parallel for faster operation
+    - **Batch Processing**: Process pods in batches to avoid overload
+    - **Resource Management**: Manage resource allocation during bulk operations
+    - **Timeout Control**: Control operation timeout for large deployments
+  </Accordion>
+  
+  <Accordion title="Monitoring and Reporting" icon="chart">
+    Monitoring features:
+    
+    - **Progress Tracking**: Track progress of bulk operations
+    - **Success/Failure Rates**: Monitor success and failure rates
+    - **Performance Metrics**: Track operation performance
+    - **Detailed Results**: Get detailed results for each pod
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Bulk Pod Start Service" icon="cog">
+    ```javascript
+    class BulkPodStartService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async startAllPods(options = {}) {
+        try {
+          const response = await this.apiClient.makeRequest('/pax/start/pods', {
+            method: 'POST',
+            body: JSON.stringify({
+              start_reason: options.startReason || 'Bulk pod start',
+              environment: options.environment,
+              region: options.region,
+              pod_type: options.podType,
+              tag_filter: options.tagFilter,
+              force_start: options.forceStart || false,
+              wait_for_ready: options.waitForReady || false,
+              timeout_seconds: options.timeoutSeconds || 300,
+              parallel_start: options.parallelStart !== false,
+              max_parallel: options.maxParallel || 5
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to start all pods');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error starting all pods:', error);
+          throw error;
+        }
+      }
+      
+      async startProductionPods(reason = 'Production startup') {
+        return this.startAllPods({
+          startReason: reason,
+          environment: 'production',
+          waitForReady: true,
+          timeoutSeconds: 600,
+          parallelStart: true,
+          maxParallel: 10
+        });
+      }
+      
+      async startPodsByRegion(region, reason) {
+        return this.startAllPods({
+          startReason: reason,
+          region: region,
+          waitForReady: true,
+          timeoutSeconds: 300,
+          parallelStart: true,
+          maxParallel: 8
+        });
+      }
+      
+      async startPodsByType(podType, reason) {
+        return this.startAllPods({
+          startReason: reason,
+          podType: podType,
+          waitForReady: true,
+          timeoutSeconds: 300,
+          parallelStart: true,
+          maxParallel: 6
+        });
+      }
+      
+      async startPodsByTag(tagKey, tagValue, reason) {
+        return this.startAllPods({
+          startReason: reason,
+          tagFilter: `${tagKey}:${tagValue}`,
+          waitForReady: true,
+          timeoutSeconds: 300,
+          parallelStart: true,
+          maxParallel: 5
+        });
+      }
+      
+      async startAllPodsWithWait(reason, timeoutSeconds = 600) {
+        return this.startAllPods({
+          startReason: reason,
+          waitForReady: true,
+          timeoutSeconds: timeoutSeconds,
+          parallelStart: true,
+          maxParallel: 10
+        });
+      }
+      
+      async startAllPodsParallel(reason, maxParallel = 10) {
+        return this.startAllPods({
+          startReason: reason,
+          waitForReady: false,
+          parallelStart: true,
+          maxParallel: maxParallel
+        });
+      }
+      
+      async startPodsForMaintenance(reason = 'Post-maintenance startup') {
+        return this.startAllPods({
+          startReason: reason,
+          waitForReady: true,
+          timeoutSeconds: 600,
+          parallelStart: true,
+          maxParallel: 15
+        });
+      }
+      
+      async startPodsByDepartment(department, reason) {
+        return this.startPodsByTag('department', department, reason);
+      }
+      
+      async startPodsByProject(project, reason) {
+        return this.startPodsByTag('project', project, reason);
+      }
+      
+      async startPodsByPriority(priority, reason) {
+        return this.startPodsByTag('priority', priority, reason);
+      }
+    }
+    
+    // Usage example
+    const bulkStartService = new BulkPodStartService(apiClient);
+    
+    // Start all production pods
+    const productionResult = await bulkStartService.startProductionPods('System maintenance completed');
+    console.log(`Started ${productionResult.data.pods_started} production pods`);
+    
+    // Start pods by region
+    const regionResult = await bulkStartService.startPodsByRegion('us-east-1', 'Regional startup');
+    console.log(`Started ${regionResult.data.pods_started} pods in us-east-1`);
+    
+    // Start pods by type
+    const typeResult = await bulkStartService.startPodsByType('processing', 'Processing pods startup');
+    console.log(`Started ${typeResult.data.pods_started} processing pods`);
+    
+    // Start pods by department
+    const deptResult = await bulkStartService.startPodsByDepartment('engineering', 'Engineering startup');
+    console.log(`Started ${deptResult.data.pods_started} engineering pods`);
+    
+    // Start all pods with wait
+    const allResult = await bulkStartService.startAllPodsWithWait('Full system startup', 900);
+    console.log(`Started ${allResult.data.pods_started} pods total`);
+    
+    // Start pods for maintenance
+    const maintenanceResult = await bulkStartService.startPodsForMaintenance();
+    console.log(`Post-maintenance startup: ${maintenanceResult.data.pods_started} pods started`);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Start Pod" icon="play">
+    `POST /pax/start/pod/{podId}` - Start a specific pod
+  </Card>
+  <Card title="Pause All Pods" icon="pause">
+    `POST /pax/pause/pods` - Pause all pods
+  </Card>
+  <Card title="Stop All Pods" icon="stop">
+    `POST /pax/stop/pods` - Stop all pods
+  </Card>
+  <Card title="Get Pods" icon="list">
+    `GET /pax/pods` - List all pods
+  </Card>
+</CardGroup>
