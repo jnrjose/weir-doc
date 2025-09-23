@@ -1,0 +1,810 @@
+---
+title: "Get Pod"
+api: "GET /pax/pod/{podId}"
+description: "Retrieve detailed information about a specific pod"
+---
+
+Retrieve comprehensive information about a specific pod including configuration, status, resource usage, and health metrics. This endpoint provides detailed pod monitoring and management capabilities.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for pod management and monitoring within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="podId" type="string" required>
+  Pod ID to retrieve
+  
+  **Example**: "pod_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid pod ID
+  - Pod must exist in the system
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="include_usage" type="string" required="false">
+  Whether to include detailed resource usage statistics
+  
+  **Options**: "true", "false"
+  
+  **Example**: "true"
+  
+  **Default**: "true"
+  
+  **Note**: Setting to true will include comprehensive usage metrics
+</ParamField>
+
+<ParamField query="include_health" type="string" required="false">
+  Whether to include detailed health status information
+  
+  **Options**: "true", "false"
+  
+  **Example**: "true"
+  
+  **Default**: "true"
+  
+  **Note**: Setting to true will include health monitoring data
+</ParamField>
+
+<ParamField query="include_logs" type="string" required="false">
+  Whether to include recent log entries
+  
+  **Options**: "true", "false"
+  
+  **Example**: "true"
+  
+  **Default**: "false"
+  
+  **Note**: Setting to true will include recent log entries
+</ParamField>
+
+<ParamField query="include_metrics" type="string" required="false">
+  Whether to include performance metrics
+  
+  **Options**: "true", "false"
+  
+  **Example**: "true"
+  
+  **Default**: "false"
+  
+  **Note**: Setting to true will include performance metrics
+</ParamField>
+
+<ParamField query="time_range" type="string" required="false">
+  Time range for metrics and logs
+  
+  **Options**: "1h", "6h", "24h", "7d", "30d"
+  
+  **Example**: "24h"
+  
+  **Default**: "1h"
+  
+  **Note**: Time range for historical data
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the pod information
+</ResponseField>
+
+<ResponseField name="data.pod_id" type="string">
+  Unique identifier for the pod
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Pod name
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Pod type
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current pod status
+</ResponseField>
+
+<ResponseField name="data.environment" type="string">
+  Deployment environment
+</ResponseField>
+
+<ResponseField name="data.region" type="string">
+  Deployment region
+</ResponseField>
+
+<ResponseField name="data.configuration" type="object">
+  Pod configuration
+</ResponseField>
+
+<ResponseField name="data.configuration.cpu_cores" type="integer">
+  Number of CPU cores
+</ResponseField>
+
+<ResponseField name="data.configuration.memory_gb" type="integer">
+  Memory allocation in GB
+</ResponseField>
+
+<ResponseField name="data.configuration.storage_gb" type="integer">
+  Storage allocation in GB
+</ResponseField>
+
+<ResponseField name="data.configuration.network_bandwidth" type="integer">
+  Network bandwidth in Mbps
+</ResponseField>
+
+<ResponseField name="data.auto_scale" type="object">
+  Auto-scaling configuration
+</ResponseField>
+
+<ResponseField name="data.auto_scale.enabled" type="boolean">
+  Whether auto-scaling is enabled
+</ResponseField>
+
+<ResponseField name="data.auto_scale.min_instances" type="integer">
+  Minimum number of instances
+</ResponseField>
+
+<ResponseField name="data.auto_scale.max_instances" type="integer">
+  Maximum number of instances
+</ResponseField>
+
+<ResponseField name="data.auto_scale.current_instances" type="integer">
+  Current number of instances
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history" type="array">
+  Recent scaling events
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history[].timestamp" type="string">
+  ISO 8601 timestamp of scaling event
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history[].action" type="string">
+  Scaling action (scale_up, scale_down)
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history[].reason" type="string">
+  Reason for scaling
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history[].instances_before" type="integer">
+  Number of instances before scaling
+</ResponseField>
+
+<ResponseField name="data.auto_scale.scaling_history[].instances_after" type="integer">
+  Number of instances after scaling
+</ResponseField>
+
+<ResponseField name="data.tags" type="object">
+  Pod tags
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when pod was created
+</ResponseField>
+
+<ResponseField name="data.updated_at" type="string">
+  ISO 8601 timestamp when pod was last updated
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  ID of the admin who created the pod
+</ResponseField>
+
+<ResponseField name="data.ip_address" type="string">
+  Pod IP address
+</ResponseField>
+
+<ResponseField name="data.endpoint" type="string">
+  Pod endpoint URL
+</ResponseField>
+
+<ResponseField name="data.usage" type="object">
+  Resource usage statistics (if include_usage=true)
+</ResponseField>
+
+<ResponseField name="data.usage.cpu_percent" type="number">
+  Current CPU usage percentage
+</ResponseField>
+
+<ResponseField name="data.usage.memory_percent" type="number">
+  Current memory usage percentage
+</ResponseField>
+
+<ResponseField name="data.usage.storage_percent" type="number">
+  Current storage usage percentage
+</ResponseField>
+
+<ResponseField name="data.usage.network_usage" type="number">
+  Current network usage in Mbps
+</ResponseField>
+
+<ResponseField name="data.usage.cpu_history" type="array">
+  CPU usage history over time
+</ResponseField>
+
+<ResponseField name="data.usage.memory_history" type="array">
+  Memory usage history over time
+</ResponseField>
+
+<ResponseField name="data.usage.storage_history" type="array">
+  Storage usage history over time
+</ResponseField>
+
+<ResponseField name="data.usage.network_history" type="array">
+  Network usage history over time
+</ResponseField>
+
+<ResponseField name="data.usage.last_updated" type="string">
+  ISO 8601 timestamp when usage was last updated
+</ResponseField>
+
+<ResponseField name="data.health" type="object">
+  Health status information (if include_health=true)
+</ResponseField>
+
+<ResponseField name="data.health.status" type="string">
+  Overall health status
+</ResponseField>
+
+<ResponseField name="data.health.last_check" type="string">
+  ISO 8601 timestamp of last health check
+</ResponseField>
+
+<ResponseField name="data.health.response_time" type="number">
+  Average response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.health.error_rate" type="number">
+  Error rate percentage
+</ResponseField>
+
+<ResponseField name="data.health.uptime" type="number">
+  Pod uptime percentage
+</ResponseField>
+
+<ResponseField name="data.health.checks" type="array">
+  Detailed health check results
+</ResponseField>
+
+<ResponseField name="data.health.checks[].name" type="string">
+  Health check name
+</ResponseField>
+
+<ResponseField name="data.health.checks[].status" type="string">
+  Health check status
+</ResponseField>
+
+<ResponseField name="data.health.checks[].message" type="string">
+  Health check message
+</ResponseField>
+
+<ResponseField name="data.health.checks[].last_check" type="string">
+  ISO 8601 timestamp of last check
+</ResponseField>
+
+<ResponseField name="data.health.checks[].response_time" type="number">
+  Health check response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.logs" type="array">
+  Recent log entries (if include_logs=true)
+</ResponseField>
+
+<ResponseField name="data.logs[].timestamp" type="string">
+  ISO 8601 timestamp of log entry
+</ResponseField>
+
+<ResponseField name="data.logs[].level" type="string">
+  Log level (info, warning, error, debug)
+</ResponseField>
+
+<ResponseField name="data.logs[].message" type="string">
+  Log message
+</ResponseField>
+
+<ResponseField name="data.logs[].source" type="string">
+  Log source component
+</ResponseField>
+
+<ResponseField name="data.metrics" type="object">
+  Performance metrics (if include_metrics=true)
+</ResponseField>
+
+<ResponseField name="data.metrics.requests_per_second" type="number">
+  Average requests per second
+</ResponseField>
+
+<ResponseField name="data.metrics.response_time_p95" type="number">
+  95th percentile response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.metrics.response_time_p99" type="number">
+  99th percentile response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.metrics.error_rate" type="number">
+  Error rate percentage
+</ResponseField>
+
+<ResponseField name="data.metrics.throughput" type="number">
+  Throughput in requests per minute
+</ResponseField>
+
+<ResponseField name="data.metrics.availability" type="number">
+  Availability percentage
+</ResponseField>
+
+<ResponseField name="data.metrics.last_updated" type="string">
+  ISO 8601 timestamp when metrics were last updated
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/pax/pod/pod_1234567890abcdef?include_usage=true&include_health=true&include_logs=true&include_metrics=true&time_range=24h" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/pax/pod/pod_1234567890abcdef?include_usage=true&include_health=true&include_logs=true&include_metrics=true&time_range=24h', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'include_usage': 'true',
+    'include_health': 'true',
+    'include_logs': 'true',
+    'include_metrics': 'true',
+    'time_range': '24h'
+}
+
+response = requests.get(
+    'https://api.example.com/pax/pod/pod_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    },
+    params=params
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "pod_id": "pod_1234567890abcdef",
+    "name": "processing-pod-001",
+    "type": "processing",
+    "status": "running",
+    "environment": "production",
+    "region": "us-east-1",
+    "configuration": {
+      "cpu_cores": 4,
+      "memory_gb": 8,
+      "storage_gb": 100,
+      "network_bandwidth": 1000
+    },
+    "auto_scale": {
+      "enabled": true,
+      "min_instances": 1,
+      "max_instances": 5,
+      "current_instances": 2,
+      "scaling_history": [
+        {
+          "timestamp": "2024-01-15T09:30:00Z",
+          "action": "scale_up",
+          "reason": "High CPU usage",
+          "instances_before": 1,
+          "instances_after": 2
+        }
+      ]
+    },
+    "tags": {
+      "department": "engineering",
+      "project": "analytics",
+      "priority": "high"
+    },
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+    "created_by": "admin_1234567890abcdef",
+    "ip_address": "10.0.1.100",
+    "endpoint": "https://pod-1234567890abcdef.example.com",
+    "usage": {
+      "cpu_percent": 65.5,
+      "memory_percent": 78.2,
+      "storage_percent": 45.8,
+      "network_usage": 234.5,
+      "cpu_history": [
+        {"timestamp": "2024-01-15T10:00:00Z", "value": 62.3},
+        {"timestamp": "2024-01-15T10:15:00Z", "value": 68.7},
+        {"timestamp": "2024-01-15T10:30:00Z", "value": 65.5}
+      ],
+      "memory_history": [
+        {"timestamp": "2024-01-15T10:00:00Z", "value": 75.8},
+        {"timestamp": "2024-01-15T10:15:00Z", "value": 80.1},
+        {"timestamp": "2024-01-15T10:30:00Z", "value": 78.2}
+      ],
+      "last_updated": "2024-01-15T10:30:00Z"
+    },
+    "health": {
+      "status": "healthy",
+      "last_check": "2024-01-15T10:30:00Z",
+      "response_time": 125.5,
+      "error_rate": 0.2,
+      "uptime": 99.8,
+      "checks": [
+        {
+          "name": "api_endpoint",
+          "status": "healthy",
+          "message": "API endpoint responding normally",
+          "last_check": "2024-01-15T10:30:00Z",
+          "response_time": 125.5
+        },
+        {
+          "name": "database_connection",
+          "status": "healthy",
+          "message": "Database connection stable",
+          "last_check": "2024-01-15T10:30:00Z",
+          "response_time": 45.2
+        },
+        {
+          "name": "storage_access",
+          "status": "healthy",
+          "message": "Storage access working",
+          "last_check": "2024-01-15T10:30:00Z",
+          "response_time": 23.1
+        }
+      ]
+    },
+    "logs": [
+      {
+        "timestamp": "2024-01-15T10:29:45Z",
+        "level": "info",
+        "message": "Processing batch of 1000 records",
+        "source": "batch_processor"
+      },
+      {
+        "timestamp": "2024-01-15T10:29:30Z",
+        "level": "info",
+        "message": "Auto-scaling event: scaled up to 2 instances",
+        "source": "auto_scaler"
+      },
+      {
+        "timestamp": "2024-01-15T10:29:15Z",
+        "level": "warning",
+        "message": "High memory usage detected: 78.2%",
+        "source": "resource_monitor"
+      }
+    ],
+    "metrics": {
+      "requests_per_second": 45.2,
+      "response_time_p95": 250.5,
+      "response_time_p99": 450.8,
+      "error_rate": 0.2,
+      "throughput": 2712,
+      "availability": 99.8,
+      "last_updated": "2024-01-15T10:30:00Z"
+    }
+  },
+  "message": "Pod details retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view pod details
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Pod not found
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Pod Not Found (404)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "POD_NOT_FOUND",
+        "message": "Pod not found",
+        "details": {
+          "field": "podId",
+          "reason": "Pod with ID pod_1234567890abcdef does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view pod details",
+        "details": {
+          "field": "permissions",
+          "reason": "Pod access requires admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Pod Monitoring" icon="monitor">
+    Monitoring features:
+    
+    - **Resource Usage**: Real-time CPU, memory, storage, and network usage
+    - **Health Checks**: Comprehensive health monitoring and status checks
+    - **Performance Metrics**: Response times, throughput, and availability
+    - **Log Analysis**: Recent log entries for troubleshooting
+  </Accordion>
+  
+  <Accordion title="Auto-scaling History" icon="expand">
+    Auto-scaling features:
+    
+    - **Scaling Events**: Track all scaling actions and reasons
+    - **Performance Impact**: Monitor scaling impact on performance
+    - **Cost Optimization**: Analyze scaling patterns for cost optimization
+    - **Load Patterns**: Understand load patterns and scaling triggers
+  </Accordion>
+  
+  <Accordion title="Health Monitoring" icon="heart">
+    Health features:
+    
+    - **Component Checks**: Individual component health status
+    - **Response Times**: Monitor response times for each component
+    - **Error Tracking**: Track errors and failure rates
+    - **Uptime Monitoring**: Monitor overall availability
+  </Accordion>
+  
+  <Accordion title="Performance Metrics" icon="chart">
+    Performance features:
+    
+    - **Request Rates**: Monitor requests per second
+    - **Response Times**: Track percentile response times
+    - **Error Rates**: Monitor error frequencies
+    - **Throughput**: Track overall system throughput
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Pod Detail Service" icon="cog">
+    ```javascript
+    class PodDetailService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getPodDetails(podId, options = {}) {
+        try {
+          const params = new URLSearchParams();
+          
+          if (options.includeUsage !== false) params.append('include_usage', 'true');
+          if (options.includeHealth !== false) params.append('include_health', 'true');
+          if (options.includeLogs) params.append('include_logs', 'true');
+          if (options.includeMetrics) params.append('include_metrics', 'true');
+          if (options.timeRange) params.append('time_range', options.timeRange);
+          
+          const response = await this.apiClient.makeRequest(
+            `/pax/pod/${podId}?${params.toString()}`
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to get pod details');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error getting pod details:', error);
+          throw error;
+        }
+      }
+      
+      async getPodOverview(podId) {
+        return this.getPodDetails(podId, {
+          includeUsage: true,
+          includeHealth: true,
+          includeLogs: false,
+          includeMetrics: false
+        });
+      }
+      
+      async getPodWithLogs(podId, timeRange = '1h') {
+        return this.getPodDetails(podId, {
+          includeUsage: true,
+          includeHealth: true,
+          includeLogs: true,
+          includeMetrics: false,
+          timeRange: timeRange
+        });
+      }
+      
+      async getPodWithMetrics(podId, timeRange = '24h') {
+        return this.getPodDetails(podId, {
+          includeUsage: true,
+          includeHealth: true,
+          includeLogs: false,
+          includeMetrics: true,
+          timeRange: timeRange
+        });
+      }
+      
+      async getPodFullDetails(podId, timeRange = '24h') {
+        return this.getPodDetails(podId, {
+          includeUsage: true,
+          includeHealth: true,
+          includeLogs: true,
+          includeMetrics: true,
+          timeRange: timeRange
+        });
+      }
+      
+      async getPodHealthStatus(podId) {
+        const result = await this.getPodDetails(podId, {
+          includeUsage: false,
+          includeHealth: true,
+          includeLogs: false,
+          includeMetrics: false
+        });
+        
+        return result.data.health;
+      }
+      
+      async getPodResourceUsage(podId) {
+        const result = await this.getPodDetails(podId, {
+          includeUsage: true,
+          includeHealth: false,
+          includeLogs: false,
+          includeMetrics: false
+        });
+        
+        return result.data.usage;
+      }
+      
+      async getPodScalingHistory(podId) {
+        const result = await this.getPodDetails(podId, {
+          includeUsage: false,
+          includeHealth: false,
+          includeLogs: false,
+          includeMetrics: false
+        });
+        
+        return result.data.auto_scale.scaling_history;
+      }
+      
+      async getPodRecentLogs(podId, timeRange = '1h') {
+        const result = await this.getPodWithLogs(podId, timeRange);
+        return result.data.logs;
+      }
+      
+      async getPodPerformanceMetrics(podId, timeRange = '24h') {
+        const result = await this.getPodWithMetrics(podId, timeRange);
+        return result.data.metrics;
+      }
+      
+      async isPodHealthy(podId) {
+        const health = await this.getPodHealthStatus(podId);
+        return health.status === 'healthy';
+      }
+      
+      async getPodResourceUtilization(podId) {
+        const usage = await this.getPodResourceUsage(podId);
+        return {
+          cpu: usage.cpu_percent,
+          memory: usage.memory_percent,
+          storage: usage.storage_percent,
+          network: usage.network_usage
+        };
+      }
+    }
+    
+    // Usage example
+    const podDetailService = new PodDetailService(apiClient);
+    
+    // Get pod overview
+    const podOverview = await podDetailService.getPodOverview('pod_1234567890abcdef');
+    console.log('Pod Overview:', podOverview.data.name);
+    
+    // Get pod with logs
+    const podWithLogs = await podDetailService.getPodWithLogs('pod_1234567890abcdef', '24h');
+    console.log('Recent logs:', podWithLogs.data.logs.length);
+    
+    // Get pod with metrics
+    const podWithMetrics = await podDetailService.getPodWithMetrics('pod_1234567890abcdef', '7d');
+    console.log('Performance metrics:', podWithMetrics.data.metrics);
+    
+    // Check pod health
+    const isHealthy = await podDetailService.isPodHealthy('pod_1234567890abcdef');
+    console.log('Pod is healthy:', isHealthy);
+    
+    // Get resource utilization
+    const utilization = await podDetailService.getPodResourceUtilization('pod_1234567890abcdef');
+    console.log('Resource utilization:', utilization);
+    
+    // Get scaling history
+    const scalingHistory = await podDetailService.getPodScalingHistory('pod_1234567890abcdef');
+    console.log('Scaling events:', scalingHistory.length);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Pod" icon="plus">
+    `POST /pax/pod` - Create new pod
+  </Card>
+  <Card title="Get Pods" icon="list">
+    `GET /pax/pods` - List all pods
+  </Card>
+  <Card title="Start Pod" icon="play">
+    `POST /pax/start/pod/{podId}` - Start a pod
+  </Card>
+  <Card title="Stop Pod" icon="stop">
+    `POST /pax/stop/pod/{podId}` - Stop a pod
+  </Card>
+</CardGroup>
