@@ -1,0 +1,392 @@
+---
+title: "Create Mail Template"
+api: "POST /mail/create/template"
+description: "Create a new email template for the system"
+---
+
+Create a new email template with customizable content, variables, and styling. This endpoint allows admins to create reusable email templates for various system communications.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for email template management within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="name" type="string" required>
+  Template name
+  
+  **Example**: "Welcome Email Template"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Must be unique
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  Email subject line
+  
+  **Example**: "Welcome to {{platform_name}}!"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Supports template variables
+</ParamField>
+
+<ParamField body="content" type="string" required>
+  Email content (HTML or plain text)
+  
+  **Example**: "<h1>Welcome {{user_name}}!</h1><p>Thank you for joining {{platform_name}}.</p>"
+  
+  **Constraints**: 
+  - Supports HTML and template variables
+  - Maximum length: 50,000 characters
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Template type
+  
+  **Options**: "welcome", "notification", "alert", "invitation", "custom"
+  
+  **Example**: "welcome"
+</ParamField>
+
+<ParamField body="variables" type="array" required="false">
+  Available template variables
+  
+  **Example**: ["user_name", "platform_name", "organization_name"]
+</ParamField>
+
+<ParamField body="is_active" type="boolean" required="false">
+  Whether template is active
+  
+  **Example**: true
+  
+  **Default**: true
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the template was created successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the created template information
+</ResponseField>
+
+<ResponseField name="data.template_id" type="string">
+  Unique identifier for the template
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Template name
+</ResponseField>
+
+<ResponseField name="data.subject" type="string">
+  Email subject line
+</ResponseField>
+
+<ResponseField name="data.content" type="string">
+  Email content
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Template type
+</ResponseField>
+
+<ResponseField name="data.variables" type="array">
+  Available template variables
+</ResponseField>
+
+<ResponseField name="data.is_active" type="boolean">
+  Whether template is active
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when template was created
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  ID of the admin who created the template
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/mail/create/template" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Welcome Email Template",
+    "subject": "Welcome to {{platform_name}}!",
+    "content": "<h1>Welcome {{user_name}}!</h1><p>Thank you for joining {{platform_name}}.</p>",
+    "type": "welcome",
+    "variables": ["user_name", "platform_name"],
+    "is_active": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/mail/create/template', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Welcome Email Template',
+    subject: 'Welcome to {{platform_name}}!',
+    content: '<h1>Welcome {{user_name}}!</h1><p>Thank you for joining {{platform_name}}.</p>',
+    type: 'welcome',
+    variables: ['user_name', 'platform_name'],
+    is_active: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "name": "Welcome Email Template",
+    "subject": "Welcome to {{platform_name}}!",
+    "content": "<h1>Welcome {{user_name}}!</h1><p>Thank you for joining {{platform_name}}.</p>",
+    "type": "welcome",
+    "variables": ["user_name", "platform_name"],
+    "is_active": True
+}
+
+response = requests.post(
+    'https://api.example.com/mail/create/template',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "template_id": "tpl_1234567890abcdef",
+    "name": "Welcome Email Template",
+    "subject": "Welcome to {{platform_name}}!",
+    "content": "<h1>Welcome {{user_name}}!</h1><p>Thank you for joining {{platform_name}}.</p>",
+    "type": "welcome",
+    "variables": ["user_name", "platform_name"],
+    "is_active": true,
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": "admin_1234567890abcdef"
+  },
+  "message": "Email template created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to create templates
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Template name already exists
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "name",
+          "reason": "Template name is required"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Template Already Exists (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TEMPLATE_EXISTS",
+        "message": "Template name already exists",
+        "details": {
+          "field": "name",
+          "reason": "A template with this name already exists"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Template Types" icon="mail">
+    Available template types:
+    
+    - **welcome**: Welcome emails for new users
+    - **notification**: General notifications
+    - **alert**: System alerts and warnings
+    - **invitation**: Invitation emails
+    - **custom**: Custom templates for specific use cases
+  </Accordion>
+  
+  <Accordion title="Template Variables" icon="code">
+    Variable features:
+    
+    - **Dynamic Content**: Use {{variable_name}} syntax
+    - **User Data**: Access user information
+    - **Platform Data**: Access platform information
+    - **Organization Data**: Access organization information
+  </Accordion>
+  
+  <Accordion title="Content Formatting" icon="edit">
+    Content options:
+    
+    - **HTML Support**: Full HTML formatting support
+    - **CSS Styling**: Inline and embedded CSS
+    - **Responsive Design**: Mobile-friendly templates
+    - **Template Variables**: Dynamic content insertion
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Mail Template Service" icon="cog">
+    ```javascript
+    class MailTemplateService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async createTemplate(templateData) {
+        try {
+          const response = await this.apiClient.makeRequest('/mail/create/template', {
+            method: 'POST',
+            body: JSON.stringify(templateData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to create template');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error creating template:', error);
+          throw error;
+        }
+      }
+      
+      async createWelcomeTemplate() {
+        return this.createTemplate({
+          name: 'Welcome Email Template',
+          subject: 'Welcome to {{platform_name}}!',
+          content: `
+            <h1>Welcome {{user_name}}!</h1>
+            <p>Thank you for joining {{platform_name}}.</p>
+            <p>We're excited to have you on board!</p>
+          `,
+          type: 'welcome',
+          variables: ['user_name', 'platform_name'],
+          is_active: true
+        });
+      }
+      
+      async createNotificationTemplate() {
+        return this.createTemplate({
+          name: 'Notification Template',
+          subject: '{{notification_title}}',
+          content: `
+            <h2>{{notification_title}}</h2>
+            <p>{{notification_message}}</p>
+            <p>Best regards,<br>{{organization_name}}</p>
+          `,
+          type: 'notification',
+          variables: ['notification_title', 'notification_message', 'organization_name'],
+          is_active: true
+        });
+      }
+    }
+    
+    // Usage example
+    const templateService = new MailTemplateService(apiClient);
+    
+    // Create welcome template
+    const welcomeTemplate = await templateService.createWelcomeTemplate();
+    console.log('Welcome template created:', welcomeTemplate.data.template_id);
+    
+    // Create notification template
+    const notificationTemplate = await templateService.createNotificationTemplate();
+    console.log('Notification template created:', notificationTemplate.data.template_id);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Mail Templates" icon="list">
+    `GET /mail/templates` - List all email templates
+  </Card>
+  <Card title="Update Mail Template" icon="edit">
+    `PUT /mail/template/{id}` - Update existing template
+  </Card>
+  <Card title="Delete Mail Template" icon="trash">
+    `DELETE /mail/template/{id}` - Delete template
+  </Card>
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List admin members
+  </Card>
+</CardGroup>

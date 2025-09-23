@@ -1,0 +1,399 @@
+---
+title: "Delete Mail Template"
+api: "DELETE /mail/template/{id}"
+description: "Delete an existing email template"
+---
+
+Delete an existing email template from the system. This endpoint allows admins to remove templates that are no longer needed while maintaining audit trails.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for email template management within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+  Template ID to delete
+  
+  **Example**: "tpl_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid template ID
+  - Template must exist in the system
+</ParamField>
+
+## Request
+
+<ParamField body="force_delete" type="boolean" required="false">
+  Force delete even if template is in use
+  
+  **Example**: false
+  
+  **Default**: false
+  
+  **Note**: If true, deletes template even if it's currently being used
+</ParamField>
+
+<ParamField body="delete_reason" type="string" required="false">
+  Reason for deletion
+  
+  **Example**: "Template no longer needed"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="backup_before_delete" type="boolean" required="false">
+  Create backup before deletion
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, creates a backup of the template before deletion
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the template was deleted successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the deletion information
+</ResponseField>
+
+<ResponseField name="data.template_id" type="string">
+  ID of the deleted template
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the deleted template
+</ResponseField>
+
+<ResponseField name="data.deleted_at" type="string">
+  ISO 8601 timestamp when template was deleted
+</ResponseField>
+
+<ResponseField name="data.deleted_by" type="string">
+  ID of the admin who deleted the template
+</ResponseField>
+
+<ResponseField name="data.delete_reason" type="string">
+  Reason for deletion
+</ResponseField>
+
+<ResponseField name="data.backup_created" type="boolean">
+  Whether backup was created before deletion
+</ResponseField>
+
+<ResponseField name="data.backup_id" type="string">
+  ID of the backup (if created)
+</ResponseField>
+
+<ResponseField name="data.usage_count" type="integer">
+  Number of times template was used before deletion
+</ResponseField>
+
+<ResponseField name="data.last_used" type="string">
+  ISO 8601 timestamp when template was last used
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X DELETE "https://api.example.com/mail/template/tpl_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "force_delete": false,
+    "delete_reason": "Template no longer needed",
+    "backup_before_delete": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/mail/template/tpl_1234567890abcdef', {
+  method: 'DELETE',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    force_delete: false,
+    delete_reason: 'Template no longer needed',
+    backup_before_delete: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "force_delete": False,
+    "delete_reason": "Template no longer needed",
+    "backup_before_delete": True
+}
+
+response = requests.delete(
+    'https://api.example.com/mail/template/tpl_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "template_id": "tpl_1234567890abcdef",
+    "name": "Old Welcome Email Template",
+    "deleted_at": "2024-01-15T10:30:00Z",
+    "deleted_by": "admin_1234567890abcdef",
+    "delete_reason": "Template no longer needed",
+    "backup_created": true,
+    "backup_id": "backup_1234567890abcdef",
+    "usage_count": 1250,
+    "last_used": "2024-01-10T15:30:00Z"
+  },
+  "message": "Template deleted successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or template in use
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to delete templates
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Template not found
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Template is currently in use
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Template Not Found (404)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TEMPLATE_NOT_FOUND",
+        "message": "Template not found",
+        "details": {
+          "field": "id",
+          "reason": "Template with ID tpl_1234567890abcdef does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Template In Use (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TEMPLATE_IN_USE",
+        "message": "Template is currently in use",
+        "details": {
+          "field": "template",
+          "reason": "Template is being used by active email campaigns",
+          "usage_count": 5
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Template Deletion" icon="trash">
+    Deletion features:
+    
+    - **Soft Delete**: Templates are marked as deleted but can be restored
+    - **Backup Creation**: Automatic backup before deletion
+    - **Usage Validation**: Check if template is in use before deletion
+    - **Audit Trail**: Track who deleted what and when
+  </Accordion>
+  
+  <Accordion title="Safety Features" icon="shield">
+    Safety considerations:
+    
+    - **Usage Check**: Prevent deletion of templates in use
+    - **Backup Option**: Create backups before deletion
+    - **Force Delete**: Override usage checks if necessary
+    - **Reason Tracking**: Record reasons for deletion
+  </Accordion>
+  
+  <Accordion title="Best Practices" icon="check">
+    Recommended practices:
+    
+    - **Check Usage**: Verify template is not in use before deletion
+    - **Create Backups**: Always backup important templates
+    - **Document Reasons**: Provide clear reasons for deletion
+    - **Test First**: Test deletion process on non-critical templates
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Template Deletion Service" icon="cog">
+    ```javascript
+    class TemplateDeletionService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async deleteTemplate(templateId, options = {}) {
+        try {
+          const response = await this.apiClient.makeRequest(`/mail/template/${templateId}`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+              force_delete: options.forceDelete || false,
+              delete_reason: options.deleteReason || 'Template deleted',
+              backup_before_delete: options.backupBeforeDelete !== false
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete template');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error deleting template:', error);
+          throw error;
+        }
+      }
+      
+      async safeDeleteTemplate(templateId, reason) {
+        return this.deleteTemplate(templateId, {
+          forceDelete: false,
+          deleteReason: reason,
+          backupBeforeDelete: true
+        });
+      }
+      
+      async forceDeleteTemplate(templateId, reason) {
+        return this.deleteTemplate(templateId, {
+          forceDelete: true,
+          deleteReason: reason,
+          backupBeforeDelete: true
+        });
+      }
+      
+      async deleteTemplateWithoutBackup(templateId, reason) {
+        return this.deleteTemplate(templateId, {
+          forceDelete: false,
+          deleteReason: reason,
+          backupBeforeDelete: false
+        });
+      }
+      
+      async deleteMultipleTemplates(templateIds, reason) {
+        const results = [];
+        
+        for (const templateId of templateIds) {
+          try {
+            const result = await this.safeDeleteTemplate(templateId, reason);
+            results.push({ success: true, templateId, data: result.data });
+          } catch (error) {
+            results.push({ success: false, templateId, error: error.message });
+          }
+        }
+        
+        return results;
+      }
+    }
+    
+    // Usage example
+    const deletionService = new TemplateDeletionService(apiClient);
+    
+    // Safe delete with backup
+    const deletedTemplate = await deletionService.safeDeleteTemplate(
+      'tpl_1234567890abcdef',
+      'Template no longer needed'
+    );
+    
+    console.log('Template deleted:', deletedTemplate.data.template_id);
+    console.log('Backup created:', deletedTemplate.data.backup_created);
+    
+    // Force delete if needed
+    const forceDeleted = await deletionService.forceDeleteTemplate(
+      'tpl_0987654321fedcba',
+      'Template causing issues'
+    );
+    
+    console.log('Template force deleted:', forceDeleted.data.template_id);
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Mail Template" icon="plus">
+    `POST /mail/create/template` - Create new template
+  </Card>
+  <Card title="Get Mail Templates" icon="list">
+    `GET /mail/templates` - List all templates
+  </Card>
+  <Card title="Update Mail Template" icon="edit">
+    `PUT /mail/template/{id}` - Update existing template
+  </Card>
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List admin members
+  </Card>
+</CardGroup>
