@@ -1,0 +1,799 @@
+---
+title: "Delete Platform"
+api: "DELETE /org/platform/{platformId}"
+description: "Delete a platform from the organization"
+---
+
+Permanently delete a platform and all its associated data from your organization. This action cannot be undone and will remove all platform configurations, settings, and associated resources.
+
+<Warning>
+  **Destructive Action**
+  
+  This operation permanently deletes the platform and all associated data. This action cannot be undone. Make sure you have backed up any important data before proceeding.
+</Warning>
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for platform management and cleanup within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="platformId" type="string" required>
+  Unique identifier of the platform to delete
+  
+  **Example**: "platform_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid platform ID
+  - Platform must exist in your organization
+  - You must have permission to delete this platform
+</ParamField>
+
+## Request
+
+<ParamField body="confirmation" type="string" required>
+  Confirmation text to verify the deletion intent
+  
+  **Example**: "DELETE_PLATFORM"
+  
+  **Constraints**: 
+  - Must be exactly "DELETE_PLATFORM" (case-sensitive)
+  - This is a safety measure to prevent accidental deletions
+</ParamField>
+
+<ParamField body="reason" type="string" required="false">
+  Reason for deleting the platform
+  
+  **Example**: "Platform is no longer needed after migration"
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for audit purposes
+</ParamField>
+
+<ParamField body="backup_data" type="boolean" required="false">
+  Whether to create a backup before deletion
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: If true, a backup will be created before deletion
+</ParamField>
+
+<ParamField body="transfer_resources" type="object" required="false">
+  Configuration for transferring platform resources to another platform
+  
+  **Properties**:
+  - `target_platform_id` (string): ID of the platform to transfer resources to
+  - `transfer_domain` (boolean): Whether to transfer domain configuration
+  - `transfer_settings` (boolean): Whether to transfer platform settings
+  - `transfer_data` (boolean): Whether to transfer platform data
+  
+  **Example**:
+  ```json
+  {
+    "target_platform_id": "platform_0987654321fedcba",
+    "transfer_domain": true,
+    "transfer_settings": true,
+    "transfer_data": false
+  }
+  ```
+</ParamField>
+
+<ParamField body="notify_team" type="boolean" required="false">
+  Whether to notify team members about the platform deletion
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, all team members will receive a notification
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the platform was deleted successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains information about the deletion operation
+</ResponseField>
+
+<ResponseField name="data.platform_id" type="string">
+  ID of the deleted platform
+</ResponseField>
+
+<ResponseField name="data.platform_name" type="string">
+  Name of the deleted platform
+</ResponseField>
+
+<ResponseField name="data.deleted_at" type="string">
+  ISO 8601 timestamp when the platform was deleted
+</ResponseField>
+
+<ResponseField name="data.deleted_by" type="string">
+  User ID of the person who deleted the platform
+</ResponseField>
+
+<ResponseField name="data.team_affected" type="string">
+  Team ID that was affected by the deletion
+</ResponseField>
+
+<ResponseField name="data.resources_transferred" type="object">
+  Information about resources that were transferred (if applicable)
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.target_platform_id" type="string">
+  ID of the platform that received the transferred resources
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.domain_transferred" type="boolean">
+  Whether domain was transferred
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.settings_transferred" type="boolean">
+  Whether settings were transferred
+</ResponseField>
+
+<ResponseField name="data.resources_transferred.data_transferred" type="boolean">
+  Whether data was transferred
+</ResponseField>
+
+<ResponseField name="data.backup_created" type="boolean">
+  Whether a backup was created before deletion
+</ResponseField>
+
+<ResponseField name="data.backup_id" type="string">
+  ID of the created backup (if backup was created)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X DELETE "https://api.example.com/org/platform/platform_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "confirmation": "DELETE_PLATFORM",
+    "reason": "Platform is no longer needed after migration",
+    "backup_data": true,
+    "transfer_resources": {
+      "target_platform_id": "platform_0987654321fedcba",
+      "transfer_domain": true,
+      "transfer_settings": true,
+      "transfer_data": false
+    },
+    "notify_team": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/platform/platform_1234567890abcdef', {
+  method: 'DELETE',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    confirmation: 'DELETE_PLATFORM',
+    reason: 'Platform is no longer needed after migration',
+    backup_data: true,
+    transfer_resources: {
+      target_platform_id: 'platform_0987654321fedcba',
+      transfer_domain: true,
+      transfer_settings: true,
+      transfer_data: false
+    },
+    notify_team: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "confirmation": "DELETE_PLATFORM",
+    "reason": "Platform is no longer needed after migration",
+    "backup_data": True,
+    "transfer_resources": {
+        "target_platform_id": "platform_0987654321fedcba",
+        "transfer_domain": True,
+        "transfer_settings": True,
+        "transfer_data": False
+    },
+    "notify_team": True
+}
+
+response = requests.delete(
+    'https://api.example.com/org/platform/platform_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'confirmation' => 'DELETE_PLATFORM',
+    'reason' => 'Platform is no longer needed after migration',
+    'backup_data' => true,
+    'transfer_resources' => [
+        'target_platform_id' => 'platform_0987654321fedcba',
+        'transfer_domain' => true,
+        'transfer_settings' => true,
+        'transfer_data' => false
+    ],
+    'notify_team' => true
+];
+
+$response = file_get_contents('https://api.example.com/org/platform/platform_1234567890abcdef', false, stream_context_create([
+    'http' => [
+        'method' => 'DELETE',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type DeletePlatformRequest struct {
+    Confirmation     string                 `json:"confirmation"`
+    Reason           string                 `json:"reason,omitempty"`
+    BackupData       bool                   `json:"backup_data,omitempty"`
+    TransferResources *TransferResources    `json:"transfer_resources,omitempty"`
+    NotifyTeam       bool                   `json:"notify_team,omitempty"`
+}
+
+type TransferResources struct {
+    TargetPlatformID   string `json:"target_platform_id"`
+    TransferDomain     bool   `json:"transfer_domain"`
+    TransferSettings   bool   `json:"transfer_settings"`
+    TransferData       bool   `json:"transfer_data"`
+}
+
+func main() {
+    payload := DeletePlatformRequest{
+        Confirmation: "DELETE_PLATFORM",
+        Reason:       "Platform is no longer needed after migration",
+        BackupData:   true,
+        TransferResources: &TransferResources{
+            TargetPlatformID: "platform_0987654321fedcba",
+            TransferDomain:   true,
+            TransferSettings: true,
+            TransferData:     false,
+        },
+        NotifyTeam: true,
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("DELETE", "https://api.example.com/org/platform/platform_1234567890abcdef", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "platform_id": "platform_1234567890abcdef",
+    "platform_name": "Production API",
+    "deleted_at": "2024-01-15T10:30:00Z",
+    "deleted_by": "user_1234567890abcdef",
+    "team_affected": "team_1234567890abcdef",
+    "resources_transferred": {
+      "target_platform_id": "platform_0987654321fedcba",
+      "domain_transferred": true,
+      "settings_transferred": true,
+      "data_transferred": false
+    },
+    "backup_created": true,
+    "backup_id": "backup_1234567890abcdef"
+  },
+  "message": "Platform deleted successfully and resources transferred",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or missing confirmation
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to delete this platform
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Platform not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Platform cannot be deleted due to dependencies or active resources
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Missing Confirmation (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Confirmation is required for platform deletion",
+        "details": {
+          "field": "confirmation",
+          "reason": "Must provide 'DELETE_PLATFORM' confirmation to proceed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Platform Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "PLATFORM_NOT_FOUND",
+        "message": "Platform not found",
+        "details": {
+          "field": "platformId",
+          "reason": "Platform with ID 'platform_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to delete platform",
+        "details": {
+          "field": "permissions",
+          "reason": "Platform deletion requires organization_admin or platform_owner role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Platform Has Dependencies (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "PLATFORM_HAS_DEPENDENCIES",
+        "message": "Platform cannot be deleted due to active dependencies",
+        "details": {
+          "field": "dependencies",
+          "reason": "Platform has active integrations, ongoing requests, or critical resources",
+          "dependencies": [
+            "Active integrations: 3",
+            "Ongoing requests: 150",
+            "Critical resources: 2"
+          ]
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Deletion Process" icon="trash">
+    What happens when a platform is deleted:
+    
+    - **Platform Removal**: Platform is permanently removed from the organization
+    - **Resource Cleanup**: Platform resources and configurations are deleted
+    - **Data Backup**: Optional backup is created before deletion
+    - **Resource Transfer**: Resources can be transferred to another platform
+    - **Team Notification**: Team members are notified of the deletion
+    - **Audit Log**: Deletion is logged for audit purposes
+  </Accordion>
+  
+  <Accordion title="Resource Transfer" icon="exchange">
+    Resource transfer options:
+    
+    - **Domain**: Transfer domain configuration to another platform
+    - **Settings**: Transfer platform settings and configurations
+    - **Data**: Transfer platform data and files
+    - **Integrations**: Transfer active integrations
+  </Accordion>
+  
+  <Accordion title="Required Permissions" icon="shield">
+    Permissions needed to delete platforms:
+    
+    - **Organization Admin**: Can delete any platform in the organization
+    - **Platform Owner**: Can delete platforms they own
+    - **Team Admin**: Can delete platforms in their teams (with restrictions)
+  </Accordion>
+  
+  <Accordion title="Safety Measures" icon="lock">
+    Safety features:
+    
+    - **Confirmation Required**: Must provide "DELETE_PLATFORM" confirmation
+    - **Dependency Check**: System checks for active dependencies
+    - **Backup Option**: Optional backup before deletion
+    - **Transfer Options**: Resources can be transferred instead of deleted
+    - **Audit Trail**: All deletions are logged and tracked
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Platform Deletion Service" icon="cog">
+    ```javascript
+    class PlatformDeletionService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async deletePlatform(platformId, options = {}) {
+        try {
+          const payload = {
+            confirmation: 'DELETE_PLATFORM',
+            reason: options.reason || 'Platform deletion requested',
+            backup_data: options.backupData || false,
+            notify_team: options.notifyTeam !== false
+          };
+          
+          // Add transfer resources if specified
+          if (options.transferResources) {
+            payload.transfer_resources = options.transferResources;
+          }
+          
+          const response = await this.apiClient.makeRequest(`/org/platform/${platformId}`, {
+            method: 'DELETE',
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete platform');
+          }
+          
+          const result = await response.json();
+          
+          // Log deletion
+          console.log(`Platform ${platformId} deleted successfully`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error deleting platform:', error);
+          throw error;
+        }
+      }
+      
+      async deletePlatformWithTransfer(platformId, targetPlatformId, reason) {
+        return this.deletePlatform(platformId, {
+          reason: reason,
+          backupData: true,
+          transferResources: {
+            target_platform_id: targetPlatformId,
+            transfer_domain: true,
+            transfer_settings: true,
+            transfer_data: false
+          },
+          notifyTeam: true
+        });
+      }
+      
+      async deletePlatformPermanently(platformId, reason) {
+        return this.deletePlatform(platformId, {
+          reason: reason,
+          backupData: true,
+          notifyTeam: true
+        });
+      }
+      
+      async deletePlatformSilently(platformId, reason) {
+        return this.deletePlatform(platformId, {
+          reason: reason,
+          backupData: false,
+          notifyTeam: false
+        });
+      }
+      
+      async deletePlatformWithBackup(platformId, reason) {
+        return this.deletePlatform(platformId, {
+          reason: reason,
+          backupData: true,
+          notifyTeam: true
+        });
+      }
+    }
+    
+    // Usage example
+    const deletionService = new PlatformDeletionService(apiClient);
+    
+    // Delete platform with resource transfer
+    const transferResult = await deletionService.deletePlatformWithTransfer(
+      'platform_1234567890abcdef',
+      'platform_0987654321fedcba',
+      'Platform migration completed, transferring resources to new platform'
+    );
+    
+    // Delete platform permanently
+    const deleteResult = await deletionService.deletePlatformPermanently(
+      'platform_abcdef1234567890',
+      'Platform no longer needed'
+    );
+    
+    // Delete platform with backup
+    const backupResult = await deletionService.deletePlatformWithBackup(
+      'platform_1234567890abcdef',
+      'Platform cleanup with backup'
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Platform Deletion Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
+    
+    class PlatformDeletionManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def delete_platform(self, 
+                          platform_id: str,
+                          reason: str = "Platform deletion requested",
+                          backup_data: bool = False,
+                          transfer_resources: Optional[Dict] = None,
+                          notify_team: bool = True) -> Dict:
+            """Delete a platform with optional resource transfer"""
+            try:
+                payload = {
+                    "confirmation": "DELETE_PLATFORM",
+                    "reason": reason,
+                    "backup_data": backup_data,
+                    "notify_team": notify_team
+                }
+                
+                if transfer_resources:
+                    payload["transfer_resources"] = transfer_resources
+                
+                response = self.api_client.delete(f'/org/platform/{platform_id}', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Platform {platform_id} deleted successfully")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error deleting platform: {e}")
+                raise
+        
+        def delete_platform_with_transfer(self, 
+                                        platform_id: str, 
+                                        target_platform_id: str, 
+                                        reason: str) -> Dict:
+            """Delete platform and transfer resources to another platform"""
+            transfer_resources = {
+                "target_platform_id": target_platform_id,
+                "transfer_domain": True,
+                "transfer_settings": True,
+                "transfer_data": False
+            }
+            
+            return self.delete_platform(
+                platform_id=platform_id,
+                reason=reason,
+                backup_data=True,
+                transfer_resources=transfer_resources,
+                notify_team=True
+            )
+        
+        def delete_platform_permanently(self, platform_id: str, reason: str) -> Dict:
+            """Delete platform permanently without resource transfer"""
+            return self.delete_platform(
+                platform_id=platform_id,
+                reason=reason,
+                backup_data=True,
+                notify_team=True
+            )
+        
+        def delete_platform_silently(self, platform_id: str, reason: str) -> Dict:
+            """Delete platform without notifying team"""
+            return self.delete_platform(
+                platform_id=platform_id,
+                reason=reason,
+                backup_data=False,
+                notify_team=False
+            )
+        
+        def delete_platform_with_backup(self, platform_id: str, reason: str) -> Dict:
+            """Delete platform with backup creation"""
+            return self.delete_platform(
+                platform_id=platform_id,
+                reason=reason,
+                backup_data=True,
+                notify_team=True
+            )
+        
+        def bulk_delete_platforms(self, platform_ids: list, reason: str) -> list:
+            """Delete multiple platforms"""
+            results = []
+            for platform_id in platform_ids:
+                try:
+                    result = self.delete_platform_permanently(platform_id, reason)
+                    results.append({"success": True, "data": result, "platform_id": platform_id})
+                except Exception as e:
+                    results.append({"success": False, "error": str(e), "platform_id": platform_id})
+            
+            return results
+        
+        def delete_inactive_platforms(self, days_inactive: int = 90) -> list:
+            """Delete platforms that have been inactive for specified days"""
+            # This would require getting platform list first and checking activity
+            # Implementation depends on available endpoints
+            pass
+        
+        def validate_platform_deletion(self, platform_id: str) -> bool:
+            """Validate if platform can be safely deleted"""
+            try:
+                # Check if platform exists and is accessible
+                response = self.api_client.get(f'/org/platform/{platform_id}')
+                if response.status_code == 404:
+                    print(f"Platform {platform_id} not found")
+                    return False
+                
+                # Check for active dependencies
+                # This would require additional endpoint calls
+                # For now, return True
+                return True
+                
+            except Exception as e:
+                print(f"Error validating platform deletion: {e}")
+                return False
+        
+        def delete_platform_safe(self, platform_id: str, reason: str) -> Dict:
+            """Delete platform with validation"""
+            if not self.validate_platform_deletion(platform_id):
+                raise ValueError(f"Platform {platform_id} cannot be safely deleted")
+            
+            return self.delete_platform_permanently(platform_id, reason)
+    
+    # Usage example
+    deletion_manager = PlatformDeletionManager(api_client)
+    
+    # Delete platform with resource transfer
+    transfer_result = deletion_manager.delete_platform_with_transfer(
+        platform_id="platform_1234567890abcdef",
+        target_platform_id="platform_0987654321fedcba",
+        reason="Platform migration completed, transferring resources to new platform"
+    )
+    
+    # Delete platform permanently
+    delete_result = deletion_manager.delete_platform_permanently(
+        platform_id="platform_abcdef1234567890",
+        reason="Platform no longer needed"
+    )
+    
+    # Delete platform with backup
+    backup_result = deletion_manager.delete_platform_with_backup(
+        platform_id="platform_1234567890abcdef",
+        reason="Platform cleanup with backup"
+    )
+    
+    # Bulk delete platforms
+    platform_ids = ["platform_1", "platform_2", "platform_3"]
+    bulk_results = deletion_manager.bulk_delete_platforms(
+        platform_ids=platform_ids,
+        reason="Cleanup of unused platforms"
+    )
+    
+    # Check results
+    for result in bulk_results:
+        if result["success"]:
+            print(f"Successfully deleted platform {result['platform_id']}")
+        else:
+            print(f"Failed to delete platform {result['platform_id']}: {result['error']}")
+    
+    # Safe deletion with validation
+    safe_result = deletion_manager.delete_platform_safe(
+        platform_id="platform_1234567890abcdef",
+        reason="Safe platform deletion"
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Platforms" icon="list">
+    `GET /org/platforms` - List all platforms before deletion
+  </Card>
+  <Card title="Create Platform" icon="plus">
+    `POST /org/create/platform` - Create a new platform
+  </Card>
+  <Card title="Verify Platform" icon="check">
+    `GET /org/verify/platform/{platformId}` - Verify platform
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for platform management
+  </Card>
+</CardGroup>

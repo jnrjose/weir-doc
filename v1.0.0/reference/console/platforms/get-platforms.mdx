@@ -1,0 +1,929 @@
+---
+title: "Get Platforms"
+api: "GET /org/platforms"
+description: "Retrieve list of platforms in the organization"
+---
+
+Retrieve a comprehensive list of all platforms within your organization, including their details, status, and configurations. This endpoint provides detailed information about platform composition and management.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for platform management and oversight within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Query Parameters
+
+<ParamField query="page" type="string" required="false">
+  Page number for pagination
+  
+  **Example**: "1"
+  
+  **Default**: "1"
+  
+  **Constraints**: 
+  - Must be a positive integer
+  - Minimum value: 1
+</ParamField>
+
+<ParamField query="limit" type="string" required="false">
+  Number of platforms to return per page
+  
+  **Example**: "20"
+  
+  **Default**: "20"
+  
+  **Constraints**: 
+  - Must be between 1 and 100
+  - Recommended: 20-50 for optimal performance
+</ParamField>
+
+<ParamField query="type" type="string" required="false">
+  Filter platforms by type
+  
+  **Options**: "Forum/Community", "Social Media", "E-commerce", "Content Management", "API Service", "Mobile App", "Web Application", "Other"
+  
+  **Example**: "API Service"
+  
+  **Note**: If not specified, returns all platforms regardless of type
+</ParamField>
+
+<ParamField query="status" type="string" required="false">
+  Filter platforms by status
+  
+  **Options**: "active", "inactive", "pending", "error"
+  
+  **Example**: "active"
+  
+  **Default**: "active"
+  
+  **Note**: If not specified, returns only active platforms
+</ParamField>
+
+<ParamField query="teamId" type="string" required="false">
+  Filter platforms by team ID
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID
+  - Team must exist in your organization
+  - You must have access to the team
+</ParamField>
+
+<ParamField query="search" type="string" required="false">
+  Search platforms by name or description
+  
+  **Example**: "api"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Case-insensitive search
+  - Searches both name and description fields
+</ParamField>
+
+<ParamField query="sort_by" type="string" required="false">
+  Sort platforms by specified field
+  
+  **Options**: "name", "type", "status", "created_at", "updated_at"
+  
+  **Example**: "created_at"
+  
+  **Default**: "name"
+</ParamField>
+
+<ParamField query="sort_order" type="string" required="false">
+  Sort order for the results
+  
+  **Options**: "asc", "desc"
+  
+  **Example**: "desc"
+  
+  **Default**: "asc"
+</ParamField>
+
+<ParamField query="tags" type="string" required="false">
+  Filter platforms by tags (comma-separated)
+  
+  **Example**: "production,api"
+  
+  **Constraints**: 
+  - Multiple tags separated by commas
+  - Case-insensitive matching
+  - Returns platforms that have any of the specified tags
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of platform objects
+</ResponseField>
+
+<ResponseField name="data[].platform_id" type="string">
+  Unique identifier for the platform
+</ResponseField>
+
+<ResponseField name="data[].name" type="string">
+  Name of the platform
+</ResponseField>
+
+<ResponseField name="data[].description" type="string">
+  Description of the platform
+</ResponseField>
+
+<ResponseField name="data[].type" type="string">
+  Type of the platform
+</ResponseField>
+
+<ResponseField name="data[].domain" type="string">
+  Domain or URL of the platform
+</ResponseField>
+
+<ResponseField name="data[].team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data[].team_name" type="string">
+  Name of the associated team
+</ResponseField>
+
+<ResponseField name="data[].status" type="string">
+  Current status of the platform
+</ResponseField>
+
+<ResponseField name="data[].verification_status" type="string">
+  Status of platform verification
+</ResponseField>
+
+<ResponseField name="data[].settings" type="object">
+  Platform settings and configurations
+</ResponseField>
+
+<ResponseField name="data[].tags" type="array">
+  Tags associated with the platform
+</ResponseField>
+
+<ResponseField name="data[].created_at" type="string">
+  ISO 8601 timestamp when the platform was created
+</ResponseField>
+
+<ResponseField name="data[].updated_at" type="string">
+  ISO 8601 timestamp when the platform was last updated
+</ResponseField>
+
+<ResponseField name="data[].created_by" type="string">
+  User ID of the person who created the platform
+</ResponseField>
+
+<ResponseField name="data[].stats" type="object">
+  Platform statistics and metrics
+</ResponseField>
+
+<ResponseField name="data[].stats.total_requests" type="integer">
+  Total number of requests handled
+</ResponseField>
+
+<ResponseField name="data[].stats.uptime_percentage" type="number">
+  Platform uptime percentage
+</ResponseField>
+
+<ResponseField name="data[].stats.last_activity" type="string">
+  ISO 8601 timestamp of last activity
+</ResponseField>
+
+<ResponseField name="pagination" type="object">
+  Pagination information
+</ResponseField>
+
+<ResponseField name="pagination.page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="pagination.limit" type="integer">
+  Number of items per page
+</ResponseField>
+
+<ResponseField name="pagination.total" type="integer">
+  Total number of platforms
+</ResponseField>
+
+<ResponseField name="pagination.total_pages" type="integer">
+  Total number of pages
+</ResponseField>
+
+<ResponseField name="pagination.has_next" type="boolean">
+  Whether there are more pages available
+</ResponseField>
+
+<ResponseField name="pagination.has_prev" type="boolean">
+  Whether there are previous pages available
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/platforms?page=1&limit=20&type=API Service&status=active&sort_by=created_at&sort_order=desc&tags=production,api" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/platforms?page=1&limit=20&type=API Service&status=active&sort_by=created_at&sort_order=desc&tags=production,api', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+params = {
+    'page': 1,
+    'limit': 20,
+    'type': 'API Service',
+    'status': 'active',
+    'sort_by': 'created_at',
+    'sort_order': 'desc',
+    'tags': 'production,api'
+}
+
+response = requests.get(
+    'https://api.example.com/org/platforms',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    },
+    params=params
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$params = http_build_query([
+    'page' => 1,
+    'limit' => 20,
+    'type' => 'API Service',
+    'status' => 'active',
+    'sort_by' => 'created_at',
+    'sort_order' => 'desc',
+    'tags' => 'production,api'
+]);
+
+$response = file_get_contents("https://api.example.com/org/platforms?$params", false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://api.example.com/org/platforms"
+    
+    params := url.Values{}
+    params.Add("page", "1")
+    params.Add("limit", "20")
+    params.Add("type", "API Service")
+    params.Add("status", "active")
+    params.Add("sort_by", "created_at")
+    params.Add("sort_order", "desc")
+    params.Add("tags", "production,api")
+    
+    req, _ := http.NewRequest("GET", baseURL+"?"+params.Encode(), nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "platform_id": "platform_1234567890abcdef",
+      "name": "Production API",
+      "description": "Main production API for handling customer requests",
+      "type": "API Service",
+      "domain": "api.example.com",
+      "team_id": "team_1234567890abcdef",
+      "team_name": "Development Team",
+      "status": "active",
+      "verification_status": "verified",
+      "settings": {
+        "environment": "production",
+        "region": "us-east-1",
+        "scaling": {
+          "min_instances": 2,
+          "max_instances": 10,
+          "auto_scale": true
+        },
+        "monitoring": {
+          "enabled": true,
+          "alerts": true,
+          "metrics": ["cpu", "memory", "response_time"]
+        },
+        "security": {
+          "ssl_enabled": true,
+          "rate_limiting": true,
+          "authentication_required": true
+        }
+      },
+      "tags": ["production", "api", "customer-facing"],
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z",
+      "created_by": "user_1234567890abcdef",
+      "stats": {
+        "total_requests": 1500000,
+        "uptime_percentage": 99.9,
+        "last_activity": "2024-01-15T10:25:00Z"
+      }
+    },
+    {
+      "platform_id": "platform_0987654321fedcba",
+      "name": "Customer Portal",
+      "description": "Customer self-service portal",
+      "type": "Web Application",
+      "domain": "portal.example.com",
+      "team_id": "team_1234567890abcdef",
+      "team_name": "Development Team",
+      "status": "active",
+      "verification_status": "verified",
+      "settings": {
+        "environment": "production",
+        "region": "us-east-1",
+        "scaling": {
+          "min_instances": 1,
+          "max_instances": 5,
+          "auto_scale": true
+        },
+        "monitoring": {
+          "enabled": true,
+          "alerts": true,
+          "metrics": ["cpu", "memory", "response_time", "error_rate"]
+        },
+        "security": {
+          "ssl_enabled": true,
+          "rate_limiting": false,
+          "authentication_required": false
+        }
+      },
+      "tags": ["web", "production", "customer-facing"],
+      "created_at": "2024-01-14T09:15:00Z",
+      "updated_at": "2024-01-15T08:45:00Z",
+      "created_by": "user_0987654321fedcba",
+      "stats": {
+        "total_requests": 750000,
+        "uptime_percentage": 99.8,
+        "last_activity": "2024-01-15T10:20:00Z"
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 2,
+    "total_pages": 1,
+    "has_next": false,
+    "has_prev": false
+  },
+  "message": "Platforms retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view platforms
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Parameters (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid query parameters",
+        "details": {
+          "field": "limit",
+          "reason": "Limit must be between 1 and 100"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view platforms",
+        "details": {
+          "field": "permissions",
+          "reason": "Platform access requires organization membership"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before making another request",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Platform Types" icon="server">
+    Available platform types:
+    
+    - **Forum/Community**: Community forums and discussion platforms
+    - **Social Media**: Social media platforms and networks
+    - **E-commerce**: Online shopping and marketplace platforms
+    - **Content Management**: CMS and content publishing platforms
+    - **API Service**: RESTful APIs and web services
+    - **Mobile App**: Mobile application platforms
+    - **Web Application**: Web-based application platforms
+    - **Other**: Any other type of platform
+  </Accordion>
+  
+  <Accordion title="Platform Status" icon="info">
+    Platform status options:
+    
+    - **active**: Platform is running and accessible
+    - **inactive**: Platform is stopped or disabled
+    - **pending**: Platform is being set up or configured
+    - **error**: Platform has encountered an error
+  </Accordion>
+  
+  <Accordion title="Verification Status" icon="check">
+    Verification status options:
+    
+    - **verified**: Platform has been verified and is fully functional
+    - **pending**: Platform verification is in progress
+    - **failed**: Platform verification has failed
+  </Accordion>
+  
+  <Accordion title="Pagination" icon="list">
+    Pagination best practices:
+    
+    - **Page Size**: Use 20-50 items per page for optimal performance
+    - **Sorting**: Sort by relevant fields (name, created_at, updated_at)
+    - **Filtering**: Use type, status, and team filters to narrow results
+    - **Search**: Use search parameter for finding specific platforms
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Platform Listing Service" icon="cog">
+    ```javascript
+    class PlatformListingService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getPlatforms(options = {}) {
+        try {
+          const params = new URLSearchParams();
+          
+          // Add query parameters
+          if (options.page) params.append('page', options.page);
+          if (options.limit) params.append('limit', options.limit);
+          if (options.type) params.append('type', options.type);
+          if (options.status) params.append('status', options.status);
+          if (options.teamId) params.append('teamId', options.teamId);
+          if (options.search) params.append('search', options.search);
+          if (options.sortBy) params.append('sort_by', options.sortBy);
+          if (options.sortOrder) params.append('sort_order', options.sortOrder);
+          if (options.tags) params.append('tags', options.tags);
+          
+          const response = await this.apiClient.makeRequest(
+            `/org/platforms?${params.toString()}`
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to get platforms');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error getting platforms:', error);
+          throw error;
+        }
+      }
+      
+      async getAllPlatforms() {
+        const allPlatforms = [];
+        let page = 1;
+        let hasMore = true;
+        
+        while (hasMore) {
+          const result = await this.getPlatforms({
+            page: page,
+            limit: 50
+          });
+          
+          allPlatforms.push(...result.data);
+          hasMore = result.pagination.has_next;
+          page++;
+        }
+        
+        return allPlatforms;
+      }
+      
+      async getActivePlatforms() {
+        return this.getPlatforms({
+          status: 'active',
+          sortBy: 'name',
+          sortOrder: 'asc'
+        });
+      }
+      
+      async getAPIPlatforms() {
+        return this.getPlatforms({
+          type: 'API Service',
+          status: 'active'
+        });
+      }
+      
+      async getWebAppPlatforms() {
+        return this.getPlatforms({
+          type: 'Web Application',
+          status: 'active'
+        });
+      }
+      
+      async getPlatformsByTeam(teamId) {
+        return this.getPlatforms({
+          teamId: teamId,
+          status: 'active'
+        });
+      }
+      
+      async searchPlatforms(searchTerm) {
+        return this.getPlatforms({
+          search: searchTerm,
+          status: 'active'
+        });
+      }
+      
+      async getRecentPlatforms(limit = 10) {
+        return this.getPlatforms({
+          status: 'active',
+          sortBy: 'created_at',
+          sortOrder: 'desc',
+          limit: limit
+        });
+      }
+      
+      async getPlatformsByTags(tags) {
+        return this.getPlatforms({
+          tags: tags.join(','),
+          status: 'active'
+        });
+      }
+    }
+    
+    // Usage example
+    const platformService = new PlatformListingService(apiClient);
+    
+    // Get all active platforms
+    const activePlatforms = await platformService.getActivePlatforms();
+    console.log(`Found ${activePlatforms.data.length} active platforms`);
+    
+    // Get API platforms
+    const apiPlatforms = await platformService.getAPIPlatforms();
+    console.log(`Found ${apiPlatforms.data.length} API platforms`);
+    
+    // Search platforms
+    const searchResults = await platformService.searchPlatforms('customer');
+    console.log(`Found ${searchResults.data.length} platforms matching 'customer'`);
+    
+    // Get platforms by team
+    const teamPlatforms = await platformService.getPlatformsByTeam('team_1234567890abcdef');
+    console.log(`Team has ${teamPlatforms.data.length} platforms`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Platform Listing Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class PlatformListingManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def get_platforms(self, 
+                         page: int = 1,
+                         limit: int = 20,
+                         platform_type: Optional[str] = None,
+                         status: str = "active",
+                         team_id: Optional[str] = None,
+                         search: Optional[str] = None,
+                         sort_by: str = "name",
+                         sort_order: str = "asc",
+                         tags: Optional[List[str]] = None) -> Dict:
+            """Get platforms with optional filtering and pagination"""
+            try:
+                params = {
+                    "page": page,
+                    "limit": limit,
+                    "status": status,
+                    "sort_by": sort_by,
+                    "sort_order": sort_order
+                }
+                
+                if platform_type:
+                    params["type"] = platform_type
+                if team_id:
+                    params["teamId"] = team_id
+                if search:
+                    params["search"] = search
+                if tags:
+                    params["tags"] = ",".join(tags)
+                
+                response = self.api_client.get('/org/platforms', params=params)
+                response.raise_for_status()
+                
+                return response.json()
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting platforms: {e}")
+                raise
+        
+        def get_all_platforms(self) -> List[Dict]:
+            """Get all platforms across all pages"""
+            all_platforms = []
+            page = 1
+            has_more = True
+            
+            while has_more:
+                result = self.get_platforms(page=page, limit=50)
+                all_platforms.extend(result["data"])
+                has_more = result["pagination"]["has_next"]
+                page += 1
+            
+            return all_platforms
+        
+        def get_active_platforms(self) -> Dict:
+            """Get all active platforms"""
+            return self.get_platforms(
+                status="active",
+                sort_by="name",
+                sort_order="asc"
+            )
+        
+        def get_api_platforms(self) -> Dict:
+            """Get all API service platforms"""
+            return self.get_platforms(
+                platform_type="API Service",
+                status="active"
+            )
+        
+        def get_web_app_platforms(self) -> Dict:
+            """Get all web application platforms"""
+            return self.get_platforms(
+                platform_type="Web Application",
+                status="active"
+            )
+        
+        def get_mobile_app_platforms(self) -> Dict:
+            """Get all mobile app platforms"""
+            return self.get_platforms(
+                platform_type="Mobile App",
+                status="active"
+            )
+        
+        def get_ecommerce_platforms(self) -> Dict:
+            """Get all e-commerce platforms"""
+            return self.get_platforms(
+                platform_type="E-commerce",
+                status="active"
+            )
+        
+        def get_platforms_by_team(self, team_id: str) -> Dict:
+            """Get platforms for a specific team"""
+            return self.get_platforms(
+                team_id=team_id,
+                status="active"
+            )
+        
+        def search_platforms(self, search_term: str) -> Dict:
+            """Search platforms by name or description"""
+            return self.get_platforms(
+                search=search_term,
+                status="active"
+            )
+        
+        def get_recent_platforms(self, limit: int = 10) -> Dict:
+            """Get recently created platforms"""
+            return self.get_platforms(
+                status="active",
+                sort_by="created_at",
+                sort_order="desc",
+                limit=limit
+            )
+        
+        def get_platforms_by_tags(self, tags: List[str]) -> Dict:
+            """Get platforms by tags"""
+            return self.get_platforms(
+                tags=tags,
+                status="active"
+            )
+        
+        def get_platform_statistics(self) -> Dict:
+            """Get platform statistics"""
+            all_platforms = self.get_all_platforms()
+            
+            stats = {
+                "total_platforms": len(all_platforms),
+                "active_platforms": len([p for p in all_platforms if p["status"] == "active"]),
+                "inactive_platforms": len([p for p in all_platforms if p["status"] == "inactive"]),
+                "pending_platforms": len([p for p in all_platforms if p["status"] == "pending"]),
+                "error_platforms": len([p for p in all_platforms if p["status"] == "error"]),
+                "verified_platforms": len([p for p in all_platforms if p["verification_status"] == "verified"]),
+                "platforms_by_type": {},
+                "platforms_by_team": {}
+            }
+            
+            # Count by type
+            for platform in all_platforms:
+                platform_type = platform["type"]
+                if platform_type not in stats["platforms_by_type"]:
+                    stats["platforms_by_type"][platform_type] = 0
+                stats["platforms_by_type"][platform_type] += 1
+            
+            # Count by team
+            for platform in all_platforms:
+                team_name = platform.get("team_name", "Unknown")
+                if team_name not in stats["platforms_by_team"]:
+                    stats["platforms_by_team"][team_name] = 0
+                stats["platforms_by_team"][team_name] += 1
+            
+            return stats
+        
+        def get_platform_by_name(self, name: str) -> Optional[Dict]:
+            """Find a specific platform by name"""
+            result = self.search_platforms(name)
+            for platform in result["data"]:
+                if platform["name"].lower() == name.lower():
+                    return platform
+            return None
+        
+        def get_platforms_by_domain(self, domain: str) -> List[Dict]:
+            """Find platforms by domain"""
+            all_platforms = self.get_all_platforms()
+            return [p for p in all_platforms if p.get("domain") == domain]
+    
+    # Usage example
+    platform_manager = PlatformListingManager(api_client)
+    
+    # Get active platforms
+    active_platforms = platform_manager.get_active_platforms()
+    print(f"Found {len(active_platforms['data'])} active platforms")
+    
+    # Get API platforms
+    api_platforms = platform_manager.get_api_platforms()
+    print(f"Found {len(api_platforms['data'])} API platforms")
+    
+    # Search platforms
+    search_results = platform_manager.search_platforms("customer")
+    print(f"Found {len(search_results['data'])} platforms matching 'customer'")
+    
+    # Get platform statistics
+    stats = platform_manager.get_platform_statistics()
+    print(f"Platform statistics: {stats}")
+    
+    # Find specific platform
+    platform = platform_manager.get_platform_by_name("Production API")
+    if platform:
+        print(f"Found platform: {platform['name']} ({platform['type']})")
+    
+    # Get platforms by tags
+    tagged_platforms = platform_manager.get_platforms_by_tags(["production", "api"])
+    print(f"Found {len(tagged_platforms['data'])} platforms with production and api tags")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Create Platform" icon="plus">
+    `POST /org/create/platform` - Create a new platform
+  </Card>
+  <Card title="Delete Platform" icon="trash">
+    `DELETE /org/platform/{platformId}` - Remove a platform
+  </Card>
+  <Card title="Verify Platform" icon="check">
+    `GET /org/verify/platform/{platformId}` - Verify platform
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for platform filtering
+  </Card>
+</CardGroup>

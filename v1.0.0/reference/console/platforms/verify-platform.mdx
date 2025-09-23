@@ -1,0 +1,794 @@
+---
+title: "Verify Platform"
+api: "GET /org/verify/platform/{platformId}"
+description: "Verify platform configuration and accessibility"
+---
+
+Verify a platform's configuration, accessibility, and compliance with platform requirements. This endpoint performs comprehensive checks to ensure the platform is properly configured and functioning correctly.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for platform verification and compliance checking within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="platformId" type="string" required>
+  Unique identifier of the platform to verify
+  
+  **Example**: "platform_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid platform ID
+  - Platform must exist in your organization
+  - You must have permission to verify this platform
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the verification was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the verification results and platform information
+</ResponseField>
+
+<ResponseField name="data.platform_id" type="string">
+  Unique identifier for the verified platform
+</ResponseField>
+
+<ResponseField name="data.platform_name" type="string">
+  Name of the verified platform
+</ResponseField>
+
+<ResponseField name="data.verification_status" type="string">
+  Overall verification status (verified, failed, pending, partial)
+</ResponseField>
+
+<ResponseField name="data.verification_timestamp" type="string">
+  ISO 8601 timestamp when verification was performed
+</ResponseField>
+
+<ResponseField name="data.verification_results" type="object">
+  Detailed results of each verification check
+</ResponseField>
+
+<ResponseField name="data.verification_results.domain_verification" type="object">
+  Domain verification results
+</ResponseField>
+
+<ResponseField name="data.verification_results.domain_verification.status" type="string">
+  Domain verification status (verified, failed, pending)
+</ResponseField>
+
+<ResponseField name="data.verification_results.domain_verification.accessible" type="boolean">
+  Whether the domain is accessible
+</ResponseField>
+
+<ResponseField name="data.verification_results.domain_verification.ssl_enabled" type="boolean">
+  Whether SSL is properly configured
+</ResponseField>
+
+<ResponseField name="data.verification_results.domain_verification.response_time" type="number">
+  Domain response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.verification_results.ssl_verification" type="object">
+  SSL certificate verification results
+</ResponseField>
+
+<ResponseField name="data.verification_results.ssl_verification.status" type="string">
+  SSL verification status (verified, failed, pending)
+</ResponseField>
+
+<ResponseField name="data.verification_results.ssl_verification.valid" type="boolean">
+  Whether SSL certificate is valid
+</ResponseField>
+
+<ResponseField name="data.verification_results.ssl_verification.expires_at" type="string">
+  SSL certificate expiration date
+</ResponseField>
+
+<ResponseField name="data.verification_results.ssl_verification.issuer" type="string">
+  SSL certificate issuer
+</ResponseField>
+
+<ResponseField name="data.verification_results.api_verification" type="object">
+  API endpoint verification results
+</ResponseField>
+
+<ResponseField name="data.verification_results.api_verification.status" type="string">
+  API verification status (verified, failed, pending)
+</ResponseField>
+
+<ResponseField name="data.verification_results.api_verification.endpoints_accessible" type="boolean">
+  Whether API endpoints are accessible
+</ResponseField>
+
+<ResponseField name="data.verification_results.api_verification.response_codes" type="array">
+  HTTP response codes received from API endpoints
+</ResponseField>
+
+<ResponseField name="data.verification_results.api_verification.avg_response_time" type="number">
+  Average API response time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.verification_results.compliance_verification" type="object">
+  Compliance verification results
+</ResponseField>
+
+<ResponseField name="data.verification_results.compliance_verification.status" type="string">
+  Compliance verification status (verified, failed, pending)
+</ResponseField>
+
+<ResponseField name="data.verification_results.compliance_verification.gdpr_compliant" type="boolean">
+  Whether platform is GDPR compliant
+</ResponseField>
+
+<ResponseField name="data.verification_results.compliance_verification.security_headers" type="boolean">
+  Whether security headers are properly configured
+</ResponseField>
+
+<ResponseField name="data.verification_results.compliance_verification.privacy_policy" type="boolean">
+  Whether privacy policy is accessible
+</ResponseField>
+
+<ResponseField name="data.verification_results.performance_verification" type="object">
+  Performance verification results
+</ResponseField>
+
+<ResponseField name="data.verification_results.performance_verification.status" type="string">
+  Performance verification status (verified, failed, pending)
+</ResponseField>
+
+<ResponseField name="data.verification_results.performance_verification.load_time" type="number">
+  Platform load time in milliseconds
+</ResponseField>
+
+<ResponseField name="data.verification_results.performance_verification.uptime_percentage" type="number">
+  Platform uptime percentage
+</ResponseField>
+
+<ResponseField name="data.verification_results.performance_verification.error_rate" type="number">
+  Platform error rate percentage
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues" type="array">
+  List of issues found during verification
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues[].type" type="string">
+  Type of issue (error, warning, info)
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues[].category" type="string">
+  Category of issue (domain, ssl, api, compliance, performance)
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues[].message" type="string">
+  Description of the issue
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues[].severity" type="string">
+  Severity level (critical, high, medium, low)
+</ResponseField>
+
+<ResponseField name="data.verification_results.issues[].recommendation" type="string">
+  Recommendation to fix the issue
+</ResponseField>
+
+<ResponseField name="data.verification_summary" type="object">
+  Summary of verification results
+</ResponseField>
+
+<ResponseField name="data.verification_summary.total_checks" type="integer">
+  Total number of verification checks performed
+</ResponseField>
+
+<ResponseField name="data.verification_summary.passed_checks" type="integer">
+  Number of checks that passed
+</ResponseField>
+
+<ResponseField name="data.verification_summary.failed_checks" type="integer">
+  Number of checks that failed
+</ResponseField>
+
+<ResponseField name="data.verification_summary.warning_checks" type="integer">
+  Number of checks with warnings
+</ResponseField>
+
+<ResponseField name="data.verification_summary.overall_score" type="number">
+  Overall verification score (0-100)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/verify/platform/platform_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/verify/platform/platform_1234567890abcdef', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.example.com/org/verify/platform/platform_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$response = file_get_contents('https://api.example.com/org/verify/platform/platform_1234567890abcdef', false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    req, _ := http.NewRequest("GET", "https://api.example.com/org/verify/platform/platform_1234567890abcdef", nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "platform_id": "platform_1234567890abcdef",
+    "platform_name": "Production API",
+    "verification_status": "verified",
+    "verification_timestamp": "2024-01-15T10:30:00Z",
+    "verification_results": {
+      "domain_verification": {
+        "status": "verified",
+        "accessible": true,
+        "ssl_enabled": true,
+        "response_time": 245
+      },
+      "ssl_verification": {
+        "status": "verified",
+        "valid": true,
+        "expires_at": "2024-12-31T23:59:59Z",
+        "issuer": "Let's Encrypt"
+      },
+      "api_verification": {
+        "status": "verified",
+        "endpoints_accessible": true,
+        "response_codes": [200, 200, 200],
+        "avg_response_time": 180
+      },
+      "compliance_verification": {
+        "status": "verified",
+        "gdpr_compliant": true,
+        "security_headers": true,
+        "privacy_policy": true
+      },
+      "performance_verification": {
+        "status": "verified",
+        "load_time": 1200,
+        "uptime_percentage": 99.9,
+        "error_rate": 0.1
+      },
+      "issues": [
+        {
+          "type": "warning",
+          "category": "performance",
+          "message": "Response time is slightly above optimal range",
+          "severity": "low",
+          "recommendation": "Consider optimizing API endpoints for better performance"
+        }
+      ]
+    },
+    "verification_summary": {
+      "total_checks": 15,
+      "passed_checks": 14,
+      "failed_checks": 0,
+      "warning_checks": 1,
+      "overall_score": 95
+    }
+  },
+  "message": "Platform verification completed successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to verify this platform
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Platform not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Platform Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "PLATFORM_NOT_FOUND",
+        "message": "Platform not found",
+        "details": {
+          "field": "platformId",
+          "reason": "Platform with ID 'platform_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to verify platform",
+        "details": {
+          "field": "permissions",
+          "reason": "Platform verification requires platform access or admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before making another request",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Verification Checks" icon="check">
+    What gets verified:
+    
+    - **Domain Verification**: Domain accessibility and response time
+    - **SSL Verification**: SSL certificate validity and configuration
+    - **API Verification**: API endpoint accessibility and response codes
+    - **Compliance Verification**: GDPR compliance and security headers
+    - **Performance Verification**: Load time, uptime, and error rates
+  </Accordion>
+  
+  <Accordion title="Verification Status" icon="info">
+    Status options:
+    
+    - **verified**: All checks passed successfully
+    - **failed**: One or more critical checks failed
+    - **pending**: Verification is in progress
+    - **partial**: Some checks passed, others failed or are pending
+  </Accordion>
+  
+  <Accordion title="Issue Severity" icon="exclamation-triangle">
+    Issue severity levels:
+    
+    - **critical**: Issues that prevent platform functionality
+    - **high**: Issues that significantly impact platform performance
+    - **medium**: Issues that may affect user experience
+    - **low**: Minor issues or warnings
+  </Accordion>
+  
+  <Accordion title="Verification Score" icon="star">
+    Scoring system:
+    
+    - **90-100**: Excellent platform configuration
+    - **80-89**: Good platform configuration with minor issues
+    - **70-79**: Acceptable platform configuration with some issues
+    - **60-69**: Poor platform configuration with significant issues
+    - **Below 60**: Critical issues that need immediate attention
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Platform Verification Service" icon="cog">
+    ```javascript
+    class PlatformVerificationService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async verifyPlatform(platformId) {
+        try {
+          const response = await this.apiClient.makeRequest(`/org/verify/platform/${platformId}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to verify platform');
+          }
+          
+          const result = await response.json();
+          
+          // Log verification results
+          console.log(`Platform verification completed: ${result.data.verification_status}`);
+          console.log(`Overall score: ${result.data.verification_summary.overall_score}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error verifying platform:', error);
+          throw error;
+        }
+      }
+      
+      async getVerificationStatus(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_status;
+      }
+      
+      async getVerificationScore(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_summary.overall_score;
+      }
+      
+      async getVerificationIssues(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.issues;
+      }
+      
+      async getCriticalIssues(platformId) {
+        const issues = await this.getVerificationIssues(platformId);
+        return issues.filter(issue => issue.severity === 'critical');
+      }
+      
+      async getHighPriorityIssues(platformId) {
+        const issues = await this.getVerificationIssues(platformId);
+        return issues.filter(issue => issue.severity === 'high');
+      }
+      
+      async isPlatformVerified(platformId) {
+        const status = await this.getVerificationStatus(platformId);
+        return status === 'verified';
+      }
+      
+      async getDomainVerification(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.domain_verification;
+      }
+      
+      async getSSLVerification(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.ssl_verification;
+      }
+      
+      async getAPIVerification(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.api_verification;
+      }
+      
+      async getComplianceVerification(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.compliance_verification;
+      }
+      
+      async getPerformanceVerification(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_results.performance_verification;
+      }
+      
+      async getVerificationSummary(platformId) {
+        const result = await this.verifyPlatform(platformId);
+        return result.data.verification_summary;
+      }
+    }
+    
+    // Usage example
+    const verificationService = new PlatformVerificationService(apiClient);
+    
+    // Verify platform
+    const verification = await verificationService.verifyPlatform('platform_1234567890abcdef');
+    console.log(`Verification status: ${verification.data.verification_status}`);
+    
+    // Check if platform is verified
+    const isVerified = await verificationService.isPlatformVerified('platform_1234567890abcdef');
+    console.log(`Platform verified: ${isVerified}`);
+    
+    // Get verification score
+    const score = await verificationService.getVerificationScore('platform_1234567890abcdef');
+    console.log(`Verification score: ${score}`);
+    
+    // Get critical issues
+    const criticalIssues = await verificationService.getCriticalIssues('platform_1234567890abcdef');
+    console.log(`Critical issues: ${criticalIssues.length}`);
+    
+    // Get domain verification
+    const domainVerification = await verificationService.getDomainVerification('platform_1234567890abcdef');
+    console.log(`Domain accessible: ${domainVerification.accessible}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Platform Verification Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class PlatformVerificationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def verify_platform(self, platform_id: str) -> Dict:
+            """Verify platform configuration and accessibility"""
+            try:
+                response = self.api_client.get(f'/org/verify/platform/{platform_id}')
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Platform verification completed: {result['data']['verification_status']}")
+                print(f"Overall score: {result['data']['verification_summary']['overall_score']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error verifying platform: {e}")
+                raise
+        
+        def get_verification_status(self, platform_id: str) -> str:
+            """Get platform verification status"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_status"]
+        
+        def get_verification_score(self, platform_id: str) -> float:
+            """Get platform verification score"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_summary"]["overall_score"]
+        
+        def get_verification_issues(self, platform_id: str) -> List[Dict]:
+            """Get platform verification issues"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["issues"]
+        
+        def get_critical_issues(self, platform_id: str) -> List[Dict]:
+            """Get critical verification issues"""
+            issues = self.get_verification_issues(platform_id)
+            return [issue for issue in issues if issue["severity"] == "critical"]
+        
+        def get_high_priority_issues(self, platform_id: str) -> List[Dict]:
+            """Get high priority verification issues"""
+            issues = self.get_verification_issues(platform_id)
+            return [issue for issue in issues if issue["severity"] == "high"]
+        
+        def is_platform_verified(self, platform_id: str) -> bool:
+            """Check if platform is verified"""
+            status = self.get_verification_status(platform_id)
+            return status == "verified"
+        
+        def get_domain_verification(self, platform_id: str) -> Dict:
+            """Get domain verification results"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["domain_verification"]
+        
+        def get_ssl_verification(self, platform_id: str) -> Dict:
+            """Get SSL verification results"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["ssl_verification"]
+        
+        def get_api_verification(self, platform_id: str) -> Dict:
+            """Get API verification results"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["api_verification"]
+        
+        def get_compliance_verification(self, platform_id: str) -> Dict:
+            """Get compliance verification results"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["compliance_verification"]
+        
+        def get_performance_verification(self, platform_id: str) -> Dict:
+            """Get performance verification results"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_results"]["performance_verification"]
+        
+        def get_verification_summary(self, platform_id: str) -> Dict:
+            """Get verification summary"""
+            result = self.verify_platform(platform_id)
+            return result["data"]["verification_summary"]
+        
+        def get_issues_by_category(self, platform_id: str, category: str) -> List[Dict]:
+            """Get issues by category"""
+            issues = self.get_verification_issues(platform_id)
+            return [issue for issue in issues if issue["category"] == category]
+        
+        def get_issues_by_severity(self, platform_id: str, severity: str) -> List[Dict]:
+            """Get issues by severity"""
+            issues = self.get_verification_issues(platform_id)
+            return [issue for issue in issues if issue["severity"] == severity]
+        
+        def get_verification_report(self, platform_id: str) -> Dict:
+            """Get comprehensive verification report"""
+            result = self.verify_platform(platform_id)
+            
+            report = {
+                "platform_id": platform_id,
+                "platform_name": result["data"]["platform_name"],
+                "verification_status": result["data"]["verification_status"],
+                "overall_score": result["data"]["verification_summary"]["overall_score"],
+                "verification_timestamp": result["data"]["verification_timestamp"],
+                "summary": result["data"]["verification_summary"],
+                "domain_verification": result["data"]["verification_results"]["domain_verification"],
+                "ssl_verification": result["data"]["verification_results"]["ssl_verification"],
+                "api_verification": result["data"]["verification_results"]["api_verification"],
+                "compliance_verification": result["data"]["verification_results"]["compliance_verification"],
+                "performance_verification": result["data"]["verification_results"]["performance_verification"],
+                "issues": result["data"]["verification_results"]["issues"],
+                "critical_issues": self.get_critical_issues(platform_id),
+                "high_priority_issues": self.get_high_priority_issues(platform_id)
+            }
+            
+            return report
+        
+        def is_platform_healthy(self, platform_id: str) -> bool:
+            """Check if platform is healthy based on verification results"""
+            score = self.get_verification_score(platform_id)
+            critical_issues = self.get_critical_issues(platform_id)
+            
+            return score >= 80 and len(critical_issues) == 0
+        
+        def get_platform_health_status(self, platform_id: str) -> str:
+            """Get platform health status"""
+            if self.is_platform_healthy(platform_id):
+                return "healthy"
+            elif self.get_verification_score(platform_id) >= 60:
+                return "warning"
+            else:
+                return "critical"
+    
+    # Usage example
+    verification_manager = PlatformVerificationManager(api_client)
+    
+    # Verify platform
+    verification = verification_manager.verify_platform("platform_1234567890abcdef")
+    print(f"Verification status: {verification['data']['verification_status']}")
+    
+    # Check if platform is verified
+    is_verified = verification_manager.is_platform_verified("platform_1234567890abcdef")
+    print(f"Platform verified: {is_verified}")
+    
+    # Get verification score
+    score = verification_manager.get_verification_score("platform_1234567890abcdef")
+    print(f"Verification score: {score}")
+    
+    # Get critical issues
+    critical_issues = verification_manager.get_critical_issues("platform_1234567890abcdef")
+    print(f"Critical issues: {len(critical_issues)}")
+    
+    # Get domain verification
+    domain_verification = verification_manager.get_domain_verification("platform_1234567890abcdef")
+    print(f"Domain accessible: {domain_verification['accessible']}")
+    
+    # Get comprehensive report
+    report = verification_manager.get_verification_report("platform_1234567890abcdef")
+    print(f"Platform health: {verification_manager.get_platform_health_status('platform_1234567890abcdef')}")
+    
+    # Get issues by category
+    domain_issues = verification_manager.get_issues_by_category("platform_1234567890abcdef", "domain")
+    ssl_issues = verification_manager.get_issues_by_category("platform_1234567890abcdef", "ssl")
+    
+    print(f"Domain issues: {len(domain_issues)}")
+    print(f"SSL issues: {len(ssl_issues)}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Platforms" icon="list">
+    `GET /org/platforms` - List all platforms
+  </Card>
+  <Card title="Create Platform" icon="plus">
+    `POST /org/create/platform` - Create a new platform
+  </Card>
+  <Card title="Delete Platform" icon="trash">
+    `DELETE /org/platform/{platformId}` - Remove a platform
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for platform management
+  </Card>
+</CardGroup>
