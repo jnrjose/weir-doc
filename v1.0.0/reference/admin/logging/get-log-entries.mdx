@@ -326,7 +326,6 @@ Authorization: Bearer <your_jwt_token>
 
 ## Example Request
 
-<CodeGroup>
 ```bash cURL
 curl -X GET "https://api.example.com/logs?page=1&limit=50&level=error&source=auth-service&category=authentication&environment=production&sort_by=timestamp&sort_order=desc&include_metadata=true&include_tags=true" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -370,7 +369,6 @@ response = requests.get(
 
 print(response.json())
 ```
-</CodeGroup>
 
 ## Example Response
 
