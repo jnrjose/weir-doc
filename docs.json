@@ -353,41 +353,131 @@
 								]
 							},
 							{
-								"group": "Organization Cards",
-								"pages": [
-									"v1.0.0/reference/org/cards/get-cards",
-									"v1.0.0/reference/org/cards/add-card"
-								]
-							},
-							{
 								"group": "Team Management",
 								"pages": [
 									"v1.0.0/reference/console/teams/get-teams",
-									"v1.0.0/reference/console/create-team",
-									"v1.0.0/reference/console/teams/delete-team",
+									"v1.0.0/reference/console/teams/create-team",
+									"v1.0.0/reference/console/teams/invite-team-member",
 									"v1.0.0/reference/console/teams/get-team-members",
-									"v1.0.0/reference/console/teams/invite-team-member"
+									"v1.0.0/reference/console/teams/delete-team"
+								]
+							},
+							{
+								"group": "Organization Management",
+								"pages": [
+									"v1.0.0/reference/console/organization/get-organization-info",
+									"v1.0.0/reference/console/organization/update-organization-info"
+								]
+							},
+							{
+								"group": "Platform Management",
+								"pages": [
+									"v1.0.0/reference/console/platforms/create-platform",
+									"v1.0.0/reference/console/platforms/get-platforms",
+									"v1.0.0/reference/console/platforms/delete-platform",
+									"v1.0.0/reference/console/platforms/verify-platform"
+								]
+							},
+							{
+								"group": "Client Management",
+								"pages": [
+									"v1.0.0/reference/console/clients/create-client",
+									"v1.0.0/reference/console/clients/get-clients"
+								]
+							},
+							{
+								"group": "Talent Management",
+								"pages": [
+									"v1.0.0/reference/console/talent/get-talent",
+									"v1.0.0/reference/console/talent/get-talent-profile"
+								]
+							},
+							{
+								"group": "PAX Management",
+								"pages": [
+									"v1.0.0/reference/console/pax/create-pax"
+								]
+							},
+							{
+								"group": "Card Management",
+								"pages": [
+									"v1.0.0/reference/console/cards/get-cards",
+									"v1.0.0/reference/console/cards/add-card"
+								]
+							},
+							{
+								"group": "Mail Management",
+								"pages": [
+									"v1.0.0/reference/console/mail/send-email",
+									"v1.0.0/reference/console/mail/get-email-status"
+								]
+							},
+							{
+								"group": "Logs Management",
+								"pages": [
+									"v1.0.0/reference/console/logs/get-logs",
+									"v1.0.0/reference/console/logs/get-log-details",
+									"v1.0.0/reference/console/logs/export-logs"
 								]
 							},
 							{
 								"group": "Admin APIs",
 								"pages": [
-									"v1.0.0/reference/admin/index",
-									"v1.0.0/reference/admin/login",
-									"v1.0.0/reference/admin/auth/logout",
-									"v1.0.0/reference/admin/auth/refresh-token",
-									"v1.0.0/reference/admin/get-organizations"
+									"v1.0.0/reference/admin/index"
 								]
 							},
 							{
-								"group": "Additional APIs",
+								"group": "Admin Authentication",
 								"pages": [
-									"v1.0.0/reference/clients/get-clients",
-									"v1.0.0/reference/logs/get-logs",
-									"v1.0.0/reference/mail/send-email",
-									"v1.0.0/reference/platforms/get-platforms",
-									"v1.0.0/reference/talent/get-talent",
-									"v1.0.0/reference/pax/get-pax"
+									"v1.0.0/reference/admin/login",
+									"v1.0.0/reference/admin/auth/logout",
+									"v1.0.0/reference/admin/auth/refresh-token"
+								]
+							},
+							{
+								"group": "Admin User Management",
+								"pages": [
+									"v1.0.0/reference/admin/members/get-members",
+									"v1.0.0/reference/admin/members/invite-member"
+								]
+							},
+							{
+								"group": "Admin System Management",
+								"pages": [
+									"v1.0.0/reference/admin/organizations/get-organizations",
+									"v1.0.0/reference/admin/system/get-licenses",
+									"v1.0.0/reference/admin/system/get-platforms"
+								]
+							},
+							{
+								"group": "Admin Mail Management",
+								"pages": [
+									"v1.0.0/reference/admin/mail/create-template",
+									"v1.0.0/reference/admin/mail/get-templates",
+									"v1.0.0/reference/admin/mail/update-template",
+									"v1.0.0/reference/admin/mail/delete-template"
+								]
+							},
+							{
+								"group": "Admin Pod Management",
+								"pages": [
+									"v1.0.0/reference/admin/pods/create-pod",
+									"v1.0.0/reference/admin/pods/get-pods",
+									"v1.0.0/reference/admin/pods/get-pod",
+									"v1.0.0/reference/admin/pods/start-pod",
+									"v1.0.0/reference/admin/pods/pause-pod",
+									"v1.0.0/reference/admin/pods/stop-pod",
+									"v1.0.0/reference/admin/pods/start-all-pods",
+									"v1.0.0/reference/admin/pods/pause-all-pods",
+									"v1.0.0/reference/admin/pods/stop-all-pods"
+								]
+							},
+							{
+								"group": "Admin Logging",
+								"pages": [
+									"v1.0.0/reference/admin/logging/create-log-entry",
+									"v1.0.0/reference/admin/logging/search-log-entries",
+									"v1.0.0/reference/admin/logging/get-log-entries"
 								]
 							}
 						]
