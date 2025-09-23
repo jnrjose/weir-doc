@@ -1,0 +1,662 @@
+---
+title: "Get Log Details"
+api: "GET /org/logs/{logId}"
+description: "Get detailed information for a specific log entry"
+---
+
+Retrieve comprehensive details for a specific log entry, including full metadata, context information, and related events. This endpoint provides in-depth log analysis and debugging information.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for detailed log analysis and debugging within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Path Parameters
+
+<ParamField path="logId" type="string" required>
+  Unique identifier of the log entry to retrieve
+  
+  **Example**: "log_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid log ID
+  - Log must exist in your organization
+  - You must have permission to view this log
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the detailed log information
+</ResponseField>
+
+<ResponseField name="data.log_id" type="string">
+  Unique identifier for the log entry
+</ResponseField>
+
+<ResponseField name="data.timestamp" type="string">
+  ISO 8601 timestamp when the log was created
+</ResponseField>
+
+<ResponseField name="data.level" type="string">
+  Log severity level (debug, info, warn, error, fatal)
+</ResponseField>
+
+<ResponseField name="data.category" type="string">
+  Log category (auth, api, system, security, audit, performance, database, email, payment, user)
+</ResponseField>
+
+<ResponseField name="data.source" type="string">
+  Source component that generated the log
+</ResponseField>
+
+<ResponseField name="data.message" type="string">
+  Log message content
+</ResponseField>
+
+<ResponseField name="data.user_id" type="string">
+  ID of the user associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the team associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.action" type="string">
+  Action that triggered the log entry
+</ResponseField>
+
+<ResponseField name="data.resource" type="string">
+  Resource type that was affected
+</ResponseField>
+
+<ResponseField name="data.resource_id" type="string">
+  ID of the specific resource that was affected
+</ResponseField>
+
+<ResponseField name="data.ip_address" type="string">
+  IP address of the request (if applicable)
+</ResponseField>
+
+<ResponseField name="data.user_agent" type="string">
+  User agent string (if applicable)
+</ResponseField>
+
+<ResponseField name="data.request_id" type="string">
+  Unique request identifier (if applicable)
+</ResponseField>
+
+<ResponseField name="data.session_id" type="string">
+  Session identifier (if applicable)
+</ResponseField>
+
+<ResponseField name="data.duration" type="number">
+  Request duration in milliseconds (if applicable)
+</ResponseField>
+
+<ResponseField name="data.status_code" type="integer">
+  HTTP status code (if applicable)
+</ResponseField>
+
+<ResponseField name="data.error_code" type="string">
+  Error code (if applicable)
+</ResponseField>
+
+<ResponseField name="data.error_message" type="string">
+  Error message (if applicable)
+</ResponseField>
+
+<ResponseField name="data.stack_trace" type="string">
+  Stack trace information (if applicable)
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  Additional metadata and context information
+</ResponseField>
+
+<ResponseField name="data.tags" type="array">
+  Tags associated with the log entry
+</ResponseField>
+
+<ResponseField name="data.related_logs" type="array">
+  Related log entries (if any)
+</ResponseField>
+
+<ResponseField name="data.related_logs[].log_id" type="string">
+  ID of the related log entry
+</ResponseField>
+
+<ResponseField name="data.related_logs[].timestamp" type="string">
+  Timestamp of the related log entry
+</ResponseField>
+
+<ResponseField name="data.related_logs[].level" type="string">
+  Level of the related log entry
+</ResponseField>
+
+<ResponseField name="data.related_logs[].message" type="string">
+  Message of the related log entry
+</ResponseField>
+
+<ResponseField name="data.related_logs[].relationship" type="string">
+  Relationship type (caused_by, followed_by, related_to)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.example.com/org/logs/log_1234567890abcdef" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/logs/log_1234567890abcdef', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  }
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    'https://api.example.com/org/logs/log_1234567890abcdef',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    }
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$response = file_get_contents('https://api.example.com/org/logs/log_1234567890abcdef', false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    req, _ := http.NewRequest("GET", "https://api.example.com/org/logs/log_1234567890abcdef", nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "log_id": "log_1234567890abcdef",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "level": "error",
+    "category": "security",
+    "source": "auth-service",
+    "message": "Authentication failed for user: invalid credentials",
+    "user_id": "user_1234567890abcdef",
+    "team_id": "team_1234567890abcdef",
+    "action": "login",
+    "resource": "user",
+    "resource_id": "user_1234567890abcdef",
+    "ip_address": "192.168.1.100",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "request_id": "req_1234567890abcdef",
+    "session_id": "sess_1234567890abcdef",
+    "duration": 150,
+    "status_code": 401,
+    "error_code": "INVALID_CREDENTIALS",
+    "error_message": "Invalid username or password",
+    "stack_trace": "at AuthService.authenticate (/app/services/auth.js:45:12)\n  at LoginController.login (/app/controllers/login.js:23:8)\n  at async /app/routes/auth.js:15:5",
+    "metadata": {
+      "attempt_count": 3,
+      "lockout_duration": 300,
+      "geolocation": {
+        "country": "US",
+        "region": "CA",
+        "city": "San Francisco",
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "device_info": {
+        "os": "Windows 10",
+        "browser": "Chrome",
+        "version": "120.0.0.0",
+        "device_type": "desktop"
+      },
+      "request_details": {
+        "method": "POST",
+        "endpoint": "/auth/login",
+        "headers": {
+          "content-type": "application/json",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        },
+        "body_size": 156
+      },
+      "security_context": {
+        "threat_level": "medium",
+        "risk_score": 0.7,
+        "anomaly_detected": true,
+        "suspicious_patterns": ["multiple_failed_attempts", "unusual_location"]
+      }
+    },
+    "tags": ["security", "authentication", "failed_login", "high_risk"],
+    "related_logs": [
+      {
+        "log_id": "log_0987654321fedcba",
+        "timestamp": "2024-01-15T10:29:45Z",
+        "level": "warn",
+        "message": "Multiple failed login attempts detected",
+        "relationship": "caused_by"
+      },
+      {
+        "log_id": "log_abcdef1234567890",
+        "timestamp": "2024-01-15T10:30:15Z",
+        "level": "info",
+        "message": "Account lockout initiated",
+        "relationship": "followed_by"
+      }
+    ]
+  },
+  "message": "Log details retrieved successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to view log details
+</ResponseField>
+
+<ResponseField name="404 Not Found" type="object">
+  Log entry not found or doesn't exist
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Log Not Found (404)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "LOG_NOT_FOUND",
+        "message": "Log entry not found",
+        "details": {
+          "field": "logId",
+          "reason": "Log with ID 'log_1234567890abcdef' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view log details",
+        "details": {
+          "field": "permissions",
+          "reason": "Log detail access requires organization_admin or security_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Log Analysis" icon="search">
+    Analysis features:
+    
+    - **Stack Traces**: Full stack trace information for errors
+    - **Related Logs**: Connected log entries and their relationships
+    - **Metadata**: Rich context and debugging information
+    - **Security Context**: Threat assessment and risk scoring
+  </Accordion>
+  
+  <Accordion title="Debugging Information" icon="bug">
+    Debugging features:
+    
+    - **Request Details**: Full request information and headers
+    - **Device Info**: Browser, OS, and device information
+    - **Geolocation**: IP-based location data
+    - **Performance**: Duration and timing information
+  </Accordion>
+  
+  <Accordion title="Security Context" icon="shield">
+    Security features:
+    
+    - **Threat Level**: Risk assessment of the event
+    - **Anomaly Detection**: Unusual patterns and behaviors
+    - **Risk Scoring**: Numerical risk assessment
+    - **Suspicious Patterns**: Identified security concerns
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Log Analysis Service" icon="cog">
+    ```javascript
+    class LogAnalysisService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getLogDetails(logId) {
+        try {
+          const response = await this.apiClient.makeRequest(`/org/logs/${logId}`);
+          
+          if (!response.ok) {
+            throw new Error('Failed to get log details');
+          }
+          
+          const result = await response.json();
+          
+          // Log analysis information
+          console.log(`Log ID: ${result.data.log_id}`);
+          console.log(`Level: ${result.data.level}`);
+          console.log(`Category: ${result.data.category}`);
+          console.log(`Message: ${result.data.message}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error getting log details:', error);
+          throw error;
+        }
+      }
+      
+      async analyzeErrorLog(logId) {
+        const logDetails = await this.getLogDetails(logId);
+        
+        if (logDetails.data.level === 'error' || logDetails.data.level === 'fatal') {
+          return {
+            logId: logDetails.data.log_id,
+            error: logDetails.data.error_message,
+            stackTrace: logDetails.data.stack_trace,
+            relatedLogs: logDetails.data.related_logs,
+            metadata: logDetails.data.metadata
+          };
+        }
+        
+        return null;
+      }
+      
+      async getSecurityContext(logId) {
+        const logDetails = await this.getLogDetails(logId);
+        
+        if (logDetails.data.category === 'security') {
+          return {
+            threatLevel: logDetails.data.metadata.security_context?.threat_level,
+            riskScore: logDetails.data.metadata.security_context?.risk_score,
+            anomalyDetected: logDetails.data.metadata.security_context?.anomaly_detected,
+            suspiciousPatterns: logDetails.data.metadata.security_context?.suspicious_patterns
+          };
+        }
+        
+        return null;
+      }
+    }
+    
+    // Usage example
+    const logAnalysisService = new LogAnalysisService(apiClient);
+    
+    // Get log details
+    const logDetails = await logAnalysisService.getLogDetails('log_1234567890abcdef');
+    console.log('Log Details:', logDetails.data);
+    
+    // Analyze error log
+    const errorAnalysis = await logAnalysisService.analyzeErrorLog('log_1234567890abcdef');
+    if (errorAnalysis) {
+      console.log('Error Analysis:', errorAnalysis);
+    }
+    
+    // Get security context
+    const securityContext = await logAnalysisService.getSecurityContext('log_1234567890abcdef');
+    if (securityContext) {
+      console.log('Security Context:', securityContext);
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Log Analyzer" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional, List
+    
+    class LogAnalyzer:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def get_log_details(self, log_id: str) -> Dict:
+            """Get detailed information for a specific log entry"""
+            try:
+                response = self.api_client.get(f'/org/logs/{log_id}')
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Log ID: {result['data']['log_id']}")
+                print(f"Level: {result['data']['level']}")
+                print(f"Category: {result['data']['category']}")
+                print(f"Message: {result['data']['message']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting log details: {e}")
+                raise
+        
+        def analyze_error_log(self, log_id: str) -> Optional[Dict]:
+            """Analyze error log for debugging information"""
+            log_details = self.get_log_details(log_id)
+            
+            if log_details['data']['level'] in ['error', 'fatal']:
+                return {
+                    'log_id': log_details['data']['log_id'],
+                    'error': log_details['data']['error_message'],
+                    'stack_trace': log_details['data']['stack_trace'],
+                    'related_logs': log_details['data']['related_logs'],
+                    'metadata': log_details['data']['metadata']
+                }
+            
+            return None
+        
+        def get_security_context(self, log_id: str) -> Optional[Dict]:
+            """Get security context for security-related logs"""
+            log_details = self.get_log_details(log_id)
+            
+            if log_details['data']['category'] == 'security':
+                security_context = log_details['data']['metadata'].get('security_context', {})
+                return {
+                    'threat_level': security_context.get('threat_level'),
+                    'risk_score': security_context.get('risk_score'),
+                    'anomaly_detected': security_context.get('anomaly_detected'),
+                    'suspicious_patterns': security_context.get('suspicious_patterns', [])
+                }
+            
+            return None
+        
+        def get_performance_metrics(self, log_id: str) -> Optional[Dict]:
+            """Get performance metrics from log entry"""
+            log_details = self.get_log_details(log_id)
+            
+            if log_details['data']['duration']:
+                return {
+                    'duration': log_details['data']['duration'],
+                    'status_code': log_details['data']['status_code'],
+                    'request_id': log_details['data']['request_id'],
+                    'endpoint': log_details['data']['metadata'].get('request_details', {}).get('endpoint')
+                }
+            
+            return None
+        
+        def get_user_context(self, log_id: str) -> Optional[Dict]:
+            """Get user context from log entry"""
+            log_details = self.get_log_details(log_id)
+            
+            if log_details['data']['user_id']:
+                return {
+                    'user_id': log_details['data']['user_id'],
+                    'team_id': log_details['data']['team_id'],
+                    'ip_address': log_details['data']['ip_address'],
+                    'user_agent': log_details['data']['user_agent'],
+                    'session_id': log_details['data']['session_id']
+                }
+            
+            return None
+        
+        def get_related_events(self, log_id: str) -> List[Dict]:
+            """Get related log events"""
+            log_details = self.get_log_details(log_id)
+            return log_details['data']['related_logs']
+        
+        def analyze_log_chain(self, log_id: str) -> Dict:
+            """Analyze the complete log chain and relationships"""
+            log_details = self.get_log_details(log_id)
+            related_logs = log_details['data']['related_logs']
+            
+            chain_analysis = {
+                'main_log': {
+                    'id': log_details['data']['log_id'],
+                    'level': log_details['data']['level'],
+                    'message': log_details['data']['message'],
+                    'timestamp': log_details['data']['timestamp']
+                },
+                'related_events': [],
+                'chain_length': len(related_logs) + 1,
+                'severity_levels': [log_details['data']['level']] + [log['level'] for log in related_logs],
+                'time_span': None
+            }
+            
+            # Calculate time span
+            if related_logs:
+                timestamps = [log_details['data']['timestamp']] + [log['timestamp'] for log in related_logs]
+                timestamps.sort()
+                chain_analysis['time_span'] = {
+                    'start': timestamps[0],
+                    'end': timestamps[-1],
+                    'duration': len(timestamps)
+                }
+            
+            # Analyze related events
+            for log in related_logs:
+                chain_analysis['related_events'].append({
+                    'id': log['log_id'],
+                    'level': log['level'],
+                    'message': log['message'],
+                    'timestamp': log['timestamp'],
+                    'relationship': log['relationship']
+                })
+            
+            return chain_analysis
+    
+    # Usage example
+    log_analyzer = LogAnalyzer(api_client)
+    
+    # Get log details
+    log_details = log_analyzer.get_log_details("log_1234567890abcdef")
+    print(f"Log Details: {log_details['data']}")
+    
+    # Analyze error log
+    error_analysis = log_analyzer.analyze_error_log("log_1234567890abcdef")
+    if error_analysis:
+        print(f"Error Analysis: {error_analysis}")
+    
+    # Get security context
+    security_context = log_analyzer.get_security_context("log_1234567890abcdef")
+    if security_context:
+        print(f"Security Context: {security_context}")
+    
+    # Analyze log chain
+    chain_analysis = log_analyzer.analyze_log_chain("log_1234567890abcdef")
+    print(f"Log Chain Analysis: {chain_analysis}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Logs" icon="list">
+    `GET /org/logs` - List all logs with filtering
+  </Card>
+  <Card title="Export Logs" icon="download">
+    `POST /org/logs/export` - Export logs in various formats
+  </Card>
+  <Card title="Get Log Statistics" icon="chart">
+    `GET /org/logs/statistics` - Get log statistics and analytics
+  </Card>
+  <Card title="Get Log Categories" icon="folder">
+    `GET /org/logs/categories` - List available log categories
+  </Card>
+</CardGroup>

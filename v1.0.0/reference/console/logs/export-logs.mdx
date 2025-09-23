@@ -1,0 +1,980 @@
+---
+title: "Export Logs"
+api: "POST /org/logs/export"
+description: "Export logs in various formats for analysis and compliance"
+---
+
+Export system logs in multiple formats for analysis, compliance, and archival purposes. This endpoint supports various export formats and filtering options to meet different use cases.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for log export and compliance reporting within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="format" type="string" required>
+  Export format for the logs
+  
+  **Options**: "json", "csv", "txt", "syslog", "xlsx"
+  
+  **Example**: "csv"
+  
+  **Constraints**: 
+  - Must be one of the supported formats
+  - Each format has different field limitations
+</ParamField>
+
+<ParamField body="start_date" type="string" required>
+  Start date for log export (ISO 8601 format)
+  
+  **Example**: "2024-01-01T00:00:00Z"
+  
+  **Constraints**: 
+  - Must be in ISO 8601 format
+  - Cannot be more than 90 days in the past
+  - Required for all exports
+</ParamField>
+
+<ParamField body="end_date" type="string" required>
+  End date for log export (ISO 8601 format)
+  
+  **Example**: "2024-01-15T23:59:59Z"
+  
+  **Constraints**: 
+  - Must be in ISO 8601 format
+  - Cannot be in the future
+  - Required for all exports
+</ParamField>
+
+<ParamField body="level" type="string" required="false">
+  Filter logs by severity level
+  
+  **Options**: "debug", "info", "warn", "error", "fatal"
+  
+  **Example**: "error"
+  
+  **Note**: If not specified, exports logs of all levels
+</ParamField>
+
+<ParamField body="category" type="string" required="false">
+  Filter logs by category
+  
+  **Options**: "auth", "api", "system", "security", "audit", "performance", "database", "email", "payment", "user"
+  
+  **Example**: "security"
+  
+  **Note**: If not specified, exports logs from all categories
+</ParamField>
+
+<ParamField body="source" type="string" required="false">
+  Filter logs by source component
+  
+  **Example**: "api-gateway"
+  
+  **Constraints**: 
+  - Must be a valid source identifier
+  - Common sources: api-gateway, auth-service, user-service, payment-service
+</ParamField>
+
+<ParamField body="user_id" type="string" required="false">
+  Filter logs by user ID
+  
+  **Example**: "user_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid user ID
+  - User must exist in your organization
+</ParamField>
+
+<ParamField body="team_id" type="string" required="false">
+  Filter logs by team ID
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID
+  - Team must exist in your organization
+</ParamField>
+
+<ParamField body="action" type="string" required="false">
+  Filter logs by action performed
+  
+  **Example**: "login"
+  
+  **Common Actions**: login, logout, create, update, delete, view, export, import, send, receive
+</ParamField>
+
+<ParamField body="resource" type="string" required="false">
+  Filter logs by resource type
+  
+  **Example**: "user"
+  
+  **Common Resources**: user, team, organization, platform, client, talent, pax, card, email, log
+</ParamField>
+
+<ParamField body="search" type="string" required="false">
+  Search logs by message content
+  
+  **Example**: "authentication failed"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Case-insensitive search
+  - Searches log messages and metadata
+</ParamField>
+
+<ParamField body="include_metadata" type="boolean" required="false">
+  Whether to include detailed metadata in export
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: Setting to true will include additional context and metadata
+</ParamField>
+
+<ParamField body="max_records" type="integer" required="false">
+  Maximum number of records to export
+  
+  **Example**: 10000
+  
+  **Default**: 50000
+  
+  **Constraints**: 
+  - Must be between 1 and 100000
+  - Large exports may take longer to process
+</ParamField>
+
+<ParamField body="compression" type="string" required="false">
+  Compression format for the export file
+  
+  **Options**: "none", "gzip", "zip"
+  
+  **Example**: "gzip"
+  
+  **Default**: "none"
+  
+  **Note**: Compression reduces file size but increases processing time
+</ParamField>
+
+<ParamField body="fields" type="array" required="false">
+  Specific fields to include in the export
+  
+  **Example**: ["timestamp", "level", "message", "user_id", "action"]
+  
+  **Note**: If not specified, includes all available fields
+</ParamField>
+
+<ParamField body="sort_by" type="string" required="false">
+  Sort logs by specified field
+  
+  **Options**: "timestamp", "level", "category", "source", "user_id", "action", "resource"
+  
+  **Example**: "timestamp"
+  
+  **Default**: "timestamp"
+</ParamField>
+
+<ParamField body="sort_order" type="string" required="false">
+  Sort order for the results
+  
+  **Options**: "asc", "desc"
+  
+  **Example**: "desc"
+  
+  **Default**: "desc"
+</ParamField>
+
+<ParamField body="export_name" type="string" required="false">
+  Custom name for the export file
+  
+  **Example**: "security_audit_2024_01"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Cannot contain special characters except hyphens and underscores
+  - If not provided, auto-generated based on filters and date range
+</ParamField>
+
+<ParamField body="notify_on_completion" type="boolean" required="false">
+  Whether to send notification when export is complete
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: Notifications are sent to the requesting user's email
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the export request was successful
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the export information
+</ResponseField>
+
+<ResponseField name="data.export_id" type="string">
+  Unique identifier for the export job
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the export (pending, processing, completed, failed)
+</ResponseField>
+
+<ResponseField name="data.format" type="string">
+  Export format requested
+</ResponseField>
+
+<ResponseField name="data.start_date" type="string">
+  Start date of the export
+</ResponseField>
+
+<ResponseField name="data.end_date" type="string">
+  End date of the export
+</ResponseField>
+
+<ResponseField name="data.filters" type="object">
+  Filters applied to the export
+</ResponseField>
+
+<ResponseField name="data.estimated_records" type="integer">
+  Estimated number of records to be exported
+</ResponseField>
+
+<ResponseField name="data.estimated_size" type="string">
+  Estimated file size of the export
+</ResponseField>
+
+<ResponseField name="data.estimated_duration" type="string">
+  Estimated time to complete the export
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the export was created
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the person who requested the export
+</ResponseField>
+
+<ResponseField name="data.download_url" type="string">
+  URL to download the completed export (if available)
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  ISO 8601 timestamp when the download URL expires
+</ResponseField>
+
+<ResponseField name="data.file_name" type="string">
+  Name of the export file
+</ResponseField>
+
+<ResponseField name="data.file_size" type="string">
+  Actual size of the export file (if completed)
+</ResponseField>
+
+<ResponseField name="data.records_exported" type="integer">
+  Number of records actually exported (if completed)
+</ResponseField>
+
+<ResponseField name="data.progress" type="object">
+  Export progress information (if processing)
+</ResponseField>
+
+<ResponseField name="data.progress.percentage" type="number">
+  Export progress percentage (0-100)
+</ResponseField>
+
+<ResponseField name="data.progress.records_processed" type="integer">
+  Number of records processed so far
+</ResponseField>
+
+<ResponseField name="data.progress.estimated_completion" type="string">
+  Estimated completion time
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/logs/export" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "format": "csv",
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "level": "error",
+    "category": "security",
+    "include_metadata": true,
+    "max_records": 10000,
+    "compression": "gzip",
+    "fields": ["timestamp", "level", "message", "user_id", "action", "ip_address"],
+    "sort_by": "timestamp",
+    "sort_order": "desc",
+    "export_name": "security_audit_2024_01",
+    "notify_on_completion": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/logs/export', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    format: 'csv',
+    start_date: '2024-01-01T00:00:00Z',
+    end_date: '2024-01-15T23:59:59Z',
+    level: 'error',
+    category: 'security',
+    include_metadata: true,
+    max_records: 10000,
+    compression: 'gzip',
+    fields: ['timestamp', 'level', 'message', 'user_id', 'action', 'ip_address'],
+    sort_by: 'timestamp',
+    sort_order: 'desc',
+    export_name: 'security_audit_2024_01',
+    notify_on_completion: true
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+from datetime import datetime, timedelta
+
+# Export logs from the last 7 days
+end_date = datetime.now()
+start_date = end_date - timedelta(days=7)
+
+payload = {
+    "format": "csv",
+    "start_date": start_date.isoformat() + "Z",
+    "end_date": end_date.isoformat() + "Z",
+    "level": "error",
+    "category": "security",
+    "include_metadata": True,
+    "max_records": 10000,
+    "compression": "gzip",
+    "fields": ["timestamp", "level", "message", "user_id", "action", "ip_address"],
+    "sort_by": "timestamp",
+    "sort_order": "desc",
+    "export_name": "security_audit_2024_01",
+    "notify_on_completion": True
+}
+
+response = requests.post(
+    'https://api.example.com/org/logs/export',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'format' => 'csv',
+    'start_date' => '2024-01-01T00:00:00Z',
+    'end_date' => '2024-01-15T23:59:59Z',
+    'level' => 'error',
+    'category' => 'security',
+    'include_metadata' => true,
+    'max_records' => 10000,
+    'compression' => 'gzip',
+    'fields' => ['timestamp', 'level', 'message', 'user_id', 'action', 'ip_address'],
+    'sort_by' => 'timestamp',
+    'sort_order' => 'desc',
+    'export_name' => 'security_audit_2024_01',
+    'notify_on_completion' => true
+];
+
+$response = file_get_contents('https://api.example.com/org/logs/export', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "time"
+)
+
+type ExportLogsRequest struct {
+    Format              string   `json:"format"`
+    StartDate           string   `json:"start_date"`
+    EndDate             string   `json:"end_date"`
+    Level               string   `json:"level,omitempty"`
+    Category            string   `json:"category,omitempty"`
+    Source              string   `json:"source,omitempty"`
+    UserID              string   `json:"user_id,omitempty"`
+    TeamID              string   `json:"team_id,omitempty"`
+    Action              string   `json:"action,omitempty"`
+    Resource            string   `json:"resource,omitempty"`
+    Search              string   `json:"search,omitempty"`
+    IncludeMetadata     bool     `json:"include_metadata,omitempty"`
+    MaxRecords          int      `json:"max_records,omitempty"`
+    Compression         string   `json:"compression,omitempty"`
+    Fields              []string `json:"fields,omitempty"`
+    SortBy              string   `json:"sort_by,omitempty"`
+    SortOrder           string   `json:"sort_order,omitempty"`
+    ExportName          string   `json:"export_name,omitempty"`
+    NotifyOnCompletion  bool     `json:"notify_on_completion,omitempty"`
+}
+
+func main() {
+    endDate := time.Now()
+    startDate := endDate.AddDate(0, 0, -7)
+    
+    payload := ExportLogsRequest{
+        Format:             "csv",
+        StartDate:          startDate.Format(time.RFC3339),
+        EndDate:            endDate.Format(time.RFC3339),
+        Level:              "error",
+        Category:           "security",
+        IncludeMetadata:    true,
+        MaxRecords:         10000,
+        Compression:        "gzip",
+        Fields:             []string{"timestamp", "level", "message", "user_id", "action", "ip_address"},
+        SortBy:             "timestamp",
+        SortOrder:          "desc",
+        ExportName:         "security_audit_2024_01",
+        NotifyOnCompletion: true,
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/logs/export", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "export_id": "export_1234567890abcdef",
+    "status": "pending",
+    "format": "csv",
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "filters": {
+      "level": "error",
+      "category": "security",
+      "include_metadata": true,
+      "max_records": 10000,
+      "fields": ["timestamp", "level", "message", "user_id", "action", "ip_address"]
+    },
+    "estimated_records": 8500,
+    "estimated_size": "2.5 MB",
+    "estimated_duration": "5-10 minutes",
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": "user_1234567890abcdef",
+    "download_url": null,
+    "expires_at": null,
+    "file_name": "security_audit_2024_01.csv.gz",
+    "file_size": null,
+    "records_exported": null,
+    "progress": {
+      "percentage": 0,
+      "records_processed": 0,
+      "estimated_completion": "2024-01-15T10:35:00Z"
+    }
+  },
+  "message": "Export request created successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to export logs
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Parameters (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "start_date",
+          "reason": "Start date cannot be more than 90 days in the past"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to export logs",
+        "details": {
+          "field": "permissions",
+          "reason": "Log export requires organization_admin or compliance_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Export Formats" icon="file">
+    Supported formats:
+    
+    - **JSON**: Structured data for programmatic access
+    - **CSV**: Tabular format for spreadsheet analysis
+    - **TXT**: Plain text format for log analysis tools
+    - **Syslog**: Standard syslog format for SIEM integration
+    - **XLSX**: Excel format for business users
+  </Accordion>
+  
+  <Accordion title="Export Limits" icon="info">
+    Export constraints:
+    
+    - **Maximum Records**: 100,000 records per export
+    - **Date Range**: Maximum 90 days
+    - **File Size**: Maximum 500 MB per export
+    - **Concurrent Exports**: Maximum 3 per user
+    - **Retention**: Export files available for 7 days
+  </Accordion>
+  
+  <Accordion title="Compression Options" icon="archive">
+    Compression formats:
+    
+    - **None**: No compression (faster processing)
+    - **Gzip**: Standard compression (balanced)
+    - **Zip**: Archive format (multiple files)
+  </Accordion>
+  
+  <Accordion title="Compliance Features" icon="shield">
+    Compliance support:
+    
+    - **Audit Trails**: Complete audit trail for exports
+    - **Data Retention**: Configurable retention periods
+    - **Access Logging**: Track who accessed what data
+    - **Encryption**: Secure data transmission and storage
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Log Export Service" icon="cog">
+    ```javascript
+    class LogExportService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async exportLogs(exportConfig) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/logs/export', {
+            method: 'POST',
+            body: JSON.stringify(exportConfig)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to create export');
+          }
+          
+          const result = await response.json();
+          
+          // Log export creation
+          console.log(`Export created: ${result.data.export_id}`);
+          console.log(`Status: ${result.data.status}`);
+          console.log(`Estimated records: ${result.data.estimated_records}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error creating export:', error);
+          throw error;
+        }
+      }
+      
+      async exportSecurityLogs(days = 7, format = 'csv') {
+        const endDate = new Date();
+        const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
+        
+        return this.exportLogs({
+          format: format,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          category: 'security',
+          include_metadata: true,
+          max_records: 10000,
+          compression: 'gzip',
+          export_name: `security_logs_${days}_days`,
+          notify_on_completion: true
+        });
+      }
+      
+      async exportAuditLogs(days = 30, format = 'csv') {
+        const endDate = new Date();
+        const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
+        
+        return this.exportLogs({
+          format: format,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          category: 'audit',
+          include_metadata: true,
+          max_records: 50000,
+          compression: 'gzip',
+          export_name: `audit_logs_${days}_days`,
+          notify_on_completion: true
+        });
+      }
+      
+      async exportErrorLogs(days = 7, format = 'csv') {
+        const endDate = new Date();
+        const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
+        
+        return this.exportLogs({
+          format: format,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          level: 'error',
+          include_metadata: true,
+          max_records: 10000,
+          compression: 'gzip',
+          export_name: `error_logs_${days}_days`,
+          notify_on_completion: true
+        });
+      }
+      
+      async exportUserActivityLogs(userId, days = 7, format = 'csv') {
+        const endDate = new Date();
+        const startDate = new Date(endDate.getTime() - (days * 24 * 60 * 60 * 1000));
+        
+        return this.exportLogs({
+          format: format,
+          start_date: startDate.toISOString(),
+          end_date: endDate.toISOString(),
+          user_id: userId,
+          include_metadata: true,
+          max_records: 10000,
+          compression: 'gzip',
+          export_name: `user_activity_${userId}_${days}_days`,
+          notify_on_completion: true
+        });
+      }
+      
+      async exportCustomLogs(filters, format = 'csv') {
+        return this.exportLogs({
+          format: format,
+          ...filters,
+          include_metadata: true,
+          max_records: 10000,
+          compression: 'gzip',
+          notify_on_completion: true
+        });
+      }
+    }
+    
+    // Usage example
+    const logExportService = new LogExportService(apiClient);
+    
+    // Export security logs
+    const securityExport = await logExportService.exportSecurityLogs(7, 'csv');
+    console.log(`Security export created: ${securityExport.data.export_id}`);
+    
+    // Export audit logs
+    const auditExport = await logExportService.exportAuditLogs(30, 'csv');
+    console.log(`Audit export created: ${auditExport.data.export_id}`);
+    
+    // Export error logs
+    const errorExport = await logExportService.exportErrorLogs(7, 'csv');
+    console.log(`Error export created: ${errorExport.data.export_id}`);
+    
+    // Export user activity
+    const userExport = await logExportService.exportUserActivityLogs('user_1234567890abcdef', 7, 'csv');
+    console.log(`User activity export created: ${userExport.data.export_id}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Log Exporter" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
+    from datetime import datetime, timedelta
+    
+    class LogExporter:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def export_logs(self, export_config: Dict) -> Dict:
+            """Create a log export request"""
+            try:
+                response = self.api_client.post('/org/logs/export', json=export_config)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Export created: {result['data']['export_id']}")
+                print(f"Status: {result['data']['status']}")
+                print(f"Estimated records: {result['data']['estimated_records']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error creating export: {e}")
+                raise
+        
+        def export_security_logs(self, days: int = 7, format: str = 'csv') -> Dict:
+            """Export security logs from the last N days"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'category': 'security',
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'export_name': f'security_logs_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_audit_logs(self, days: int = 30, format: str = 'csv') -> Dict:
+            """Export audit logs from the last N days"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'category': 'audit',
+                'include_metadata': True,
+                'max_records': 50000,
+                'compression': 'gzip',
+                'export_name': f'audit_logs_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_error_logs(self, days: int = 7, format: str = 'csv') -> Dict:
+            """Export error logs from the last N days"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'level': 'error',
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'export_name': f'error_logs_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_user_activity_logs(self, user_id: str, days: int = 7, format: str = 'csv') -> Dict:
+            """Export user activity logs"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'user_id': user_id,
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'export_name': f'user_activity_{user_id}_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_team_activity_logs(self, team_id: str, days: int = 7, format: str = 'csv') -> Dict:
+            """Export team activity logs"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'team_id': team_id,
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'export_name': f'team_activity_{team_id}_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_custom_logs(self, filters: Dict, format: str = 'csv') -> Dict:
+            """Export logs with custom filters"""
+            return self.export_logs({
+                'format': format,
+                **filters,
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'notify_on_completion': True
+            })
+        
+        def export_compliance_logs(self, days: int = 90, format: str = 'csv') -> Dict:
+            """Export logs for compliance reporting"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'category': 'audit',
+                'include_metadata': True,
+                'max_records': 100000,
+                'compression': 'gzip',
+                'export_name': f'compliance_logs_{days}_days',
+                'notify_on_completion': True
+            })
+        
+        def export_performance_logs(self, days: int = 7, format: str = 'csv') -> Dict:
+            """Export performance logs"""
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days)
+            
+            return self.export_logs({
+                'format': format,
+                'start_date': start_date.isoformat() + 'Z',
+                'end_date': end_date.isoformat() + 'Z',
+                'category': 'performance',
+                'include_metadata': True,
+                'max_records': 10000,
+                'compression': 'gzip',
+                'export_name': f'performance_logs_{days}_days',
+                'notify_on_completion': True
+            })
+    
+    # Usage example
+    log_exporter = LogExporter(api_client)
+    
+    # Export security logs
+    security_export = log_exporter.export_security_logs(7, 'csv')
+    print(f"Security export created: {security_export['data']['export_id']}")
+    
+    # Export audit logs
+    audit_export = log_exporter.export_audit_logs(30, 'csv')
+    print(f"Audit export created: {audit_export['data']['export_id']}")
+    
+    # Export error logs
+    error_export = log_exporter.export_error_logs(7, 'csv')
+    print(f"Error export created: {error_export['data']['export_id']}")
+    
+    # Export user activity
+    user_export = log_exporter.export_user_activity_logs('user_1234567890abcdef', 7, 'csv')
+    print(f"User activity export created: {user_export['data']['export_id']}")
+    
+    # Export compliance logs
+    compliance_export = log_exporter.export_compliance_logs(90, 'csv')
+    print(f"Compliance export created: {compliance_export['data']['export_id']}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Logs" icon="list">
+    `GET /org/logs` - List all logs with filtering
+  </Card>
+  <Card title="Get Log Details" icon="info">
+    `GET /org/logs/{logId}` - Get detailed information for a specific log entry
+  </Card>
+  <Card title="Get Export Status" icon="clock">
+    `GET /org/logs/export/{exportId}` - Check export status and progress
+  </Card>
+  <Card title="Get Log Statistics" icon="chart">
+    `GET /org/logs/statistics` - Get log statistics and analytics
+  </Card>
+</CardGroup>
