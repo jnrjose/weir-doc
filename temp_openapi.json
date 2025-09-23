@@ -1,0 +1,32 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Weir AI APIs v1.0.0",
+    "version": "1.0.0",
+    "description": "Comprehensive API for Name, Image, and Likeness (NIL) detection and management platform",
+    "contact": {
+      "name": "Weir AI Support",
+      "email": "support@weir.ai"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{baseUrl}",
+      "description": "Console/Base server",
+      "variables": {
+        "baseUrl": {
+          "default": "api.example.com"
+        }
+      }
+    },
+    {
+      "url": "https://{apiBaseUrl}",
+      "description": "External API server",
+      "variables": {
+        "apiBaseUrl": {
+          "default": "external.example.com"
+        }
+      }
+    }
+  ]
+}

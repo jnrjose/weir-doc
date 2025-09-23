@@ -35,8 +35,14 @@
         "summary": "Generate Access Token",
         "description": "Generate an access token for external API authentication using Basic Authentication",
         "operationId": "external_generate_access_token_post",
-        "tags": ["External"],
-        "security": [{"basicAuth": []}],
+        "tags": [
+          "External"
+        ],
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Access token generated successfully",
@@ -45,17 +51,32 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean"},
+                    "success": {
+                      "type": "boolean"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "access_token": {"type": "string"},
-                        "token_type": {"type": "string", "default": "Bearer"},
-                        "expires_in": {"type": "integer", "description": "Token expiration in seconds"}
+                        "access_token": {
+                          "type": "string"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "default": "Bearer"
+                        },
+                        "expires_in": {
+                          "type": "integer",
+                          "description": "Token expiration in seconds"
+                        }
                       }
                     },
-                    "message": {"type": "string"},
-                    "timestamp": {"type": "string", "format": "date-time"}
+                    "message": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   }
                 }
               }
@@ -72,15 +93,23 @@
         "summary": "Create Team",
         "description": "Create a new team within the organization",
         "operationId": "console_team_management_create_team_post",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name"],
+                "required": [
+                  "name"
+                ],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -100,18 +129,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean"},
+                    "success": {
+                      "type": "boolean"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "team_id": {"type": "string"},
-                        "name": {"type": "string"},
-                        "created_at": {"type": "string", "format": "date-time"},
-                        "status": {"type": "string"}
+                        "team_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
                       }
                     },
-                    "message": {"type": "string"},
-                    "timestamp": {"type": "string", "format": "date-time"}
+                    "message": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   }
                 }
               }
@@ -125,14 +170,22 @@
         "summary": "Invite Team Member",
         "description": "Invite a new member to join a team",
         "operationId": "console_team_management_invite_team_member_post",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "teamId",
             "in": "path",
             "required": true,
-            "schema": {"type": "string"},
+            "schema": {
+              "type": "string"
+            },
             "description": "ID of the team to invite member to"
           }
         ],
@@ -142,12 +195,35 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["firstname", "lastname", "email", "role"],
+                "required": [
+                  "firstname",
+                  "lastname",
+                  "email",
+                  "role"
+                ],
                 "properties": {
-                  "firstname": {"type": "string", "example": "John"},
-                  "lastname": {"type": "string", "example": "Doe"},
-                  "email": {"type": "string", "format": "email", "example": "john.doe@example.com"},
-                  "role": {"type": "string", "enum": ["Organization_User", "Team_Admin", "Viewer"], "example": "Organization_User"}
+                  "firstname": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "lastname": {
+                    "type": "string",
+                    "example": "Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john.doe@example.com"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "Organization_User",
+                      "Team_Admin",
+                      "Viewer"
+                    ],
+                    "example": "Organization_User"
+                  }
                 }
               }
             }
@@ -165,21 +241,33 @@
         "summary": "Get Teams",
         "description": "Retrieve list of teams in the organization",
         "operationId": "console_team_management_get_teams_get",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "page",
             "in": "query",
             "required": false,
-            "schema": {"type": "string", "default": "1"},
+            "schema": {
+              "type": "string",
+              "default": "1"
+            },
             "description": "Page number for pagination"
           },
           {
             "name": "limit",
             "in": "query",
             "required": false,
-            "schema": {"type": "string", "default": "20"},
+            "schema": {
+              "type": "string",
+              "default": "20"
+            },
             "description": "Number of items per page"
           }
         ],
@@ -191,27 +279,48 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean"},
+                    "success": {
+                      "type": "boolean"
+                    },
                     "data": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
-                          "team_id": {"type": "string"},
-                          "name": {"type": "string"},
-                          "created_at": {"type": "string", "format": "date-time"},
-                          "status": {"type": "string"},
-                          "member_count": {"type": "integer"}
+                          "team_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "member_count": {
+                            "type": "integer"
+                          }
                         }
                       }
                     },
                     "pagination": {
                       "type": "object",
                       "properties": {
-                        "page": {"type": "integer"},
-                        "limit": {"type": "integer"},
-                        "total": {"type": "integer"},
-                        "total_pages": {"type": "integer"}
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        },
+                        "total_pages": {
+                          "type": "integer"
+                        }
                       }
                     }
                   }
@@ -227,14 +336,22 @@
         "summary": "Delete Team",
         "description": "Delete a team from the organization",
         "operationId": "console_team_management_delete_team_delete",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "teamId",
             "in": "path",
             "required": true,
-            "schema": {"type": "string"},
+            "schema": {
+              "type": "string"
+            },
             "description": "ID of the team to delete"
           }
         ],
@@ -250,14 +367,22 @@
         "summary": "Get Team Members",
         "description": "Retrieve list of members in a specific team",
         "operationId": "console_team_management_get_team_members_get",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "teamId",
             "in": "path",
             "required": true,
-            "schema": {"type": "string"},
+            "schema": {
+              "type": "string"
+            },
             "description": "ID of the team to get members for"
           }
         ],
@@ -268,22 +393,122 @@
         }
       }
     },
-    "/auth/logout": {
+    "/auth/login": {
       "post": {
-        "summary": "Logout",
-        "description": "Logout and invalidate the current session",
-        "operationId": "admin_logout_post",
-        "tags": ["Admin"],
-        "security": [{"bearerAuth": []}],
+        "summary": "Login",
+        "description": "Authenticate admin user and receive access token",
+        "operationId": "admin_login_post",
+        "tags": [
+          "Admin"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["refreshToken"],
+                "required": [
+                  "username",
+                  "password"
+                ],
                 "properties": {
-                  "refreshToken": {"type": "string", "description": "Refresh token to invalidate"}
+                  "username": {
+                    "type": "string",
+                    "example": "admin@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "secure_password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "access_token": {
+                          "type": "string"
+                        },
+                        "refresh_token": {
+                          "type": "string"
+                        },
+                        "expires_in": {
+                          "type": "integer"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "default": "Bearer"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "user_id": {
+                              "type": "string"
+                            },
+                            "username": {
+                              "type": "string"
+                            },
+                            "role": {
+                              "type": "string"
+                            },
+                            "permissions": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout",
+        "description": "Logout and invalidate the current session",
+        "operationId": "admin_logout_post",
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Refresh token to invalidate"
+                  }
                 }
               }
             }
@@ -301,17 +526,28 @@
         "summary": "Refresh Token",
         "description": "Refresh an expired access token using a refresh token",
         "operationId": "admin_refresh_token_post",
-        "tags": ["Admin"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["refreshToken"],
+                "required": [
+                  "refreshToken"
+                ],
                 "properties": {
-                  "refreshToken": {"type": "string", "description": "Valid refresh token"}
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Valid refresh token"
+                  }
                 }
               }
             }
@@ -325,69 +561,24 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean"},
+                    "success": {
+                      "type": "boolean"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "access_token": {"type": "string"},
-                        "refresh_token": {"type": "string"},
-                        "expires_in": {"type": "integer"},
-                        "token_type": {"type": "string", "default": "Bearer"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "summary": "Login",
-        "description": "Authenticate admin user and receive access token",
-        "operationId": "admin_login_post",
-        "tags": ["Admin"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["username", "password"],
-                "properties": {
-                  "username": {"type": "string", "example": "admin@example.com"},
-                  "password": {"type": "string", "example": "secure_password"}
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {"type": "boolean"},
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "access_token": {"type": "string"},
-                        "refresh_token": {"type": "string"},
-                        "expires_in": {"type": "integer"},
-                        "token_type": {"type": "string", "default": "Bearer"},
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "user_id": {"type": "string"},
-                            "username": {"type": "string"},
-                            "role": {"type": "string"},
-                            "permissions": {"type": "array", "items": {"type": "string"}}
-                          }
+                        "access_token": {
+                          "type": "string"
+                        },
+                        "refresh_token": {
+                          "type": "string"
+                        },
+                        "expires_in": {
+                          "type": "integer"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "default": "Bearer"
                         }
                       }
                     }
@@ -404,18 +595,35 @@
         "summary": "Register (Mobile)",
         "description": "Register a new user account (mobile/web)",
         "operationId": "console_auth_register_mobile_post",
-        "tags": ["Console"],
+        "tags": [
+          "Console"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["fullname", "email", "password"],
+                "required": [
+                  "fullname",
+                  "email",
+                  "password"
+                ],
                 "properties": {
-                  "fullname": {"type": "string", "example": "John Doe"},
-                  "email": {"type": "string", "format": "email", "example": "john@example.com"},
-                  "password": {"type": "string", "minLength": 8, "example": "secure_password"}
+                  "fullname": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "secure_password"
+                  }
                 }
               }
             }
@@ -433,8 +641,14 @@
         "summary": "Get Organization Information",
         "description": "Retrieve organization details and settings",
         "operationId": "console_org_mgmt_get_org_info_get",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Organization information retrieved successfully",
@@ -443,33 +657,65 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean"},
+                    "success": {
+                      "type": "boolean"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "organization_id": {"type": "string"},
-                        "name": {"type": "string"},
-                        "website": {"type": "string"},
-                        "industry": {"type": "string"},
-                        "company_size": {"type": "string"},
-                        "founded": {"type": "string"},
-                        "description": {"type": "string"},
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "website": {
+                          "type": "string"
+                        },
+                        "industry": {
+                          "type": "string"
+                        },
+                        "company_size": {
+                          "type": "string"
+                        },
+                        "founded": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
                         "address": {
                           "type": "object",
                           "properties": {
-                            "address1": {"type": "string"},
-                            "address2": {"type": "string"},
-                            "city": {"type": "string"},
-                            "state": {"type": "string"},
-                            "postal_code": {"type": "string"},
-                            "country": {"type": "string"}
+                            "address1": {
+                              "type": "string"
+                            },
+                            "address2": {
+                              "type": "string"
+                            },
+                            "city": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "postal_code": {
+                              "type": "string"
+                            },
+                            "country": {
+                              "type": "string"
+                            }
                           }
                         },
                         "contact": {
                           "type": "object",
                           "properties": {
-                            "phone": {"type": "string"},
-                            "email": {"type": "string"}
+                            "phone": {
+                              "type": "string"
+                            },
+                            "email": {
+                              "type": "string"
+                            }
                           }
                         }
                       }
@@ -485,8 +731,14 @@
         "summary": "Update Organization Information",
         "description": "Update organization details and settings",
         "operationId": "console_update_org_info_patch",
-        "tags": ["Console"],
-        "security": [{"bearerAuth": []}],
+        "tags": [
+          "Console"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -497,29 +749,72 @@
                   "basicInfo": {
                     "type": "object",
                     "properties": {
-                      "website": {"type": "string", "example": "https://examplecompany.com"},
-                      "industry": {"type": "string", "enum": ["TECHNOLOGY", "HEALTHCARE", "FINANCE", "EDUCATION", "OTHER"]},
-                      "companySize": {"type": "string", "enum": ["SMALL", "MEDIUM", "LARGE", "ENTERPRISE"]},
-                      "founded": {"type": "string", "example": "2010"},
-                      "description": {"type": "string", "example": "A software development company"}
+                      "website": {
+                        "type": "string",
+                        "example": "https://examplecompany.com"
+                      },
+                      "industry": {
+                        "type": "string",
+                        "enum": [
+                          "TECHNOLOGY",
+                          "HEALTHCARE",
+                          "FINANCE",
+                          "EDUCATION",
+                          "OTHER"
+                        ]
+                      },
+                      "companySize": {
+                        "type": "string",
+                        "enum": [
+                          "SMALL",
+                          "MEDIUM",
+                          "LARGE",
+                          "ENTERPRISE"
+                        ]
+                      },
+                      "founded": {
+                        "type": "string",
+                        "example": "2010"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "A software development company"
+                      }
                     }
                   },
                   "address": {
                     "type": "object",
                     "properties": {
-                      "address1": {"type": "string"},
-                      "address2": {"type": "string"},
-                      "city": {"type": "string"},
-                      "state": {"type": "string"},
-                      "postalCode": {"type": "string"},
-                      "country": {"type": "string"}
+                      "address1": {
+                        "type": "string"
+                      },
+                      "address2": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "postalCode": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      }
                     }
                   },
                   "contact": {
                     "type": "object",
                     "properties": {
-                      "phone": {"type": "string"},
-                      "email": {"type": "string", "format": "email"}
+                      "phone": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email"
+                      }
                     }
                   }
                 }
@@ -530,6 +825,1157 @@
         "responses": {
           "200": {
             "description": "Organization information updated successfully"
+          }
+        }
+      }
+    },
+    "/auth/resend/otp/{session}": {
+      "put": {
+        "summary": "Resend Registration OTP",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "name": "session",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/auth/validate/registration": {
+      "post": {
+        "summary": "Validate Registration",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "otpSession": "",
+                "otp": ""
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "fullname": "string",
+                "email": "string",
+                "password": "string",
+                "organization": {
+                  "name": "string",
+                  "type": "Platform",
+                  "description": "A business platform"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/cards": {
+      "get": {
+        "summary": "Get Cards",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ]
+      }
+    },
+    "/org/card": {
+      "post": {
+        "summary": "Add Card",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "token": "tok_1N3T00LkdIwHu7ixt44h1F8k"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/card/{cardId}": {
+      "delete": {
+        "summary": "Delete Card",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "cardNumber": "1234-5678-9012-3456",
+                "type": "Visa",
+                "expiry": "12/25",
+                "description": "Company corporate card"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/create/platform": {
+      "post": {
+        "summary": "Create Platform",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "string",
+                "teamId": "",
+                "description": "string",
+                "type": "Forum/Community",
+                "domain": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/platforms": {
+      "get": {
+        "summary": "Get Platforms",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ]
+      }
+    },
+    "/org/platform/{platformId}": {
+      "delete": {
+        "summary": "Delete Platform",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "platformId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "string",
+                "teamId": "",
+                "description": "string",
+                "type": "Forum/Community",
+                "domain": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/verify/platform/{platformId}": {
+      "get": {
+        "summary": "Verify platform",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "platformId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/org/create/client": {
+      "post": {
+        "summary": "Create client",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "Lekan Client",
+                "environment": "production"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/clients": {
+      "get": {
+        "summary": "Get Clients",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ]
+      }
+    },
+    "/org/refresh/client": {
+      "patch": {
+        "summary": "Refresh Client",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/org/client/{clientId}": {
+      "delete": {
+        "summary": "Delete Client",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/org/talent/roster": {
+      "get": {
+        "summary": "Get Agency Talent Roster",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ]
+      }
+    },
+    "/org/invite/talent": {
+      "post": {
+        "summary": "Invite Talent to Agency",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "email": "talent@string.com"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/talent/name/search": {
+      "get": {
+        "summary": "Search for Agency Talent",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/org/licenses": {
+      "get": {
+        "summary": "Get Talent Licenses",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ]
+      }
+    },
+    "/org/talent/license/{talentId}": {
+      "post": {
+        "summary": "Create License by Agency",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "talentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "appearanceFee": {
+                    "type": "string"
+                  },
+                  "canCrawl": {
+                    "type": "string"
+                  },
+                  "images": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Talent License",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "License"
+        ],
+        "parameters": [
+          {
+            "name": "talentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/org/talent/license/{licenseId}/image": {
+      "patch": {
+        "summary": "Add Images to License (Agency)",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/org/talent/license/{licenseId}/image/{imageId}": {
+      "delete": {
+        "summary": "Remove image from license (Agency)",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Console"
+        ],
+        "parameters": [
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/members": {
+      "get": {
+        "summary": "Get Admin Members",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "User Management"
+        ]
+      }
+    },
+    "/admin/member/invite": {
+      "post": {
+        "summary": "Invite Admin User",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "User Management"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      }
+    },
+    "/auth/authenticateAdmin": {
+      "post": {
+        "summary": "Authenticate Admin",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "token": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/licenses": {
+      "get": {
+        "summary": "Get Licenses",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Licenses"
+        ]
+      }
+    },
+    "/admin/organizations": {
+      "get": {
+        "summary": "Get Organizations",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/admin/platforms": {
+      "get": {
+        "summary": "Get Platforms",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/mail/create/template": {
+      "post": {
+        "summary": "Create Mail Template",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      }
+    },
+    "/mail/templates": {
+      "get": {
+        "summary": "Get Mail Templates",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/mail/template/{id}": {
+      "put": {
+        "summary": "Update Mail Template",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Mail Template",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/pax/pod": {
+      "post": {
+        "summary": "Create Pod",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "platform": {},
+                "scopes": [
+                  "string"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pax/pods": {
+      "get": {
+        "summary": "Get Pods",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/pax/pod/{podId}": {
+      "get": {
+        "summary": "Get Pod",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "podId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/pax/start/pod/{podId}": {
+      "post": {
+        "summary": "Start Pod",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "podId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/pax/pause/pod/{podId}": {
+      "post": {
+        "summary": "Pause Pod",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "podId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/pax/stop/pod/{podId}": {
+      "post": {
+        "summary": "Stop Pod",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "podId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/pax/start/pods": {
+      "post": {
+        "summary": "Start All Pods",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/pax/pause/pods": {
+      "post": {
+        "summary": "Pause All Pods",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/pax/stop/pods": {
+      "post": {
+        "summary": "Stop All Pods",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/logs/log": {
+      "post": {
+        "summary": "Create Log Entry",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "scheme",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "type": "INFO",
+                "message": "This is a log message",
+                "dateTime": "2025-09-04T11:28:14.670Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logs/search": {
+      "get": {
+        "summary": "Search Log Entries",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheme",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "searchTerm",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/logs/all": {
+      "get": {
+        "summary": "Get Log Entries",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheme",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/crawl/reddit": {
+      "post": {
+        "summary": "Reddit",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        },
+        "tags": [
+          "Crawler"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "search": "Lebron"
+              }
+            }
           }
         }
       }
@@ -553,25 +1999,47 @@
       "ErrorResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "default": false},
+          "success": {
+            "type": "boolean",
+            "default": false
+          },
           "error": {
             "type": "object",
             "properties": {
-              "code": {"type": "string"},
-              "message": {"type": "string"},
-              "details": {"type": "object"}
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "object"
+              }
             }
           },
-          "timestamp": {"type": "string", "format": "date-time"}
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "SuccessResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "default": true},
-          "data": {"type": "object"},
-          "message": {"type": "string"},
-          "timestamp": {"type": "string", "format": "date-time"}
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "data": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       }
     }
@@ -588,6 +2056,22 @@
     {
       "name": "Admin",
       "description": "Admin APIs for system administration and monitoring"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints"
+    },
+    {
+      "name": "User Management",
+      "description": "User and member management endpoints"
+    },
+    {
+      "name": "Licenses",
+      "description": "License management endpoints"
+    },
+    {
+      "name": "Crawler",
+      "description": "Web crawling and data collection endpoints"
     }
   ]
 }

@@ -4,13 +4,17 @@ api: "POST /auth/login"
 description: "Authenticate admin user and receive access token"
 ---
 
-Authenticate an admin user and receive an access token for administrative API access. This endpoint is specifically designed for system administrators and platform managers.
+Authenticate an admin user and receive access and refresh tokens for administrative operations. This endpoint is used by system administrators to gain access to administrative functions and system management capabilities.
 
 <Note>
   **Admin API Endpoint**
   
-  This endpoint is part of the Admin API category and does not require authentication. It's designed for administrative user authentication.
+  This endpoint is part of the Admin API category and does not require authentication (it's used to obtain authentication). It's designed for system administrators and super users who need access to administrative functions.
 </Note>
+
+## Authentication
+
+This endpoint does not require authentication as it's used to obtain authentication tokens. However, you must provide valid admin credentials in the request body.
 
 ## Request
 
@@ -20,86 +24,98 @@ Authenticate an admin user and receive an access token for administrative API ac
   **Example**: "admin@example.com"
   
   **Constraints**: 
-  - Must be a valid admin username or email
-  - Maximum length: 255 characters
+  - Must be a valid email address or username
+  - Must belong to an admin user account
+  - Case sensitive
 </ParamField>
 
 <ParamField body="password" type="string" required>
   Admin password
   
-  **Example**: "AdminPassword123!"
+  **Example**: "secure_password"
   
   **Constraints**: 
-  - Must be a valid admin password
   - Minimum length: 8 characters
+  - Must contain at least one uppercase letter, one lowercase letter, and one number
+  - Cannot be empty
 </ParamField>
 
 <ParamField body="remember_me" type="boolean" required="false">
-  Whether to extend token expiration time
+  Whether to extend the session duration
   
   **Example**: true
   
   **Default**: false
+  
+  **Note**: If true, extends both access and refresh token expiration times
 </ParamField>
 
-<ParamField body="mfa_code" type="string" required="false">
-  Multi-factor authentication code (if enabled)
+<ParamField body="two_factor_code" type="string" required="false">
+  Two-factor authentication code (if 2FA is enabled)
   
   **Example**: "123456"
   
   **Constraints**: 
-  - Must be a valid 6-digit MFA code
-  - Required if MFA is enabled for the admin account
+  - 6-digit numeric code
+  - Required only if 2FA is enabled for the admin account
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean">
-  Indicates if the request was successful
+  Indicates if the authentication was successful
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Authentication result data
-</ResponseField>
-
-<ResponseField name="data.admin_id" type="string">
-  Unique identifier for the admin user
-</ResponseField>
-
-<ResponseField name="data.username" type="string">
-  Admin username
-</ResponseField>
-
-<ResponseField name="data.email" type="string">
-  Admin email address
-</ResponseField>
-
-<ResponseField name="data.role" type="string">
-  Admin role level
-</ResponseField>
-
-<ResponseField name="data.permissions" type="array">
-  List of admin permissions
+  Contains the authentication tokens and user information
 </ResponseField>
 
 <ResponseField name="data.access_token" type="string">
-  JWT access token for API authentication
+  JWT access token for API authentication (expires in 1 hour)
 </ResponseField>
 
 <ResponseField name="data.refresh_token" type="string">
-  Refresh token for obtaining new access tokens
+  Refresh token for obtaining new access tokens (expires in 7 days)
 </ResponseField>
 
-<ResponseField name="data.token_expires_in" type="integer">
-  Access token expiration time in seconds
+<ResponseField name="data.expires_in" type="integer">
+  Access token expiration time in seconds (3600 = 1 hour)
 </ResponseField>
 
-<ResponseField name="data.last_login" type="string">
-  ISO 8601 timestamp of last successful login
+<ResponseField name="data.token_type" type="string">
+  Token type, always "Bearer"
 </ResponseField>
 
-<ResponseField name="data.requires_mfa" type="boolean">
-  Whether MFA is required for this admin account
+<ResponseField name="data.user" type="object">
+  Admin user information
+</ResponseField>
+
+<ResponseField name="data.user.user_id" type="string">
+  Unique identifier for the admin user
+</ResponseField>
+
+<ResponseField name="data.user.username" type="string">
+  Admin username
+</ResponseField>
+
+<ResponseField name="data.user.email" type="string">
+  Admin email address
+</ResponseField>
+
+<ResponseField name="data.user.role" type="string">
+  Admin role level (super_admin, admin, moderator)
+</ResponseField>
+
+<ResponseField name="data.user.permissions" type="array">
+  List of admin permissions
+</ResponseField>
+
+<ResponseField name="data.user.last_login" type="string">
+  ISO 8601 timestamp of the last login
+</ResponseField>
+
+<ResponseField name="data.user.account_status" type="string">
+  Account status (active, suspended, pending)
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -118,9 +134,9 @@ curl -X POST "https://api.example.com/auth/login" \
   -H "Content-Type: application/json" \
   -d '{
     "username": "admin@example.com",
-    "password": "AdminPassword123!",
+    "password": "secure_password",
     "remember_me": true,
-    "mfa_code": "123456"
+    "two_factor_code": "123456"
   }'
 ```
 
@@ -132,9 +148,9 @@ const response = await fetch('https://api.example.com/auth/login', {
   },
   body: JSON.stringify({
     username: 'admin@example.com',
-    password: 'AdminPassword123!',
+    password: 'secure_password',
     remember_me: true,
-    mfa_code: '123456'
+    two_factor_code: '123456'
   })
 });
 
@@ -147,18 +163,82 @@ import requests
 
 payload = {
     "username": "admin@example.com",
-    "password": "AdminPassword123!",
+    "password": "secure_password",
     "remember_me": True,
-    "mfa_code": "123456"
+    "two_factor_code": "123456"
 }
 
 response = requests.post(
     'https://api.example.com/auth/login',
-    headers={'Content-Type': 'application/json'},
+    headers={
+        'Content-Type': 'application/json'
+    },
     json=payload
 )
 
 print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'username' => 'admin@example.com',
+    'password' => 'secure_password',
+    'remember_me' => true,
+    'two_factor_code' => '123456'
+];
+
+$response = file_get_contents('https://api.example.com/auth/login', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => 'Content-Type: application/json',
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type LoginRequest struct {
+    Username      string `json:"username"`
+    Password      string `json:"password"`
+    RememberMe    bool   `json:"remember_me,omitempty"`
+    TwoFactorCode string `json:"two_factor_code,omitempty"`
+}
+
+func main() {
+    payload := LoginRequest{
+        Username:      "admin@example.com",
+        Password:      "secure_password",
+        RememberMe:    true,
+        TwoFactorCode: "123456",
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/auth/login", bytes.NewBuffer(jsonData))
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
 ```
 </CodeGroup>
 
@@ -168,26 +248,32 @@ print(response.json())
 {
   "success": true,
   "data": {
-    "admin_id": "admin_1234567890abcdef",
-    "username": "admin@example.com",
-    "email": "admin@example.com",
-    "role": "super_admin",
-    "permissions": [
-      "admin:users:read",
-      "admin:users:write",
-      "admin:organizations:read",
-      "admin:organizations:write",
-      "admin:system:read",
-      "admin:system:write",
-      "admin:logs:read"
-    ],
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIFVzZXIiLCJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjI0MjYyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
     "refresh_token": "rt_admin_1234567890abcdef",
-    "token_expires_in": 3600,
-    "last_login": "2024-01-15T09:30:00Z",
-    "requires_mfa": true
+    "expires_in": 3600,
+    "token_type": "Bearer",
+    "user": {
+      "user_id": "admin_1234567890abcdef",
+      "username": "admin@example.com",
+      "email": "admin@example.com",
+      "role": "super_admin",
+      "permissions": [
+        "admin:users:read",
+        "admin:users:write",
+        "admin:organizations:read",
+        "admin:organizations:write",
+        "admin:system:read",
+        "admin:system:write",
+        "admin:logs:read",
+        "admin:logs:write",
+        "admin:settings:read",
+        "admin:settings:write"
+      ],
+      "last_login": "2024-01-15T09:15:00Z",
+      "account_status": "active"
+    }
   },
-  "message": "Admin authentication successful",
+  "message": "Admin login successful",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
@@ -203,16 +289,87 @@ print(response.json())
 </ResponseField>
 
 <ResponseField name="403 Forbidden" type="object">
-  Account locked, suspended, or insufficient privileges
-</ResponseField>
-
-<ResponseField name="422 Unprocessable Entity" type="object">
-  MFA code required or invalid MFA code
+  Account is locked, suspended, or requires 2FA
 </ResponseField>
 
 <ResponseField name="429 Too Many Requests" type="object">
-  Rate limit exceeded for login attempts
+  Too many login attempts - rate limited
 </ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Credentials (401)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_CREDENTIALS",
+        "message": "Invalid username or password",
+        "details": {
+          "field": "credentials",
+          "reason": "Username or password is incorrect"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Account Locked (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "ACCOUNT_LOCKED",
+        "message": "Account is temporarily locked",
+        "details": {
+          "field": "account",
+          "reason": "Too many failed login attempts",
+          "unlock_time": "2024-01-15T11:30:00Z"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="2FA Required (403)" icon="shield">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TWO_FACTOR_REQUIRED",
+        "message": "Two-factor authentication required",
+        "details": {
+          "field": "two_factor_code",
+          "reason": "Please provide your 2FA code",
+          "method": "authenticator_app"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many login attempts",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before trying again",
+          "retry_after": 300
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
 
 ## Usage Notes
 
@@ -220,36 +377,37 @@ print(response.json())
   <Accordion title="Admin Roles" icon="user-shield">
     Available admin roles:
     
-    - **super_admin**: Full system access
-    - **admin**: Standard administrative access
-    - **moderator**: Limited administrative access
-    - **auditor**: Read-only administrative access
+    - **super_admin**: Full system access and control
+    - **admin**: Administrative access with some restrictions
+    - **moderator**: Limited administrative capabilities
+    - **auditor**: Read-only access for auditing purposes
   </Accordion>
   
-  <Accordion title="Multi-Factor Authentication" icon="shield">
-    MFA requirements:
+  <Accordion title="Two-Factor Authentication" icon="shield">
+    2FA security features:
     
-    - Required for super_admin and admin roles
-    - Optional for moderator and auditor roles
-    - Uses TOTP (Time-based One-Time Password)
-    - 6-digit codes valid for 30 seconds
+    - **Authenticator Apps**: Google Authenticator, Authy, etc.
+    - **SMS Codes**: Text message verification
+    - **Backup Codes**: Emergency access codes
+    - **Hardware Tokens**: Physical security keys
   </Accordion>
   
-  <Accordion title="Token Expiration" icon="clock">
-    Token expiration times:
+  <Accordion title="Session Management" icon="clock">
+    Session handling:
     
-    - **Standard**: 1 hour (3600 seconds)
-    - **Remember Me**: 24 hours (86400 seconds)
-    - **MFA Required**: 30 minutes (1800 seconds)
+    - **Access Tokens**: Short-lived (1 hour) for API requests
+    - **Refresh Tokens**: Long-lived (7 days) for token renewal
+    - **Remember Me**: Extends session duration
+    - **Auto Logout**: Inactive session timeout
   </Accordion>
   
   <Accordion title="Security Features" icon="lock">
     Security measures:
     
-    - Account lockout after 5 failed attempts
-    - IP-based rate limiting
-    - Suspicious activity monitoring
-    - Session management and tracking
+    - **Rate Limiting**: Prevents brute force attacks
+    - **Account Lockout**: Temporary lockout after failed attempts
+    - **IP Restrictions**: Limit access to specific IP ranges
+    - **Audit Logging**: Track all admin activities
   </Accordion>
 </AccordionGroup>
 
@@ -258,121 +416,296 @@ print(response.json())
 <AccordionGroup>
   <Accordion title="Admin Authentication Service" icon="cog">
     ```javascript
-class AdminAuthService {
-  constructor(apiClient) {
-    this.apiClient = apiClient;
-  }
-  
-  async login(username, password, rememberMe = false, mfaCode = null) {
-    try {
-      const response = await this.apiClient.makeRequest('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          username,
-          password,
-          remember_me: rememberMe,
-          mfa_code: mfaCode
-        })
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Admin login failed');
+    class AdminAuthService {
+      constructor(baseUrl) {
+        this.baseUrl = baseUrl;
+        this.accessToken = null;
+        this.refreshToken = null;
+        this.user = null;
       }
       
-      const result = await response.json();
+      async login(username, password, rememberMe = false, twoFactorCode = null) {
+        try {
+          const response = await fetch(`${this.baseUrl}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username,
+              password,
+              remember_me: rememberMe,
+              two_factor_code: twoFactorCode
+            })
+          });
+          
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error.message);
+          }
+          
+          const data = await response.json();
+          
+          // Store tokens and user info
+          this.accessToken = data.data.access_token;
+          this.refreshToken = data.data.refresh_token;
+          this.user = data.data.user;
+          
+          // Store in localStorage for persistence
+          localStorage.setItem('admin_access_token', this.accessToken);
+          localStorage.setItem('admin_refresh_token', this.refreshToken);
+          localStorage.setItem('admin_user', JSON.stringify(this.user));
+          
+          return data;
+          
+        } catch (error) {
+          console.error('Admin login failed:', error);
+          throw error;
+        }
+      }
       
-      // Store admin tokens securely
-      await this.storeAdminTokens(result.data.access_token, result.data.refresh_token);
+      async logout() {
+        try {
+          if (this.accessToken) {
+            await fetch(`${this.baseUrl}/auth/logout`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${this.accessToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                refreshToken: this.refreshToken
+              })
+            });
+          }
+        } catch (error) {
+          console.error('Logout error:', error);
+        } finally {
+          // Clear stored data
+          this.accessToken = null;
+          this.refreshToken = null;
+          this.user = null;
+          localStorage.removeItem('admin_access_token');
+          localStorage.removeItem('admin_refresh_token');
+          localStorage.removeItem('admin_user');
+        }
+      }
       
-      return result;
+      async refreshAccessToken() {
+        try {
+          const response = await fetch(`${this.baseUrl}/auth/refresh/token`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              refreshToken: this.refreshToken
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Token refresh failed');
+          }
+          
+          const data = await response.json();
+          this.accessToken = data.data.access_token;
+          this.refreshToken = data.data.refresh_token;
+          
+          // Update stored tokens
+          localStorage.setItem('admin_access_token', this.accessToken);
+          localStorage.setItem('admin_refresh_token', this.refreshToken);
+          
+          return data;
+          
+        } catch (error) {
+          console.error('Token refresh failed:', error);
+          // If refresh fails, redirect to login
+          this.logout();
+          throw error;
+        }
+      }
       
-    } catch (error) {
-      console.error('Admin login error:', error);
-      throw error;
+      isAuthenticated() {
+        return this.accessToken !== null;
+      }
+      
+      hasPermission(permission) {
+        return this.user && this.user.permissions.includes(permission);
+      }
+      
+      hasRole(role) {
+        return this.user && this.user.role === role;
+      }
     }
-  }
-  
-  async storeAdminTokens(accessToken, refreshToken) {
-    // Store tokens in secure admin storage
-    await SecureStore.setItemAsync('admin_access_token', accessToken);
-    await SecureStore.setItemAsync('admin_refresh_token', refreshToken);
-  }
-  
-  async logout() {
+    
+    // Usage example
+    const adminAuth = new AdminAuthService('https://api.example.com');
+    
+    // Login
     try {
-      await this.apiClient.makeRequest('/auth/logout', {
-        method: 'POST'
-      });
-      
-      // Clear stored tokens
-      await SecureStore.deleteItemAsync('admin_access_token');
-      await SecureStore.deleteItemAsync('admin_refresh_token');
-      
+      const result = await adminAuth.login('admin@example.com', 'secure_password', true);
+      console.log('Login successful:', result.data.user);
     } catch (error) {
-      console.error('Admin logout error:', error);
-      throw error;
+      console.error('Login failed:', error);
     }
-  }
-}
-```
+    
+    // Check permissions
+    if (adminAuth.hasPermission('admin:users:write')) {
+      console.log('User can manage users');
+    }
+    ```
   </Accordion>
   
   <Accordion title="Python Admin Client" icon="python">
     ```python
-import requests
-import json
-from datetime import datetime
-
-class AdminClient:
-    def __init__(self, base_url):
-        self.base_url = base_url
-        self.access_token = None
-        self.refresh_token = None
+    import requests
+    import json
+    from typing import Optional, Dict, List
     
-    def login(self, username, password, remember_me=False, mfa_code=None):
-        """Authenticate admin user"""
-        try:
-            payload = {
-                "username": username,
-                "password": password,
-                "remember_me": remember_me,
-                "mfa_code": mfa_code
-            }
+    class AdminAuthClient:
+        def __init__(self, base_url: str):
+            self.base_url = base_url
+            self.access_token: Optional[str] = None
+            self.refresh_token: Optional[str] = None
+            self.user: Optional[Dict] = None
+        
+        def login(self, 
+                  username: str, 
+                  password: str, 
+                  remember_me: bool = False,
+                  two_factor_code: Optional[str] = None) -> Dict:
+            """Authenticate admin user"""
+            try:
+                payload = {
+                    "username": username,
+                    "password": password,
+                    "remember_me": remember_me
+                }
+                
+                if two_factor_code:
+                    payload["two_factor_code"] = two_factor_code
+                
+                response = requests.post(
+                    f"{self.base_url}/auth/login",
+                    headers={"Content-Type": "application/json"},
+                    json=payload
+                )
+                response.raise_for_status()
+                
+                data = response.json()
+                
+                # Store tokens and user info
+                self.access_token = data["data"]["access_token"]
+                self.refresh_token = data["data"]["refresh_token"]
+                self.user = data["data"]["user"]
+                
+                print(f"Login successful for {self.user['username']}")
+                return data
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Login failed: {e}")
+                raise
+        
+        def logout(self) -> None:
+            """Logout admin user"""
+            try:
+                if self.access_token:
+                    requests.post(
+                        f"{self.base_url}/auth/logout",
+                        headers={
+                            "Authorization": f"Bearer {self.access_token}",
+                            "Content-Type": "application/json"
+                        },
+                        json={"refreshToken": self.refresh_token}
+                    )
+            except requests.exceptions.RequestException as e:
+                print(f"Logout error: {e}")
+            finally:
+                # Clear stored data
+                self.access_token = None
+                self.refresh_token = None
+                self.user = None
+        
+        def refresh_token(self) -> Dict:
+            """Refresh access token"""
+            try:
+                response = requests.post(
+                    f"{self.base_url}/auth/refresh/token",
+                    headers={
+                        "Authorization": f"Bearer {self.access_token}",
+                        "Content-Type": "application/json"
+                    },
+                    json={"refreshToken": self.refresh_token}
+                )
+                response.raise_for_status()
+                
+                data = response.json()
+                self.access_token = data["data"]["access_token"]
+                self.refresh_token = data["data"]["refresh_token"]
+                
+                return data
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Token refresh failed: {e}")
+                self.logout()
+                raise
+        
+        def is_authenticated(self) -> bool:
+            """Check if user is authenticated"""
+            return self.access_token is not None
+        
+        def has_permission(self, permission: str) -> bool:
+            """Check if user has specific permission"""
+            return self.user and permission in self.user.get("permissions", [])
+        
+        def has_role(self, role: str) -> bool:
+            """Check if user has specific role"""
+            return self.user and self.user.get("role") == role
+        
+        def make_authenticated_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+            """Make authenticated request to admin API"""
+            if not self.is_authenticated():
+                raise Exception("Not authenticated")
             
-            response = requests.post(
-                f"{self.base_url}/auth/login",
-                headers={"Content-Type": "application/json"},
-                json=payload
-            )
+            headers = kwargs.get("headers", {})
+            headers["Authorization"] = f"Bearer {self.access_token}"
+            headers["Content-Type"] = "application/json"
+            kwargs["headers"] = headers
             
-            response.raise_for_status()
-            result = response.json()
+            response = requests.request(method, f"{self.base_url}{endpoint}", **kwargs)
             
-            # Store tokens
-            self.access_token = result["data"]["access_token"]
-            self.refresh_token = result["data"]["refresh_token"]
+            # Handle token expiration
+            if response.status_code == 401:
+                try:
+                    self.refresh_token()
+                    headers["Authorization"] = f"Bearer {self.access_token}"
+                    response = requests.request(method, f"{self.base_url}{endpoint}", **kwargs)
+                except:
+                    self.logout()
+                    raise
             
-            return result
-            
-        except requests.exceptions.RequestException as e:
-            print(f"Admin login failed: {e}")
-            raise
+            return response
     
-    def make_authenticated_request(self, endpoint, method="GET", **kwargs):
-        """Make authenticated API request"""
-        if not self.access_token:
-            raise Exception("Not authenticated. Please login first.")
-        
-        headers = kwargs.get('headers', {})
-        headers['Authorization'] = f'Bearer {self.access_token}'
-        kwargs['headers'] = headers
-        
-        response = requests.request(method, f"{self.base_url}{endpoint}", **kwargs)
-        response.raise_for_status()
-        
-        return response.json()
-```
+    # Usage example
+    admin_client = AdminAuthClient("https://api.example.com")
+    
+    # Login
+    try:
+        result = admin_client.login("admin@example.com", "secure_password", remember_me=True)
+        print(f"Logged in as {result['data']['user']['username']}")
+    except Exception as e:
+        print(f"Login failed: {e}")
+    
+    # Check permissions
+    if admin_client.has_permission("admin:users:write"):
+        print("User can manage users")
+    
+    # Make authenticated requests
+    if admin_client.is_authenticated():
+        response = admin_client.make_authenticated_request("GET", "/admin/organizations")
+        print(response.json())
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -380,15 +713,15 @@ class AdminClient:
 
 <CardGroup cols={2}>
   <Card title="Admin Logout" icon="sign-out">
-    `POST /auth/logout` - Logout and invalidate admin session
+    `POST /auth/logout` - Logout and invalidate session
   </Card>
   <Card title="Refresh Token" icon="refresh">
     `POST /auth/refresh/token` - Refresh expired access token
   </Card>
-  <Card title="Get Admin Profile" icon="user">
-    `GET /admin/profile` - Get admin user profile
+  <Card title="Get Organizations" icon="building">
+    `GET /admin/organizations` - List all organizations
   </Card>
-  <Card title="Change Password" icon="key">
-    `PUT /admin/password` - Change admin password
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List admin users
   </Card>
 </CardGroup>
