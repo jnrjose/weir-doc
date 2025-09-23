@@ -218,7 +218,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -247,7 +247,7 @@ print(response.json())
   "message": "Authentication successful",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -317,7 +317,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Authentication Service" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class AuthService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -381,11 +381,11 @@ class AuthService {
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Auth Client" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 import json
 from datetime import datetime
@@ -455,7 +455,7 @@ class AuthClient:
         response.raise_for_status()
         
         return response.json()
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

@@ -16,9 +16,9 @@ Send email notifications, invitations, alerts, and other communications through 
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -207,7 +207,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -220,7 +220,7 @@ print(response.json())
   "message": "Email sent successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -291,7 +291,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Send Team Invitation" icon="users">
-    <CodeBlock lang="javascript">
+    ```javascript
 class EmailService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -353,11 +353,11 @@ class EmailService {
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Send System Alert" icon="alert-triangle">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from datetime import datetime
 
@@ -411,7 +411,7 @@ class AlertService:
         except requests.exceptions.RequestException as e:
             print(f"Failed to send maintenance notification: {e}")
             raise
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

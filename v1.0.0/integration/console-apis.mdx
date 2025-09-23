@@ -51,7 +51,7 @@ Console APIs require user registration and authentication. Here's the complete f
 
 ### Step 2: Set Up Authentication
 
-<CodeBlock lang="javascript" title="Console API Authentication Setup">
+```javascript Console API Authentication Setup
 {`class ConsoleAPIClient {
   constructor(baseURL) {
     this.baseURL = baseURL;
@@ -138,7 +138,7 @@ Console APIs require user registration and authentication. Here's the complete f
     });
   }
 }`}
-</CodeBlock>
+```
 
 ## Available API Categories
 
@@ -292,7 +292,7 @@ Console APIs require user registration and authentication. Here's the complete f
 
 Complete organization setup and configuration:
 
-<CodeBlock lang="javascript" title="Organization Setup">
+```javascript Organization Setup
 {`class OrganizationSetup {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -411,13 +411,13 @@ Complete organization setup and configuration:
     }
   }
 }`}
-</CodeBlock>
+```
 
 ### Pattern 2: Team Management System
 
 Comprehensive team management with member administration:
 
-<CodeBlock lang="javascript" title="Team Management System">
+```javascript Team Management System
 {`class TeamManagementSystem {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -545,13 +545,13 @@ Comprehensive team management with member administration:
     return await response.json();
   }
 }`}
-</CodeBlock>
+```
 
 ### Pattern 3: Platform Management System
 
 Platform creation, configuration, and management:
 
-<CodeBlock lang="javascript" title="Platform Management System">
+```javascript Platform Management System
 {`class PlatformManagementSystem {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -645,13 +645,13 @@ Platform creation, configuration, and management:
     };
   }
 }`}
-</CodeBlock>
+```
 
 ## Error Handling and Retry Logic
 
 ### Comprehensive Error Handling
 
-<CodeBlock lang="javascript" title="Console API Error Handling">
+```javascript Console API Error Handling
 {`class ConsoleAPIErrorHandler {
   static async handleResponse(response, context = '') {
     if (response.ok) {
@@ -729,11 +729,11 @@ class ConsoleAPIError extends Error {
     this.details = details;
   }
 }`}
-</CodeBlock>
+```
 
 ### Retry Logic with Exponential Backoff
 
-<CodeBlock lang="javascript" title="Retry Logic">
+```javascript Retry Logic
 {`class ConsoleAPIRetryHandler {
   constructor(maxRetries = 3, baseDelay = 1000) {
     this.maxRetries = maxRetries;
@@ -789,7 +789,7 @@ class ConsoleAPIError extends Error {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }`}
-</CodeBlock>
+```
 
 ## Security Best Practices
 
@@ -818,7 +818,7 @@ class ConsoleAPIError extends Error {
 
 ### Role-Based Access Control
 
-<CodeBlock lang="javascript" title="Role-Based Access Control">
+```javascript Role-Based Access Control
 {`class RoleBasedAccessControl {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -864,13 +864,13 @@ class ConsoleAPIError extends Error {
     return await operation();
   }
 }`}
-</CodeBlock>
+```
 
 ## Monitoring and Analytics
 
 ### Request Monitoring
 
-<CodeBlock lang="javascript" title="Request Monitoring">
+```javascript Request Monitoring
 {`class ConsoleAPIMonitor {
   constructor(apiClient, metrics) {
     this.apiClient = apiClient;
@@ -915,13 +915,13 @@ class ConsoleAPIError extends Error {
     return Math.random().toString(36).substr(2, 9);
   }
 }`}
-</CodeBlock>
+```
 
 ## Testing Strategies
 
 ### Unit Testing
 
-<CodeBlock lang="javascript" title="Unit Tests for Console APIs">
+```javascript Unit Tests for Console APIs
 {`describe('ConsoleAPIClient', () => {
   let client;
   let mockFetch;
@@ -1005,11 +1005,11 @@ class ConsoleAPIError extends Error {
     });
   });
 });`}
-</CodeBlock>
+```
 
 ### Integration Testing
 
-<CodeBlock lang="javascript" title="Integration Tests">
+```javascript Integration Tests
 {`describe('Console API Integration', () => {
   let client;
   
@@ -1076,7 +1076,7 @@ class ConsoleAPIError extends Error {
     expect(teamWithMembers.members).toBeDefined();
   });
 });`}
-</CodeBlock>
+```
 
 ## Common Use Cases
 

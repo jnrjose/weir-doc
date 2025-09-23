@@ -107,15 +107,15 @@ Let's start with a simple example. We'll use the External API to generate an acc
 
 ### Using cURL
 
-<CodeBlock lang="bash">
+```bash
 {`curl -X POST "https://external.example.com/auth/token" \\
   -H "Authorization: Basic <YOUR_BASIC_AUTH_CREDENTIALS>" \\
   -H "Content-Type: application/json"`}
-</CodeBlock>
+```
 
 ### Using JavaScript (Node.js)
 
-<CodeBlock lang="javascript">
+```javascript
 {`const response = await fetch('https://external.example.com/auth/token', {
   method: 'POST',
   headers: {
@@ -126,11 +126,11 @@ Let's start with a simple example. We'll use the External API to generate an acc
 
 const data = await response.json();
 console.log(data);`}
-</CodeBlock>
+```
 
 ### Using Python
 
-<CodeBlock lang="python">
+```python
 {`import requests
 
 response = requests.post(
@@ -142,7 +142,7 @@ response = requests.post(
 )
 
 print(response.json())`}
-</CodeBlock>
+```
 
 ## Step 4: Test with Console APIs
 
@@ -150,22 +150,22 @@ Once you have a Bearer token, let's try a Console API endpoint:
 
 ### Get Organization Information
 
-<CodeBlock lang="bash">
+```bash
 {`curl -X GET "https://api.example.com/org/information" \\
   -H "Authorization: Bearer <YOUR_BEARER_TOKEN>" \\
   -H "Content-Type: application/json"`}
-</CodeBlock>
+```
 
 ### Create a Team
 
-<CodeBlock lang="bash">
+```bash
 {`curl -X POST "https://api.example.com/org/create/team" \\
   -H "Authorization: Bearer <YOUR_BEARER_TOKEN>" \\
   -H "Content-Type: application/json" \\
   -d '{
     "name": "My Development Team"
   }'`}
-</CodeBlock>
+```
 
 ## Step 5: Explore the API Playground
 

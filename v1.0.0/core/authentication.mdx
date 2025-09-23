@@ -50,15 +50,15 @@ Basic Authentication is the simplest form of authentication, suitable for extern
 
 <AccordionGroup>
   <Accordion title="cURL" icon="terminal">
-    <CodeBlock lang="bash">
+    ```bash
 {`curl -X POST "https://external.example.com/auth/token" \\
   -H "Authorization: Basic $(echo -n 'username:password' | base64)" \\
   -H "Content-Type: application/json"`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="JavaScript" icon="javascript">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`const credentials = btoa('username:password');
 const response = await fetch('https://external.example.com/auth/token', {
   method: 'POST',
@@ -67,11 +67,11 @@ const response = await fetch('https://external.example.com/auth/token', {
     'Content-Type': 'application/json'
   }
 });`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python" icon="python">
-    <CodeBlock lang="python">
+    ```python
 {`import base64
 import requests
 
@@ -83,7 +83,7 @@ response = requests.post(
         'Content-Type': 'application/json'
     }
 )`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -112,15 +112,15 @@ There are several ways to obtain a Bearer token:
     
     **Use Case**: Admin users accessing administrative functions
     
-    <CodeBlock lang="json" title="Request Body">
-{`{
+    ```json Request Body
+{
   "username": "admin@example.com",
   "password": "your_password"
-}`}
-    </CodeBlock>
+}
+```
     
-    <CodeBlock lang="json" title="Response">
-{`{
+    ```json Response
+{
   "success": true,
   "data": {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -128,8 +128,8 @@ There are several ways to obtain a Bearer token:
     "expires_in": 3600,
     "token_type": "Bearer"
   }
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="User Registration" icon="user-plus">
@@ -137,13 +137,13 @@ There are several ways to obtain a Bearer token:
     
     **Use Case**: New user registration (mobile/web)
     
-    <CodeBlock lang="json" title="Request Body">
-{`{
+    ```json Request Body
+{
   "fullname": "John Doe",
   "email": "john@example.com",
   "password": "secure_password"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Token Refresh" icon="refresh">
@@ -151,11 +151,11 @@ There are several ways to obtain a Bearer token:
     
     **Use Case**: Refresh expired access tokens
     
-    <CodeBlock lang="json" title="Request Body">
-{`{
+    ```json Request Body
+{
   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -163,11 +163,11 @@ There are several ways to obtain a Bearer token:
 
 Once you have a Bearer token, include it in the `Authorization` header:
 
-<CodeBlock lang="bash">
+```bash
 {`curl -X GET "https://api.example.com/org/information" \\
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json"`}
-</CodeBlock>
+```
 
 ### Token Lifecycle Management
 
@@ -186,7 +186,7 @@ Once you have a Bearer token, include it in the `Authorization` header:
 
 ### Token Refresh Implementation
 
-<CodeBlock lang="javascript" title="Automatic Token Refresh">
+```javascript Automatic Token Refresh
 {`class WeirAPIClient {
   constructor(baseURL, refreshToken) {
     this.baseURL = baseURL;
@@ -233,7 +233,7 @@ Once you have a Bearer token, include it in the `Authorization` header:
     return response;
   }
 }`}
-</CodeBlock>
+```
 
 ## Authentication for Different API Categories
 
@@ -303,12 +303,12 @@ Once you have a Bearer token, include it in the `Authorization` header:
     Store all credentials in environment variables or secure credential stores. Never commit credentials to version control.
   </Step>
   <Step title="Use Environment Variables" icon="code">
-    <CodeBlock lang="bash">
+    ```bash
 {`# .env file
 WEIR_API_USERNAME=your_username
 WEIR_API_PASSWORD=your_password
 WEIR_API_BASE_URL=https://api.example.com`}
-    </CodeBlock>
+```
   </Step>
   <Step title="Implement Credential Rotation" icon="refresh">
     Regularly rotate API credentials and tokens. Implement automated rotation where possible.
@@ -345,7 +345,7 @@ WEIR_API_BASE_URL=https://api.example.com`}
 
 ### Error Handling
 
-<CodeBlock lang="javascript" title="Secure Error Handling">
+```javascript Secure Error Handling
 {`async function makeSecureRequest(url, options) {
   try {
     const response = await fetch(url, options);
@@ -376,7 +376,7 @@ WEIR_API_BASE_URL=https://api.example.com`}
     throw error;
   }
 }`}
-</CodeBlock>
+```
 
 ## Troubleshooting Authentication Issues
 
@@ -460,7 +460,7 @@ WEIR_API_BASE_URL=https://api.example.com`}
 
 ### Key Storage Security
 
-<CodeBlock lang="javascript" title="Secure Key Storage Example">
+```javascript Secure Key Storage Example
 {`// ❌ NEVER do this
 const API_KEY = 'sk_live_1234567890abcdef';
 
@@ -470,7 +470,7 @@ const API_KEY = process.env.WEIR_API_KEY;
 // ✅ Even better - use a secure credential store
 const { getSecret } = require('@aws-sdk/client-secrets-manager');
 const apiKey = await getSecret('weir-api-key');`}
-</CodeBlock>
+```
 
 <Tip>
   **Pro Tip**: Use the API Playground to test different authentication methods and understand the response formats before implementing in your application. This will help you avoid common authentication pitfalls.

@@ -16,9 +16,9 @@ Retrieve a paginated list of all organizations in the system. This endpoint prov
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -274,7 +274,7 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": [
@@ -347,7 +347,7 @@ func main() {
   "message": "Organizations retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -371,7 +371,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -384,11 +384,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -401,11 +401,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Validation Error (400)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -418,7 +418,7 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -465,7 +465,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Admin Dashboard" icon="tachometer">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class AdminDashboard {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -575,11 +575,11 @@ func main() {
     await this.loadOrganizations(page);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Organization Analytics" icon="chart-line">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class OrganizationAnalytics {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -673,7 +673,7 @@ func main() {
     return growthData;
   }
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

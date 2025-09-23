@@ -16,9 +16,9 @@ Create a new team within your organization. This endpoint allows you to set up t
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Bearer <your_jwt_token>`}
-</CodeBlock>
+```
 
 ## Request
 
@@ -253,8 +253,8 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": {
     "team_id": "team_1234567890abcdef",
@@ -275,8 +275,8 @@ func main() {
   },
   "message": "Team created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 
@@ -308,8 +308,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Name Conflict (409)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "TEAM_NAME_EXISTS",
@@ -320,13 +320,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Validation Error (422)" icon="exclamation">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -349,13 +349,13 @@ func main() {
     ]
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -366,8 +366,8 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -414,7 +414,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Creation Form" icon="form">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamCreationForm {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -607,11 +607,11 @@ func main() {
     }, 5000);
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Team Management Dashboard" icon="tachometer">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamManagementDashboard {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -712,7 +712,7 @@ func main() {
     errorElement.style.display = 'none';
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

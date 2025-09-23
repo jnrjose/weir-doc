@@ -42,7 +42,7 @@ You'll need Basic Authentication credentials (username and password) for externa
 
 ### Step 2: Set Up Authentication
 
-<CodeBlock lang="javascript" title="Basic Authentication Setup">
+```javascript Basic Authentication Setup
 {`// Encode credentials for Basic Auth
 const credentials = btoa('username:password');
 
@@ -54,11 +54,11 @@ const response = await fetch('https://external.example.com/auth/token', {
     'Content-Type': 'application/json'
   }
 });`}
-</CodeBlock>
+```
 
 ### Step 3: Make Your First API Call
 
-<CodeBlock lang="javascript" title="Generate Access Token">
+```javascript Generate Access Token
 {`async function generateAccessToken() {
   const credentials = btoa('username:password');
   
@@ -84,7 +84,7 @@ const response = await fetch('https://external.example.com/auth/token', {
     throw error;
   }
 }`}
-</CodeBlock>
+```
 
 ## Available Endpoints
 
@@ -108,7 +108,7 @@ const response = await fetch('https://external.example.com/auth/token', {
 
 For applications that need occasional access to Weir AI services:
 
-<CodeBlock lang="javascript" title="Simple Integration">
+```javascript Simple Integration
 {`class SimpleWeirClient {
   constructor(username, password) {
     this.username = username;
@@ -150,13 +150,13 @@ For applications that need occasional access to Weir AI services:
 // Usage
 const client = new SimpleWeirClient('username', 'password');
 const response = await client.makeAuthenticatedRequest('/some-endpoint');`}
-</CodeBlock>
+```
 
 ### Pattern 2: Cached Token Management
 
 For applications that make frequent API calls:
 
-<CodeBlock lang="javascript" title="Cached Token Integration">
+```javascript Cached Token Integration
 {`class CachedWeirClient {
   constructor(username, password) {
     this.username = username;
@@ -209,7 +209,7 @@ For applications that make frequent API calls:
     });
   }
 }`}
-</CodeBlock>
+```
 
 ## Error Handling
 
@@ -248,7 +248,7 @@ For applications that make frequent API calls:
 
 ### Robust Error Handling
 
-<CodeBlock lang="javascript" title="Comprehensive Error Handling">
+```javascript Comprehensive Error Handling
 {`class RobustWeirClient {
   constructor(username, password, options = {}) {
     this.username = username;
@@ -336,7 +336,7 @@ For applications that make frequent API calls:
     // ... token management logic
   }
 }`}
-</CodeBlock>
+```
 
 ## Security Best Practices
 
@@ -368,7 +368,7 @@ For applications that make frequent API calls:
 
 ### Code Security
 
-<CodeBlock lang="javascript" title="Secure Credential Handling">
+```javascript Secure Credential Handling
 {`// ❌ NEVER do this
 const username = 'admin';
 const password = 'password123';
@@ -395,13 +395,13 @@ class SecureWeirClient {
     // ...
   }
 }`}
-</CodeBlock>
+```
 
 ## Monitoring and Logging
 
 ### Request Logging
 
-<CodeBlock lang="javascript" title="Request Logging">
+```javascript Request Logging
 {`class LoggingWeirClient {
   constructor(username, password, logger) {
     this.username = username;
@@ -451,11 +451,11 @@ class SecureWeirClient {
     return Math.random().toString(36).substr(2, 9);
   }
 }`}
-</CodeBlock>
+```
 
 ### Performance Monitoring
 
-<CodeBlock lang="javascript" title="Performance Monitoring">
+```javascript Performance Monitoring
 {`class MonitoredWeirClient {
   constructor(username, password, metrics) {
     this.username = username;
@@ -495,13 +495,13 @@ class SecureWeirClient {
     }
   }
 }`}
-</CodeBlock>
+```
 
 ## Testing
 
 ### Unit Testing
 
-<CodeBlock lang="javascript" title="Unit Tests">
+```javascript Unit Tests
 {`// Mock fetch for testing
 global.fetch = jest.fn();
 
@@ -557,11 +557,11 @@ describe('WeirClient', () => {
     await expect(client.getAccessToken()).rejects.toThrow('Authentication failed');
   });
 });`}
-</CodeBlock>
+```
 
 ### Integration Testing
 
-<CodeBlock lang="javascript" title="Integration Tests">
+```javascript Integration Tests
 {`describe('Weir API Integration', () => {
   let client;
   
@@ -591,7 +591,7 @@ describe('WeirClient', () => {
     expect(successful.length).toBeGreaterThan(0);
   });
 });`}
-</CodeBlock>
+```
 
 ## Common Use Cases
 
@@ -666,7 +666,7 @@ describe('WeirClient', () => {
 
 ### Debug Tools
 
-<CodeBlock lang="javascript" title="Debug Client">
+```javascript Debug Client
 {`class DebugWeirClient {
   constructor(username, password, debug = false) {
     this.username = username;
@@ -701,7 +701,7 @@ describe('WeirClient', () => {
     return response;
   }
 }`}
-</CodeBlock>
+```
 
 <Callout type="info" title="Need Help?">
   If you encounter issues with External API integration, check the troubleshooting section above or contact our support team. The API Playground is also available for testing endpoints interactively.

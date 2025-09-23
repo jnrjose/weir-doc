@@ -16,9 +16,9 @@ Delete a team from your organization. This endpoint permanently removes the team
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Bearer <your_jwt_token>`}
-</CodeBlock>
+```
 
 ## Path Parameters
 
@@ -186,8 +186,8 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": {
     "team_id": "team_1234567890abcdef",
@@ -199,8 +199,8 @@ func main() {
   },
   "message": "Team deleted successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 
@@ -236,8 +236,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Missing Confirmation (400)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "CONFIRMATION_REQUIRED",
@@ -248,13 +248,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Team Has Active Members (409)" icon="users">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "TEAM_HAS_ACTIVE_MEMBERS",
@@ -266,13 +266,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Team Not Found (404)" icon="search">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "TEAM_NOT_FOUND",
@@ -283,13 +283,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -300,8 +300,8 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -348,7 +348,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Deletion Confirmation" icon="form">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamDeletionConfirmation {
   constructor(apiClient, teamId) {
     this.apiClient = apiClient;
@@ -484,11 +484,11 @@ func main() {
     }, 5000);
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Bulk Team Cleanup" icon="broom">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class BulkTeamCleanup {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -572,7 +572,7 @@ func main() {
     return report;
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

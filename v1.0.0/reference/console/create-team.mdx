@@ -16,9 +16,9 @@ Create a new team within your organization. Teams are used to organize users and
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -171,7 +171,7 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -184,7 +184,7 @@ func main() {
   "message": "Team created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -212,7 +212,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Validation Error (400)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -225,11 +225,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Authentication Error (401)" icon="key">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -242,11 +242,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Conflict Error (409)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -259,7 +259,7 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -299,7 +299,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Management Class" icon="code">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamManager {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -345,11 +345,11 @@ func main() {
 // Usage
 const teamManager = new TeamManager(apiClient);
 const team = await teamManager.createTeam('Marketing Team');`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Error Handling" icon="exclamation-triangle">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`async function createTeamWithRetry(name, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -387,7 +387,7 @@ const team = await teamManager.createTeam('Marketing Team');`}
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

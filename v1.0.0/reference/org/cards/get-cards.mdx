@@ -16,9 +16,9 @@ Retrieve a paginated list of all cards and payment methods associated with the o
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -206,7 +206,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": [
@@ -250,7 +250,7 @@ print(response.json())
   "message": "Cards retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -270,7 +270,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -283,11 +283,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -300,7 +300,7 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

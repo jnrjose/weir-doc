@@ -16,9 +16,9 @@ Retrieve a comprehensive list of all payment cards and payment methods associate
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -171,7 +171,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": [
@@ -228,7 +228,7 @@ print(response.json())
   "message": "Cards retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -292,7 +292,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Payment Card Component" icon="react">
-    <CodeBlock lang="javascript">
+    ```javascript
 import React, { useState, useEffect } from 'react';
 
 const PaymentCards = () => {
@@ -376,11 +376,11 @@ const PaymentCards = () => {
     </div>
   );
 };
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Payment Manager" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import List, Dict, Optional
 
@@ -437,7 +437,7 @@ class PaymentManager:
             if card["last_four"] == last_four:
                 return card
         return None
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

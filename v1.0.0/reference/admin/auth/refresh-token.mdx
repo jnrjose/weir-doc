@@ -16,9 +16,9 @@ Refresh an expired admin access token using a valid refresh token. This endpoint
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <admin_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -147,7 +147,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -172,7 +172,7 @@ print(response.json())
   "message": "Token refreshed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -240,7 +240,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Token Refresh Service" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class AdminTokenRefreshService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -288,11 +288,11 @@ class AdminTokenRefreshService {
     return this.refreshToken(refreshToken, true);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Token Manager" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import Optional
 from datetime import datetime, timedelta
@@ -358,7 +358,7 @@ class AdminTokenManager:
         if self.auto_refresh_if_needed():
             return self.access_token
         return None
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

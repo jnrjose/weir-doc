@@ -16,9 +16,9 @@ Retrieve a comprehensive list of all members in a specific team, including their
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Bearer <your_jwt_token>`}
-</CodeBlock>
+```
 
 ## Path Parameters
 
@@ -298,8 +298,8 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": [
     {
@@ -376,8 +376,8 @@ func main() {
   },
   "message": "Team members retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 
@@ -405,8 +405,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -417,13 +417,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -434,13 +434,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Team Not Found (404)" icon="search">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "TEAM_NOT_FOUND",
@@ -451,8 +451,8 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -499,7 +499,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Member Dashboard" icon="tachometer">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamMemberDashboard {
   constructor(apiClient, teamId) {
     this.apiClient = apiClient;
@@ -628,11 +628,11 @@ func main() {
     errorElement.style.display = 'none';
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Team Member Analytics" icon="chart-line">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TeamMemberAnalytics {
   constructor(apiClient, teamId) {
     this.apiClient = apiClient;
@@ -724,7 +724,7 @@ func main() {
     };
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

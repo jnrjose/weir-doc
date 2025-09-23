@@ -16,9 +16,9 @@ Retrieve comprehensive information about your organization including basic detai
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Bearer <your_jwt_token>`}
-</CodeBlock>
+```
 
 ## Response
 
@@ -209,8 +209,8 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": {
     "organization_id": "org_1234567890abcdef",
@@ -242,8 +242,8 @@ func main() {
   },
   "message": "Organization information retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 
@@ -267,8 +267,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "UNAUTHORIZED",
@@ -279,13 +279,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "FORBIDDEN",
@@ -296,13 +296,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Not Found (404)" icon="search">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "ORGANIZATION_NOT_FOUND",
@@ -313,8 +313,8 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -361,7 +361,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Organization Profile Component" icon="building">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class OrganizationProfile {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -435,11 +435,11 @@ func main() {
     await this.loadOrganizationInfo();
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Organization Settings Manager" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class OrganizationSettingsManager {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -574,7 +574,7 @@ func main() {
     }
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

@@ -16,9 +16,9 @@ Retrieve comprehensive details about a specific platform including its capabilit
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Path Parameters
 
@@ -233,7 +233,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -320,7 +320,7 @@ print(response.json())
   "message": "Platform details retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -389,7 +389,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Platform Evaluator" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class PlatformEvaluator {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -455,11 +455,11 @@ class PlatformEvaluator {
     return Math.min(score, 100);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Platform Client" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import Dict, List, Optional
 
@@ -524,7 +524,7 @@ class PlatformClient:
             "testing": platform.get("integration", {}).get("testing", {}),
             "documentation": platform.get("documentation", {})
         }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

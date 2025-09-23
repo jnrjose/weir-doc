@@ -157,32 +157,32 @@ Security is a fundamental aspect of the Weir AI API. Here's how we ensure your d
 
 All API requests follow consistent patterns:
 
-<CodeBlock lang="json" title="Request Headers">
-{`{
+```json Request Headers
+{
   "Authorization": "Bearer <token>",
   "Content-Type": "application/json",
   "Accept": "application/json",
   "User-Agent": "YourApp/1.0"
-}`}
-</CodeBlock>
+}
+```
 
 ### Standard Response Format
 
 API responses follow a consistent structure:
 
-<CodeBlock lang="json" title="Success Response">
-{`{
+```json Success Response
+{
   "success": true,
   "data": {
     // Response data here
   },
   "message": "Operation completed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
-<CodeBlock lang="json" title="Error Response">
-{`{
+```json Error Response
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -193,8 +193,8 @@ API responses follow a consistent structure:
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Handling
 
@@ -228,8 +228,8 @@ Robust error handling is essential for reliable integrations:
 
 ### Error Response Structure
 
-<CodeBlock lang="json" title="Detailed Error Response">
-{`{
+```json Detailed Error Response
+{
   "success": false,
   "error": {
     "code": "RATE_LIMIT_EXCEEDED",
@@ -243,8 +243,8 @@ Robust error handling is essential for reliable integrations:
   },
   "timestamp": "2024-01-15T10:30:00Z",
   "request_id": "req_1234567890"
-}`}
-</CodeBlock>
+}
+```
 
 ## Rate Limiting
 
@@ -281,8 +281,8 @@ To ensure fair usage and system stability, the Weir AI API implements rate limit
 
 Many endpoints support pagination for large datasets:
 
-<CodeBlock lang="json" title="Paginated Response">
-{`{
+```json Paginated Response
+{
   "success": true,
   "data": [
     // Array of items
@@ -295,8 +295,8 @@ Many endpoints support pagination for large datasets:
     "has_next": true,
     "has_prev": false
   }
-}`}
-</CodeBlock>
+}
+```
 
 ### Pagination Parameters
 

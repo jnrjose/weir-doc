@@ -213,7 +213,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -230,7 +230,7 @@ print(response.json())
   "message": "User registered successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -296,7 +296,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Mobile App Registration" icon="smartphone">
-    <CodeBlock lang="javascript">
+    ```javascript
 class AuthService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -341,11 +341,11 @@ class AuthService {
     await SecureStore.setItemAsync('refresh_token', refreshToken);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Web App Registration" icon="globe">
-    <CodeBlock lang="python">
+    ```python
 import requests
 import json
 
@@ -389,7 +389,7 @@ class WebAuthService:
         # Store in session or secure storage
         session["access_token"] = access_token
         session["refresh_token"] = refresh_token
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

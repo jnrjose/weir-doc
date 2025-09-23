@@ -16,9 +16,9 @@ Create a new team within your organization with specified settings and configura
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -226,7 +226,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -254,7 +254,7 @@ print(response.json())
   "message": "Team created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -328,7 +328,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Team Management Service" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class TeamService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -395,11 +395,11 @@ class TeamService {
     });
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Team Manager" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 
 class TeamManager:
@@ -447,7 +447,7 @@ class TeamManager:
                 "manage:members"
             ]
         )
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

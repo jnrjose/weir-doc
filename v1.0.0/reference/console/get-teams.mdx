@@ -16,9 +16,9 @@ Retrieve a comprehensive list of all teams within your organization, including t
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -192,7 +192,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": [
@@ -252,7 +252,7 @@ print(response.json())
   "message": "Teams retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -316,7 +316,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Team List Component" icon="react">
-    <CodeBlock lang="javascript">
+    ```javascript
 import React, { useState, useEffect } from 'react';
 
 const TeamList = () => {
@@ -395,11 +395,11 @@ const TeamList = () => {
     </div>
   );
 };
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Team Manager" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import List, Dict, Optional
 
@@ -457,7 +457,7 @@ class TeamManager:
             if team["team_id"] == team_id:
                 return team
         return None
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

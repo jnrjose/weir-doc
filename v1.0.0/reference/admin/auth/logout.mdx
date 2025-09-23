@@ -16,9 +16,9 @@ Logout an admin user and invalidate their current session. This endpoint termina
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <admin_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -132,7 +132,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -145,7 +145,7 @@ print(response.json())
   "message": "Admin logout successful",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -208,7 +208,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Admin Logout Service" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class AdminLogoutService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -251,11 +251,11 @@ class AdminLogoutService {
     return this.logout(true, reason);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Admin Client" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import Optional
 
@@ -296,7 +296,7 @@ class AdminLogoutClient:
     def logout_all_sessions(self, reason: str = "Security policy enforcement") -> dict:
         """Logout from all admin sessions"""
         return self.logout(logout_all_sessions=True, reason=reason)
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

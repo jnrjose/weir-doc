@@ -16,9 +16,9 @@ Retrieve system logs, application logs, and audit trails with comprehensive filt
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Bearer <your_jwt_token>`}
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -224,8 +224,8 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": [
     {
@@ -271,8 +271,8 @@ print(response.json())
   },
   "message": "Logs retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 

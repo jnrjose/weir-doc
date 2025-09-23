@@ -169,7 +169,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -181,7 +181,7 @@ print(response.json())
   "message": "Registration initiated successfully. Please check your email for verification code.",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -201,7 +201,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Email Already Exists (409)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -214,11 +214,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Validation Error (422)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -243,11 +243,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Terms Not Accepted (400)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -260,7 +260,7 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -301,7 +301,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Registration Form" icon="form">
-    <CodeBlock lang="javascript">
+    ```javascript
 // Registration form handler
 async function handleRegistration(formData) {
   try {
@@ -355,7 +355,7 @@ function displayValidationErrors(errors) {
     }
   });
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

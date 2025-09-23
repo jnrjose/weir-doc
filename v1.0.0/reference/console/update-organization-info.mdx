@@ -16,9 +16,9 @@ Update organization information including basic details, contact information, ad
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -219,7 +219,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -258,7 +258,7 @@ print(response.json())
   "message": "Organization information updated successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -325,7 +325,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Update Basic Info" icon="info">
-    <CodeBlock lang="javascript">
+    ```javascript
 class OrganizationService {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -382,11 +382,11 @@ class OrganizationService {
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Update Settings" icon="settings">
-    <CodeBlock lang="python">
+    ```python
 import requests
 
 class OrganizationManager:
@@ -432,7 +432,7 @@ class OrganizationManager:
         except requests.exceptions.RequestException as e:
             print(f"Failed to update billing info: {e}")
             raise
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

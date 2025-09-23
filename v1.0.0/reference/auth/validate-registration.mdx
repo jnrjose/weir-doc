@@ -146,7 +146,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -162,7 +162,7 @@ print(response.json())
   "message": "Registration completed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -186,7 +186,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Invalid OTP (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -199,11 +199,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Registration Not Found (404)" icon="search">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -216,11 +216,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Already Completed (409)" icon="check">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -233,7 +233,7 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -272,7 +272,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Registration Flow" icon="flow">
-    <CodeBlock lang="javascript">
+    ```javascript
 // Complete registration flow
 async function completeRegistration(email, otp, registrationId) {
   try {
@@ -308,7 +308,7 @@ async function completeRegistration(email, otp, registrationId) {
     throw error;
   }
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

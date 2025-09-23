@@ -214,8 +214,8 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": true,
   "data": {
     "user_id": "user_1234567890abcdef",
@@ -231,8 +231,8 @@ func main() {
   },
   "message": "Registration successful",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Responses
 
@@ -260,8 +260,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Email Already Exists (409)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "EMAIL_ALREADY_EXISTS",
@@ -272,13 +272,13 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Validation Error (422)" icon="exclamation">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
@@ -306,13 +306,13 @@ func main() {
     ]
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
   
   <Accordion title="Rate Limited (429)" icon="clock">
-    <CodeBlock lang="json">
-{`{
+    ```json
+{
   "success": false,
   "error": {
     "code": "RATE_LIMITED",
@@ -324,8 +324,8 @@ func main() {
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-    </CodeBlock>
+}
+```
   </Accordion>
 </AccordionGroup>
 
@@ -373,7 +373,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Registration Form Component" icon="form">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class RegistrationForm {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -594,11 +594,11 @@ func main() {
     }, 5000);
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Mobile Registration Handler" icon="mobile">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class MobileRegistrationHandler {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -714,7 +714,7 @@ func main() {
     return null;
   }
 }`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

@@ -40,21 +40,21 @@ Before testing endpoints, you'll need to configure authentication:
 ### For External APIs
 Use Basic Authentication with your username and password:
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "username": "your_username",
   "password": "your_password"
-}`}
-</CodeBlock>
+}
+```
 
 ### For Console/Admin APIs
 Use Bearer Token authentication:
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}`}
-</CodeBlock>
+}
+```
 
 ## Available Endpoints
 
@@ -175,14 +175,14 @@ Here are some common testing scenarios you can try in the playground:
 
 ### Example 1: External API Token Generation
 
-<CodeBlock lang="bash" title="Request">
+```bash Request
 {`curl -X POST "https://external.example.com/auth/token" \\
   -H "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" \\
   -H "Content-Type: application/json"`}
-</CodeBlock>
+```
 
-<CodeBlock lang="json" title="Response">
-{`{
+```json Response
+{
   "success": true,
   "data": {
     "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -191,22 +191,22 @@ Here are some common testing scenarios you can try in the playground:
   },
   "message": "Token generated successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ### Example 2: Create Team
 
-<CodeBlock lang="bash" title="Request">
+```bash Request
 {`curl -X POST "https://api.example.com/org/create/team" \\
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json" \\
   -d '{
     "name": "Development Team"
   }'`}
-</CodeBlock>
+```
 
-<CodeBlock lang="json" title="Response">
-{`{
+```json Response
+{
   "success": true,
   "data": {
     "team_id": "team_1234567890",
@@ -216,19 +216,19 @@ Here are some common testing scenarios you can try in the playground:
   },
   "message": "Team created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ### Example 3: Get Organization Information
 
-<CodeBlock lang="bash" title="Request">
+```bash Request
 {`curl -X GET "https://api.example.com/org/information" \\
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \\
   -H "Content-Type: application/json"`}
-</CodeBlock>
+```
 
-<CodeBlock lang="json" title="Response">
-{`{
+```json Response
+{
   "success": true,
   "data": {
     "organization_id": "org_1234567890",
@@ -254,8 +254,8 @@ Here are some common testing scenarios you can try in the playground:
   },
   "message": "Organization information retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Error Handling in Playground
 

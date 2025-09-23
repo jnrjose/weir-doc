@@ -31,9 +31,9 @@ The External API is designed for third-party developers, partners, and external 
 
 External API endpoints use Basic Authentication:
 
-<CodeBlock lang="bash">
+```bash
 {`Authorization: Basic <base64_encoded_credentials>`}
-</CodeBlock>
+```
 
 Where credentials are encoded as `base64(username:password)`.
 
@@ -120,8 +120,8 @@ External API endpoints have specific rate limits based on your subscription tier
 
 All External API endpoints return consistent error responses:
 
-<CodeBlock lang="json">
-{`{
+```json
+{
   "success": false,
   "error": {
     "code": "ERROR_CODE",
@@ -132,8 +132,8 @@ All External API endpoints return consistent error responses:
     }
   },
   "timestamp": "2024-01-15T10:30:00Z"
-}`}
-</CodeBlock>
+}
+```
 
 ## Common Error Codes
 
@@ -215,7 +215,7 @@ All External API endpoints return consistent error responses:
 
 <AccordionGroup>
   <Accordion title="JavaScript SDK" icon="code">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`// Initialize the Weir External API client
 const weirClient = new WeirExternalClient({
   baseURL: 'https://external.example.com',
@@ -243,11 +243,11 @@ const status = await weirClient.getProcessingStatus(uploadResult.jobId);
 if (status.status === 'completed') {
   const results = await weirClient.downloadResults(uploadResult.jobId);
 }`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python SDK" icon="code">
-    <CodeBlock lang="python">
+    ```python
 {`from weir_external import WeirExternalClient
 
 # Initialize the client
@@ -276,11 +276,11 @@ status = client.get_processing_status(upload_result['job_id'])
 # Download results when ready
 if status['status'] == 'completed':
     results = client.download_results(upload_result['job_id'])`}
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="cURL Examples" icon="terminal">
-    <CodeBlock lang="bash">
+    ```bash
 {`# Generate access token
 curl -X POST "https://external.example.com/auth/token" \
   -H "Authorization: Basic $(echo -n 'username:password' | base64)" \
@@ -296,7 +296,7 @@ curl -X POST "https://external.example.com/data/upload" \
 # Check processing status
 curl -X GET "https://external.example.com/data/status/job_123" \
   -H "Authorization: Bearer <access_token>"`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -304,7 +304,7 @@ curl -X GET "https://external.example.com/data/status/job_123" \
 
 <AccordionGroup>
   <Accordion title="Webhook Setup" icon="webhook">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`// Register webhook endpoint
 const webhook = await weirClient.registerWebhook({
   url: 'https://your-app.com/webhooks/weir',
@@ -326,7 +326,7 @@ app.post('/webhooks/weir', (req, res) => {
     res.status(401).send('Unauthorized');
   }
 });`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

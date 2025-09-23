@@ -16,9 +16,9 @@ Validate an API key and retrieve access information including permissions, rate 
 
 This endpoint uses Basic Authentication. Include your API credentials in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Basic <base64_encoded_credentials>
-</CodeBlock>
+```
 
 Where credentials are encoded as `base64(api_key:api_secret)`.
 
@@ -198,7 +198,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -232,7 +232,7 @@ print(response.json())
   "message": "API key validated successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -300,7 +300,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="API Key Validator" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class APIKeyValidator {
   constructor(apiKey, apiSecret) {
     this.apiKey = apiKey;
@@ -352,11 +352,11 @@ class APIKeyValidator {
     return result.data.permissions.includes(permission);
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python API Client" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 import base64
 from typing import Dict, List, Optional
@@ -421,7 +421,7 @@ class ExternalAPIClient:
             return result.get("success", False) and result.get("data", {}).get("status") == "active"
         except:
             return False
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

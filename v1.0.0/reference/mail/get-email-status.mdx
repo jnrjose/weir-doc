@@ -16,9 +16,9 @@ Retrieve the current status and delivery information for a specific email messag
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Path Parameters
 
@@ -225,7 +225,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -275,7 +275,7 @@ print(response.json())
   "message": "Email status retrieved successfully",
   "timestamp": "2024-01-15T12:00:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -348,7 +348,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Email Status Tracker" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class EmailStatusTracker {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -404,11 +404,11 @@ class EmailStatusTracker {
     return status.data.events;
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python Email Monitor" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import Dict, List, Optional
 from datetime import datetime
@@ -485,7 +485,7 @@ class EmailMonitor:
             "total_clicks": data.get("engagement", {}).get("clicks", 0),
             "has_errors": data.get("error") is not None
         }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

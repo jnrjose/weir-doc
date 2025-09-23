@@ -16,9 +16,9 @@ Create a new PAX configuration to establish platform access and data exchange be
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -308,7 +308,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -345,7 +345,7 @@ print(response.json())
   "message": "PAX configuration created successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -418,7 +418,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="PAX Manager" icon="cog">
-    <CodeBlock lang="javascript">
+    ```javascript
 class PAXManager {
   constructor(apiClient) {
     this.apiClient = apiClient;
@@ -487,11 +487,11 @@ class PAXManager {
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python PAX Client" icon="python">
-    <CodeBlock lang="python">
+    ```python
 import requests
 from typing import Dict, List, Optional
 
@@ -589,7 +589,7 @@ class PAXClient:
             permissions=permissions,
             sso_provider=sso_provider
         )
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

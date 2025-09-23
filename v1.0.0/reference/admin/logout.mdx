@@ -16,9 +16,9 @@ Logout from the admin panel and invalidate the current session. This endpoint en
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <admin_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -148,13 +148,13 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "message": "Logout successful",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -174,7 +174,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Invalid Token (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -187,11 +187,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Missing Refresh Token (400)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -204,11 +204,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Token Not Found (404)" icon="search">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -221,7 +221,7 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -267,7 +267,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Admin Client Logout" icon="code">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class WeirAdminClient {
   constructor(baseURL) {
     this.baseURL = baseURL;
@@ -326,11 +326,11 @@ func main() {
     });
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Automatic Logout" icon="clock">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class AutoLogoutManager {
   constructor(adminClient, timeoutMinutes = 30) {
     this.adminClient = adminClient;
@@ -389,7 +389,7 @@ func main() {
 // Usage
 const adminClient = new WeirAdminClient('https://api.example.com');
 const autoLogout = new AutoLogoutManager(adminClient, 30); // 30 minutes`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

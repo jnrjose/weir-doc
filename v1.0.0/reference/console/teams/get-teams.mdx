@@ -16,9 +16,9 @@ Retrieve a paginated list of all teams within your organization. This endpoint p
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Query Parameters
 
@@ -209,7 +209,7 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": [
@@ -255,7 +255,7 @@ func main() {
   "message": "Teams retrieved successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -279,54 +279,54 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Authentication Error (401)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
-{
-  "success": false,
-  "error": {
-    "code": "UNAUTHORIZED",
-    "message": "Invalid or expired authentication token",
-    "details": {
-      "field": "authorization",
-      "reason": "Token validation failed"
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-    </CodeBlock>
+    ```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
-{
-  "success": false,
-  "error": {
-    "code": "FORBIDDEN",
-    "message": "Insufficient permissions to view teams",
-    "details": {
-      "field": "permissions",
-      "reason": "Team access required"
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view teams",
+        "details": {
+          "field": "permissions",
+          "reason": "Team access required"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-    </CodeBlock>
+    ```
   </Accordion>
   
   <Accordion title="Validation Error (400)" icon="exclamation">
-    <CodeBlock lang="json">
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid query parameters",
-    "details": {
-      "field": "limit",
-      "reason": "Limit must be between 1 and 100"
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid query parameters",
+        "details": {
+          "field": "limit",
+          "reason": "Limit must be between 1 and 100"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-    </CodeBlock>
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -371,8 +371,8 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Team Dashboard" icon="tachometer">
-    <CodeBlock lang="javascript">
-{`class TeamDashboard {
+    ```javascript
+    class TeamDashboard {
   constructor(apiClient) {
     this.apiClient = apiClient;
     this.teams = [];
@@ -456,12 +456,12 @@ func main() {
     await this.loadTeams(page);
   }
 }
-    </CodeBlock>
+    ```
   </Accordion>
   
   <Accordion title="Team Analytics" icon="chart-line">
-    <CodeBlock lang="javascript">
-{`class TeamAnalytics {
+    ```javascript
+    class TeamAnalytics {
   constructor(apiClient) {
     this.apiClient = apiClient;
   }
@@ -529,7 +529,7 @@ func main() {
     return growthData;
   }
 }
-    </CodeBlock>
+    ```
   </Accordion>
 </AccordionGroup>
 

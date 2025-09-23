@@ -16,9 +16,9 @@ Add a new payment method (credit card, debit card, or other payment method) to t
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <your_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -238,7 +238,7 @@ print(response.json())
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -256,7 +256,7 @@ print(response.json())
   "message": "Card added successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -280,7 +280,7 @@ print(response.json())
 
 <AccordionGroup>
   <Accordion title="Invalid Card (422)" icon="exclamation">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -305,11 +305,11 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Permission Error (403)" icon="user-slash">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -322,7 +322,7 @@ print(response.json())
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

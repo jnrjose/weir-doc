@@ -31,9 +31,9 @@ The Console API is designed for organization administrators, team managers, and 
 
 All Console API endpoints require Bearer Token authentication:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <user_jwt_token>
-</CodeBlock>
+```
 
 ## Available Endpoints
 
@@ -141,7 +141,7 @@ Console API endpoints have standard rate limits:
 
 All Console API endpoints return consistent error responses:
 
-<CodeBlock lang="json">
+```json
 {
   "success": false,
   "error": {
@@ -154,7 +154,7 @@ All Console API endpoints return consistent error responses:
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Common Error Codes
 
@@ -236,7 +236,7 @@ All Console API endpoints return consistent error responses:
 
 <AccordionGroup>
   <Accordion title="JavaScript SDK" icon="code">
-    <CodeBlock lang="javascript">
+    ```javascript
 // Initialize the Weir Console API client
 const weirClient = new WeirConsoleClient({
   baseURL: 'https://api.example.com',
@@ -257,11 +257,11 @@ await weirClient.inviteTeamMember(team.id, {
   email: 'member@example.com',
   role: 'Organization_User'
 });
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Python SDK" icon="code">
-    <CodeBlock lang="python">
+    ```python
 from weir_console import WeirConsoleClient
 
 # Initialize the client
@@ -285,7 +285,7 @@ client.invite_team_member(
     email='member@example.com',
     role='Organization_User'
 )
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 

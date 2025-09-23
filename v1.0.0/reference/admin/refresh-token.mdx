@@ -16,9 +16,9 @@ Refresh an expired access token using a valid refresh token. This endpoint allow
 
 This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
 
-<CodeBlock lang="bash">
+```bash
 Authorization: Bearer <admin_jwt_token>
-</CodeBlock>
+```
 
 ## Request
 
@@ -169,7 +169,7 @@ func main() {
 
 ## Example Response
 
-<CodeBlock lang="json">
+```json
 {
   "success": true,
   "data": {
@@ -181,7 +181,7 @@ func main() {
   "message": "Token refreshed successfully",
   "timestamp": "2024-01-15T10:30:00Z"
 }
-</CodeBlock>
+```
 
 ## Error Responses
 
@@ -205,7 +205,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Invalid Refresh Token (403)" icon="exclamation-triangle">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -218,11 +218,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Token Revoked (403)" icon="ban">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -235,11 +235,11 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Rate Limited (429)" icon="clock">
-    <CodeBlock lang="json">
+    ```json
 {
   "success": false,
   "error": {
@@ -253,7 +253,7 @@ func main() {
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
@@ -301,7 +301,7 @@ func main() {
 
 <AccordionGroup>
   <Accordion title="Token Manager" icon="key">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class TokenManager {
   constructor() {
     this.accessToken = null;
@@ -394,11 +394,11 @@ func main() {
     this.tokenExpiry = parseInt(localStorage.getItem('weir_token_expiry') || '0');
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="API Client with Auto-Refresh" icon="refresh">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class WeirAdminClient {
   constructor(baseURL) {
     this.baseURL = baseURL;
@@ -470,11 +470,11 @@ func main() {
     }
   }
 }
-    </CodeBlock>
+```
   </Accordion>
   
   <Accordion title="Background Token Refresh" icon="clock">
-    <CodeBlock lang="javascript">
+    ```javascript
 {`class BackgroundTokenRefresh {
   constructor(tokenManager, refreshIntervalMinutes = 50) {
     this.tokenManager = tokenManager;
@@ -539,7 +539,7 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('beforeunload', () => {
   backgroundRefresh.stop();
 });`}
-    </CodeBlock>
+```
   </Accordion>
 </AccordionGroup>
 
