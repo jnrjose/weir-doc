@@ -1,90 +1,115 @@
 ---
 title: "Validate Registration"
-api: "POST /auth/validate-registration"
-description: "Validate OTP and complete user registration process"
+api: "POST /auth/validate/registration"
+description: "Validate email address and complete user registration"
 ---
 
-Validate the OTP (One-Time Password) received during registration and complete the user registration process. This endpoint finalizes the user account creation.
+Validate a user's email address using the verification token received during registration. This endpoint completes the registration process by confirming the user's email address and activating their account.
 
 <Note>
-  **Console API Endpoint**
+  **Auth API Endpoint**
   
-  This endpoint is part of the Console API category and is used to complete the user registration process by verifying the OTP sent to the user's email.
+  This endpoint is part of the Auth API category and does not require authentication (it's used to complete the registration process). It's designed for email verification and account activation.
 </Note>
 
 ## Authentication
 
-This endpoint does not require authentication as it's used during the registration process.
+This endpoint does not require authentication as it's used to complete the registration process.
 
 ## Request
 
-<ParamField body="email" type="string" required>
-  Email address of the user completing registration
+<ParamField body="otpSession" type="string" required>
+  OTP session identifier from the registration response
   
-  **Example**: "user@example.com"
+  **Example**: "session_1234567890abcdef"
   
   **Constraints**: 
-  - Must be a valid email format
-  - Must match the email used in registration
+  - Must be a valid session ID from registration
+  - Session must not be expired
+  - Session must be in pending verification state
 </ParamField>
 
 <ParamField body="otp" type="string" required>
-  One-Time Password received via email
+  One-time password (OTP) code received via email
   
   **Example**: "123456"
   
   **Constraints**: 
-  - Must be 6 digits
-  - Must not be expired
-  - Must match the OTP sent to the email
+  - Must be a 6-digit numeric code
+  - Code must match the one sent to user's email
+  - Code must not be expired
 </ParamField>
 
-<ParamField body="registration_id" type="string" required>
-  Registration ID from the initial registration request
+<ParamField body="email" type="string" required="false">
+  Email address for additional verification
   
-  **Example**: "reg_1234567890abcdef"
+  **Example**: "john.doe@example.com"
+  
+  **Constraints**: 
+  - Must match the email used during registration
+  - Optional but recommended for security
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean">
-  Indicates if the registration was validated successfully
+  Indicates if the validation was successful
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Contains user account information and authentication tokens
+  Contains the validation and account information
 </ResponseField>
 
 <ResponseField name="data.user_id" type="string">
-  Unique identifier for the created user account
+  Unique identifier for the validated user
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the user's organization
 </ResponseField>
 
 <ResponseField name="data.email" type="string">
-  User's email address
+  Email address of the validated user
 </ResponseField>
 
 <ResponseField name="data.fullname" type="string">
-  User's full name
+  Full name of the validated user
 </ResponseField>
 
-<ResponseField name="data.status" type="string">
-  User account status (active, pending, suspended)
+<ResponseField name="data.organization_name" type="string">
+  Name of the user's organization
 </ResponseField>
 
-<ResponseField name="data.access_token" type="string">
-  JWT access token for API authentication
+<ResponseField name="data.verification_status" type="string">
+  Status of the email verification (verified, failed, expired)
 </ResponseField>
 
-<ResponseField name="data.refresh_token" type="string">
-  Refresh token for obtaining new access tokens
+<ResponseField name="data.account_status" type="string">
+  Status of the user account (active, pending, suspended)
 </ResponseField>
 
-<ResponseField name="data.expires_in" type="integer">
+<ResponseField name="data.verified_at" type="string">
+  ISO 8601 timestamp when the email was verified
+</ResponseField>
+
+<ResponseField name="data.login_credentials" type="object">
+  Login credentials for the validated user
+</ResponseField>
+
+<ResponseField name="data.login_credentials.access_token" type="string">
+  JWT access token for immediate login
+</ResponseField>
+
+<ResponseField name="data.login_credentials.refresh_token" type="string">
+  Refresh token for token renewal
+</ResponseField>
+
+<ResponseField name="data.login_credentials.expires_in" type="integer">
   Access token expiration time in seconds
 </ResponseField>
 
-<ResponseField name="data.token_type" type="string">
-  Token type (Bearer)
+<ResponseField name="data.login_credentials.token_type" type="string">
+  Token type, always "Bearer"
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -99,25 +124,25 @@ This endpoint does not require authentication as it's used during the registrati
 
 <CodeGroup>
 ```bash cURL
-curl -X POST "https://api.example.com/auth/validate-registration" \
+curl -X POST "https://api.example.com/auth/validate/registration" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "user@example.com",
+    "otpSession": "session_1234567890abcdef",
     "otp": "123456",
-    "registration_id": "reg_1234567890abcdef"
+    "email": "john.doe@example.com"
   }'
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.example.com/auth/validate-registration', {
+const response = await fetch('https://api.example.com/auth/validate/registration', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    email: 'user@example.com',
+    otpSession: 'session_1234567890abcdef',
     otp: '123456',
-    registration_id: 'reg_1234567890abcdef'
+    email: 'john.doe@example.com'
   })
 });
 
@@ -128,19 +153,80 @@ console.log(data);
 ```python Python
 import requests
 
-data = {
-    'email': 'user@example.com',
-    'otp': '123456',
-    'registration_id': 'reg_1234567890abcdef'
+payload = {
+    "otpSession": "session_1234567890abcdef",
+    "otp": "123456",
+    "email": "john.doe@example.com"
 }
 
 response = requests.post(
-    'https://api.example.com/auth/validate-registration',
-    headers={'Content-Type': 'application/json'},
-    json=data
+    'https://api.example.com/auth/validate/registration',
+    headers={
+        'Content-Type': 'application/json'
+    },
+    json=payload
 )
 
 print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'otpSession' => 'session_1234567890abcdef',
+    'otp' => '123456',
+    'email' => 'john.doe@example.com'
+];
+
+$response = file_get_contents('https://api.example.com/auth/validate/registration', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => 'Content-Type: application/json',
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type ValidateRegistrationRequest struct {
+    OTPSession string `json:"otpSession"`
+    OTP        string `json:"otp"`
+    Email      string `json:"email,omitempty"`
+}
+
+func main() {
+    payload := ValidateRegistrationRequest{
+        OTPSession: "session_1234567890abcdef",
+        OTP:        "123456",
+        Email:      "john.doe@example.com",
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/auth/validate/registration", bytes.NewBuffer(jsonData))
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
 ```
 </CodeGroup>
 
@@ -151,15 +237,21 @@ print(response.json())
   "success": true,
   "data": {
     "user_id": "user_1234567890abcdef",
-    "email": "user@example.com",
+    "organization_id": "org_1234567890abcdef",
+    "email": "john.doe@example.com",
     "fullname": "John Doe",
-    "status": "active",
-    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "refresh_token": "rt_1234567890abcdef",
-    "expires_in": 3600,
-    "token_type": "Bearer"
+    "organization_name": "Acme Corporation",
+    "verification_status": "verified",
+    "account_status": "active",
+    "verified_at": "2024-01-15T10:30:00Z",
+    "login_credentials": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+      "refresh_token": "rt_1234567890abcdef",
+      "expires_in": 3600,
+      "token_type": "Bearer"
+    }
   },
-  "message": "Registration completed successfully",
+  "message": "Registration validated successfully. Your account is now active.",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
@@ -167,19 +259,23 @@ print(response.json())
 ## Error Responses
 
 <ResponseField name="400 Bad Request" type="object">
-  Invalid request data or validation errors
+  Invalid request parameters or validation errors
 </ResponseField>
 
 <ResponseField name="401 Unauthorized" type="object">
-  Invalid OTP or expired registration
+  Invalid OTP or session
 </ResponseField>
 
 <ResponseField name="404 Not Found" type="object">
-  Registration not found
+  Session not found or expired
 </ResponseField>
 
 <ResponseField name="409 Conflict" type="object">
-  Registration already completed
+  Account already verified or validation failed
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for validation attempts
 </ResponseField>
 
 ### Example Error Responses
@@ -187,144 +283,400 @@ print(response.json())
 <AccordionGroup>
   <Accordion title="Invalid OTP (401)" icon="exclamation-triangle">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "INVALID_OTP",
-    "message": "Invalid or expired OTP",
-    "details": {
-      "field": "otp",
-      "reason": "OTP does not match or has expired"
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_OTP",
+        "message": "Invalid OTP code",
+        "details": {
+          "field": "otp",
+          "reason": "The provided OTP code is incorrect or expired"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="Registration Not Found (404)" icon="search">
+  <Accordion title="Session Not Found (404)" icon="search">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "REGISTRATION_NOT_FOUND",
-    "message": "Registration not found",
-    "details": {
-      "field": "registration_id",
-      "reason": "Invalid registration ID"
+    {
+      "success": false,
+      "error": {
+        "code": "SESSION_NOT_FOUND",
+        "message": "Verification session not found",
+        "details": {
+          "field": "otpSession",
+          "reason": "Session does not exist or has expired"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
   
-  <Accordion title="Already Completed (409)" icon="check">
+  <Accordion title="Already Verified (409)" icon="check">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "REGISTRATION_COMPLETED",
-    "message": "Registration already completed",
-    "details": {
-      "field": "registration",
-      "reason": "User account already exists and is active"
+    {
+      "success": false,
+      "error": {
+        "code": "ALREADY_VERIFIED",
+        "message": "Account already verified",
+        "details": {
+          "field": "account",
+          "reason": "This account has already been verified"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many validation attempts",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before trying again",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="OTP Validation" icon="check">
-    OTP requirements:
+  <Accordion title="Validation Process" icon="check">
+    How validation works:
     
-    - OTP must be exactly 6 digits
-    - OTP expires after 10 minutes
-    - Only the most recent OTP is valid
-    - OTP can only be used once
+    - **OTP Verification**: 6-digit code sent to user's email
+    - **Session Validation**: Session ID must be valid and not expired
+    - **Account Activation**: Account becomes active after successful validation
+    - **Login Credentials**: Access and refresh tokens provided for immediate login
   </Accordion>
   
-  <Accordion title="Account Creation" icon="user-plus">
-    Upon successful validation:
+  <Accordion title="OTP Security" icon="shield">
+    OTP security features:
     
-    - User account is created and activated
-    - Authentication tokens are provided
-    - User can immediately access the platform
-    - Welcome email is sent to the user
+    - **Time-based**: OTP codes expire after a set time period
+    - **Single Use**: Each OTP can only be used once
+    - **Rate Limited**: Limited number of validation attempts
+    - **Session Bound**: OTP is tied to specific session
   </Accordion>
   
-  <Accordion title="Security" icon="shield">
-    Security features:
+  <Accordion title="Account Status" icon="user">
+    Account status after validation:
     
-    - OTP is single-use and time-limited
-    - Registration ID prevents unauthorized access
-    - Failed attempts are logged and monitored
-    - Account is immediately active upon validation
+    - **Active**: Account is fully functional
+    - **Verified**: Email address is confirmed
+    - **Login Ready**: User can immediately log in
+    - **Organization Access**: Full access to organization features
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    Common error scenarios:
+    
+    - **Invalid OTP**: Wrong or expired verification code
+    - **Expired Session**: Session has expired
+    - **Already Verified**: Account was already verified
+    - **Rate Limited**: Too many validation attempts
   </Accordion>
 </AccordionGroup>
 
-## Integration Examples
+## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Registration Flow" icon="flow">
+  <Accordion title="Registration Validation Service" icon="cog">
     ```javascript
-// Complete registration flow
-async function completeRegistration(email, otp, registrationId) {
-  try {
-    const response = await fetch('/auth/validate-registration', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: email,
-        otp: otp,
-        registration_id: registrationId
-      })
-    });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Store authentication tokens
-      localStorage.setItem('access_token', data.data.access_token);
-      localStorage.setItem('refresh_token', data.data.refresh_token);
+    class RegistrationValidationService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
       
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
+      async validateRegistration(otpSession, otp, email = null) {
+        try {
+          const payload = {
+            otpSession: otpSession,
+            otp: otp
+          };
+          
+          if (email) {
+            payload.email = email;
+          }
+          
+          const response = await this.apiClient.makeRequest('/auth/validate/registration', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Validation failed');
+          }
+          
+          const result = await response.json();
+          
+          // Log validation
+          console.log(`Registration validated for: ${result.data.email}`);
+          console.log(`Account status: ${result.data.account_status}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error validating registration:', error);
+          throw error;
+        }
+      }
       
-      return data;
-    } else {
-      throw new Error(data.error.message);
+      async validateWithEmail(otpSession, otp, email) {
+        return this.validateRegistration(otpSession, otp, email);
+      }
+      
+      async validateWithoutEmail(otpSession, otp) {
+        return this.validateRegistration(otpSession, otp);
+      }
+      
+      async validateAndLogin(otpSession, otp, email = null) {
+        const result = await this.validateRegistration(otpSession, otp, email);
+        
+        // Store login credentials
+        if (result.data.login_credentials) {
+          localStorage.setItem('access_token', result.data.login_credentials.access_token);
+          localStorage.setItem('refresh_token', result.data.login_credentials.refresh_token);
+          localStorage.setItem('user_id', result.data.user_id);
+          localStorage.setItem('organization_id', result.data.organization_id);
+        }
+        
+        return result;
+      }
+      
+      async validateWithRetry(otpSession, otp, email = null, maxRetries = 3) {
+        let lastError = null;
+        
+        for (let i = 0; i < maxRetries; i++) {
+          try {
+            return await this.validateRegistration(otpSession, otp, email);
+          } catch (error) {
+            lastError = error;
+            
+            // If it's a rate limit error, wait before retrying
+            if (error.message.includes('rate limit') || error.message.includes('429')) {
+              const waitTime = Math.pow(2, i) * 1000; // Exponential backoff
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+              // For other errors, don't retry
+              throw error;
+            }
+          }
+        }
+        
+        throw lastError;
+      }
     }
     
-  } catch (error) {
-    console.error('Registration validation failed:', error);
-    throw error;
-  }
-}
-```
+    // Usage example
+    const validationService = new RegistrationValidationService(apiClient);
+    
+    // Validate registration
+    const validation = await validationService.validateRegistration(
+      'session_1234567890abcdef',
+      '123456',
+      'john.doe@example.com'
+    );
+    
+    // Validate and login
+    const loginResult = await validationService.validateAndLogin(
+      'session_1234567890abcdef',
+      '123456',
+      'john.doe@example.com'
+    );
+    
+    // Validate with retry
+    const retryResult = await validationService.validateWithRetry(
+      'session_1234567890abcdef',
+      '123456',
+      'john.doe@example.com',
+      3
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Registration Validation Manager" icon="python">
+    ```python
+    import requests
+    import time
+    from typing import Dict, Optional
+    
+    class RegistrationValidationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def validate_registration(self, 
+                                otp_session: str, 
+                                otp: str, 
+                                email: Optional[str] = None) -> Dict:
+            """Validate user registration with OTP"""
+            try:
+                payload = {
+                    "otpSession": otp_session,
+                    "otp": otp
+                }
+                
+                if email:
+                    payload["email"] = email
+                
+                response = self.api_client.post('/auth/validate/registration', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Registration validated for: {result['data']['email']}")
+                print(f"Account status: {result['data']['account_status']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error validating registration: {e}")
+                raise
+        
+        def validate_with_email(self, otp_session: str, otp: str, email: str) -> Dict:
+            """Validate registration with email verification"""
+            return self.validate_registration(otp_session, otp, email)
+        
+        def validate_without_email(self, otp_session: str, otp: str) -> Dict:
+            """Validate registration without email verification"""
+            return self.validate_registration(otp_session, otp)
+        
+        def validate_and_login(self, 
+                             otp_session: str, 
+                             otp: str, 
+                             email: Optional[str] = None) -> Dict:
+            """Validate registration and store login credentials"""
+            result = self.validate_registration(otp_session, otp, email)
+            
+            # Store login credentials
+            if result["data"].get("login_credentials"):
+                credentials = result["data"]["login_credentials"]
+                print(f"Access token: {credentials['access_token'][:20]}...")
+                print(f"Refresh token: {credentials['refresh_token'][:20]}...")
+                print(f"Expires in: {credentials['expires_in']} seconds")
+            
+            return result
+        
+        def validate_with_retry(self, 
+                              otp_session: str, 
+                              otp: str, 
+                              email: Optional[str] = None,
+                              max_retries: int = 3) -> Dict:
+            """Validate registration with retry logic"""
+            last_error = None
+            
+            for attempt in range(max_retries):
+                try:
+                    return self.validate_registration(otp_session, otp, email)
+                except requests.exceptions.RequestException as e:
+                    last_error = e
+                    
+                    # If it's a rate limit error, wait before retrying
+                    if "rate limit" in str(e) or "429" in str(e):
+                        wait_time = 2 ** attempt  # Exponential backoff
+                        print(f"Rate limited, waiting {wait_time} seconds before retry...")
+                        time.sleep(wait_time)
+                    else:
+                        # For other errors, don't retry
+                        raise e
+            
+            raise last_error
+        
+        def validate_otp_format(self, otp: str) -> bool:
+            """Validate OTP format"""
+            return otp.isdigit() and len(otp) == 6
+        
+        def validate_session_format(self, session: str) -> bool:
+            """Validate session format"""
+            return session.startswith('session_') and len(session) > 20
+        
+        def validate_registration_safe(self, 
+                                     otp_session: str, 
+                                     otp: str, 
+                                     email: Optional[str] = None) -> Dict:
+            """Validate registration with format validation"""
+            if not self.validate_otp_format(otp):
+                raise ValueError("OTP must be a 6-digit number")
+            
+            if not self.validate_session_format(otp_session):
+                raise ValueError("Invalid session format")
+            
+            return self.validate_registration(otp_session, otp, email)
+        
+        def get_validation_status(self, result: Dict) -> str:
+            """Get validation status from result"""
+            return result["data"]["verification_status"]
+        
+        def get_account_status(self, result: Dict) -> str:
+            """Get account status from result"""
+            return result["data"]["account_status"]
+        
+        def is_validation_successful(self, result: Dict) -> bool:
+            """Check if validation was successful"""
+            return (result["success"] and 
+                   result["data"]["verification_status"] == "verified" and
+                   result["data"]["account_status"] == "active")
+    
+    # Usage example
+    validation_manager = RegistrationValidationManager(api_client)
+    
+    # Validate registration
+    validation = validation_manager.validate_registration(
+        otp_session="session_1234567890abcdef",
+        otp="123456",
+        email="john.doe@example.com"
+    )
+    
+    # Validate and login
+    login_result = validation_manager.validate_and_login(
+        otp_session="session_1234567890abcdef",
+        otp="123456",
+        email="john.doe@example.com"
+    )
+    
+    # Validate with retry
+    retry_result = validation_manager.validate_with_retry(
+        otp_session="session_1234567890abcdef",
+        otp="123456",
+        email="john.doe@example.com",
+        max_retries=3
+    )
+    
+    # Check validation status
+    if validation_manager.is_validation_successful(validation):
+        print("Registration validation successful!")
+        print(f"Account status: {validation_manager.get_account_status(validation)}")
+    else:
+        print("Registration validation failed!")
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Related Endpoints
 
 <CardGroup cols={2}>
-  <Card title="Register User" icon="user-plus">
+  <Card title="Register" icon="user-plus">
     `POST /auth/register` - Initial user registration
   </Card>
-  <Card title="Resend OTP" icon="refresh">
-    `PUT /auth/resend-registration-otp` - Resend registration OTP
+  <Card title="Resend Registration OTP" icon="mail">
+    `PUT /auth/resend/otp/{session}` - Resend verification email
   </Card>
-  <Card title="Mobile Register" icon="mobile">
-    `POST /auth/m/register` - Mobile user registration
+  <Card title="Login" icon="sign-in">
+    `POST /auth/login` - Login after validation
   </Card>
-  <Card title="User Login" icon="sign-in">
-    `POST /auth/login` - Login with credentials
+  <Card title="Register (Mobile)" icon="mobile">
+    `POST /auth/m/register` - Mobile registration
   </Card>
 </CardGroup>

@@ -1,104 +1,152 @@
 ---
-title: "Register User"
+title: "Register"
 api: "POST /auth/register"
-description: "Register a new user account with email verification"
+description: "Register a new user account with organization"
 ---
 
-Register a new user account in the Weir AI platform. This endpoint initiates the registration process and sends an OTP to the user's email for verification.
+Register a new user account and create an organization in the Weir AI platform. This endpoint allows new users to sign up and establish their organization with initial settings and configurations.
 
 <Note>
-  **Console API Endpoint**
+  **Auth API Endpoint**
   
-  This endpoint is part of the Console API category and is used for standard user registration (non-mobile). It requires email verification through OTP.
+  This endpoint is part of the Auth API category and does not require authentication (it's used to create new accounts). It's designed for new user registration and organization setup.
 </Note>
 
 ## Authentication
 
-This endpoint does not require authentication as it's used for new user registration.
+This endpoint does not require authentication as it's used to create new user accounts and organizations.
 
 ## Request
 
 <ParamField body="fullname" type="string" required>
-  User's full name
+  Full name of the user registering
   
   **Example**: "John Doe"
   
   **Constraints**: 
   - Minimum length: 2 characters
   - Maximum length: 100 characters
-  - Must contain only letters, spaces, hyphens, and apostrophes
+  - Must contain at least first and last name
 </ParamField>
 
 <ParamField body="email" type="string" required>
-  User's email address
+  Email address for the user account
   
   **Example**: "john.doe@example.com"
   
   **Constraints**: 
-  - Must be a valid email format
-  - Must be unique (not already registered)
-  - Maximum length: 255 characters
+  - Must be a valid email address format
+  - Must be unique across the platform
+  - Will be used for account verification and login
 </ParamField>
 
 <ParamField body="password" type="string" required>
-  User's password
+  Password for the user account
+  
+  **Example**: "secure_password123"
   
   **Constraints**: 
   - Minimum length: 8 characters
-  - Must contain at least one uppercase letter
-  - Must contain at least one lowercase letter
-  - Must contain at least one number
-  - Must contain at least one special character
+  - Must contain at least one uppercase letter, one lowercase letter, and one number
+  - Cannot contain common passwords or personal information
 </ParamField>
 
-<ParamField body="confirm_password" type="string" required>
-  Password confirmation
+<ParamField body="organization" type="object" required>
+  Organization information to create
   
-  **Constraints**: 
-  - Must match the password field exactly
+  **Properties**:
+  - `name` (string): Name of the organization
+  - `type` (string): Type of organization (Platform, Agency, Enterprise, Other)
+  - `description` (string): Description of the organization
+  
+  **Example**:
+  ```json
+  {
+    "name": "Acme Corporation",
+    "type": "Platform",
+    "description": "A business platform for managing teams and projects"
+  }
+  ```
 </ParamField>
 
 <ParamField body="terms_accepted" type="boolean" required>
-  Indicates if user has accepted terms and conditions
+  Whether the user has accepted the terms of service
   
   **Example**: true
   
   **Constraints**: 
   - Must be true to proceed with registration
+  - Required for legal compliance
+</ParamField>
+
+<ParamField body="privacy_accepted" type="boolean" required>
+  Whether the user has accepted the privacy policy
+  
+  **Example**: true
+  
+  **Constraints**: 
+  - Must be true to proceed with registration
+  - Required for legal compliance
 </ParamField>
 
 <ParamField body="marketing_consent" type="boolean" required="false">
-  Indicates if user consents to marketing communications
+  Whether the user consents to receive marketing communications
   
   **Example**: false
   
   **Default**: false
+  
+  **Note**: Optional field for marketing preferences
 </ParamField>
 
 ## Response
 
 <ResponseField name="success" type="boolean">
-  Indicates if the registration was initiated successfully
+  Indicates if the registration was successful
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Contains registration information
+  Contains the registration information
 </ResponseField>
 
-<ResponseField name="data.registration_id" type="string">
-  Unique identifier for tracking the registration process
+<ResponseField name="data.user_id" type="string">
+  Unique identifier for the created user
+</ResponseField>
+
+<ResponseField name="data.organization_id" type="string">
+  Unique identifier for the created organization
 </ResponseField>
 
 <ResponseField name="data.email" type="string">
-  Email address where OTP was sent
+  Email address of the registered user
 </ResponseField>
 
-<ResponseField name="data.otp_expires_at" type="string">
-  ISO 8601 timestamp when the OTP expires
+<ResponseField name="data.fullname" type="string">
+  Full name of the registered user
 </ResponseField>
 
-<ResponseField name="data.status" type="string">
-  Registration status (pending_verification)
+<ResponseField name="data.organization_name" type="string">
+  Name of the created organization
+</ResponseField>
+
+<ResponseField name="data.verification_required" type="boolean">
+  Whether email verification is required
+</ResponseField>
+
+<ResponseField name="data.verification_email_sent" type="boolean">
+  Whether verification email was sent
+</ResponseField>
+
+<ResponseField name="data.verification_token" type="string">
+  Token for email verification (if verification required)
+</ResponseField>
+
+<ResponseField name="data.registration_status" type="string">
+  Status of the registration (pending_verification, completed, failed)
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the account was created
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -118,9 +166,14 @@ curl -X POST "https://api.example.com/auth/register" \
   -d '{
     "fullname": "John Doe",
     "email": "john.doe@example.com",
-    "password": "SecurePass123!",
-    "confirm_password": "SecurePass123!",
+    "password": "secure_password123",
+    "organization": {
+      "name": "Acme Corporation",
+      "type": "Platform",
+      "description": "A business platform for managing teams and projects"
+    },
     "terms_accepted": true,
+    "privacy_accepted": true,
     "marketing_consent": false
   }'
 ```
@@ -134,9 +187,14 @@ const response = await fetch('https://api.example.com/auth/register', {
   body: JSON.stringify({
     fullname: 'John Doe',
     email: 'john.doe@example.com',
-    password: 'SecurePass123!',
-    confirm_password: 'SecurePass123!',
+    password: 'secure_password123',
+    organization: {
+      name: 'Acme Corporation',
+      type: 'Platform',
+      description: 'A business platform for managing teams and projects'
+    },
     terms_accepted: true,
+    privacy_accepted: true,
     marketing_consent: false
   })
 });
@@ -148,22 +206,114 @@ console.log(data);
 ```python Python
 import requests
 
-data = {
-    'fullname': 'John Doe',
-    'email': 'john.doe@example.com',
-    'password': 'SecurePass123!',
-    'confirm_password': 'SecurePass123!',
-    'terms_accepted': True,
-    'marketing_consent': False
+payload = {
+    "fullname": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "secure_password123",
+    "organization": {
+        "name": "Acme Corporation",
+        "type": "Platform",
+        "description": "A business platform for managing teams and projects"
+    },
+    "terms_accepted": True,
+    "privacy_accepted": True,
+    "marketing_consent": False
 }
 
 response = requests.post(
     'https://api.example.com/auth/register',
-    headers={'Content-Type': 'application/json'},
-    json=data
+    headers={
+        'Content-Type': 'application/json'
+    },
+    json=payload
 )
 
 print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'fullname' => 'John Doe',
+    'email' => 'john.doe@example.com',
+    'password' => 'secure_password123',
+    'organization' => [
+        'name' => 'Acme Corporation',
+        'type' => 'Platform',
+        'description' => 'A business platform for managing teams and projects'
+    ],
+    'terms_accepted' => true,
+    'privacy_accepted' => true,
+    'marketing_consent' => false
+];
+
+$response = file_get_contents('https://api.example.com/auth/register', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => 'Content-Type: application/json',
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type RegisterRequest struct {
+    Fullname         string       `json:"fullname"`
+    Email            string       `json:"email"`
+    Password         string       `json:"password"`
+    Organization     Organization `json:"organization"`
+    TermsAccepted    bool         `json:"terms_accepted"`
+    PrivacyAccepted  bool         `json:"privacy_accepted"`
+    MarketingConsent bool         `json:"marketing_consent,omitempty"`
+}
+
+type Organization struct {
+    Name        string `json:"name"`
+    Type        string `json:"type"`
+    Description string `json:"description"`
+}
+
+func main() {
+    payload := RegisterRequest{
+        Fullname: "John Doe",
+        Email:    "john.doe@example.com",
+        Password: "secure_password123",
+        Organization: Organization{
+            Name:        "Acme Corporation",
+            Type:        "Platform",
+            Description: "A business platform for managing teams and projects",
+        },
+        TermsAccepted:    true,
+        PrivacyAccepted:  true,
+        MarketingConsent: false,
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/auth/register", bytes.NewBuffer(jsonData))
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
 ```
 </CodeGroup>
 
@@ -173,12 +323,18 @@ print(response.json())
 {
   "success": true,
   "data": {
-    "registration_id": "reg_1234567890abcdef",
+    "user_id": "user_1234567890abcdef",
+    "organization_id": "org_1234567890abcdef",
     "email": "john.doe@example.com",
-    "otp_expires_at": "2024-01-15T11:00:00Z",
-    "status": "pending_verification"
+    "fullname": "John Doe",
+    "organization_name": "Acme Corporation",
+    "verification_required": true,
+    "verification_email_sent": true,
+    "verification_token": "verify_1234567890abcdef",
+    "registration_status": "pending_verification",
+    "created_at": "2024-01-15T10:30:00Z"
   },
-  "message": "Registration initiated successfully. Please check your email for verification code.",
+  "message": "Registration successful. Please check your email for verification instructions.",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
@@ -186,176 +342,414 @@ print(response.json())
 ## Error Responses
 
 <ResponseField name="400 Bad Request" type="object">
-  Invalid request data or validation errors
+  Invalid request parameters or validation errors
 </ResponseField>
 
 <ResponseField name="409 Conflict" type="object">
-  Email already registered
+  User already exists or organization name is taken
 </ResponseField>
 
 <ResponseField name="422 Unprocessable Entity" type="object">
-  Validation errors in the request data
+  Validation errors or business logic violations
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded for registration attempts
 </ResponseField>
 
 ### Example Error Responses
 
 <AccordionGroup>
-  <Accordion title="Email Already Exists (409)" icon="exclamation">
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "EMAIL_ALREADY_EXISTS",
-    "message": "Email address is already registered",
-    "details": {
-      "field": "email",
-      "reason": "An account with this email already exists"
-    }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
-  </Accordion>
-  
-  <Accordion title="Validation Error (422)" icon="exclamation">
-    ```json
-{
-  "success": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Validation failed for one or more fields",
-    "details": {
-      "field": "password",
-      "reason": "Password does not meet security requirements"
-    },
-    "validation_errors": [
-      {
-        "field": "password",
-        "message": "Password must contain at least one special character",
-        "code": "PASSWORD_REQUIREMENTS"
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "password",
+          "reason": "Password must be at least 8 characters long and contain uppercase, lowercase, and numeric characters"
+        }
       },
-      {
-        "field": "confirm_password",
-        "message": "Password confirmation does not match",
-        "code": "PASSWORD_MISMATCH"
-      }
-    ]
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
   
-  <Accordion title="Terms Not Accepted (400)" icon="exclamation-triangle">
+  <Accordion title="User Already Exists (409)" icon="user-check">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "TERMS_NOT_ACCEPTED",
-    "message": "Terms and conditions must be accepted",
-    "details": {
-      "field": "terms_accepted",
-      "reason": "User must accept terms and conditions to register"
+    {
+      "success": false,
+      "error": {
+        "code": "USER_ALREADY_EXISTS",
+        "message": "User already exists",
+        "details": {
+          "field": "email",
+          "reason": "A user with this email address already exists"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
+  </Accordion>
+  
+  <Accordion title="Terms Not Accepted (422)" icon="file-contract">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TERMS_NOT_ACCEPTED",
+        "message": "Terms and conditions must be accepted",
+        "details": {
+          "field": "terms_accepted",
+          "reason": "You must accept the terms of service to register"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many registration attempts",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before trying to register again",
+          "retry_after": 300
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Password Requirements" icon="lock">
-    Password must meet these criteria:
+  <Accordion title="Registration Process" icon="user-plus">
+    What happens during registration:
     
-    - Minimum 8 characters
-    - At least one uppercase letter (A-Z)
-    - At least one lowercase letter (a-z)
-    - At least one number (0-9)
-    - At least one special character (!@#$%^&*)
-    - Cannot be a common password
+    - **Account Creation**: User account is created with provided details
+    - **Organization Setup**: New organization is created and linked to user
+    - **Email Verification**: Verification email is sent to user's email
+    - **Terms Acceptance**: Legal terms and privacy policy are recorded
+    - **Initial Setup**: User becomes organization admin by default
+  </Accordion>
+  
+  <Accordion title="Organization Types" icon="building">
+    Available organization types:
+    
+    - **Platform**: Business platform for managing teams and projects
+    - **Agency**: Marketing or service agency
+    - **Enterprise**: Large enterprise organization
+    - **Other**: Any other type of organization
   </Accordion>
   
   <Accordion title="Email Verification" icon="mail">
-    Registration process:
+    Email verification process:
     
-    - OTP is sent to the provided email address
-    - OTP expires after 10 minutes
-    - User must verify email before account is activated
-    - Verification is required to complete registration
+    - **Verification Required**: Most registrations require email verification
+    - **Verification Email**: Sent automatically after successful registration
+    - **Verification Token**: Unique token for verifying email address
+    - **Verification Link**: Click link in email to complete verification
   </Accordion>
   
-  <Accordion title="Terms and Conditions" icon="file-text">
-    Legal requirements:
+  <Accordion title="Security Features" icon="shield">
+    Security measures:
     
-    - Terms and conditions must be accepted
-    - Marketing consent is optional
-    - User data is processed according to privacy policy
-    - Account creation is subject to platform terms
+    - **Password Requirements**: Strong password requirements enforced
+    - **Rate Limiting**: Prevents spam and abuse
+    - **Email Validation**: Validates email format and uniqueness
+    - **Terms Compliance**: Ensures legal compliance
   </Accordion>
 </AccordionGroup>
 
-## Integration Examples
+## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Registration Form" icon="form">
+  <Accordion title="User Registration Service" icon="cog">
     ```javascript
-// Registration form handler
-async function handleRegistration(formData) {
-  try {
-    const response = await fetch('/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        fullname: formData.fullname,
-        email: formData.email,
-        password: formData.password,
-        confirm_password: formData.confirmPassword,
-        terms_accepted: formData.termsAccepted,
-        marketing_consent: formData.marketingConsent
-      })
-    });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      // Store registration ID for verification
-      localStorage.setItem('registration_id', data.data.registration_id);
-      localStorage.setItem('registration_email', data.data.email);
+    class UserRegistrationService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
       
-      // Redirect to verification page
-      window.location.href = '/verify-email';
+      async registerUser(userData) {
+        try {
+          const response = await this.apiClient.makeRequest('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Registration failed');
+          }
+          
+          const result = await response.json();
+          
+          // Log registration
+          console.log(`User registered: ${result.data.email}`);
+          console.log(`Organization created: ${result.data.organization_name}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error registering user:', error);
+          throw error;
+        }
+      }
       
-      return data;
-    } else {
-      // Handle validation errors
-      displayValidationErrors(data.error.validation_errors);
-      throw new Error(data.error.message);
+      async registerWithOrganization(fullname, email, password, orgName, orgType, orgDescription) {
+        return this.registerUser({
+          fullname: fullname,
+          email: email,
+          password: password,
+          organization: {
+            name: orgName,
+            type: orgType,
+            description: orgDescription
+          },
+          terms_accepted: true,
+          privacy_accepted: true,
+          marketing_consent: false
+        });
+      }
+      
+      async registerPlatformUser(fullname, email, password, orgName, orgDescription) {
+        return this.registerWithOrganization(
+          fullname,
+          email,
+          password,
+          orgName,
+          'Platform',
+          orgDescription
+        );
+      }
+      
+      async registerAgencyUser(fullname, email, password, orgName, orgDescription) {
+        return this.registerWithOrganization(
+          fullname,
+          email,
+          password,
+          orgName,
+          'Agency',
+          orgDescription
+        );
+      }
+      
+      async registerEnterpriseUser(fullname, email, password, orgName, orgDescription) {
+        return this.registerWithOrganization(
+          fullname,
+          email,
+          password,
+          orgName,
+          'Enterprise',
+          orgDescription
+        );
+      }
     }
     
-  } catch (error) {
-    console.error('Registration failed:', error);
-    throw error;
-  }
-}
-
-function displayValidationErrors(errors) {
-  errors.forEach(error => {
-    const field = document.querySelector(`[name="${error.field}"]`);
-    if (field) {
-      field.classList.add('error');
-      const errorMsg = document.createElement('div');
-      errorMsg.className = 'error-message';
-      errorMsg.textContent = error.message;
-      field.parentNode.appendChild(errorMsg);
+    // Usage example
+    const registrationService = new UserRegistrationService(apiClient);
+    
+    // Register a platform user
+    const platformUser = await registrationService.registerPlatformUser(
+      'John Doe',
+      'john.doe@example.com',
+      'secure_password123',
+      'Acme Corporation',
+      'A business platform for managing teams and projects'
+    );
+    
+    // Register an agency user
+    const agencyUser = await registrationService.registerAgencyUser(
+      'Jane Smith',
+      'jane.smith@example.com',
+      'secure_password456',
+      'Creative Agency',
+      'A creative agency specializing in digital marketing'
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python User Registration Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, Optional
+    
+    class UserRegistrationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def register_user(self, user_data: Dict) -> Dict:
+            """Register a new user with organization"""
+            try:
+                response = self.api_client.post('/auth/register', json=user_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"User registered: {result['data']['email']}")
+                print(f"Organization created: {result['data']['organization_name']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error registering user: {e}")
+                raise
+        
+        def register_with_organization(self, 
+                                     fullname: str,
+                                     email: str,
+                                     password: str,
+                                     org_name: str,
+                                     org_type: str,
+                                     org_description: str,
+                                     marketing_consent: bool = False) -> Dict:
+            """Register user with organization details"""
+            user_data = {
+                "fullname": fullname,
+                "email": email,
+                "password": password,
+                "organization": {
+                    "name": org_name,
+                    "type": org_type,
+                    "description": org_description
+                },
+                "terms_accepted": True,
+                "privacy_accepted": True,
+                "marketing_consent": marketing_consent
+            }
+            
+            return self.register_user(user_data)
+        
+        def register_platform_user(self, 
+                                 fullname: str,
+                                 email: str,
+                                 password: str,
+                                 org_name: str,
+                                 org_description: str) -> Dict:
+            """Register a platform user"""
+            return self.register_with_organization(
+                fullname=fullname,
+                email=email,
+                password=password,
+                org_name=org_name,
+                org_type="Platform",
+                org_description=org_description
+            )
+        
+        def register_agency_user(self, 
+                               fullname: str,
+                               email: str,
+                               password: str,
+                               org_name: str,
+                               org_description: str) -> Dict:
+            """Register an agency user"""
+            return self.register_with_organization(
+                fullname=fullname,
+                email=email,
+                password=password,
+                org_name=org_name,
+                org_type="Agency",
+                org_description=org_description
+            )
+        
+        def register_enterprise_user(self, 
+                                   fullname: str,
+                                   email: str,
+                                   password: str,
+                                   org_name: str,
+                                   org_description: str) -> Dict:
+            """Register an enterprise user"""
+            return self.register_with_organization(
+                fullname=fullname,
+                email=email,
+                password=password,
+                org_name=org_name,
+                org_type="Enterprise",
+                org_description=org_description
+            )
+        
+        def validate_registration_data(self, user_data: Dict) -> bool:
+            """Validate registration data before submission"""
+            required_fields = ['fullname', 'email', 'password', 'organization']
+            
+            for field in required_fields:
+                if field not in user_data:
+                    print(f"Missing required field: {field}")
+                    return False
+            
+            # Validate email format
+            if '@' not in user_data['email']:
+                print("Invalid email format")
+                return False
+            
+            # Validate password strength
+            password = user_data['password']
+            if len(password) < 8:
+                print("Password must be at least 8 characters long")
+                return False
+            
+            # Validate organization data
+            org = user_data['organization']
+            if 'name' not in org or 'type' not in org:
+                print("Organization name and type are required")
+                return False
+            
+            return True
+        
+        def register_user_safe(self, user_data: Dict) -> Dict:
+            """Register user with validation"""
+            if not self.validate_registration_data(user_data):
+                raise ValueError("Invalid registration data")
+            
+            return self.register_user(user_data)
+    
+    # Usage example
+    registration_manager = UserRegistrationManager(api_client)
+    
+    # Register a platform user
+    platform_user = registration_manager.register_platform_user(
+        fullname="John Doe",
+        email="john.doe@example.com",
+        password="secure_password123",
+        org_name="Acme Corporation",
+        org_description="A business platform for managing teams and projects"
+    )
+    
+    # Register an agency user
+    agency_user = registration_manager.register_agency_user(
+        fullname="Jane Smith",
+        email="jane.smith@example.com",
+        password="secure_password456",
+        org_name="Creative Agency",
+        org_description="A creative agency specializing in digital marketing"
+    )
+    
+    # Register with validation
+    user_data = {
+        "fullname": "Bob Wilson",
+        "email": "bob.wilson@example.com",
+        "password": "secure_password789",
+        "organization": {
+            "name": "Tech Startup",
+            "type": "Platform",
+            "description": "A technology startup company"
+        },
+        "terms_accepted": True,
+        "privacy_accepted": True,
+        "marketing_consent": False
     }
-  });
-}
-```
+    
+    validated_user = registration_manager.register_user_safe(user_data)
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -363,15 +757,15 @@ function displayValidationErrors(errors) {
 
 <CardGroup cols={2}>
   <Card title="Validate Registration" icon="check">
-    `POST /auth/validate-registration` - Verify OTP and complete registration
+    `POST /auth/validate/registration` - Verify email address
   </Card>
-  <Card title="Resend OTP" icon="refresh">
-    `PUT /auth/resend-registration-otp` - Resend registration OTP
+  <Card title="Resend Registration OTP" icon="mail">
+    `PUT /auth/resend/otp/{session}` - Resend verification email
   </Card>
-  <Card title="Mobile Register" icon="mobile">
-    `POST /auth/m/register` - Mobile user registration
+  <Card title="Register (Mobile)" icon="mobile">
+    `POST /auth/m/register` - Mobile registration endpoint
   </Card>
-  <Card title="User Login" icon="sign-in">
-    `POST /auth/login` - Login with credentials
+  <Card title="Login" icon="sign-in">
+    `POST /auth/login` - Login after registration
   </Card>
 </CardGroup>

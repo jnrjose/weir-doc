@@ -1,37 +1,58 @@
 ---
 title: "Resend Registration OTP"
-api: "PUT /auth/resend-registration-otp"
-description: "Resend OTP (One-Time Password) for user registration verification"
+api: "PUT /auth/resend/otp/{session}"
+description: "Resend verification OTP code to user's email"
 ---
 
-Resend the OTP (One-Time Password) for user registration verification. This endpoint is used when the original OTP has expired or was not received by the user.
+Resend a verification OTP (One-Time Password) code to the user's email address. This endpoint is useful when the original verification email was not received, expired, or the user needs a new code.
 
 <Note>
-  **Console API Endpoint**
+  **Auth API Endpoint**
   
-  This endpoint is part of the Console API category and is used for user registration verification. It helps users complete their registration process when they need a new OTP.
+  This endpoint is part of the Auth API category and does not require authentication (it's used to resend verification codes). It's designed for email verification and account activation support.
 </Note>
 
 ## Authentication
 
-This endpoint does not require authentication as it's used during the registration process.
+This endpoint does not require authentication as it's used to resend verification codes during the registration process.
+
+## Path Parameters
+
+<ParamField path="session" type="string" required>
+  OTP session identifier from the registration response
+  
+  **Example**: "session_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid session ID from registration
+  - Session must not be expired
+  - Session must be in pending verification state
+</ParamField>
 
 ## Request
 
-<ParamField body="email" type="string" required>
-  Email address of the user requesting OTP resend
+<ParamField body="email" type="string" required="false">
+  Email address to resend OTP to
   
-  **Example**: "user@example.com"
+  **Example**: "john.doe@example.com"
   
   **Constraints**: 
-  - Must be a valid email format
-  - Must be associated with a pending registration
+  - Must match the email used during registration
+  - Optional but recommended for security
 </ParamField>
 
-<ParamField body="registration_id" type="string" required>
-  Registration ID from the initial registration request
+<ParamField body="reason" type="string" required="false">
+  Reason for resending OTP
   
-  **Example**: "reg_1234567890abcdef"
+  **Example**: "Email not received"
+  
+  **Options**: 
+  - "Email not received"
+  - "Code expired"
+  - "Code lost"
+  - "Other"
+  
+  **Note**: Used for audit and support purposes
 </ParamField>
 
 ## Response
@@ -41,23 +62,39 @@ This endpoint does not require authentication as it's used during the registrati
 </ResponseField>
 
 <ResponseField name="data" type="object">
-  Contains OTP resend information
+  Contains the resend operation information
 </ResponseField>
 
-<ResponseField name="data.registration_id" type="string">
-  Registration ID for tracking
+<ResponseField name="data.session_id" type="string">
+  OTP session identifier
 </ResponseField>
 
 <ResponseField name="data.email" type="string">
-  Email address where OTP was sent
+  Email address the OTP was sent to
 </ResponseField>
 
 <ResponseField name="data.otp_expires_at" type="string">
   ISO 8601 timestamp when the OTP expires
 </ResponseField>
 
-<ResponseField name="data.retry_count" type="integer">
-  Number of OTP resend attempts
+<ResponseField name="data.resend_count" type="integer">
+  Number of times OTP has been resent for this session
+</ResponseField>
+
+<ResponseField name="data.max_resends" type="integer">
+  Maximum number of resends allowed for this session
+</ResponseField>
+
+<ResponseField name="data.resend_attempts_remaining" type="integer">
+  Number of resend attempts remaining
+</ResponseField>
+
+<ResponseField name="data.sent_at" type="string">
+  ISO 8601 timestamp when the OTP was sent
+</ResponseField>
+
+<ResponseField name="data.delivery_status" type="string">
+  Status of email delivery (sent, delivered, failed)
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -72,23 +109,23 @@ This endpoint does not require authentication as it's used during the registrati
 
 <CodeGroup>
 ```bash cURL
-curl -X PUT "https://api.example.com/auth/resend-registration-otp" \
+curl -X PUT "https://api.example.com/auth/resend/otp/session_1234567890abcdef" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "user@example.com",
-    "registration_id": "reg_1234567890abcdef"
+    "email": "john.doe@example.com",
+    "reason": "Email not received"
   }'
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.example.com/auth/resend-registration-otp', {
+const response = await fetch('https://api.example.com/auth/resend/otp/session_1234567890abcdef', {
   method: 'PUT',
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    email: 'user@example.com',
-    registration_id: 'reg_1234567890abcdef'
+    email: 'john.doe@example.com',
+    reason: 'Email not received'
   })
 });
 
@@ -99,18 +136,76 @@ console.log(data);
 ```python Python
 import requests
 
-data = {
-    'email': 'user@example.com',
-    'registration_id': 'reg_1234567890abcdef'
+payload = {
+    "email": "john.doe@example.com",
+    "reason": "Email not received"
 }
 
 response = requests.put(
-    'https://api.example.com/auth/resend-registration-otp',
-    headers={'Content-Type': 'application/json'},
-    json=data
+    'https://api.example.com/auth/resend/otp/session_1234567890abcdef',
+    headers={
+        'Content-Type': 'application/json'
+    },
+    json=payload
 )
 
 print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'email' => 'john.doe@example.com',
+    'reason' => 'Email not received'
+];
+
+$response = file_get_contents('https://api.example.com/auth/resend/otp/session_1234567890abcdef', false, stream_context_create([
+    'http' => [
+        'method' => 'PUT',
+        'header' => 'Content-Type: application/json',
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type ResendOTPRequest struct {
+    Email  string `json:"email,omitempty"`
+    Reason string `json:"reason,omitempty"`
+}
+
+func main() {
+    payload := ResendOTPRequest{
+        Email:  "john.doe@example.com",
+        Reason: "Email not received",
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("PUT", "https://api.example.com/auth/resend/otp/session_1234567890abcdef", bytes.NewBuffer(jsonData))
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
 ```
 </CodeGroup>
 
@@ -120,12 +215,16 @@ print(response.json())
 {
   "success": true,
   "data": {
-    "registration_id": "reg_1234567890abcdef",
-    "email": "user@example.com",
-    "otp_expires_at": "2024-01-15T11:00:00Z",
-    "retry_count": 2
+    "session_id": "session_1234567890abcdef",
+    "email": "john.doe@example.com",
+    "otp_expires_at": "2024-01-15T10:35:00Z",
+    "resend_count": 2,
+    "max_resends": 5,
+    "resend_attempts_remaining": 3,
+    "sent_at": "2024-01-15T10:30:00Z",
+    "delivery_status": "sent"
   },
-  "message": "OTP resent successfully",
+  "message": "OTP code has been resent to your email address",
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
@@ -133,94 +232,465 @@ print(response.json())
 ## Error Responses
 
 <ResponseField name="400 Bad Request" type="object">
-  Invalid request data or validation errors
+  Invalid request parameters or validation errors
 </ResponseField>
 
 <ResponseField name="404 Not Found" type="object">
-  Registration not found or already completed
+  Session not found or expired
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Account already verified or resend limit exceeded
 </ResponseField>
 
 <ResponseField name="429 Too Many Requests" type="object">
-  Rate limit exceeded for OTP resend
+  Rate limit exceeded for resend attempts
 </ResponseField>
 
 ### Example Error Responses
 
 <AccordionGroup>
-  <Accordion title="Registration Not Found (404)" icon="search">
+  <Accordion title="Session Not Found (404)" icon="search">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "REGISTRATION_NOT_FOUND",
-    "message": "Registration not found or already completed",
-    "details": {
-      "field": "registration_id",
-      "reason": "Invalid or expired registration ID"
+    {
+      "success": false,
+      "error": {
+        "code": "SESSION_NOT_FOUND",
+        "message": "Verification session not found",
+        "details": {
+          "field": "session",
+          "reason": "Session does not exist or has expired"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
+  </Accordion>
+  
+  <Accordion title="Resend Limit Exceeded (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RESEND_LIMIT_EXCEEDED",
+        "message": "Maximum resend attempts exceeded",
+        "details": {
+          "field": "resend_count",
+          "reason": "You have exceeded the maximum number of resend attempts",
+          "max_resends": 5,
+          "resend_count": 5
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Already Verified (409)" icon="check">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "ALREADY_VERIFIED",
+        "message": "Account already verified",
+        "details": {
+          "field": "account",
+          "reason": "This account has already been verified"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
   </Accordion>
   
   <Accordion title="Rate Limited (429)" icon="clock">
     ```json
-{
-  "success": false,
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "OTP resend rate limit exceeded",
-    "details": {
-      "field": "otp_resend",
-      "reason": "Maximum 3 resend attempts per hour",
-      "retry_after": 3600
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many resend attempts",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before requesting another OTP",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
     }
-  },
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-```
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Rate Limiting" icon="clock">
-    OTP resend limits:
+  <Accordion title="Resend Limits" icon="clock">
+    Resend restrictions:
     
-    - Maximum 3 resend attempts per hour per email
-    - Rate limit resets after 1 hour
-    - Exceeding limits requires waiting period
+    - **Maximum Resends**: Limited number of resends per session
+    - **Rate Limiting**: Cooldown period between resend requests
+    - **Session Expiry**: Resends only allowed for active sessions
+    - **Account Status**: Resends only for unverified accounts
   </Accordion>
   
-  <Accordion title="OTP Expiration" icon="time">
-    OTP validity:
+  <Accordion title="OTP Expiration" icon="hourglass">
+    OTP timing:
     
-    - OTP expires after 10 minutes
-    - New OTP invalidates previous OTP
-    - Expired OTPs cannot be used for verification
+    - **Expiration Time**: OTP codes expire after a set time period
+    - **New Expiration**: Each resend creates a new expiration time
+    - **Single Use**: Each OTP can only be used once
+    - **Time Window**: Limited time to use the OTP after receiving
   </Accordion>
   
-  <Accordion title="Security" icon="shield">
-    Security considerations:
+  <Accordion title="Email Delivery" icon="mail">
+    Email delivery features:
     
-    - OTP is sent to registered email only
-    - Registration ID must match original request
-    - Failed attempts are logged for security monitoring
+    - **Delivery Status**: Track email delivery status
+    - **Retry Logic**: Automatic retry for failed deliveries
+    - **Spam Prevention**: Measures to prevent emails from going to spam
+    - **Delivery Confirmation**: Confirmation when email is delivered
+  </Accordion>
+  
+  <Accordion title="Security Measures" icon="shield">
+    Security features:
+    
+    - **Rate Limiting**: Prevents abuse and spam
+    - **Session Validation**: Ensures valid session for resend
+    - **Email Verification**: Confirms email address matches registration
+    - **Audit Logging**: Tracks all resend attempts
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="OTP Resend Service" icon="cog">
+    ```javascript
+    class OTPResendService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async resendOTP(sessionId, email = null, reason = null) {
+        try {
+          const payload = {};
+          
+          if (email) {
+            payload.email = email;
+          }
+          
+          if (reason) {
+            payload.reason = reason;
+          }
+          
+          const response = await this.apiClient.makeRequest(`/auth/resend/otp/${sessionId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to resend OTP');
+          }
+          
+          const result = await response.json();
+          
+          // Log resend
+          console.log(`OTP resent to: ${result.data.email}`);
+          console.log(`Resend count: ${result.data.resend_count}`);
+          console.log(`Attempts remaining: ${result.data.resend_attempts_remaining}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error resending OTP:', error);
+          throw error;
+        }
+      }
+      
+      async resendOTPWithEmail(sessionId, email, reason = null) {
+        return this.resendOTP(sessionId, email, reason);
+      }
+      
+      async resendOTPWithoutEmail(sessionId, reason = null) {
+        return this.resendOTP(sessionId, null, reason);
+      }
+      
+      async resendOTPForEmailNotReceived(sessionId, email) {
+        return this.resendOTP(sessionId, email, 'Email not received');
+      }
+      
+      async resendOTPForCodeExpired(sessionId, email) {
+        return this.resendOTP(sessionId, email, 'Code expired');
+      }
+      
+      async resendOTPForCodeLost(sessionId, email) {
+        return this.resendOTP(sessionId, email, 'Code lost');
+      }
+      
+      async resendOTPWithRetry(sessionId, email = null, reason = null, maxRetries = 3) {
+        let lastError = null;
+        
+        for (let i = 0; i < maxRetries; i++) {
+          try {
+            return await this.resendOTP(sessionId, email, reason);
+          } catch (error) {
+            lastError = error;
+            
+            // If it's a rate limit error, wait before retrying
+            if (error.message.includes('rate limit') || error.message.includes('429')) {
+              const waitTime = Math.pow(2, i) * 1000; // Exponential backoff
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+            } else {
+              // For other errors, don't retry
+              throw error;
+            }
+          }
+        }
+        
+        throw lastError;
+      }
+      
+      async checkResendStatus(sessionId) {
+        try {
+          const response = await this.apiClient.makeRequest(`/auth/resend/otp/${sessionId}`, {
+            method: 'PUT',
+            body: JSON.stringify({})
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to check resend status');
+          }
+          
+          const result = await response.json();
+          
+          return {
+            resendCount: result.data.resend_count,
+            maxResends: result.data.max_resends,
+            attemptsRemaining: result.data.resend_attempts_remaining,
+            canResend: result.data.resend_attempts_remaining > 0
+          };
+          
+        } catch (error) {
+          console.error('Error checking resend status:', error);
+          throw error;
+        }
+      }
+    }
+    
+    // Usage example
+    const otpResendService = new OTPResendService(apiClient);
+    
+    // Resend OTP with email
+    const resendResult = await otpResendService.resendOTPWithEmail(
+      'session_1234567890abcdef',
+      'john.doe@example.com',
+      'Email not received'
+    );
+    
+    // Resend OTP for specific reasons
+    const emailNotReceived = await otpResendService.resendOTPForEmailNotReceived(
+      'session_1234567890abcdef',
+      'john.doe@example.com'
+    );
+    
+    // Check resend status
+    const status = await otpResendService.checkResendStatus('session_1234567890abcdef');
+    console.log(`Can resend: ${status.canResend}`);
+    console.log(`Attempts remaining: ${status.attemptsRemaining}`);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python OTP Resend Manager" icon="python">
+    ```python
+    import requests
+    import time
+    from typing import Dict, Optional
+    
+    class OTPResendManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def resend_otp(self, 
+                      session_id: str, 
+                      email: Optional[str] = None, 
+                      reason: Optional[str] = None) -> Dict:
+            """Resend OTP code to user's email"""
+            try:
+                payload = {}
+                
+                if email:
+                    payload["email"] = email
+                
+                if reason:
+                    payload["reason"] = reason
+                
+                response = self.api_client.put(f'/auth/resend/otp/{session_id}', json=payload)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"OTP resent to: {result['data']['email']}")
+                print(f"Resend count: {result['data']['resend_count']}")
+                print(f"Attempts remaining: {result['data']['resend_attempts_remaining']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error resending OTP: {e}")
+                raise
+        
+        def resend_otp_with_email(self, session_id: str, email: str, reason: Optional[str] = None) -> Dict:
+            """Resend OTP with email verification"""
+            return self.resend_otp(session_id, email, reason)
+        
+        def resend_otp_without_email(self, session_id: str, reason: Optional[str] = None) -> Dict:
+            """Resend OTP without email verification"""
+            return self.resend_otp(session_id, None, reason)
+        
+        def resend_otp_for_email_not_received(self, session_id: str, email: str) -> Dict:
+            """Resend OTP because email was not received"""
+            return self.resend_otp(session_id, email, "Email not received")
+        
+        def resend_otp_for_code_expired(self, session_id: str, email: str) -> Dict:
+            """Resend OTP because code expired"""
+            return self.resend_otp(session_id, email, "Code expired")
+        
+        def resend_otp_for_code_lost(self, session_id: str, email: str) -> Dict:
+            """Resend OTP because code was lost"""
+            return self.resend_otp(session_id, email, "Code lost")
+        
+        def resend_otp_with_retry(self, 
+                                session_id: str, 
+                                email: Optional[str] = None, 
+                                reason: Optional[str] = None,
+                                max_retries: int = 3) -> Dict:
+            """Resend OTP with retry logic"""
+            last_error = None
+            
+            for attempt in range(max_retries):
+                try:
+                    return self.resend_otp(session_id, email, reason)
+                except requests.exceptions.RequestException as e:
+                    last_error = e
+                    
+                    # If it's a rate limit error, wait before retrying
+                    if "rate limit" in str(e) or "429" in str(e):
+                        wait_time = 2 ** attempt  # Exponential backoff
+                        print(f"Rate limited, waiting {wait_time} seconds before retry...")
+                        time.sleep(wait_time)
+                    else:
+                        # For other errors, don't retry
+                        raise e
+            
+            raise last_error
+        
+        def check_resend_status(self, session_id: str) -> Dict:
+            """Check resend status for a session"""
+            try:
+                response = self.api_client.put(f'/auth/resend/otp/{session_id}', json={})
+                response.raise_for_status()
+                
+                result = response.json()
+                
+                return {
+                    "resend_count": result["data"]["resend_count"],
+                    "max_resends": result["data"]["max_resends"],
+                    "attempts_remaining": result["data"]["resend_attempts_remaining"],
+                    "can_resend": result["data"]["resend_attempts_remaining"] > 0
+                }
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error checking resend status: {e}")
+                raise
+        
+        def get_resend_reasons(self) -> list:
+            """Get available resend reasons"""
+            return [
+                "Email not received",
+                "Code expired",
+                "Code lost",
+                "Other"
+            ]
+        
+        def validate_session_format(self, session_id: str) -> bool:
+            """Validate session ID format"""
+            return session_id.startswith('session_') and len(session_id) > 20
+        
+        def resend_otp_safe(self, 
+                          session_id: str, 
+                          email: Optional[str] = None, 
+                          reason: Optional[str] = None) -> Dict:
+            """Resend OTP with validation"""
+            if not self.validate_session_format(session_id):
+                raise ValueError("Invalid session ID format")
+            
+            return self.resend_otp(session_id, email, reason)
+        
+        def get_otp_expiration_time(self, result: Dict) -> str:
+            """Get OTP expiration time from result"""
+            return result["data"]["otp_expires_at"]
+        
+        def get_delivery_status(self, result: Dict) -> str:
+            """Get email delivery status from result"""
+            return result["data"]["delivery_status"]
+        
+        def is_resend_successful(self, result: Dict) -> bool:
+            """Check if resend was successful"""
+            return (result["success"] and 
+                   result["data"]["delivery_status"] in ["sent", "delivered"])
+    
+    # Usage example
+    otp_resend_manager = OTPResendManager(api_client)
+    
+    # Resend OTP with email
+    resend_result = otp_resend_manager.resend_otp_with_email(
+        session_id="session_1234567890abcdef",
+        email="john.doe@example.com",
+        reason="Email not received"
+    )
+    
+    # Resend OTP for specific reasons
+    email_not_received = otp_resend_manager.resend_otp_for_email_not_received(
+        session_id="session_1234567890abcdef",
+        email="john.doe@example.com"
+    )
+    
+    # Check resend status
+    status = otp_resend_manager.check_resend_status("session_1234567890abcdef")
+    print(f"Can resend: {status['can_resend']}")
+    print(f"Attempts remaining: {status['attempts_remaining']}")
+    
+    # Resend with retry
+    retry_result = otp_resend_manager.resend_otp_with_retry(
+        session_id="session_1234567890abcdef",
+        email="john.doe@example.com",
+        reason="Email not received",
+        max_retries=3
+    )
+    
+    # Check if resend was successful
+    if otp_resend_manager.is_resend_successful(resend_result):
+        print("OTP resent successfully!")
+        print(f"Expires at: {otp_resend_manager.get_otp_expiration_time(resend_result)}")
+    else:
+        print("OTP resend failed!")
+    ```
   </Accordion>
 </AccordionGroup>
 
 ## Related Endpoints
 
 <CardGroup cols={2}>
-  <Card title="Register User" icon="user-plus">
+  <Card title="Register" icon="user-plus">
     `POST /auth/register` - Initial user registration
   </Card>
   <Card title="Validate Registration" icon="check">
-    `POST /auth/validate-registration` - Verify OTP and complete registration
+    `POST /auth/validate/registration` - Verify OTP code
   </Card>
-  <Card title="Mobile Register" icon="mobile">
-    `POST /auth/m/register` - Mobile user registration
+  <Card title="Login" icon="sign-in">
+    `POST /auth/login` - Login after verification
+  </Card>
+  <Card title="Register (Mobile)" icon="mobile">
+    `POST /auth/m/register` - Mobile registration
   </Card>
 </CardGroup>
