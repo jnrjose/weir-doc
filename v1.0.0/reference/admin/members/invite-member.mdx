@@ -1,0 +1,984 @@
+---
+title: "Invite Admin Member"
+api: "POST /admin/member/invite"
+description: "Invite a new admin member to the system"
+---
+
+Invite a new admin member to join the system with specified role and permissions. This endpoint allows existing admins to invite new team members with appropriate access levels.
+
+<Note>
+  **Admin API Endpoint**
+  
+  This endpoint is part of the Admin API category and requires Bearer Token authentication. It's designed for admin team management within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="email" type="string" required>
+  Email address of the person to invite
+  
+  **Example**: "john.doe@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email address
+  - Email must not already be registered as an admin
+  - Email will be used for invitation delivery
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  Full name of the person to invite
+  
+  **Example**: "John Doe"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Cannot be empty
+  - Should be the person's real name
+</ParamField>
+
+<ParamField body="role" type="string" required>
+  Admin role to assign to the invited member
+  
+  **Options**: "admin", "moderator", "support", "readonly"
+  
+  **Example**: "admin"
+  
+  **Constraints**: 
+  - Must be one of the specified roles
+  - Cannot assign "super_admin" role via invitation
+  - Role determines default permissions
+</ParamField>
+
+<ParamField body="permissions" type="array" required="false">
+  Specific permissions to assign (overrides role defaults)
+  
+  **Example**: ["admin.read", "admin.write", "logs.view"]
+  
+  **Constraints**: 
+  - Must be valid permission identifiers
+  - Cannot exceed permissions of the inviting admin
+  - If not provided, uses role default permissions
+</ParamField>
+
+<ParamField body="message" type="string" required="false">
+  Personal message to include in the invitation
+  
+  **Example**: "Welcome to the admin team! Looking forward to working with you."
+  
+  **Constraints**: 
+  - Maximum length: 500 characters
+  - Optional but recommended for personal touch
+</ParamField>
+
+<ParamField body="expires_in" type="integer" required="false">
+  Invitation expiration time in hours
+  
+  **Example**: 168
+  
+  **Default**: 168 (7 days)
+  
+  **Constraints**: 
+  - Must be between 1 and 720 hours (30 days)
+  - Invitation will expire after this time
+</ParamField>
+
+<ParamField body="send_email" type="boolean" required="false">
+  Whether to send invitation email
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If false, invitation will be created but no email sent
+</ParamField>
+
+<ParamField body="require_2fa" type="boolean" required="false">
+  Whether to require two-factor authentication setup
+  
+  **Example**: true
+  
+  **Default**: true
+  
+  **Note**: If true, member must set up 2FA before accessing system
+</ParamField>
+
+<ParamField body="restrict_ip" type="array" required="false">
+  IP addresses to restrict access to
+  
+  **Example**: ["192.168.1.0/24", "10.0.0.0/8"]
+  
+  **Constraints**: 
+  - Must be valid IP addresses or CIDR blocks
+  - If provided, member can only access from these IPs
+  - Optional security feature
+</ParamField>
+
+<ParamField body="metadata" type="object" required="false">
+  Additional metadata for the invitation
+  
+  **Example**:
+  ```json
+  {
+    "department": "Engineering",
+    "manager": "Jane Smith",
+    "start_date": "2024-02-01",
+    "notes": "Senior developer joining admin team"
+  }
+  ```
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the invitation was sent successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the invitation information
+</ResponseField>
+
+<ResponseField name="data.invitation_id" type="string">
+  Unique identifier for the invitation
+</ResponseField>
+
+<ResponseField name="data.email" type="string">
+  Email address of the invited person
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the invited person
+</ResponseField>
+
+<ResponseField name="data.role" type="string">
+  Assigned admin role
+</ResponseField>
+
+<ResponseField name="data.permissions" type="array">
+  Assigned permissions
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Invitation status (sent, pending, accepted, expired, cancelled)
+</ResponseField>
+
+<ResponseField name="data.invitation_token" type="string">
+  Unique invitation token for acceptance
+</ResponseField>
+
+<ResponseField name="data.expires_at" type="string">
+  ISO 8601 timestamp when the invitation expires
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the invitation was created
+</ResponseField>
+
+<ResponseField name="data.invited_by" type="string">
+  ID of the admin who sent the invitation
+</ResponseField>
+
+<ResponseField name="data.invited_by_name" type="string">
+  Name of the admin who sent the invitation
+</ResponseField>
+
+<ResponseField name="data.message" type="string">
+  Personal message included in invitation
+</ResponseField>
+
+<ResponseField name="data.require_2fa" type="boolean">
+  Whether 2FA is required
+</ResponseField>
+
+<ResponseField name="data.restrict_ip" type="array">
+  IP restrictions (if any)
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  Additional metadata
+</ResponseField>
+
+<ResponseField name="data.email_sent" type="boolean">
+  Whether invitation email was sent
+</ResponseField>
+
+<ResponseField name="data.email_sent_at" type="string">
+  ISO 8601 timestamp when email was sent
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/admin/member/invite" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "role": "admin",
+    "permissions": ["admin.read", "admin.write", "logs.view"],
+    "message": "Welcome to the admin team! Looking forward to working with you.",
+    "expires_in": 168,
+    "send_email": true,
+    "require_2fa": true,
+    "restrict_ip": ["192.168.1.0/24"],
+    "metadata": {
+      "department": "Engineering",
+      "manager": "Jane Smith",
+      "start_date": "2024-02-01",
+      "notes": "Senior developer joining admin team"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/admin/member/invite', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'john.doe@example.com',
+    name: 'John Doe',
+    role: 'admin',
+    permissions: ['admin.read', 'admin.write', 'logs.view'],
+    message: 'Welcome to the admin team! Looking forward to working with you.',
+    expires_in: 168,
+    send_email: true,
+    require_2fa: true,
+    restrict_ip: ['192.168.1.0/24'],
+    metadata: {
+      department: 'Engineering',
+      manager: 'Jane Smith',
+      start_date: '2024-02-01',
+      notes: 'Senior developer joining admin team'
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "role": "admin",
+    "permissions": ["admin.read", "admin.write", "logs.view"],
+    "message": "Welcome to the admin team! Looking forward to working with you.",
+    "expires_in": 168,
+    "send_email": True,
+    "require_2fa": True,
+    "restrict_ip": ["192.168.1.0/24"],
+    "metadata": {
+        "department": "Engineering",
+        "manager": "Jane Smith",
+        "start_date": "2024-02-01",
+        "notes": "Senior developer joining admin team"
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/admin/member/invite',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'email' => 'john.doe@example.com',
+    'name' => 'John Doe',
+    'role' => 'admin',
+    'permissions' => ['admin.read', 'admin.write', 'logs.view'],
+    'message' => 'Welcome to the admin team! Looking forward to working with you.',
+    'expires_in' => 168,
+    'send_email' => true,
+    'require_2fa' => true,
+    'restrict_ip' => ['192.168.1.0/24'],
+    'metadata' => [
+        'department' => 'Engineering',
+        'manager' => 'Jane Smith',
+        'start_date' => '2024-02-01',
+        'notes' => 'Senior developer joining admin team'
+    ]
+];
+
+$response = file_get_contents('https://api.example.com/admin/member/invite', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type InviteMemberRequest struct {
+    Email       string                 `json:"email"`
+    Name        string                 `json:"name"`
+    Role        string                 `json:"role"`
+    Permissions []string               `json:"permissions,omitempty"`
+    Message     string                 `json:"message,omitempty"`
+    ExpiresIn   int                    `json:"expires_in,omitempty"`
+    SendEmail   bool                   `json:"send_email,omitempty"`
+    Require2FA  bool                   `json:"require_2fa,omitempty"`
+    RestrictIP  []string               `json:"restrict_ip,omitempty"`
+    Metadata    map[string]interface{} `json:"metadata,omitempty"`
+}
+
+func main() {
+    payload := InviteMemberRequest{
+        Email:      "john.doe@example.com",
+        Name:       "John Doe",
+        Role:       "admin",
+        Permissions: []string{"admin.read", "admin.write", "logs.view"},
+        Message:    "Welcome to the admin team! Looking forward to working with you.",
+        ExpiresIn:  168,
+        SendEmail:  true,
+        Require2FA: true,
+        RestrictIP: []string{"192.168.1.0/24"},
+        Metadata: map[string]interface{}{
+            "department": "Engineering",
+            "manager":    "Jane Smith",
+            "start_date": "2024-02-01",
+            "notes":      "Senior developer joining admin team",
+        },
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/admin/member/invite", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "invitation_id": "inv_1234567890abcdef",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "role": "admin",
+    "permissions": [
+      "admin.read",
+      "admin.write",
+      "logs.view"
+    ],
+    "status": "sent",
+    "invitation_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expires_at": "2024-01-22T10:30:00Z",
+    "created_at": "2024-01-15T10:30:00Z",
+    "invited_by": "admin_0987654321fedcba",
+    "invited_by_name": "Jane Smith",
+    "message": "Welcome to the admin team! Looking forward to working with you.",
+    "require_2fa": true,
+    "restrict_ip": ["192.168.1.0/24"],
+    "metadata": {
+      "department": "Engineering",
+      "manager": "Jane Smith",
+      "start_date": "2024-02-01",
+      "notes": "Senior developer joining admin team"
+    },
+    "email_sent": true,
+    "email_sent_at": "2024-01-15T10:30:05Z"
+  },
+  "message": "Admin member invitation sent successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to invite admin members
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Email already exists or invitation already sent
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "email",
+          "reason": "Email address is required and must be valid"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Email Already Exists (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "EMAIL_ALREADY_EXISTS",
+        "message": "Email address already exists",
+        "details": {
+          "field": "email",
+          "reason": "An admin member with this email already exists"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to invite admin members",
+        "details": {
+          "field": "permissions",
+          "reason": "Admin member invitation requires super_admin or admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Admin Roles" icon="users">
+    Available roles for invitation:
+    
+    - **admin**: Full administrative access
+    - **moderator**: Limited administrative access
+    - **support**: Support-level access
+    - **readonly**: Read-only access
+    - **super_admin**: Cannot be assigned via invitation
+  </Accordion>
+  
+  <Accordion title="Security Features" icon="shield">
+    Security considerations:
+    
+    - **Two-Factor Authentication**: Can require 2FA setup
+    - **IP Restrictions**: Can restrict access to specific IP ranges
+    - **Permission Limits**: Cannot assign permissions exceeding inviter's level
+    - **Invitation Expiration**: Invitations expire after specified time
+  </Accordion>
+  
+  <Accordion title="Invitation Process" icon="mail">
+    Invitation workflow:
+    
+    - **Email Delivery**: Invitation email sent to recipient
+    - **Token Generation**: Unique invitation token created
+    - **Expiration**: Invitation expires after specified time
+    - **Acceptance**: Recipient must accept invitation to join
+  </Accordion>
+  
+  <Accordion title="Best Practices" icon="check">
+    Recommended practices:
+    
+    - **Verify Email**: Ensure email address is correct
+    - **Appropriate Role**: Assign appropriate role for responsibilities
+    - **Personal Message**: Include personal welcome message
+    - **Security Settings**: Enable 2FA and IP restrictions when needed
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Admin Invitation Service" icon="cog">
+    ```javascript
+    class AdminInvitationService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async inviteMember(invitationData) {
+        try {
+          const response = await this.apiClient.makeRequest('/admin/member/invite', {
+            method: 'POST',
+            body: JSON.stringify(invitationData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send invitation');
+          }
+          
+          const result = await response.json();
+          
+          // Log invitation success
+          console.log(`Invitation sent to ${result.data.email}`);
+          console.log(`Invitation ID: ${result.data.invitation_id}`);
+          console.log(`Expires at: ${result.data.expires_at}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error sending invitation:', error);
+          throw error;
+        }
+      }
+      
+      async inviteAdmin(email, name, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'admin',
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteModerator(email, name, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'moderator',
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteSupport(email, name, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'support',
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteReadOnly(email, name, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'readonly',
+          message: message,
+          require_2fa: false,
+          send_email: true
+        });
+      }
+      
+      async inviteWithCustomPermissions(email, name, permissions, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'admin',
+          permissions: permissions,
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteWithIPRestrictions(email, name, ipRanges, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: 'admin',
+          restrict_ip: ipRanges,
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteWithMetadata(email, name, role, metadata, message = null) {
+        return this.inviteMember({
+          email: email,
+          name: name,
+          role: role,
+          metadata: metadata,
+          message: message,
+          require_2fa: true,
+          send_email: true
+        });
+      }
+      
+      async inviteBulk(invitations) {
+        const results = [];
+        
+        for (const invitation of invitations) {
+          try {
+            const result = await this.inviteMember(invitation);
+            results.push({ success: true, data: result.data });
+          } catch (error) {
+            results.push({ success: false, error: error.message, email: invitation.email });
+          }
+        }
+        
+        return results;
+      }
+    }
+    
+    // Usage example
+    const invitationService = new AdminInvitationService(apiClient);
+    
+    // Invite admin
+    const adminInvitation = await invitationService.inviteAdmin(
+      'john.doe@example.com',
+      'John Doe',
+      'Welcome to the admin team!'
+    );
+    
+    // Invite moderator
+    const moderatorInvitation = await invitationService.inviteModerator(
+      'jane.smith@example.com',
+      'Jane Smith',
+      'Looking forward to working with you!'
+    );
+    
+    // Invite with custom permissions
+    const customInvitation = await invitationService.inviteWithCustomPermissions(
+      'bob.wilson@example.com',
+      'Bob Wilson',
+      ['admin.read', 'logs.view', 'users.read'],
+      'Welcome to the team!'
+    );
+    
+    // Invite with IP restrictions
+    const restrictedInvitation = await invitationService.inviteWithIPRestrictions(
+      'alice.johnson@example.com',
+      'Alice Johnson',
+      ['192.168.1.0/24', '10.0.0.0/8'],
+      'Welcome! Access restricted to office networks.'
+    );
+    
+    // Bulk invitations
+    const bulkInvitations = await invitationService.inviteBulk([
+      {
+        email: 'user1@example.com',
+        name: 'User One',
+        role: 'support',
+        message: 'Welcome!'
+      },
+      {
+        email: 'user2@example.com',
+        name: 'User Two',
+        role: 'readonly',
+        message: 'Welcome!'
+      }
+    ]);
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Admin Invitation Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    
+    class AdminInvitationManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def invite_member(self, invitation_data: Dict) -> Dict:
+            """Send admin member invitation"""
+            try:
+                response = self.api_client.post('/admin/member/invite', json=invitation_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Invitation sent to {result['data']['email']}")
+                print(f"Invitation ID: {result['data']['invitation_id']}")
+                print(f"Expires at: {result['data']['expires_at']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error sending invitation: {e}")
+                raise
+        
+        def invite_admin(self, email: str, name: str, message: Optional[str] = None) -> Dict:
+            """Invite admin member"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'admin',
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_moderator(self, email: str, name: str, message: Optional[str] = None) -> Dict:
+            """Invite moderator member"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'moderator',
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_support(self, email: str, name: str, message: Optional[str] = None) -> Dict:
+            """Invite support member"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'support',
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_readonly(self, email: str, name: str, message: Optional[str] = None) -> Dict:
+            """Invite readonly member"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'readonly',
+                'message': message,
+                'require_2fa': False,
+                'send_email': True
+            })
+        
+        def invite_with_custom_permissions(self, 
+                                         email: str, 
+                                         name: str, 
+                                         permissions: List[str], 
+                                         message: Optional[str] = None) -> Dict:
+            """Invite member with custom permissions"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'admin',
+                'permissions': permissions,
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_with_ip_restrictions(self, 
+                                      email: str, 
+                                      name: str, 
+                                      ip_ranges: List[str], 
+                                      message: Optional[str] = None) -> Dict:
+            """Invite member with IP restrictions"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': 'admin',
+                'restrict_ip': ip_ranges,
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_with_metadata(self, 
+                               email: str, 
+                               name: str, 
+                               role: str, 
+                               metadata: Dict, 
+                               message: Optional[str] = None) -> Dict:
+            """Invite member with metadata"""
+            return self.invite_member({
+                'email': email,
+                'name': name,
+                'role': role,
+                'metadata': metadata,
+                'message': message,
+                'require_2fa': True,
+                'send_email': True
+            })
+        
+        def invite_bulk(self, invitations: List[Dict]) -> List[Dict]:
+            """Send multiple invitations"""
+            results = []
+            
+            for invitation in invitations:
+                try:
+                    result = self.invite_member(invitation)
+                    results.append({'success': True, 'data': result['data']})
+                except Exception as e:
+                    results.append({'success': False, 'error': str(e), 'email': invitation.get('email')})
+            
+            return results
+        
+        def invite_engineering_team(self, team_members: List[Dict]) -> List[Dict]:
+            """Invite engineering team members"""
+            invitations = []
+            
+            for member in team_members:
+                invitation = {
+                    'email': member['email'],
+                    'name': member['name'],
+                    'role': member.get('role', 'admin'),
+                    'message': f"Welcome to the engineering team, {member['name']}!",
+                    'require_2fa': True,
+                    'send_email': True,
+                    'metadata': {
+                        'department': 'Engineering',
+                        'team': member.get('team', 'General'),
+                        'manager': member.get('manager', 'Engineering Manager')
+                    }
+                }
+                invitations.append(invitation)
+            
+            return self.invite_bulk(invitations)
+        
+        def invite_support_team(self, support_members: List[Dict]) -> List[Dict]:
+            """Invite support team members"""
+            invitations = []
+            
+            for member in support_members:
+                invitation = {
+                    'email': member['email'],
+                    'name': member['name'],
+                    'role': 'support',
+                    'message': f"Welcome to the support team, {member['name']}!",
+                    'require_2fa': True,
+                    'send_email': True,
+                    'metadata': {
+                        'department': 'Support',
+                        'team': 'Customer Support',
+                        'manager': member.get('manager', 'Support Manager')
+                    }
+                }
+                invitations.append(invitation)
+            
+            return self.invite_bulk(invitations)
+    
+    # Usage example
+    invitation_manager = AdminInvitationManager(api_client)
+    
+    # Invite admin
+    admin_invitation = invitation_manager.invite_admin(
+        'john.doe@example.com',
+        'John Doe',
+        'Welcome to the admin team!'
+    )
+    
+    # Invite moderator
+    moderator_invitation = invitation_manager.invite_moderator(
+        'jane.smith@example.com',
+        'Jane Smith',
+        'Looking forward to working with you!'
+    )
+    
+    # Invite with custom permissions
+    custom_invitation = invitation_manager.invite_with_custom_permissions(
+        'bob.wilson@example.com',
+        'Bob Wilson',
+        ['admin.read', 'logs.view', 'users.read'],
+        'Welcome to the team!'
+    )
+    
+    # Invite with IP restrictions
+    restricted_invitation = invitation_manager.invite_with_ip_restrictions(
+        'alice.johnson@example.com',
+        'Alice Johnson',
+        ['192.168.1.0/24', '10.0.0.0/8'],
+        'Welcome! Access restricted to office networks.'
+    )
+    
+    # Invite engineering team
+    engineering_team = [
+        {'email': 'dev1@example.com', 'name': 'Developer One', 'team': 'Backend'},
+        {'email': 'dev2@example.com', 'name': 'Developer Two', 'team': 'Frontend'},
+        {'email': 'dev3@example.com', 'name': 'Developer Three', 'team': 'DevOps'}
+    ]
+    
+    team_invitations = invitation_manager.invite_engineering_team(engineering_team)
+    print(f"Sent {len(team_invitations)} team invitations")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Admin Members" icon="users">
+    `GET /admin/members` - List all admin members
+  </Card>
+  <Card title="Get Organizations" icon="building">
+    `GET /admin/organizations` - List all organizations
+  </Card>
+  <Card title="Get Admin Platforms" icon="server">
+    `GET /admin/platforms` - List all platforms
+  </Card>
+  <Card title="Get Admin Licenses" icon="key">
+    `GET /admin/licenses` - List system licenses
+  </Card>
+</CardGroup>
