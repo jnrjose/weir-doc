@@ -1,0 +1,1111 @@
+---
+title: "Add Card"
+api: "POST /org/cards/add"
+description: "Add a new payment card to the organization"
+---
+
+Add a new payment card to your organization for processing payments and managing billing. This endpoint allows you to securely add cards with different types and configurations.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for secure card management and payment processing within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="card_number" type="string" required>
+  The card number to add
+  
+  **Example**: "4242424242424242"
+  
+  **Constraints**: 
+  - Must be a valid card number
+  - Length varies by card type (13-19 digits)
+  - Must pass Luhn algorithm validation
+  - Will be tokenized for security
+</ParamField>
+
+<ParamField body="exp_month" type="integer" required>
+  Expiration month of the card
+  
+  **Example**: 12
+  
+  **Constraints**: 
+  - Must be between 1 and 12
+  - Represents the month (1 = January, 12 = December)
+</ParamField>
+
+<ParamField body="exp_year" type="integer" required>
+  Expiration year of the card
+  
+  **Example**: 2025
+  
+  **Constraints**: 
+  - Must be a 4-digit year
+  - Must be in the future
+  - Cannot be more than 10 years in the future
+</ParamField>
+
+<ParamField body="cvc" type="string" required>
+  Card verification code (CVC/CVV)
+  
+  **Example**: "123"
+  
+  **Constraints**: 
+  - Must be 3-4 digits
+  - 3 digits for Visa, Mastercard, Discover
+  - 4 digits for American Express
+  - Will be used for verification only
+</ParamField>
+
+<ParamField body="name" type="string" required="false">
+  Name for the card (for identification purposes)
+  
+  **Example**: "Corporate Credit Card"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Optional but recommended for organization
+  - Cannot contain special characters except spaces, hyphens, and underscores
+</ParamField>
+
+<ParamField body="teamId" type="string" required="false">
+  ID of the team to associate with this card
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID within your organization
+  - Team must exist and be accessible
+  - If not provided, card will be associated with the user's default team
+</ParamField>
+
+<ParamField body="is_default" type="boolean" required="false">
+  Whether this should be the default card for the organization
+  
+  **Example**: true
+  
+  **Default**: false
+  
+  **Note**: If set to true, this card will become the default payment method
+</ParamField>
+
+<ParamField body="cardholder_name" type="string" required="false">
+  Name of the cardholder
+  
+  **Example**: "John Smith"
+  
+  **Constraints**: 
+  - Maximum length: 100 characters
+  - Optional but recommended for verification
+  - Should match the name on the card
+</ParamField>
+
+<ParamField body="billing_address" type="object" required="false">
+  Billing address for the card
+  
+  **Properties**:
+  - `line1` (string): First line of address
+  - `line2` (string): Second line of address (optional)
+  - `city` (string): City
+  - `state` (string): State or province
+  - `postal_code` (string): Postal or ZIP code
+  - `country` (string): Country code (ISO 3166-1 alpha-2)
+  
+  **Example**:
+  ```json
+  {
+    "line1": "123 Main Street",
+    "line2": "Suite 100",
+    "city": "San Francisco",
+    "state": "CA",
+    "postal_code": "94105",
+    "country": "US"
+  }
+  ```
+</ParamField>
+
+<ParamField body="metadata" type="object" required="false">
+  Additional metadata for the card
+  
+  **Example**:
+  ```json
+  {
+    "department": "Engineering",
+    "purpose": "Development expenses",
+    "approval_required": true,
+    "spending_limit": 5000
+  }
+  ```
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the card was added successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the added card information
+</ResponseField>
+
+<ResponseField name="data.card_id" type="string">
+  Unique identifier for the added card
+</ResponseField>
+
+<ResponseField name="data.name" type="string">
+  Name of the card
+</ResponseField>
+
+<ResponseField name="data.brand" type="string">
+  Card brand (visa, mastercard, amex, discover, other)
+</ResponseField>
+
+<ResponseField name="data.type" type="string">
+  Card type (credit, debit, prepaid, virtual, corporate)
+</ResponseField>
+
+<ResponseField name="data.last_four" type="string">
+  Last four digits of the card number
+</ResponseField>
+
+<ResponseField name="data.exp_month" type="integer">
+  Expiration month
+</ResponseField>
+
+<ResponseField name="data.exp_year" type="integer">
+  Expiration year
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the card (active, pending, failed)
+</ResponseField>
+
+<ResponseField name="data.is_default" type="boolean">
+  Whether this is the default card
+</ResponseField>
+
+<ResponseField name="data.team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data.cardholder_name" type="string">
+  Name of the cardholder
+</ResponseField>
+
+<ResponseField name="data.billing_address" type="object">
+  Billing address information
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  Additional metadata for the card
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the card was added
+</ResponseField>
+
+<ResponseField name="data.created_by" type="string">
+  User ID of the person who added the card
+</ResponseField>
+
+<ResponseField name="data.verification_status" type="string">
+  Status of card verification (pending, verified, failed)
+</ResponseField>
+
+<ResponseField name="data.verification_method" type="string">
+  Method used for verification (cvc, address, both)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/cards/add" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "card_number": "4242424242424242",
+    "exp_month": 12,
+    "exp_year": 2025,
+    "cvc": "123",
+    "name": "Corporate Credit Card",
+    "teamId": "team_1234567890abcdef",
+    "is_default": true,
+    "cardholder_name": "John Smith",
+    "billing_address": {
+      "line1": "123 Main Street",
+      "line2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country": "US"
+    },
+    "metadata": {
+      "department": "Engineering",
+      "purpose": "Development expenses",
+      "approval_required": true,
+      "spending_limit": 5000
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/cards/add', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    card_number: '4242424242424242',
+    exp_month: 12,
+    exp_year: 2025,
+    cvc: '123',
+    name: 'Corporate Credit Card',
+    teamId: 'team_1234567890abcdef',
+    is_default: true,
+    cardholder_name: 'John Smith',
+    billing_address: {
+      line1: '123 Main Street',
+      line2: 'Suite 100',
+      city: 'San Francisco',
+      state: 'CA',
+      postal_code: '94105',
+      country: 'US'
+    },
+    metadata: {
+      department: 'Engineering',
+      purpose: 'Development expenses',
+      approval_required: true,
+      spending_limit: 5000
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+
+payload = {
+    "card_number": "4242424242424242",
+    "exp_month": 12,
+    "exp_year": 2025,
+    "cvc": "123",
+    "name": "Corporate Credit Card",
+    "teamId": "team_1234567890abcdef",
+    "is_default": True,
+    "cardholder_name": "John Smith",
+    "billing_address": {
+        "line1": "123 Main Street",
+        "line2": "Suite 100",
+        "city": "San Francisco",
+        "state": "CA",
+        "postal_code": "94105",
+        "country": "US"
+    },
+    "metadata": {
+        "department": "Engineering",
+        "purpose": "Development expenses",
+        "approval_required": True,
+        "spending_limit": 5000
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/org/cards/add',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+$payload = [
+    'card_number' => '4242424242424242',
+    'exp_month' => 12,
+    'exp_year' => 2025,
+    'cvc' => '123',
+    'name' => 'Corporate Credit Card',
+    'teamId' => 'team_1234567890abcdef',
+    'is_default' => true,
+    'cardholder_name' => 'John Smith',
+    'billing_address' => [
+        'line1' => '123 Main Street',
+        'line2' => 'Suite 100',
+        'city' => 'San Francisco',
+        'state' => 'CA',
+        'postal_code' => '94105',
+        'country' => 'US'
+    ],
+    'metadata' => [
+        'department' => 'Engineering',
+        'purpose' => 'Development expenses',
+        'approval_required' => true,
+        'spending_limit' => 5000
+    ]
+];
+
+$response = file_get_contents('https://api.example.com/org/cards/add', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type AddCardRequest struct {
+    CardNumber     string                 `json:"card_number"`
+    ExpMonth       int                    `json:"exp_month"`
+    ExpYear        int                    `json:"exp_year"`
+    CVC            string                 `json:"cvc"`
+    Name           string                 `json:"name,omitempty"`
+    TeamID         string                 `json:"teamId,omitempty"`
+    IsDefault      bool                   `json:"is_default,omitempty"`
+    CardholderName string                 `json:"cardholder_name,omitempty"`
+    BillingAddress *BillingAddress        `json:"billing_address,omitempty"`
+    Metadata       map[string]interface{} `json:"metadata,omitempty"`
+}
+
+type BillingAddress struct {
+    Line1      string `json:"line1"`
+    Line2      string `json:"line2,omitempty"`
+    City       string `json:"city"`
+    State      string `json:"state"`
+    PostalCode string `json:"postal_code"`
+    Country    string `json:"country"`
+}
+
+func main() {
+    payload := AddCardRequest{
+        CardNumber:     "4242424242424242",
+        ExpMonth:       12,
+        ExpYear:        2025,
+        CVC:            "123",
+        Name:           "Corporate Credit Card",
+        TeamID:         "team_1234567890abcdef",
+        IsDefault:      true,
+        CardholderName: "John Smith",
+        BillingAddress: &BillingAddress{
+            Line1:      "123 Main Street",
+            Line2:      "Suite 100",
+            City:       "San Francisco",
+            State:      "CA",
+            PostalCode: "94105",
+            Country:    "US",
+        },
+        Metadata: map[string]interface{}{
+            "department":        "Engineering",
+            "purpose":           "Development expenses",
+            "approval_required": true,
+            "spending_limit":    5000,
+        },
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/cards/add", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "card_id": "card_1234567890abcdef",
+    "name": "Corporate Credit Card",
+    "brand": "visa",
+    "type": "credit",
+    "last_four": "4242",
+    "exp_month": 12,
+    "exp_year": 2025,
+    "status": "active",
+    "is_default": true,
+    "team_id": "team_1234567890abcdef",
+    "cardholder_name": "John Smith",
+    "billing_address": {
+      "line1": "123 Main Street",
+      "line2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country": "US"
+    },
+    "metadata": {
+      "department": "Engineering",
+      "purpose": "Development expenses",
+      "approval_required": true,
+      "spending_limit": 5000
+    },
+    "created_at": "2024-01-15T10:30:00Z",
+    "created_by": "user_1234567890abcdef",
+    "verification_status": "verified",
+    "verification_method": "cvc"
+  },
+  "message": "Card added successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to add cards
+</ResponseField>
+
+<ResponseField name="409 Conflict" type="object">
+  Card already exists or verification failed
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "card_number",
+          "reason": "Card number is required and must be a valid card number"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Card Verification Failed (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "CARD_VERIFICATION_FAILED",
+        "message": "Card verification failed",
+        "details": {
+          "field": "cvc",
+          "reason": "Invalid CVC code provided"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Card Already Exists (409)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "CARD_ALREADY_EXISTS",
+        "message": "Card already exists",
+        "details": {
+          "field": "card_number",
+          "reason": "A card with this number already exists in the organization"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to add cards",
+        "details": {
+          "field": "permissions",
+          "reason": "Card addition requires team_admin or organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Card Security" icon="shield">
+    Security features:
+    
+    - **PCI Compliance**: All card data is handled according to PCI DSS standards
+    - **Tokenization**: Card numbers are tokenized and never stored in plain text
+    - **Encryption**: All card data is encrypted in transit and at rest
+    - **CVC Verification**: CVC codes are verified but not stored
+  </Accordion>
+  
+  <Accordion title="Card Verification" icon="check">
+    Verification process:
+    
+    - **CVC Verification**: Card verification code is validated
+    - **Address Verification**: Billing address is verified (if provided)
+    - **Card Number Validation**: Luhn algorithm validation
+    - **Expiry Validation**: Expiration date is checked
+  </Accordion>
+  
+  <Accordion title="Supported Card Types" icon="credit-card">
+    Supported cards:
+    
+    - **Visa**: All Visa cards
+    - **Mastercard**: All Mastercard cards
+    - **American Express**: All Amex cards
+    - **Discover**: All Discover cards
+    - **Other**: Other card brands
+  </Accordion>
+  
+  <Accordion title="Required Permissions" icon="users">
+    Permissions needed:
+    
+    - **Team Admin**: Can add cards for their teams
+    - **Organization Admin**: Can add cards for any team
+    - **Card Manager**: Can add cards within their scope
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Card Addition Service" icon="cog">
+    ```javascript
+    class CardAdditionService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async addCard(cardData) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/cards/add', {
+            method: 'POST',
+            body: JSON.stringify(cardData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to add card');
+          }
+          
+          const result = await response.json();
+          
+          // Log card addition
+          console.log(`Card added: ${result.data.name} (ID: ${result.data.card_id})`);
+          console.log(`Brand: ${result.data.brand}, Last Four: ${result.data.last_four}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error adding card:', error);
+          throw error;
+        }
+      }
+      
+      async addCreditCard(cardNumber, expMonth, expYear, cvc, name, teamId, isDefault = false) {
+        return this.addCard({
+          card_number: cardNumber,
+          exp_month: expMonth,
+          exp_year: expYear,
+          cvc: cvc,
+          name: name,
+          teamId: teamId,
+          is_default: isDefault,
+          cardholder_name: name
+        });
+      }
+      
+      async addDebitCard(cardNumber, expMonth, expYear, cvc, name, teamId, isDefault = false) {
+        return this.addCard({
+          card_number: cardNumber,
+          exp_month: expMonth,
+          exp_year: expYear,
+          cvc: cvc,
+          name: name,
+          teamId: teamId,
+          is_default: isDefault,
+          cardholder_name: name
+        });
+      }
+      
+      async addCorporateCard(cardNumber, expMonth, expYear, cvc, name, teamId, cardholderName, billingAddress, isDefault = false) {
+        return this.addCard({
+          card_number: cardNumber,
+          exp_month: expMonth,
+          exp_year: expYear,
+          cvc: cvc,
+          name: name,
+          teamId: teamId,
+          is_default: isDefault,
+          cardholder_name: cardholderName,
+          billing_address: billingAddress,
+          metadata: {
+            type: 'corporate',
+            approval_required: true
+          }
+        });
+      }
+      
+      async addCardWithBillingAddress(cardNumber, expMonth, expYear, cvc, name, teamId, billingAddress, isDefault = false) {
+        return this.addCard({
+          card_number: cardNumber,
+          exp_month: expMonth,
+          exp_year: expYear,
+          cvc: cvc,
+          name: name,
+          teamId: teamId,
+          is_default: isDefault,
+          billing_address: billingAddress
+        });
+      }
+      
+      validateCardData(cardData) {
+        const errors = [];
+        
+        // Validate card number
+        if (!cardData.card_number || !this.isValidCardNumber(cardData.card_number)) {
+          errors.push('Invalid card number');
+        }
+        
+        // Validate expiration
+        if (!cardData.exp_month || cardData.exp_month < 1 || cardData.exp_month > 12) {
+          errors.push('Invalid expiration month');
+        }
+        
+        if (!cardData.exp_year || cardData.exp_year < new Date().getFullYear()) {
+          errors.push('Invalid expiration year');
+        }
+        
+        // Validate CVC
+        if (!cardData.cvc || !/^\d{3,4}$/.test(cardData.cvc)) {
+          errors.push('Invalid CVC');
+        }
+        
+        return errors;
+      }
+      
+      isValidCardNumber(cardNumber) {
+        // Remove spaces and dashes
+        const cleaned = cardNumber.replace(/[\s-]/g, '');
+        
+        // Check if it's all digits
+        if (!/^\d+$/.test(cleaned)) {
+          return false;
+        }
+        
+        // Check length
+        if (cleaned.length < 13 || cleaned.length > 19) {
+          return false;
+        }
+        
+        // Luhn algorithm validation
+        let sum = 0;
+        let isEven = false;
+        
+        for (let i = cleaned.length - 1; i >= 0; i--) {
+          let digit = parseInt(cleaned[i]);
+          
+          if (isEven) {
+            digit *= 2;
+            if (digit > 9) {
+              digit -= 9;
+            }
+          }
+          
+          sum += digit;
+          isEven = !isEven;
+        }
+        
+        return sum % 10 === 0;
+      }
+    }
+    
+    // Usage example
+    const cardService = new CardAdditionService(apiClient);
+    
+    // Add credit card
+    const creditCard = await cardService.addCreditCard(
+      '4242424242424242',
+      12,
+      2025,
+      '123',
+      'Corporate Credit Card',
+      'team_1234567890abcdef',
+      true
+    );
+    
+    // Add corporate card with billing address
+    const corporateCard = await cardService.addCorporateCard(
+      '5555555555554444',
+      8,
+      2026,
+      '456',
+      'Business Card',
+      'team_1234567890abcdef',
+      'Jane Doe',
+      {
+        line1: '456 Oak Avenue',
+        city: 'New York',
+        state: 'NY',
+        postal_code: '10001',
+        country: 'US'
+      },
+      false
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Card Manager" icon="python">
+    ```python
+    import requests
+    from typing import Dict, List, Optional
+    import re
+    
+    class CardManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def add_card(self, card_data: Dict) -> Dict:
+            """Add a new payment card"""
+            try:
+                # Validate card data
+                validation_errors = self.validate_card_data(card_data)
+                if validation_errors:
+                    raise ValueError(f"Validation errors: {', '.join(validation_errors)}")
+                
+                response = self.api_client.post('/org/cards/add', json=card_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Card added: {result['data']['name']} (ID: {result['data']['card_id']})")
+                print(f"Brand: {result['data']['brand']}, Last Four: {result['data']['last_four']}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error adding card: {e}")
+                raise
+        
+        def add_credit_card(self, 
+                          card_number: str, 
+                          exp_month: int, 
+                          exp_year: int, 
+                          cvc: str, 
+                          name: str, 
+                          team_id: str, 
+                          is_default: bool = False) -> Dict:
+            """Add a credit card"""
+            card_data = {
+                "card_number": card_number,
+                "exp_month": exp_month,
+                "exp_year": exp_year,
+                "cvc": cvc,
+                "name": name,
+                "teamId": team_id,
+                "is_default": is_default,
+                "cardholder_name": name
+            }
+            
+            return self.add_card(card_data)
+        
+        def add_debit_card(self, 
+                         card_number: str, 
+                         exp_month: int, 
+                         exp_year: int, 
+                         cvc: str, 
+                         name: str, 
+                         team_id: str, 
+                         is_default: bool = False) -> Dict:
+            """Add a debit card"""
+            card_data = {
+                "card_number": card_number,
+                "exp_month": exp_month,
+                "exp_year": exp_year,
+                "cvc": cvc,
+                "name": name,
+                "teamId": team_id,
+                "is_default": is_default,
+                "cardholder_name": name
+            }
+            
+            return self.add_card(card_data)
+        
+        def add_corporate_card(self, 
+                             card_number: str, 
+                             exp_month: int, 
+                             exp_year: int, 
+                             cvc: str, 
+                             name: str, 
+                             team_id: str, 
+                             cardholder_name: str, 
+                             billing_address: Dict, 
+                             is_default: bool = False) -> Dict:
+            """Add a corporate card"""
+            card_data = {
+                "card_number": card_number,
+                "exp_month": exp_month,
+                "exp_year": exp_year,
+                "cvc": cvc,
+                "name": name,
+                "teamId": team_id,
+                "is_default": is_default,
+                "cardholder_name": cardholder_name,
+                "billing_address": billing_address,
+                "metadata": {
+                    "type": "corporate",
+                    "approval_required": True
+                }
+            }
+            
+            return self.add_card(card_data)
+        
+        def add_card_with_billing_address(self, 
+                                        card_number: str, 
+                                        exp_month: int, 
+                                        exp_year: int, 
+                                        cvc: str, 
+                                        name: str, 
+                                        team_id: str, 
+                                        billing_address: Dict, 
+                                        is_default: bool = False) -> Dict:
+            """Add a card with billing address"""
+            card_data = {
+                "card_number": card_number,
+                "exp_month": exp_month,
+                "exp_year": exp_year,
+                "cvc": cvc,
+                "name": name,
+                "teamId": team_id,
+                "is_default": is_default,
+                "billing_address": billing_address
+            }
+            
+            return self.add_card(card_data)
+        
+        def validate_card_data(self, card_data: Dict) -> List[str]:
+            """Validate card data before submission"""
+            errors = []
+            
+            # Validate card number
+            if not card_data.get('card_number') or not self.is_valid_card_number(card_data['card_number']):
+                errors.append('Invalid card number')
+            
+            # Validate expiration month
+            exp_month = card_data.get('exp_month')
+            if not exp_month or exp_month < 1 or exp_month > 12:
+                errors.append('Invalid expiration month')
+            
+            # Validate expiration year
+            exp_year = card_data.get('exp_year')
+            if not exp_year or exp_year < 2024:  # Assuming current year is 2024
+                errors.append('Invalid expiration year')
+            
+            # Validate CVC
+            cvc = card_data.get('cvc')
+            if not cvc or not re.match(r'^\d{3,4}$', cvc):
+                errors.append('Invalid CVC')
+            
+            return errors
+        
+        def is_valid_card_number(self, card_number: str) -> bool:
+            """Validate card number using Luhn algorithm"""
+            # Remove spaces and dashes
+            cleaned = re.sub(r'[\s-]', '', card_number)
+            
+            # Check if it's all digits
+            if not re.match(r'^\d+$', cleaned):
+                return False
+            
+            # Check length
+            if len(cleaned) < 13 or len(cleaned) > 19:
+                return False
+            
+            # Luhn algorithm validation
+            total = 0
+            is_even = False
+            
+            for digit in reversed(cleaned):
+                digit = int(digit)
+                
+                if is_even:
+                    digit *= 2
+                    if digit > 9:
+                        digit -= 9
+                
+                total += digit
+                is_even = not is_even
+            
+            return total % 10 == 0
+        
+        def get_card_brand(self, card_number: str) -> str:
+            """Determine card brand from card number"""
+            cleaned = re.sub(r'[\s-]', '', card_number)
+            
+            if re.match(r'^4', cleaned):
+                return 'visa'
+            elif re.match(r'^5[1-5]', cleaned):
+                return 'mastercard'
+            elif re.match(r'^3[47]', cleaned):
+                return 'amex'
+            elif re.match(r'^6(?:011|5)', cleaned):
+                return 'discover'
+            else:
+                return 'other'
+        
+        def add_card_safe(self, card_data: Dict) -> Dict:
+            """Add card with validation"""
+            validation_errors = self.validate_card_data(card_data)
+            if validation_errors:
+                raise ValueError(f"Validation errors: {', '.join(validation_errors)}")
+            
+            return self.add_card(card_data)
+    
+    # Usage example
+    card_manager = CardManager(api_client)
+    
+    # Add credit card
+    credit_card = card_manager.add_credit_card(
+        card_number="4242424242424242",
+        exp_month=12,
+        exp_year=2025,
+        cvc="123",
+        name="Corporate Credit Card",
+        team_id="team_1234567890abcdef",
+        is_default=True
+    )
+    
+    # Add corporate card with billing address
+    corporate_card = card_manager.add_corporate_card(
+        card_number="5555555555554444",
+        exp_month=8,
+        exp_year=2026,
+        cvc="456",
+        name="Business Card",
+        team_id="team_1234567890abcdef",
+        cardholder_name="Jane Doe",
+        billing_address={
+            "line1": "456 Oak Avenue",
+            "city": "New York",
+            "state": "NY",
+            "postal_code": "10001",
+            "country": "US"
+        },
+        is_default=False
+    )
+    
+    # Add card with billing address
+    card_with_address = card_manager.add_card_with_billing_address(
+        card_number="378282246310005",
+        exp_month=10,
+        exp_year=2027,
+        cvc="1234",
+        name="Amex Card",
+        team_id="team_1234567890abcdef",
+        billing_address={
+            "line1": "789 Pine Street",
+            "line2": "Apt 2B",
+            "city": "Los Angeles",
+            "state": "CA",
+            "postal_code": "90210",
+            "country": "US"
+        },
+        is_default=False
+    )
+    
+    # Validate card number
+    is_valid = card_manager.is_valid_card_number("4242424242424242")
+    print(f"Card number is valid: {is_valid}")
+    
+    # Get card brand
+    brand = card_manager.get_card_brand("4242424242424242")
+    print(f"Card brand: {brand}")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Cards" icon="list">
+    `GET /org/cards` - List all cards
+  </Card>
+  <Card title="Delete Card" icon="trash">
+    `DELETE /org/card/{cardId}` - Remove a card
+  </Card>
+  <Card title="Update Card" icon="edit">
+    `PATCH /org/card/{cardId}` - Update card information
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for card assignment
+  </Card>
+</CardGroup>

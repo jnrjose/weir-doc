@@ -1,0 +1,1150 @@
+---
+title: "Send Email"
+api: "POST /org/mail/send"
+description: "Send email through the organization's mail system"
+---
+
+Send email messages through your organization's mail system with support for templates, attachments, and advanced delivery options. This endpoint provides comprehensive email functionality for notifications, communications, and automated messaging.
+
+<Note>
+  **Console API Endpoint**
+  
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for email management and communication within the Weir AI platform.
+</Note>
+
+## Authentication
+
+This endpoint requires Bearer Token authentication. Include your JWT token in the Authorization header:
+
+```bash
+Authorization: Bearer <your_jwt_token>
+```
+
+## Request
+
+<ParamField body="to" type="array" required>
+  List of recipient email addresses
+  
+  **Example**: ["user@example.com", "admin@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 100 recipients per email
+  - Each email must be properly formatted
+</ParamField>
+
+<ParamField body="cc" type="array" required="false">
+  List of CC (carbon copy) email addresses
+  
+  **Example**: ["manager@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 50 CC recipients
+  - Optional field
+</ParamField>
+
+<ParamField body="bcc" type="array" required="false">
+  List of BCC (blind carbon copy) email addresses
+  
+  **Example**: ["archive@example.com"]
+  
+  **Constraints**: 
+  - Must be valid email addresses
+  - Maximum 50 BCC recipients
+  - Optional field
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  Email subject line
+  
+  **Example**: "Welcome to Our Platform"
+  
+  **Constraints**: 
+  - Maximum length: 200 characters
+  - Cannot be empty
+  - Should be descriptive and clear
+</ParamField>
+
+<ParamField body="body" type="string" required>
+  Email body content
+  
+  **Example**: "Welcome to our platform! We're excited to have you on board."
+  
+  **Constraints**: 
+  - Can be plain text or HTML
+  - Maximum length: 1MB
+  - HTML content is supported
+</ParamField>
+
+<ParamField body="html_body" type="string" required="false">
+  HTML version of the email body
+  
+  **Example**: "<h1>Welcome!</h1><p>Welcome to our platform!</p>"
+  
+  **Constraints**: 
+  - Must be valid HTML
+  - Maximum length: 1MB
+  - If provided, will be used instead of plain text body
+</ParamField>
+
+<ParamField body="from" type="string" required="false">
+  Sender email address
+  
+  **Example**: "noreply@example.com"
+  
+  **Default**: Organization's default sender address
+  
+  **Constraints**: 
+  - Must be a valid email address
+  - Must be from an authorized domain
+  - If not provided, uses organization default
+</ParamField>
+
+<ParamField body="reply_to" type="string" required="false">
+  Reply-to email address
+  
+  **Example**: "support@example.com"
+  
+  **Constraints**: 
+  - Must be a valid email address
+  - If not provided, uses sender address
+</ParamField>
+
+<ParamField body="template_id" type="string" required="false">
+  ID of the email template to use
+  
+  **Example**: "welcome_template_123"
+  
+  **Constraints**: 
+  - Must be a valid template ID
+  - Template must exist in the organization
+  - If provided, template variables will be used
+</ParamField>
+
+<ParamField body="template_variables" type="object" required="false">
+  Variables to replace in the email template
+  
+  **Example**:
+  ```json
+  {
+    "user_name": "John Doe",
+    "company_name": "Acme Corp",
+    "activation_link": "https://example.com/activate/123"
+  }
+  ```
+  
+  **Constraints**: 
+  - Must match template variable names
+  - Values will be inserted into template placeholders
+</ParamField>
+
+<ParamField body="attachments" type="array" required="false">
+  List of file attachments
+  
+  **Example**:
+  ```json
+  [
+    {
+      "filename": "document.pdf",
+      "content": "base64_encoded_content",
+      "content_type": "application/pdf"
+    }
+  ]
+  ```
+  
+  **Constraints**: 
+  - Maximum 10 attachments per email
+  - Each attachment maximum 25MB
+  - Content must be base64 encoded
+</ParamField>
+
+<ParamField body="priority" type="string" required="false">
+  Email priority level
+  
+  **Options**: "low", "normal", "high", "urgent"
+  
+  **Example**: "normal"
+  
+  **Default**: "normal"
+  
+  **Constraints**: 
+  - Must be one of the specified options
+  - Affects delivery priority
+</ParamField>
+
+<ParamField body="scheduled_at" type="string" required="false">
+  ISO 8601 timestamp for scheduled delivery
+  
+  **Example**: "2024-01-15T14:30:00Z"
+  
+  **Constraints**: 
+  - Must be in the future
+  - Cannot be more than 30 days in the future
+  - If not provided, email is sent immediately
+</ParamField>
+
+<ParamField body="tracking" type="object" required="false">
+  Email tracking configuration
+  
+  **Properties**:
+  - `opens` (boolean): Track email opens
+  - `clicks` (boolean): Track link clicks
+  - `delivery` (boolean): Track delivery status
+  
+  **Example**:
+  ```json
+  {
+    "opens": true,
+    "clicks": true,
+    "delivery": true
+  }
+  ```
+</ParamField>
+
+<ParamField body="metadata" type="object" required="false">
+  Additional metadata for the email
+  
+  **Example**:
+  ```json
+  {
+    "campaign_id": "welcome_campaign_2024",
+    "user_segment": "new_users",
+    "source": "registration_flow"
+  }
+  ```
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indicates if the email was sent successfully
+</ResponseField>
+
+<ResponseField name="data" type="object">
+  Contains the email sending information
+</ResponseField>
+
+<ResponseField name="data.message_id" type="string">
+  Unique identifier for the sent email
+</ResponseField>
+
+<ResponseField name="data.status" type="string">
+  Current status of the email (sent, scheduled, failed)
+</ResponseField>
+
+<ResponseField name="data.recipients" type="object">
+  Information about email recipients
+</ResponseField>
+
+<ResponseField name="data.recipients.to" type="array">
+  List of TO recipients
+</ResponseField>
+
+<ResponseField name="data.recipients.cc" type="array">
+  List of CC recipients
+</ResponseField>
+
+<ResponseField name="data.recipients.bcc" type="array">
+  List of BCC recipients
+</ResponseField>
+
+<ResponseField name="data.subject" type="string">
+  Email subject line
+</ResponseField>
+
+<ResponseField name="data.from" type="string">
+  Sender email address
+</ResponseField>
+
+<ResponseField name="data.reply_to" type="string">
+  Reply-to email address
+</ResponseField>
+
+<ResponseField name="data.template_id" type="string">
+  Template ID used (if applicable)
+</ResponseField>
+
+<ResponseField name="data.priority" type="string">
+  Email priority level
+</ResponseField>
+
+<ResponseField name="data.scheduled_at" type="string">
+  Scheduled delivery time (if applicable)
+</ResponseField>
+
+<ResponseField name="data.tracking" type="object">
+  Tracking configuration
+</ResponseField>
+
+<ResponseField name="data.metadata" type="object">
+  Additional metadata
+</ResponseField>
+
+<ResponseField name="data.created_at" type="string">
+  ISO 8601 timestamp when the email was created
+</ResponseField>
+
+<ResponseField name="data.estimated_delivery" type="string">
+  Estimated delivery time
+</ResponseField>
+
+<ResponseField name="data.attachments_count" type="integer">
+  Number of attachments
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Human-readable message about the operation result
+</ResponseField>
+
+<ResponseField name="timestamp" type="string">
+  ISO 8601 timestamp of the response
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST "https://api.example.com/org/mail/send" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": ["user@example.com", "admin@example.com"],
+    "cc": ["manager@example.com"],
+    "bcc": ["archive@example.com"],
+    "subject": "Welcome to Our Platform",
+    "html_body": "<h1>Welcome!</h1><p>Welcome to our platform! We are excited to have you on board.</p><p>Best regards,<br>The Team</p>",
+    "from": "noreply@example.com",
+    "reply_to": "support@example.com",
+    "template_id": "welcome_template_123",
+    "template_variables": {
+      "user_name": "John Doe",
+      "company_name": "Acme Corp",
+      "activation_link": "https://example.com/activate/123"
+    },
+    "attachments": [
+      {
+        "filename": "welcome_guide.pdf",
+        "content": "JVBERi0xLjQKJcfsj6IKNSAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMiA3OTJdCi9SZXNvdXJjZXMgPDwKL0ZvbnQgPDwKL0YxIDIgMCBSCj4+Cj4+Ci9Db250ZW50cyA0IDAgUgo+PgplbmRvYmoKNCAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVApxCjcyMCAwIDAgNzIwIDAgMCBjbQovRjEgMTIgVGYKKldlbGNvbWUgdG8gb3VyIHBsYXRmb3JtISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoyIDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWzQgMCBSXQo+PgplbmRvYmoKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMyAwIFIKPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI3MyAwMDAwMCBuIAowMDAwMDAwMzQ5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDQ3CiUlRU9G",
+        "content_type": "application/pdf"
+      }
+    ],
+    "priority": "normal",
+    "tracking": {
+      "opens": true,
+      "clicks": true,
+      "delivery": true
+    },
+    "metadata": {
+      "campaign_id": "welcome_campaign_2024",
+      "user_segment": "new_users",
+      "source": "registration_flow"
+    }
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.example.com/org/mail/send', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    to: ['user@example.com', 'admin@example.com'],
+    cc: ['manager@example.com'],
+    bcc: ['archive@example.com'],
+    subject: 'Welcome to Our Platform',
+    html_body: '<h1>Welcome!</h1><p>Welcome to our platform! We are excited to have you on board.</p><p>Best regards,<br>The Team</p>',
+    from: 'noreply@example.com',
+    reply_to: 'support@example.com',
+    template_id: 'welcome_template_123',
+    template_variables: {
+      user_name: 'John Doe',
+      company_name: 'Acme Corp',
+      activation_link: 'https://example.com/activate/123'
+    },
+    attachments: [
+      {
+        filename: 'welcome_guide.pdf',
+        content: 'JVBERi0xLjQKJcfsj6IKNSAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDMgMCBSCi9NZWRpYUJveCBbMCAwIDYxMiA3OTJdCi9SZXNvdXJjZXMgPDwKL0ZvbnQgPDwKL0YxIDIgMCBSCj4+Cj4+Ci9Db250ZW50cyA0IDAgUgo+PgplbmRvYmoKNCAwIG9iago8PAovTGVuZ3RoIDQ0Cj4+CnN0cmVhbQpCVApxCjcyMCAwIDAgNzIwIDAgMCBjbQovRjEgMTIgVGYKKldlbGNvbWUgdG8gb3VyIHBsYXRmb3JtISkgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagoyIDAgb2JqCjw8Ci9UeXBlIC9Gb250Ci9TdWJ0eXBlIC9UeXBlMQovQmFzZUZvbnQgL0hlbHZldGljYQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZXMKL0NvdW50IDEKL0tpZHMgWzQgMCBSXQo+PgplbmRvYmoKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMyAwIFIKPj4KZW5kb2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDI3MyAwMDAwMCBuIAowMDAwMDAwMzQ5IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNgovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKNDQ3CiUlRU9G',
+        content_type: 'application/pdf'
+      }
+    ],
+    priority: 'normal',
+    tracking: {
+      opens: true,
+      clicks: true,
+      delivery: true
+    },
+    metadata: {
+      campaign_id: 'welcome_campaign_2024',
+      user_segment: 'new_users',
+      source: 'registration_flow'
+    }
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+```python Python
+import requests
+import base64
+
+# Read and encode attachment
+with open('welcome_guide.pdf', 'rb') as f:
+    attachment_content = base64.b64encode(f.read()).decode('utf-8')
+
+payload = {
+    "to": ["user@example.com", "admin@example.com"],
+    "cc": ["manager@example.com"],
+    "bcc": ["archive@example.com"],
+    "subject": "Welcome to Our Platform",
+    "html_body": "<h1>Welcome!</h1><p>Welcome to our platform! We are excited to have you on board.</p><p>Best regards,<br>The Team</p>",
+    "from": "noreply@example.com",
+    "reply_to": "support@example.com",
+    "template_id": "welcome_template_123",
+    "template_variables": {
+        "user_name": "John Doe",
+        "company_name": "Acme Corp",
+        "activation_link": "https://example.com/activate/123"
+    },
+    "attachments": [
+        {
+            "filename": "welcome_guide.pdf",
+            "content": attachment_content,
+            "content_type": "application/pdf"
+        }
+    ],
+    "priority": "normal",
+    "tracking": {
+        "opens": True,
+        "clicks": True,
+        "delivery": True
+    },
+    "metadata": {
+        "campaign_id": "welcome_campaign_2024",
+        "user_segment": "new_users",
+        "source": "registration_flow"
+    }
+}
+
+response = requests.post(
+    'https://api.example.com/org/mail/send',
+    headers={
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        'Content-Type': 'application/json'
+    },
+    json=payload
+)
+
+print(response.json())
+```
+
+```php PHP
+<?php
+// Read and encode attachment
+$attachment_content = base64_encode(file_get_contents('welcome_guide.pdf'));
+
+$payload = [
+    'to' => ['user@example.com', 'admin@example.com'],
+    'cc' => ['manager@example.com'],
+    'bcc' => ['archive@example.com'],
+    'subject' => 'Welcome to Our Platform',
+    'html_body' => '<h1>Welcome!</h1><p>Welcome to our platform! We are excited to have you on board.</p><p>Best regards,<br>The Team</p>',
+    'from' => 'noreply@example.com',
+    'reply_to' => 'support@example.com',
+    'template_id' => 'welcome_template_123',
+    'template_variables' => [
+        'user_name' => 'John Doe',
+        'company_name' => 'Acme Corp',
+        'activation_link' => 'https://example.com/activate/123'
+    ],
+    'attachments' => [
+        [
+            'filename' => 'welcome_guide.pdf',
+            'content' => $attachment_content,
+            'content_type' => 'application/pdf'
+        ]
+    ],
+    'priority' => 'normal',
+    'tracking' => [
+        'opens' => true,
+        'clicks' => true,
+        'delivery' => true
+    ],
+    'metadata' => [
+        'campaign_id' => 'welcome_campaign_2024',
+        'user_segment' => 'new_users',
+        'source' => 'registration_flow'
+    ]
+];
+
+$response = file_get_contents('https://api.example.com/org/mail/send', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => [
+            'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+            'Content-Type: application/json'
+        ],
+        'content' => json_encode($payload)
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "bytes"
+    "encoding/base64"
+    "encoding/json"
+    "fmt"
+    "io/ioutil"
+    "net/http"
+)
+
+type SendEmailRequest struct {
+    To                []string               `json:"to"`
+    CC                []string               `json:"cc,omitempty"`
+    BCC               []string               `json:"bcc,omitempty"`
+    Subject           string                 `json:"subject"`
+    Body              string                 `json:"body,omitempty"`
+    HTMLBody          string                 `json:"html_body,omitempty"`
+    From              string                 `json:"from,omitempty"`
+    ReplyTo           string                 `json:"reply_to,omitempty"`
+    TemplateID        string                 `json:"template_id,omitempty"`
+    TemplateVariables map[string]interface{} `json:"template_variables,omitempty"`
+    Attachments       []Attachment           `json:"attachments,omitempty"`
+    Priority          string                 `json:"priority,omitempty"`
+    ScheduledAt       string                 `json:"scheduled_at,omitempty"`
+    Tracking          *TrackingConfig        `json:"tracking,omitempty"`
+    Metadata          map[string]interface{} `json:"metadata,omitempty"`
+}
+
+type Attachment struct {
+    Filename    string `json:"filename"`
+    Content     string `json:"content"`
+    ContentType string `json:"content_type"`
+}
+
+type TrackingConfig struct {
+    Opens    bool `json:"opens"`
+    Clicks   bool `json:"clicks"`
+    Delivery bool `json:"delivery"`
+}
+
+func main() {
+    // Read and encode attachment
+    fileContent, _ := ioutil.ReadFile("welcome_guide.pdf")
+    attachmentContent := base64.StdEncoding.EncodeToString(fileContent)
+    
+    payload := SendEmailRequest{
+        To:      []string{"user@example.com", "admin@example.com"},
+        CC:      []string{"manager@example.com"},
+        BCC:     []string{"archive@example.com"},
+        Subject: "Welcome to Our Platform",
+        HTMLBody: "<h1>Welcome!</h1><p>Welcome to our platform! We are excited to have you on board.</p><p>Best regards,<br>The Team</p>",
+        From:    "noreply@example.com",
+        ReplyTo: "support@example.com",
+        TemplateID: "welcome_template_123",
+        TemplateVariables: map[string]interface{}{
+            "user_name":      "John Doe",
+            "company_name":   "Acme Corp",
+            "activation_link": "https://example.com/activate/123",
+        },
+        Attachments: []Attachment{
+            {
+                Filename:    "welcome_guide.pdf",
+                Content:     attachmentContent,
+                ContentType: "application/pdf",
+            },
+        },
+        Priority: "normal",
+        Tracking: &TrackingConfig{
+            Opens:    true,
+            Clicks:   true,
+            Delivery: true,
+        },
+        Metadata: map[string]interface{}{
+            "campaign_id":   "welcome_campaign_2024",
+            "user_segment":  "new_users",
+            "source":        "registration_flow",
+        },
+    }
+    
+    jsonData, _ := json.Marshal(payload)
+    
+    req, _ := http.NewRequest("POST", "https://api.example.com/org/mail/send", bytes.NewBuffer(jsonData))
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    req.Header.Set("Content-Type", "application/json")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "message_id": "msg_1234567890abcdef",
+    "status": "sent",
+    "recipients": {
+      "to": ["user@example.com", "admin@example.com"],
+      "cc": ["manager@example.com"],
+      "bcc": ["archive@example.com"]
+    },
+    "subject": "Welcome to Our Platform",
+    "from": "noreply@example.com",
+    "reply_to": "support@example.com",
+    "template_id": "welcome_template_123",
+    "priority": "normal",
+    "tracking": {
+      "opens": true,
+      "clicks": true,
+      "delivery": true
+    },
+    "metadata": {
+      "campaign_id": "welcome_campaign_2024",
+      "user_segment": "new_users",
+      "source": "registration_flow"
+    },
+    "created_at": "2024-01-15T10:30:00Z",
+    "estimated_delivery": "2024-01-15T10:30:30Z",
+    "attachments_count": 1
+  },
+  "message": "Email sent successfully",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="400 Bad Request" type="object">
+  Invalid request parameters or validation errors
+</ResponseField>
+
+<ResponseField name="401 Unauthorized" type="object">
+  Invalid or expired authentication token
+</ResponseField>
+
+<ResponseField name="403 Forbidden" type="object">
+  Insufficient permissions to send emails
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests" type="object">
+  Rate limit exceeded
+</ResponseField>
+
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Validation Error (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "field": "to",
+          "reason": "At least one recipient email address is required"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Invalid Email Address (400)" icon="exclamation">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "INVALID_EMAIL",
+        "message": "Invalid email address",
+        "details": {
+          "field": "to",
+          "reason": "Email address 'invalid-email' is not valid"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Template Not Found (400)" icon="search">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "TEMPLATE_NOT_FOUND",
+        "message": "Email template not found",
+        "details": {
+          "field": "template_id",
+          "reason": "Template 'welcome_template_123' does not exist"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to send emails",
+        "details": {
+          "field": "permissions",
+          "reason": "Email sending requires team_admin or organization_admin role"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Notes
+
+<AccordionGroup>
+  <Accordion title="Email Templates" icon="file-text">
+    Template features:
+    
+    - **Variable Substitution**: Use template variables for dynamic content
+    - **HTML Support**: Rich HTML templates with styling
+    - **Responsive Design**: Mobile-friendly email templates
+    - **Brand Consistency**: Organization branding and styling
+  </Accordion>
+  
+  <Accordion title="Attachments" icon="paperclip">
+    Attachment support:
+    
+    - **File Types**: PDF, images, documents, spreadsheets
+    - **Size Limits**: Maximum 25MB per attachment
+    - **Encoding**: Base64 encoded content
+    - **Security**: Virus scanning and content validation
+  </Accordion>
+  
+  <Accordion title="Tracking Features" icon="chart">
+    Email tracking:
+    
+    - **Open Tracking**: Track when emails are opened
+    - **Click Tracking**: Track link clicks in emails
+    - **Delivery Status**: Track delivery success/failure
+    - **Analytics**: Detailed engagement metrics
+  </Accordion>
+  
+  <Accordion title="Scheduling" icon="clock">
+    Email scheduling:
+    
+    - **Future Delivery**: Schedule emails for later delivery
+    - **Time Zones**: Support for different time zones
+    - **Recurring**: Support for recurring email campaigns
+    - **Cancellation**: Cancel scheduled emails before delivery
+  </Accordion>
+</AccordionGroup>
+
+## Code Examples
+
+<AccordionGroup>
+  <Accordion title="Email Service" icon="cog">
+    ```javascript
+    class EmailService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async sendEmail(emailData) {
+        try {
+          const response = await this.apiClient.makeRequest('/org/mail/send', {
+            method: 'POST',
+            body: JSON.stringify(emailData)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to send email');
+          }
+          
+          const result = await response.json();
+          
+          // Log email sending
+          console.log(`Email sent: ${result.data.message_id}`);
+          console.log(`Recipients: ${result.data.recipients.to.length}`);
+          
+          return result;
+          
+        } catch (error) {
+          console.error('Error sending email:', error);
+          throw error;
+        }
+      }
+      
+      async sendWelcomeEmail(userEmail, userName, activationLink) {
+        return this.sendEmail({
+          to: [userEmail],
+          subject: 'Welcome to Our Platform',
+          template_id: 'welcome_template',
+          template_variables: {
+            user_name: userName,
+            activation_link: activationLink
+          },
+          tracking: {
+            opens: true,
+            clicks: true,
+            delivery: true
+          },
+          metadata: {
+            type: 'welcome',
+            user_id: userEmail
+          }
+        });
+      }
+      
+      async sendNotificationEmail(recipients, subject, message, priority = 'normal') {
+        return this.sendEmail({
+          to: recipients,
+          subject: subject,
+          html_body: `<p>${message}</p>`,
+          priority: priority,
+          tracking: {
+            opens: true,
+            delivery: true
+          }
+        });
+      }
+      
+      async sendScheduledEmail(recipients, subject, body, scheduledAt) {
+        return this.sendEmail({
+          to: recipients,
+          subject: subject,
+          html_body: body,
+          scheduled_at: scheduledAt,
+          tracking: {
+            opens: true,
+            clicks: true,
+            delivery: true
+          }
+        });
+      }
+      
+      async sendEmailWithAttachment(recipients, subject, body, attachments) {
+        return this.sendEmail({
+          to: recipients,
+          subject: subject,
+          html_body: body,
+          attachments: attachments,
+          tracking: {
+            opens: true,
+            delivery: true
+          }
+        });
+      }
+      
+      async sendBulkEmail(recipients, subject, templateId, templateVariables) {
+        return this.sendEmail({
+          to: recipients,
+          subject: subject,
+          template_id: templateId,
+          template_variables: templateVariables,
+          priority: 'normal',
+          tracking: {
+            opens: true,
+            clicks: true,
+            delivery: true
+          },
+          metadata: {
+            type: 'bulk',
+            recipient_count: recipients.length
+          }
+        });
+      }
+    }
+    
+    // Usage example
+    const emailService = new EmailService(apiClient);
+    
+    // Send welcome email
+    const welcomeEmail = await emailService.sendWelcomeEmail(
+      'user@example.com',
+      'John Doe',
+      'https://example.com/activate/123'
+    );
+    
+    // Send notification
+    const notification = await emailService.sendNotificationEmail(
+      ['admin@example.com', 'manager@example.com'],
+      'System Alert',
+      'The system is experiencing high load.',
+      'high'
+    );
+    
+    // Send scheduled email
+    const scheduledEmail = await emailService.sendScheduledEmail(
+      ['user@example.com'],
+      'Reminder',
+      '<p>Don\'t forget about your appointment tomorrow!</p>',
+      '2024-01-16T09:00:00Z'
+    );
+    ```
+  </Accordion>
+  
+  <Accordion title="Python Email Manager" icon="python">
+    ```python
+    import requests
+    import base64
+    from typing import Dict, List, Optional
+    from datetime import datetime, timedelta
+    
+    class EmailManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def send_email(self, email_data: Dict) -> Dict:
+            """Send an email"""
+            try:
+                response = self.api_client.post('/org/mail/send', json=email_data)
+                response.raise_for_status()
+                
+                result = response.json()
+                print(f"Email sent: {result['data']['message_id']}")
+                print(f"Recipients: {len(result['data']['recipients']['to'])}")
+                
+                return result
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error sending email: {e}")
+                raise
+        
+        def send_welcome_email(self, 
+                             user_email: str, 
+                             user_name: str, 
+                             activation_link: str) -> Dict:
+            """Send welcome email to new user"""
+            email_data = {
+                "to": [user_email],
+                "subject": "Welcome to Our Platform",
+                "template_id": "welcome_template",
+                "template_variables": {
+                    "user_name": user_name,
+                    "activation_link": activation_link
+                },
+                "tracking": {
+                    "opens": True,
+                    "clicks": True,
+                    "delivery": True
+                },
+                "metadata": {
+                    "type": "welcome",
+                    "user_id": user_email
+                }
+            }
+            
+            return self.send_email(email_data)
+        
+        def send_notification_email(self, 
+                                  recipients: List[str], 
+                                  subject: str, 
+                                  message: str, 
+                                  priority: str = "normal") -> Dict:
+            """Send notification email"""
+            email_data = {
+                "to": recipients,
+                "subject": subject,
+                "html_body": f"<p>{message}</p>",
+                "priority": priority,
+                "tracking": {
+                    "opens": True,
+                    "delivery": True
+                }
+            }
+            
+            return self.send_email(email_data)
+        
+        def send_scheduled_email(self, 
+                               recipients: List[str], 
+                               subject: str, 
+                               body: str, 
+                               scheduled_at: str) -> Dict:
+            """Send scheduled email"""
+            email_data = {
+                "to": recipients,
+                "subject": subject,
+                "html_body": body,
+                "scheduled_at": scheduled_at,
+                "tracking": {
+                    "opens": True,
+                    "clicks": True,
+                    "delivery": True
+                }
+            }
+            
+            return self.send_email(email_data)
+        
+        def send_email_with_attachment(self, 
+                                     recipients: List[str], 
+                                     subject: str, 
+                                     body: str, 
+                                     attachments: List[Dict]) -> Dict:
+            """Send email with attachments"""
+            email_data = {
+                "to": recipients,
+                "subject": subject,
+                "html_body": body,
+                "attachments": attachments,
+                "tracking": {
+                    "opens": True,
+                    "delivery": True
+                }
+            }
+            
+            return self.send_email(email_data)
+        
+        def send_bulk_email(self, 
+                          recipients: List[str], 
+                          subject: str, 
+                          template_id: str, 
+                          template_variables: Dict) -> Dict:
+            """Send bulk email"""
+            email_data = {
+                "to": recipients,
+                "subject": subject,
+                "template_id": template_id,
+                "template_variables": template_variables,
+                "priority": "normal",
+                "tracking": {
+                    "opens": True,
+                    "clicks": True,
+                    "delivery": True
+                },
+                "metadata": {
+                    "type": "bulk",
+                    "recipient_count": len(recipients)
+                }
+            }
+            
+            return self.send_email(email_data)
+        
+        def create_attachment(self, file_path: str, filename: str = None) -> Dict:
+            """Create attachment from file"""
+            if filename is None:
+                filename = file_path.split('/')[-1]
+            
+            with open(file_path, 'rb') as f:
+                content = base64.b64encode(f.read()).decode('utf-8')
+            
+            # Determine content type based on file extension
+            content_type = self.get_content_type(filename)
+            
+            return {
+                "filename": filename,
+                "content": content,
+                "content_type": content_type
+            }
+        
+        def get_content_type(self, filename: str) -> str:
+            """Get content type based on file extension"""
+            extension = filename.lower().split('.')[-1]
+            
+            content_types = {
+                'pdf': 'application/pdf',
+                'doc': 'application/msword',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'xls': 'application/vnd.ms-excel',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'jpg': 'image/jpeg',
+                'jpeg': 'image/jpeg',
+                'png': 'image/png',
+                'gif': 'image/gif',
+                'txt': 'text/plain',
+                'csv': 'text/csv'
+            }
+            
+            return content_types.get(extension, 'application/octet-stream')
+        
+        def schedule_email_for_tomorrow(self, 
+                                      recipients: List[str], 
+                                      subject: str, 
+                                      body: str) -> Dict:
+            """Schedule email for tomorrow at 9 AM"""
+            tomorrow = datetime.now() + timedelta(days=1)
+            scheduled_at = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
+            
+            return self.send_scheduled_email(
+                recipients, 
+                subject, 
+                body, 
+                scheduled_at.isoformat() + 'Z'
+            )
+    
+    # Usage example
+    email_manager = EmailManager(api_client)
+    
+    # Send welcome email
+    welcome_email = email_manager.send_welcome_email(
+        user_email="user@example.com",
+        user_name="John Doe",
+        activation_link="https://example.com/activate/123"
+    )
+    
+    # Send notification
+    notification = email_manager.send_notification_email(
+        recipients=["admin@example.com", "manager@example.com"],
+        subject="System Alert",
+        message="The system is experiencing high load.",
+        priority="high"
+    )
+    
+    # Send email with attachment
+    attachment = email_manager.create_attachment("welcome_guide.pdf")
+    email_with_attachment = email_manager.send_email_with_attachment(
+        recipients=["user@example.com"],
+        subject="Welcome Guide",
+        body="<p>Please find the welcome guide attached.</p>",
+        attachments=[attachment]
+    )
+    
+    # Schedule email for tomorrow
+    scheduled_email = email_manager.schedule_email_for_tomorrow(
+        recipients=["user@example.com"],
+        subject="Daily Reminder",
+        body="<p>Don't forget to check your dashboard!</p>"
+    )
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Get Email Status" icon="info">
+    `GET /org/mail/status/{messageId}` - Check email delivery status
+  </Card>
+  <Card title="Get Email Templates" icon="file-text">
+    `GET /org/mail/templates` - List available email templates
+  </Card>
+  <Card title="Get Email Logs" icon="list">
+    `GET /org/mail/logs` - View email sending history
+  </Card>
+  <Card title="Cancel Scheduled Email" icon="x">
+    `DELETE /org/mail/scheduled/{messageId}` - Cancel scheduled email
+  </Card>
+</CardGroup>

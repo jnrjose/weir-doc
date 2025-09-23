@@ -1,15 +1,15 @@
 ---
 title: "Get Cards"
 api: "GET /org/cards"
-description: "Retrieve list of organization cards and payment methods"
+description: "Retrieve list of cards in the organization"
 ---
 
-Retrieve a comprehensive list of all payment cards and payment methods associated with your organization. This endpoint provides access to billing and payment information for managing subscriptions and transactions.
+Retrieve a comprehensive list of all cards within your organization, including their details, configurations, and status. This endpoint provides detailed information about card management and payment processing.
 
 <Note>
   **Console API Endpoint**
   
-  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for payment and billing management.
+  This endpoint is part of the Console API category and requires Bearer Token authentication. It's designed for card management and payment oversight within the Weir AI platform.
 </Note>
 
 ## Authentication
@@ -23,37 +23,121 @@ Authorization: Bearer <your_jwt_token>
 ## Query Parameters
 
 <ParamField query="page" type="string" required="false">
-  Page number for pagination (default: 1)
+  Page number for pagination
   
   **Example**: "1"
+  
+  **Default**: "1"
+  
+  **Constraints**: 
+  - Must be a positive integer
+  - Minimum value: 1
 </ParamField>
 
 <ParamField query="limit" type="string" required="false">
-  Number of cards per page (default: 20, max: 100)
+  Number of cards to return per page
   
   **Example**: "20"
+  
+  **Default**: "20"
+  
+  **Constraints**: 
+  - Must be between 1 and 100
+  - Recommended: 20-50 for optimal performance
 </ParamField>
 
 <ParamField query="status" type="string" required="false">
   Filter cards by status
   
-  **Options**: "active", "inactive", "expired", "pending"
+  **Options**: "active", "inactive", "expired", "suspended", "pending"
   
   **Example**: "active"
+  
+  **Default**: "active"
+  
+  **Note**: If not specified, returns only active cards
 </ParamField>
 
-<ParamField query="card_type" type="string" required="false">
+<ParamField query="type" type="string" required="false">
   Filter cards by type
   
-  **Options**: "credit", "debit", "prepaid", "corporate"
+  **Options**: "credit", "debit", "prepaid", "virtual", "corporate"
   
   **Example**: "credit"
+  
+  **Note**: If not specified, returns all card types
+</ParamField>
+
+<ParamField query="brand" type="string" required="false">
+  Filter cards by brand
+  
+  **Options**: "visa", "mastercard", "amex", "discover", "other"
+  
+  **Example**: "visa"
+  
+  **Note**: If not specified, returns all card brands
+</ParamField>
+
+<ParamField query="teamId" type="string" required="false">
+  Filter cards by team ID
+  
+  **Example**: "team_1234567890abcdef"
+  
+  **Constraints**: 
+  - Must be a valid team ID
+  - Team must exist in your organization
+  - You must have access to the team
 </ParamField>
 
 <ParamField query="search" type="string" required="false">
-  Search cards by last 4 digits or nickname
+  Search cards by last four digits or cardholder name
   
   **Example**: "1234"
+  
+  **Constraints**: 
+  - Minimum length: 2 characters
+  - Case-insensitive search
+  - Searches last four digits and cardholder name
+</ParamField>
+
+<ParamField query="sort_by" type="string" required="false">
+  Sort cards by specified field
+  
+  **Options**: "name", "type", "brand", "status", "created_at", "updated_at", "expires_at"
+  
+  **Example**: "expires_at"
+  
+  **Default**: "created_at"
+</ParamField>
+
+<ParamField query="sort_order" type="string" required="false">
+  Sort order for the results
+  
+  **Options**: "asc", "desc"
+  
+  **Example**: "desc"
+  
+  **Default**: "desc"
+</ParamField>
+
+<ParamField query="expires_soon" type="string" required="false">
+  Filter cards that expire within specified days
+  
+  **Example**: "30"
+  
+  **Constraints**: 
+  - Must be a positive integer
+  - Returns cards expiring within the specified number of days
+</ParamField>
+
+<ParamField query="is_default" type="string" required="false">
+  Filter cards by default status
+  
+  **Options**: "true", "false"
+  
+  **Example**: "true"
+  
+  **Note**: If not specified, returns cards regardless of default status
 </ParamField>
 
 ## Response
@@ -70,28 +154,28 @@ Authorization: Bearer <your_jwt_token>
   Unique identifier for the card
 </ResponseField>
 
-<ResponseField name="data[].nickname" type="string">
-  User-defined nickname for the card
+<ResponseField name="data[].name" type="string">
+  Name of the card (if provided)
+</ResponseField>
+
+<ResponseField name="data[].brand" type="string">
+  Card brand (visa, mastercard, amex, discover, other)
+</ResponseField>
+
+<ResponseField name="data[].type" type="string">
+  Card type (credit, debit, prepaid, virtual, corporate)
 </ResponseField>
 
 <ResponseField name="data[].last_four" type="string">
   Last four digits of the card number
 </ResponseField>
 
-<ResponseField name="data[].brand" type="string">
-  Card brand (Visa, Mastercard, American Express, etc.)
-</ResponseField>
-
-<ResponseField name="data[].card_type" type="string">
-  Type of card (credit, debit, prepaid, corporate)
-</ResponseField>
-
 <ResponseField name="data[].exp_month" type="integer">
-  Card expiration month (1-12)
+  Expiration month (1-12)
 </ResponseField>
 
 <ResponseField name="data[].exp_year" type="integer">
-  Card expiration year
+  Expiration year (4 digits)
 </ResponseField>
 
 <ResponseField name="data[].status" type="string">
@@ -99,23 +183,111 @@ Authorization: Bearer <your_jwt_token>
 </ResponseField>
 
 <ResponseField name="data[].is_default" type="boolean">
-  Whether this is the default payment method
+  Whether this is the default card for the organization
+</ResponseField>
+
+<ResponseField name="data[].team_id" type="string">
+  ID of the associated team
+</ResponseField>
+
+<ResponseField name="data[].team_name" type="string">
+  Name of the associated team
+</ResponseField>
+
+<ResponseField name="data[].cardholder_name" type="string">
+  Name of the cardholder
 </ResponseField>
 
 <ResponseField name="data[].billing_address" type="object">
-  Billing address associated with the card
+  Billing address information
+</ResponseField>
+
+<ResponseField name="data[].billing_address.line1" type="string">
+  First line of billing address
+</ResponseField>
+
+<ResponseField name="data[].billing_address.line2" type="string">
+  Second line of billing address
+</ResponseField>
+
+<ResponseField name="data[].billing_address.city" type="string">
+  City of billing address
+</ResponseField>
+
+<ResponseField name="data[].billing_address.state" type="string">
+  State of billing address
+</ResponseField>
+
+<ResponseField name="data[].billing_address.postal_code" type="string">
+  Postal code of billing address
+</ResponseField>
+
+<ResponseField name="data[].billing_address.country" type="string">
+  Country of billing address
 </ResponseField>
 
 <ResponseField name="data[].created_at" type="string">
-  ISO 8601 timestamp when the card was added
+  ISO 8601 timestamp when the card was created
+</ResponseField>
+
+<ResponseField name="data[].updated_at" type="string">
+  ISO 8601 timestamp when the card was last updated
+</ResponseField>
+
+<ResponseField name="data[].created_by" type="string">
+  User ID of the person who added the card
 </ResponseField>
 
 <ResponseField name="data[].last_used" type="string">
-  ISO 8601 timestamp of last successful use
+  ISO 8601 timestamp of last card usage
+</ResponseField>
+
+<ResponseField name="data[].usage_stats" type="object">
+  Card usage statistics
+</ResponseField>
+
+<ResponseField name="data[].usage_stats.total_transactions" type="integer">
+  Total number of transactions
+</ResponseField>
+
+<ResponseField name="data[].usage_stats.total_amount" type="number">
+  Total amount processed
+</ResponseField>
+
+<ResponseField name="data[].usage_stats.currency" type="string">
+  Currency for the amounts
+</ResponseField>
+
+<ResponseField name="data[].usage_stats.last_transaction" type="string">
+  ISO 8601 timestamp of last transaction
 </ResponseField>
 
 <ResponseField name="pagination" type="object">
   Pagination information
+</ResponseField>
+
+<ResponseField name="pagination.page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="pagination.limit" type="integer">
+  Number of items per page
+</ResponseField>
+
+<ResponseField name="pagination.total" type="integer">
+  Total number of cards
+</ResponseField>
+
+<ResponseField name="pagination.total_pages" type="integer">
+  Total number of pages
+</ResponseField>
+
+<ResponseField name="pagination.has_next" type="boolean">
+  Whether there are more pages available
+</ResponseField>
+
+<ResponseField name="pagination.has_prev" type="boolean">
+  Whether there are previous pages available
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -130,17 +302,15 @@ Authorization: Bearer <your_jwt_token>
 
 <CodeGroup>
 ```bash cURL
-curl -X GET "https://api.example.com/org/cards?status=active&card_type=credit" \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
-  -H "Content-Type: application/json"
+curl -X GET "https://api.example.com/org/cards?page=1&limit=20&status=active&type=credit&brand=visa&sort_by=expires_at&sort_order=asc&expires_soon=30&is_default=true" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 ```javascript JavaScript
-const response = await fetch('https://api.example.com/org/cards?status=active&card_type=credit', {
+const response = await fetch('https://api.example.com/org/cards?page=1&limit=20&status=active&type=credit&brand=visa&sort_by=expires_at&sort_order=asc&expires_soon=30&is_default=true', {
   method: 'GET',
   headers: {
-    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-    'Content-Type': 'application/json'
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   }
 });
 
@@ -152,20 +322,89 @@ console.log(data);
 import requests
 
 params = {
+    'page': 1,
+    'limit': 20,
     'status': 'active',
-    'card_type': 'credit'
+    'type': 'credit',
+    'brand': 'visa',
+    'sort_by': 'expires_at',
+    'sort_order': 'asc',
+    'expires_soon': 30,
+    'is_default': 'true'
 }
 
 response = requests.get(
     'https://api.example.com/org/cards',
     headers={
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        'Content-Type': 'application/json'
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
     },
     params=params
 )
 
 print(response.json())
+```
+
+```php PHP
+<?php
+$params = http_build_query([
+    'page' => 1,
+    'limit' => 20,
+    'status' => 'active',
+    'type' => 'credit',
+    'brand' => 'visa',
+    'sort_by' => 'expires_at',
+    'sort_order' => 'asc',
+    'expires_soon' => 30,
+    'is_default' => 'true'
+]);
+
+$response = file_get_contents("https://api.example.com/org/cards?$params", false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    ]
+]));
+
+$data = json_decode($response, true);
+print_r($data);
+?>
+```
+
+```go Go
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "net/url"
+)
+
+func main() {
+    baseURL := "https://api.example.com/org/cards"
+    
+    params := url.Values{}
+    params.Add("page", "1")
+    params.Add("limit", "20")
+    params.Add("status", "active")
+    params.Add("type", "credit")
+    params.Add("brand", "visa")
+    params.Add("sort_by", "expires_at")
+    params.Add("sort_order", "asc")
+    params.Add("expires_soon", "30")
+    params.Add("is_default", "true")
+    
+    req, _ := http.NewRequest("GET", baseURL+"?"+params.Encode(), nil)
+    req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
+    
+    client := &http.Client{}
+    resp, _ := client.Do(req)
+    defer resp.Body.Close()
+    
+    var result map[string]interface{}
+    json.NewDecoder(resp.Body).Decode(&result)
+    fmt.Printf("%+v\n", result)
+}
 ```
 </CodeGroup>
 
@@ -177,44 +416,67 @@ print(response.json())
   "data": [
     {
       "card_id": "card_1234567890abcdef",
-      "nickname": "Company Credit Card",
+      "name": "Corporate Credit Card",
+      "brand": "visa",
+      "type": "credit",
       "last_four": "4242",
-      "brand": "Visa",
-      "card_type": "credit",
       "exp_month": 12,
       "exp_year": 2025,
       "status": "active",
       "is_default": true,
+      "team_id": "team_1234567890abcdef",
+      "team_name": "Development Team",
+      "cardholder_name": "John Smith",
       "billing_address": {
         "line1": "123 Main Street",
         "line2": "Suite 100",
+        "city": "San Francisco",
+        "state": "CA",
+        "postal_code": "94105",
+        "country": "US"
+      },
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z",
+      "created_by": "user_1234567890abcdef",
+      "last_used": "2024-01-15T10:25:00Z",
+      "usage_stats": {
+        "total_transactions": 45,
+        "total_amount": 12500.00,
+        "currency": "USD",
+        "last_transaction": "2024-01-15T10:25:00Z"
+      }
+    },
+    {
+      "card_id": "card_0987654321fedcba",
+      "name": "Business Debit Card",
+      "brand": "mastercard",
+      "type": "debit",
+      "last_four": "5555",
+      "exp_month": 8,
+      "exp_year": 2026,
+      "status": "active",
+      "is_default": false,
+      "team_id": "team_1234567890abcdef",
+      "team_name": "Development Team",
+      "cardholder_name": "Jane Doe",
+      "billing_address": {
+        "line1": "456 Oak Avenue",
+        "line2": null,
         "city": "New York",
         "state": "NY",
         "postal_code": "10001",
         "country": "US"
       },
-      "created_at": "2024-01-01T00:00:00Z",
-      "last_used": "2024-01-15T10:30:00Z"
-    },
-    {
-      "card_id": "card_0987654321fedcba",
-      "nickname": "Backup Card",
-      "last_four": "5555",
-      "brand": "Mastercard",
-      "card_type": "credit",
-      "exp_month": 8,
-      "exp_year": 2026,
-      "status": "active",
-      "is_default": false,
-      "billing_address": {
-        "line1": "456 Oak Avenue",
-        "city": "San Francisco",
-        "state": "CA",
-        "postal_code": "94102",
-        "country": "US"
-      },
-      "created_at": "2024-01-05T00:00:00Z",
-      "last_used": "2024-01-10T14:20:00Z"
+      "created_at": "2024-01-14T09:15:00Z",
+      "updated_at": "2024-01-15T08:45:00Z",
+      "created_by": "user_0987654321fedcba",
+      "last_used": "2024-01-15T09:30:00Z",
+      "usage_stats": {
+        "total_transactions": 23,
+        "total_amount": 8750.00,
+        "currency": "USD",
+        "last_transaction": "2024-01-15T09:30:00Z"
+      }
     }
   ],
   "pagination": {
@@ -232,212 +494,545 @@ print(response.json())
 
 ## Error Responses
 
+<ResponseField name="400 Bad Request" type="object">
+  Invalid query parameters or validation errors
+</ResponseField>
+
 <ResponseField name="401 Unauthorized" type="object">
   Invalid or expired authentication token
 </ResponseField>
 
 <ResponseField name="403 Forbidden" type="object">
-  Insufficient permissions to view payment cards
-</ResponseField>
-
-<ResponseField name="400 Bad Request" type="object">
-  Invalid query parameters
+  Insufficient permissions to view cards
 </ResponseField>
 
 <ResponseField name="429 Too Many Requests" type="object">
   Rate limit exceeded
 </ResponseField>
 
+### Example Error Responses
+
+<AccordionGroup>
+  <Accordion title="Invalid Parameters (400)" icon="exclamation-triangle">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid query parameters",
+        "details": {
+          "field": "limit",
+          "reason": "Limit must be between 1 and 100"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Unauthorized (401)" icon="user-slash">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "UNAUTHORIZED",
+        "message": "Invalid or expired authentication token",
+        "details": {
+          "field": "authorization",
+          "reason": "Token validation failed"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Insufficient Permissions (403)" icon="ban">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "FORBIDDEN",
+        "message": "Insufficient permissions to view cards",
+        "details": {
+          "field": "permissions",
+          "reason": "Card access requires organization membership"
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Rate Limited (429)" icon="clock">
+    ```json
+    {
+      "success": false,
+      "error": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests",
+        "details": {
+          "field": "rate_limit",
+          "reason": "Please wait before making another request",
+          "retry_after": 60
+        }
+      },
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
 ## Usage Notes
 
 <AccordionGroup>
-  <Accordion title="Card Security" icon="shield">
-    Security features:
+  <Accordion title="Card Types" icon="credit-card">
+    Available card types:
     
-    - Only last 4 digits are returned
-    - Full card numbers are never exposed
-    - PCI DSS compliant storage
-    - Encrypted transmission
+    - **credit**: Credit cards for purchases and payments
+    - **debit**: Debit cards linked to bank accounts
+    - **prepaid**: Prepaid cards with pre-loaded funds
+    - **virtual**: Virtual cards for online transactions
+    - **corporate**: Corporate cards for business expenses
+  </Accordion>
+  
+  <Accordion title="Card Brands" icon="building">
+    Supported card brands:
+    
+    - **visa**: Visa cards
+    - **mastercard**: Mastercard cards
+    - **amex**: American Express cards
+    - **discover**: Discover cards
+    - **other**: Other card brands
   </Accordion>
   
   <Accordion title="Card Status" icon="info">
-    Card statuses:
+    Card status options:
     
-    - **active**: Card is ready for use
-    - **inactive**: Card is disabled but not deleted
-    - **expired**: Card has passed expiration date
-    - **pending**: Card is being processed
+    - **active**: Card is active and can be used
+    - **inactive**: Card is disabled and cannot be used
+    - **expired**: Card has expired and cannot be used
+    - **suspended**: Card access is temporarily suspended
+    - **pending**: Card is being processed or verified
   </Accordion>
   
-  <Accordion title="Billing Address" icon="map-pin">
-    Billing address includes:
+  <Accordion title="Security Features" icon="shield">
+    Security considerations:
     
-    - Street address (line1, line2)
-    - City, state, postal code
-    - Country code
-    - Used for payment verification
-  </Accordion>
-  
-  <Accordion title="Default Card" icon="star">
-    Default payment method:
-    
-    - Only one card can be default
-    - Used for automatic payments
-    - Can be changed at any time
-    - Required for subscriptions
+    - **PCI Compliance**: All card data is handled according to PCI DSS standards
+    - **Tokenization**: Card numbers are tokenized for security
+    - **Encryption**: All card data is encrypted in transit and at rest
+    - **Access Control**: Card access is restricted based on user permissions
   </Accordion>
 </AccordionGroup>
 
 ## Code Examples
 
 <AccordionGroup>
-  <Accordion title="Payment Card Component" icon="react">
+  <Accordion title="Card Management Service" icon="cog">
     ```javascript
-import React, { useState, useEffect } from 'react';
-
-const PaymentCards = () => {
-  const [cards, setCards] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    status: 'active',
-    card_type: ''
-  });
-
-  useEffect(() => {
-    fetchCards();
-  }, [filters]);
-
-  const fetchCards = async () => {
-    try {
-      setLoading(true);
-      const queryParams = new URLSearchParams(filters);
-      const response = await fetch(`/api/org/cards?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    class CardManagementService {
+      constructor(apiClient) {
+        this.apiClient = apiClient;
+      }
+      
+      async getCards(options = {}) {
+        try {
+          const params = new URLSearchParams();
+          
+          // Add query parameters
+          if (options.page) params.append('page', options.page);
+          if (options.limit) params.append('limit', options.limit);
+          if (options.status) params.append('status', options.status);
+          if (options.type) params.append('type', options.type);
+          if (options.brand) params.append('brand', options.brand);
+          if (options.teamId) params.append('teamId', options.teamId);
+          if (options.search) params.append('search', options.search);
+          if (options.sortBy) params.append('sort_by', options.sortBy);
+          if (options.sortOrder) params.append('sort_order', options.sortOrder);
+          if (options.expiresSoon) params.append('expires_soon', options.expiresSoon);
+          if (options.isDefault !== undefined) params.append('is_default', options.isDefault);
+          
+          const response = await this.apiClient.makeRequest(
+            `/org/cards?${params.toString()}`
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to get cards');
+          }
+          
+          return await response.json();
+          
+        } catch (error) {
+          console.error('Error getting cards:', error);
+          throw error;
         }
-      });
+      }
       
-      const data = await response.json();
-      setCards(data.data);
-    } catch (error) {
-      console.error('Error fetching cards:', error);
-    } finally {
-      setLoading(false);
+      async getAllCards() {
+        const allCards = [];
+        let page = 1;
+        let hasMore = true;
+        
+        while (hasMore) {
+          const result = await this.getCards({
+            page: page,
+            limit: 50
+          });
+          
+          allCards.push(...result.data);
+          hasMore = result.pagination.has_next;
+          page++;
+        }
+        
+        return allCards;
+      }
+      
+      async getActiveCards() {
+        return this.getCards({
+          status: 'active',
+          sortBy: 'created_at',
+          sortOrder: 'desc'
+        });
+      }
+      
+      async getCreditCards() {
+        return this.getCards({
+          type: 'credit',
+          status: 'active'
+        });
+      }
+      
+      async getDebitCards() {
+        return this.getCards({
+          type: 'debit',
+          status: 'active'
+        });
+      }
+      
+      async getVisaCards() {
+        return this.getCards({
+          brand: 'visa',
+          status: 'active'
+        });
+      }
+      
+      async getMastercardCards() {
+        return this.getCards({
+          brand: 'mastercard',
+          status: 'active'
+        });
+      }
+      
+      async getDefaultCards() {
+        return this.getCards({
+          isDefault: true,
+          status: 'active'
+        });
+      }
+      
+      async getExpiringCards(days = 30) {
+        return this.getCards({
+          status: 'active',
+          expiresSoon: days,
+          sortBy: 'expires_at',
+          sortOrder: 'asc'
+        });
+      }
+      
+      async getCardsByTeam(teamId) {
+        return this.getCards({
+          teamId: teamId,
+          status: 'active'
+        });
+      }
+      
+      async searchCards(searchTerm) {
+        return this.getCards({
+          search: searchTerm,
+          status: 'active'
+        });
+      }
     }
-  };
-
-  const formatCardNumber = (lastFour, brand) => {
-    const brandPrefix = {
-      'Visa': '4',
-      'Mastercard': '5',
-      'American Express': '3'
-    };
     
-    const prefix = brandPrefix[brand] || '•';
-    return `${prefix}•••• •••• •••• ${lastFour}`;
-  };
-
-  if (loading) return <div>Loading cards...</div>;
-
-  return (
-    <div className="payment-cards">
-      <div className="filters">
-        <select 
-          value={filters.status} 
-          onChange={(e) => setFilters({...filters, status: e.target.value})}
-        >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="expired">Expired</option>
-        </select>
-      </div>
-      
-      <div className="cards-grid">
-        {cards.map(card => (
-          <div key={card.card_id} className={`card-item ${card.is_default ? 'default' : ''}`}>
-            <div className="card-header">
-              <span className="card-brand">{card.brand}</span>
-              {card.is_default && <span className="default-badge">Default</span>}
-            </div>
-            <div className="card-number">
-              {formatCardNumber(card.last_four, card.brand)}
-            </div>
-            <div className="card-details">
-              <span>Expires: {card.exp_month}/{card.exp_year}</span>
-              <span className={`status ${card.status}`}>{card.status}</span>
-            </div>
-            {card.nickname && (
-              <div className="card-nickname">{card.nickname}</div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-```
+    // Usage example
+    const cardService = new CardManagementService(apiClient);
+    
+    // Get all active cards
+    const activeCards = await cardService.getActiveCards();
+    console.log(`Found ${activeCards.data.length} active cards`);
+    
+    // Get credit cards
+    const creditCards = await cardService.getCreditCards();
+    console.log(`Found ${creditCards.data.length} credit cards`);
+    
+    // Get expiring cards
+    const expiringCards = await cardService.getExpiringCards(30);
+    console.log(`Found ${expiringCards.data.length} cards expiring within 30 days`);
+    
+    // Get default cards
+    const defaultCards = await cardService.getDefaultCards();
+    console.log(`Found ${defaultCards.data.length} default cards`);
+    ```
   </Accordion>
   
-  <Accordion title="Python Payment Manager" icon="python">
+  <Accordion title="Python Card Manager" icon="python">
     ```python
-import requests
-from typing import List, Dict, Optional
-
-class PaymentManager:
-    def __init__(self, api_client):
-        self.api_client = api_client
+    import requests
+    from typing import Dict, List, Optional
+    from datetime import datetime, timedelta
     
-    def get_cards(self, 
-                  status: Optional[str] = None,
-                  card_type: Optional[str] = None,
-                  search: Optional[str] = None,
-                  page: int = 1,
-                  limit: int = 20) -> Dict:
-        """Get list of payment cards with optional filtering"""
-        try:
-            params = {
-                "page": page,
-                "limit": limit
+    class CardManager:
+        def __init__(self, api_client):
+            self.api_client = api_client
+        
+        def get_cards(self, 
+                     page: int = 1,
+                     limit: int = 20,
+                     status: str = "active",
+                     card_type: Optional[str] = None,
+                     brand: Optional[str] = None,
+                     team_id: Optional[str] = None,
+                     search: Optional[str] = None,
+                     sort_by: str = "created_at",
+                     sort_order: str = "desc",
+                     expires_soon: Optional[int] = None,
+                     is_default: Optional[bool] = None) -> Dict:
+            """Get cards with optional filtering and pagination"""
+            try:
+                params = {
+                    "page": page,
+                    "limit": limit,
+                    "status": status,
+                    "sort_by": sort_by,
+                    "sort_order": sort_order
+                }
+                
+                if card_type:
+                    params["type"] = card_type
+                if brand:
+                    params["brand"] = brand
+                if team_id:
+                    params["teamId"] = team_id
+                if search:
+                    params["search"] = search
+                if expires_soon:
+                    params["expires_soon"] = expires_soon
+                if is_default is not None:
+                    params["is_default"] = str(is_default).lower()
+                
+                response = self.api_client.get('/org/cards', params=params)
+                response.raise_for_status()
+                
+                return response.json()
+                
+            except requests.exceptions.RequestException as e:
+                print(f"Error getting cards: {e}")
+                raise
+        
+        def get_all_cards(self) -> List[Dict]:
+            """Get all cards across all pages"""
+            all_cards = []
+            page = 1
+            has_more = True
+            
+            while has_more:
+                result = self.get_cards(page=page, limit=50)
+                all_cards.extend(result["data"])
+                has_more = result["pagination"]["has_next"]
+                page += 1
+            
+            return all_cards
+        
+        def get_active_cards(self) -> Dict:
+            """Get all active cards"""
+            return self.get_cards(
+                status="active",
+                sort_by="created_at",
+                sort_order="desc"
+            )
+        
+        def get_credit_cards(self) -> Dict:
+            """Get all credit cards"""
+            return self.get_cards(
+                card_type="credit",
+                status="active"
+            )
+        
+        def get_debit_cards(self) -> Dict:
+            """Get all debit cards"""
+            return self.get_cards(
+                card_type="debit",
+                status="active"
+            )
+        
+        def get_prepaid_cards(self) -> Dict:
+            """Get all prepaid cards"""
+            return self.get_cards(
+                card_type="prepaid",
+                status="active"
+            )
+        
+        def get_virtual_cards(self) -> Dict:
+            """Get all virtual cards"""
+            return self.get_cards(
+                card_type="virtual",
+                status="active"
+            )
+        
+        def get_corporate_cards(self) -> Dict:
+            """Get all corporate cards"""
+            return self.get_cards(
+                card_type="corporate",
+                status="active"
+            )
+        
+        def get_visa_cards(self) -> Dict:
+            """Get all Visa cards"""
+            return self.get_cards(
+                brand="visa",
+                status="active"
+            )
+        
+        def get_mastercard_cards(self) -> Dict:
+            """Get all Mastercard cards"""
+            return self.get_cards(
+                brand="mastercard",
+                status="active"
+            )
+        
+        def get_amex_cards(self) -> Dict:
+            """Get all American Express cards"""
+            return self.get_cards(
+                brand="amex",
+                status="active"
+            )
+        
+        def get_default_cards(self) -> Dict:
+            """Get all default cards"""
+            return self.get_cards(
+                is_default=True,
+                status="active"
+            )
+        
+        def get_expiring_cards(self, days: int = 30) -> Dict:
+            """Get cards expiring within specified days"""
+            return self.get_cards(
+                status="active",
+                expires_soon=days,
+                sort_by="expires_at",
+                sort_order="asc"
+            )
+        
+        def get_cards_by_team(self, team_id: str) -> Dict:
+            """Get cards for a specific team"""
+            return self.get_cards(
+                team_id=team_id,
+                status="active"
+            )
+        
+        def search_cards(self, search_term: str) -> Dict:
+            """Search cards by last four digits or cardholder name"""
+            return self.get_cards(
+                search=search_term,
+                status="active"
+            )
+        
+        def get_card_statistics(self) -> Dict:
+            """Get card statistics"""
+            all_cards = self.get_all_cards()
+            
+            stats = {
+                "total_cards": len(all_cards),
+                "active_cards": len([c for c in all_cards if c["status"] == "active"]),
+                "inactive_cards": len([c for c in all_cards if c["status"] == "inactive"]),
+                "expired_cards": len([c for c in all_cards if c["status"] == "expired"]),
+                "suspended_cards": len([c for c in all_cards if c["status"] == "suspended"]),
+                "pending_cards": len([c for c in all_cards if c["status"] == "pending"]),
+                "default_cards": len([c for c in all_cards if c["is_default"]]),
+                "cards_by_type": {},
+                "cards_by_brand": {},
+                "cards_by_team": {}
             }
             
-            if status:
-                params["status"] = status
-            if card_type:
-                params["card_type"] = card_type
-            if search:
-                params["search"] = search
+            # Count by type
+            for card in all_cards:
+                card_type = card["type"]
+                if card_type not in stats["cards_by_type"]:
+                    stats["cards_by_type"][card_type] = 0
+                stats["cards_by_type"][card_type] += 1
             
-            response = self.api_client.get('/org/cards', params=params)
-            response.raise_for_status()
+            # Count by brand
+            for card in all_cards:
+                brand = card["brand"]
+                if brand not in stats["cards_by_brand"]:
+                    stats["cards_by_brand"][brand] = 0
+                stats["cards_by_brand"][brand] += 1
             
-            return response.json()
+            # Count by team
+            for card in all_cards:
+                team_name = card.get("team_name", "Unknown")
+                if team_name not in stats["cards_by_team"]:
+                    stats["cards_by_team"][team_name] = 0
+                stats["cards_by_team"][team_name] += 1
             
-        except requests.exceptions.RequestException as e:
-            print(f"Failed to get cards: {e}")
-            raise
+            return stats
+        
+        def get_card_by_last_four(self, last_four: str) -> Optional[Dict]:
+            """Find a specific card by last four digits"""
+            result = self.search_cards(last_four)
+            for card in result["data"]:
+                if card["last_four"] == last_four:
+                    return card
+            return None
+        
+        def get_cards_by_expiry_month(self, month: int, year: int) -> List[Dict]:
+            """Get cards expiring in a specific month and year"""
+            all_cards = self.get_all_cards()
+            return [c for c in all_cards if c["exp_month"] == month and c["exp_year"] == year]
+        
+        def get_high_usage_cards(self, min_transactions: int = 100) -> List[Dict]:
+            """Get cards with high usage"""
+            all_cards = self.get_all_cards()
+            return [c for c in all_cards if c.get("usage_stats", {}).get("total_transactions", 0) >= min_transactions]
+        
+        def get_cards_by_currency(self, currency: str) -> List[Dict]:
+            """Get cards by currency"""
+            all_cards = self.get_all_cards()
+            return [c for c in all_cards if c.get("usage_stats", {}).get("currency") == currency]
     
-    def get_active_cards(self) -> List[Dict]:
-        """Get all active payment cards"""
-        result = self.get_cards(status="active")
-        return result.get("data", [])
+    # Usage example
+    card_manager = CardManager(api_client)
     
-    def get_default_card(self) -> Optional[Dict]:
-        """Get the default payment card"""
-        cards = self.get_active_cards()
-        for card in cards:
-            if card.get("is_default", False):
-                return card
-        return None
+    # Get active cards
+    active_cards = card_manager.get_active_cards()
+    print(f"Found {len(active_cards['data'])} active cards")
     
-    def find_card_by_last_four(self, last_four: str) -> Optional[Dict]:
-        """Find card by last four digits"""
-        cards = self.get_cards()
-        for card in cards.get("data", []):
-            if card["last_four"] == last_four:
-                return card
-        return None
-```
+    # Get credit cards
+    credit_cards = card_manager.get_credit_cards()
+    print(f"Found {len(credit_cards['data'])} credit cards")
+    
+    # Get expiring cards
+    expiring_cards = card_manager.get_expiring_cards(30)
+    print(f"Found {len(expiring_cards['data'])} cards expiring within 30 days")
+    
+    # Get card statistics
+    stats = card_manager.get_card_statistics()
+    print(f"Card statistics: {stats}")
+    
+    # Find specific card
+    card = card_manager.get_card_by_last_four("4242")
+    if card:
+        print(f"Found card: {card['name']} ({card['brand']} {card['type']})")
+    
+    # Get high usage cards
+    high_usage_cards = card_manager.get_high_usage_cards(50)
+    print(f"Found {len(high_usage_cards)} high usage cards")
+    
+    # Get cards by expiry month
+    expiring_this_month = card_manager.get_cards_by_expiry_month(12, 2024)
+    print(f"Found {len(expiring_this_month)} cards expiring in December 2024")
+    ```
   </Accordion>
 </AccordionGroup>
 
@@ -445,15 +1040,15 @@ class PaymentManager:
 
 <CardGroup cols={2}>
   <Card title="Add Card" icon="plus">
-    `POST /org/cards` - Add new payment card
-  </Card>
-  <Card title="Update Card" icon="edit">
-    `PUT /org/cards/{cardId}` - Update card information
+    `POST /org/cards/add` - Add a new card
   </Card>
   <Card title="Delete Card" icon="trash">
-    `DELETE /org/cards/{cardId}` - Remove payment card
+    `DELETE /org/card/{cardId}` - Remove a card
   </Card>
-  <Card title="Set Default Card" icon="star">
-    `PUT /org/cards/{cardId}/default` - Set as default payment method
+  <Card title="Update Card" icon="edit">
+    `PATCH /org/card/{cardId}` - Update card information
+  </Card>
+  <Card title="Get Teams" icon="users">
+    `GET /org/teams` - List teams for card filtering
   </Card>
 </CardGroup>
