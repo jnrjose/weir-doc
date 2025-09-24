@@ -9,7 +9,9 @@
 		"dark": "#0A5D4A"
 	},
 	"api": {
-		"baseUrl": "https://api-dev.weir.ai/",
+		"mdx":{
+			"server": "https://api-dev.weir.ai/"
+		},
 		"auth": {
 			"method": "bearer"
 		},
