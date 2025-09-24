@@ -56,7 +56,6 @@ No request body is required for this endpoint. The authentication is handled thr
 
 ## Example Request
 
-<CodeGroup>
 ```bash cURL
 curl -X POST "https://external.example.com/auth/token" \
   -H "Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=" \
@@ -140,7 +139,6 @@ func main() {
     fmt.Printf("%+v\n", result)
 }
 ```
-</CodeGroup>
 
 ## Example Response
 
@@ -205,14 +203,6 @@ func main() {
     - Monitor token usage and expiration
   </Accordion>
   
-  <Accordion title="Rate Limiting" icon="tachometer">
-    Rate limit information:
-    
-    - Token generation is rate limited
-    - Typical limit: 10 requests per minute per IP
-    - Use exponential backoff for retries
-    - Monitor rate limit headers in responses
-  </Accordion>
   
   <Accordion title="Integration Examples" icon="code">
     Common integration patterns:
@@ -392,9 +382,6 @@ func main() {
   </Card>
   <Card title="Authentication Guide" icon="shield">
     Complete authentication documentation
-  </Card>
-  <Card title="Rate Limiting" icon="tachometer">
-    Understanding API rate limits
   </Card>
   <Card title="Error Handling" icon="exclamation-triangle">
     How to handle API errors
