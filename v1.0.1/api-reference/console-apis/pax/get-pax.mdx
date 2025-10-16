@@ -1,0 +1,72 @@
+---
+title: "Get PAX"
+description: "Retrieve PAX configurations"
+api: "GET /console/pax"
+---
+
+# Get PAX
+
+Retrieve all PAX (Platform Access Extension) configurations for your organization.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/console/pax' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "pax": [
+      {
+        "paxId": "pax_123456789",
+        "platformId": "platform_123456789",
+        "platformName": "My Platform",
+        "name": "My PAX",
+        "scopes": ["read", "write"],
+        "status": "active",
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "PAX configurations retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getPax = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/console/pax', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_pax(access_token):
+    response = requests.get(
+        'https://api.weir.ai/console/pax',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

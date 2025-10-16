@@ -1,0 +1,86 @@
+---
+title: "Get Talent List"
+description: "Retrieve list of all talent"
+api: "GET /talent"
+---
+
+# Get Talent List
+
+Retrieve a list of all talent in the system.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/talent?page=1&limit=20' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "talents": [
+      {
+        "talentId": "talent_123456789",
+        "fullname": "John Athlete",
+        "email": "john@athlete.com",
+        "status": "active",
+        "verified": true,
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 50,
+      "totalPages": 3
+    }
+  },
+  "message": "Talent list retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="20">
+Number of items per page (1-100).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getTalent = async (page, limit, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/talent?page=${page}&limit=${limit}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_talent(page, limit, access_token):
+    response = requests.get(
+        f'https://api.weir.ai/talent?page={page}&limit={limit}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

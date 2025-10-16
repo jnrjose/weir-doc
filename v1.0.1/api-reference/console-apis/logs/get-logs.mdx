@@ -1,0 +1,105 @@
+---
+title: "Get Logs"
+description: "Retrieve organization logs"
+api: "GET /console/logs"
+---
+
+# Get Logs
+
+Retrieve logs for your organization's activities and operations.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/console/logs?page=1&limit=20' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "logs": [
+      {
+        "logId": "log_123456789",
+        "type": "INFO",
+        "message": "Team created successfully",
+        "userId": "user_123456789",
+        "timestamp": "2024-01-22T15:30:00Z",
+        "action": "team.create",
+        "resourceId": "team_987654321"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 150,
+      "totalPages": 8
+    }
+  },
+  "message": "Logs retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="20">
+Number of logs per page (1-100).
+</ParamField>
+
+<ParamField query="type" type="string">
+Filter by log type (INFO, WARNING, ERROR).
+</ParamField>
+
+<ParamField query="startDate" type="string">
+Start date for filtering (YYYY-MM-DD).
+</ParamField>
+
+<ParamField query="endDate" type="string">
+End date for filtering (YYYY-MM-DD).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getLogs = async (filters, accessToken) => {
+  const params = new URLSearchParams(filters);
+  const response = await fetch(`https://api.weir.ai/console/logs?${params}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_logs(filters, access_token):
+    response = requests.get(
+        'https://api.weir.ai/console/logs',
+        params=filters,
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Use date filters to narrow down logs to specific time periods for easier analysis.
+</Tip>

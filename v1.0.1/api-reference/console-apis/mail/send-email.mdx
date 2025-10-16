@@ -1,0 +1,94 @@
+---
+title: "Send Email"
+description: "Send email notifications from your organization"
+api: "POST /console/mail/send"
+---
+
+# Send Email
+
+Send email notifications to users from your organization.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/console/mail/send' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "to": "recipient@example.com",
+    "subject": "Welcome to the team",
+    "body": "Welcome message...",
+    "templateId": "tpl_123456789"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "emailId": "email_123456789",
+    "to": "recipient@example.com",
+    "status": "sent",
+    "sentAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Email sent successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="to" type="string" required>
+Recipient email address.
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+Email subject line.
+</ParamField>
+
+<ParamField body="body" type="string">
+Email body content (plain text or HTML).
+</ParamField>
+
+<ParamField body="templateId" type="string">
+Email template ID to use (optional).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const sendEmail = async (emailData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/console/mail/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(emailData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def send_email(email_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/console/mail/send',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=email_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

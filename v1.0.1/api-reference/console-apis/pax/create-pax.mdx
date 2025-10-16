@@ -1,0 +1,91 @@
+---
+title: "Create PAX"
+description: "Create a new PAX (Platform Access Extension)"
+api: "POST /console/pax"
+---
+
+# Create PAX
+
+Create a new PAX (Platform Access Extension) for your platform.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/console/pax' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "platformId": "platform_123456789",
+    "name": "My PAX",
+    "scopes": ["read", "write"]
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "paxId": "pax_123456789",
+    "platformId": "platform_123456789",
+    "name": "My PAX",
+    "scopes": ["read", "write"],
+    "status": "active",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "PAX created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="platformId" type="string" required>
+Platform ID to create PAX for.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+PAX name.
+</ParamField>
+
+<ParamField body="scopes" type="array" required>
+Array of permission scopes.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createPax = async (paxData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/console/pax', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(paxData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_pax(pax_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/console/pax',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=pax_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

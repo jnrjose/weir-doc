@@ -1,0 +1,77 @@
+---
+title: "Get PAX Details"
+description: "Retrieve detailed PAX information"
+api: "GET /console/pax/:paxId"
+---
+
+# Get PAX Details
+
+Retrieve detailed information about a specific PAX configuration.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/console/pax/pax_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "paxId": "pax_123456789",
+    "platformId": "platform_123456789",
+    "platformName": "My Platform",
+    "name": "My PAX",
+    "scopes": ["read", "write", "crawl"],
+    "status": "active",
+    "statistics": {
+      "requestCount": 5000,
+      "lastAccessed": "2024-01-22T14:00:00Z"
+    },
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  "message": "PAX details retrieved successfully",
+  "status": "success"
+}
+```
+</RequestExample>
+
+## Path Parameters
+
+<ParamField path="paxId" type="string" required>
+Unique identifier of the PAX.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getPaxDetails = async (paxId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/console/pax/${paxId}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_pax_details(pax_id, access_token):
+    response = requests.get(
+        f'https://api.weir.ai/console/pax/{pax_id}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

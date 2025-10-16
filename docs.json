@@ -9,7 +9,7 @@
 		"dark": "#0A5D4A"
 	},
 	"api": {
-		"mdx":{
+		"mdx": {
 			"server": "https://api-dev.weir.ai/"
 		},
 		"auth": {
@@ -37,7 +37,7 @@
 	"navigation": {
 		"versions": [
 			{
-				"version": "v0.0.0",
+				"version": "v1.0.0",
 				"tabs": [
 					{
 						"tab": "Getting Started",
@@ -162,330 +162,6 @@
 				]
 			},
 			{
-				"version": "v0.0.1",
-				"tabs": [
-					{
-						"tab": "Getting Started",
-						"groups": [
-							{
-								"group": "Start Here",
-								"pages": [
-									"v0.0.1/index"
-								]
-							},
-							{
-								"group": "Core Concepts",
-								"pages": [
-									"v0.0.1/core/analysis",
-									"v0.0.1/core/nil"
-								]
-							},
-							{
-								"group": "Design Principles",
-								"pages": [
-									"v0.0.1/design/concept",
-									"v0.0.1/design/auth",
-									"v0.0.1/design/request",
-									"v0.0.1/design/response",
-									"v0.0.1/design/error",
-									"v0.0.1/design/rate"
-								]
-							},
-							{
-								"group": "Integration Guides",
-								"pages": [
-									"v0.0.1/integration/concept",
-									"v0.0.1/integration/auth",
-									"v0.0.1/integration/request",
-									"v0.0.1/integration/response",
-									"v0.0.1/integration/error",
-									"v0.0.1/integration/rate"
-								]
-							}
-						]
-					},
-					{
-						"tab": "API Reference",
-						"groups": [
-							{
-								"group": "API Playground",
-								"pages": [
-									"v0.0.1/api-playground"
-								]
-							},
-							{
-								"group": "Authentication",
-								"pages": [
-									"v0.0.1/reference/auth/authenticate",
-									"v0.0.1/reference/auth/authenticateAPI",
-									"v0.0.1/reference/auth/authenticateForgotToken",
-									"v0.0.1/reference/auth/login",
-									"v0.0.1/reference/auth/register",
-									"v0.0.1/reference/auth/token",
-									"v0.0.1/reference/auth/logout",
-									"v0.0.1/reference/auth/refresh/token",
-									"v0.0.1/reference/auth/revoke/token",
-									"v0.0.1/reference/auth/forgot",
-									"v0.0.1/reference/auth/forgot/resendOtp",
-									"v0.0.1/reference/auth/forgot/validateOtp",
-									"v0.0.1/reference/auth/update/password",
-									"v0.0.1/reference/auth/validate/invitee",
-									"v0.0.1/reference/auth/validate/invitee/otp",
-									"v0.0.1/reference/auth/register/invitee"
-								]
-							},
-							{
-								"group": "Organization Management",
-								"pages": [
-									"v0.0.1/reference/org/information",
-									"v0.0.1/reference/org/teams",
-									"v0.0.1/reference/org/team/create",
-									"v0.0.1/reference/org/team/update",
-									"v0.0.1/reference/org/team/delete",
-									"v0.0.1/reference/org/team/members",
-									"v0.0.1/reference/org/team/invite",
-									"v0.0.1/reference/org/platforms",
-									"v0.0.1/reference/org/platform/create",
-									"v0.0.1/reference/org/platform/update",
-									"v0.0.1/reference/org/platform/delete",
-									"v0.0.1/reference/org/clients",
-									"v0.0.1/reference/org/client/create",
-									"v0.0.1/reference/org/client/update",
-									"v0.0.1/reference/org/client/delete",
-									"v0.0.1/reference/org/refresh/client"
-								]
-							},
-							{
-								"group": "Ad Validation",
-								"pages": [
-									"v0.0.1/reference/ad/validateIdentity",
-									"v0.0.1/reference/ad/validation/status"
-								]
-							},
-							{
-								"group": "Trial Features",
-								"pages": [
-									"v0.0.1/reference/trial/register",
-									"v0.0.1/reference/trial/authenticate",
-									"v0.0.1/reference/trial/users",
-									"v0.0.1/reference/trial/user/create",
-									"v0.0.1/reference/trial/uploadImage",
-									"v0.0.1/reference/trial/upload-selfie",
-									"v0.0.1/reference/trial/selfie/upload",
-									"v0.0.1/reference/trial/fakeads",
-									"v0.0.1/reference/trial/fakead/create"
-								]
-							},
-							{
-								"group": "Event Logging",
-								"pages": [
-									"v0.0.1/reference/event/logs"
-								]
-							}
-						]
-					}
-				]
-			},
-		{
-			"version": "v1.0.0",
-			"tabs": [
-					{
-						"tab": "Getting Started",
-						"groups": [
-							{
-								"group": "Start Here",
-								"pages": [
-									"v1.0.0/index"
-								]
-							},
-							{
-								"group": "Quick Start",
-								"pages": [
-									"v1.0.0/quickstart"
-								]
-							},
-							{
-								"group": "Core Concepts",
-								"pages": [
-									"v1.0.0/core/concepts",
-									"v1.0.0/core/authentication"
-								]
-							},
-							{
-								"group": "Integration Guides",
-								"pages": [
-									"v1.0.0/integration/external-apis",
-									"v1.0.0/integration/console-apis"
-								]
-							}
-						]
-					},
-					{
-						"tab": "API Reference",
-						"groups": [
-							{
-								"group": "API Playground",
-								"pages": [
-									"v1.0.0/api-playground"
-								]
-							},
-							{
-								"group": "External APIs",
-								"pages": [
-									"v1.0.0/reference/external/index",
-									"v1.0.0/reference/external/generate-access-token"
-								]
-							},
-							{
-								"group": "Console APIs",
-								"pages": [
-									"v1.0.0/reference/console/index",
-									"v1.0.0/reference/console/mobile-register",
-									"v1.0.0/reference/console/get-organization-info",
-									"v1.0.0/reference/console/update-organization-info"
-								]
-							},
-							{
-								"group": "Authentication & Registration",
-								"pages": [
-									"v1.0.0/reference/auth/register",
-									"v1.0.0/reference/auth/validate-registration",
-									"v1.0.0/reference/auth/resend-registration-otp"
-								]
-							},
-							{
-								"group": "Team Management",
-								"pages": [
-									"v1.0.0/reference/console/teams/get-teams",
-									"v1.0.0/reference/console/teams/create-team",
-									"v1.0.0/reference/console/teams/invite-team-member",
-									"v1.0.0/reference/console/teams/get-team-members",
-									"v1.0.0/reference/console/teams/delete-team"
-								]
-							},
-							{
-								"group": "Organization Management",
-								"pages": [
-									"v1.0.0/reference/console/organization/get-organization-info",
-									"v1.0.0/reference/console/organization/update-organization-info"
-								]
-							},
-							{
-								"group": "Platform Management",
-								"pages": [
-									"v1.0.0/reference/console/platforms/create-platform",
-									"v1.0.0/reference/console/platforms/get-platforms",
-									"v1.0.0/reference/console/platforms/delete-platform",
-									"v1.0.0/reference/console/platforms/verify-platform"
-								]
-							},
-							{
-								"group": "Client Management",
-								"pages": [
-									"v1.0.0/reference/console/clients/create-client",
-									"v1.0.0/reference/console/clients/get-clients"
-								]
-							},
-							{
-								"group": "Talent Management",
-								"pages": [
-									"v1.0.0/reference/console/talent/get-talent",
-									"v1.0.0/reference/console/talent/get-talent-profile"
-								]
-							},
-							{
-								"group": "PAX Management",
-								"pages": [
-									"v1.0.0/reference/console/pax/create-pax"
-								]
-							},
-							{
-								"group": "Card Management",
-								"pages": [
-									"v1.0.0/reference/console/cards/get-cards",
-									"v1.0.0/reference/console/cards/add-card"
-								]
-							},
-							{
-								"group": "Mail Management",
-								"pages": [
-									"v1.0.0/reference/console/mail/send-email",
-									"v1.0.0/reference/console/mail/get-email-status"
-								]
-							},
-							{
-								"group": "Logs Management",
-								"pages": [
-									"v1.0.0/reference/console/logs/get-logs",
-									"v1.0.0/reference/console/logs/get-log-details",
-									"v1.0.0/reference/console/logs/export-logs"
-								]
-							},
-							{
-								"group": "Admin APIs",
-								"pages": [
-									"v1.0.0/reference/admin/index"
-								]
-							},
-							{
-								"group": "Admin Authentication",
-								"pages": [
-									"v1.0.0/reference/admin/login",
-									"v1.0.0/reference/admin/auth/logout",
-									"v1.0.0/reference/admin/auth/refresh-token"
-								]
-							},
-							{
-								"group": "Admin User Management",
-								"pages": [
-									"v1.0.0/reference/admin/members/get-members",
-									"v1.0.0/reference/admin/members/invite-member"
-								]
-							},
-							{
-								"group": "Admin System Management",
-								"pages": [
-									"v1.0.0/reference/admin/organizations/get-organizations",
-									"v1.0.0/reference/admin/system/get-licenses",
-									"v1.0.0/reference/admin/system/get-platforms"
-								]
-							},
-							{
-								"group": "Admin Mail Management",
-								"pages": [
-									"v1.0.0/reference/admin/mail/create-template",
-									"v1.0.0/reference/admin/mail/get-templates",
-									"v1.0.0/reference/admin/mail/update-template",
-									"v1.0.0/reference/admin/mail/delete-template"
-								]
-							},
-							{
-								"group": "Admin Pod Management",
-								"pages": [
-									"v1.0.0/reference/admin/pods/create-pod",
-									"v1.0.0/reference/admin/pods/get-pods",
-									"v1.0.0/reference/admin/pods/get-pod",
-									"v1.0.0/reference/admin/pods/start-pod",
-									"v1.0.0/reference/admin/pods/pause-pod",
-									"v1.0.0/reference/admin/pods/stop-pod",
-									"v1.0.0/reference/admin/pods/start-all-pods",
-									"v1.0.0/reference/admin/pods/pause-all-pods",
-									"v1.0.0/reference/admin/pods/stop-all-pods"
-								]
-							},
-							{
-								"group": "Admin Logging",
-								"pages": [
-									"v1.0.0/reference/admin/logging/create-log-entry",
-									"v1.0.0/reference/admin/logging/search-log-entries",
-									"v1.0.0/reference/admin/logging/get-log-entries"
-								]
-							}
-						]
-					}
-				]
-			},
-			{
 				"version": "v1.0.1",
 				"default": true,
 				"tabs": [
@@ -549,7 +225,8 @@
 								"group": "External APIs",
 								"pages": [
 									"v1.0.1/api-reference/external-apis/index",
-									"v1.0.1/api-reference/external-apis/generate-access-token"
+									"v1.0.1/api-reference/external-apis/generate-access-token",
+									"v1.0.1/api-reference/external-apis/validate-api-key"
 								]
 							},
 							{
@@ -570,57 +247,60 @@
 									"v1.0.1/api-reference/console-apis/auth/mobile-register"
 								]
 							},
-			{
-				"group": "Console APIs - Organization",
-				"pages": [
-					"v1.0.1/api-reference/console-apis/organization/get-info",
-					"v1.0.1/api-reference/console-apis/organization/update-info",
-					"v1.0.1/api-reference/console-apis/organization/billing-history",
-					"v1.0.1/api-reference/console-apis/organization/subscriptions",
-					"v1.0.1/api-reference/console-apis/organization/subscribe",
-					"v1.0.1/api-reference/console-apis/organization/cards",
-					"v1.0.1/api-reference/console-apis/organization/add-card",
-					"v1.0.1/api-reference/console-apis/organization/delete-card"
-				]
-			},
-			{
-				"group": "Console APIs - Platforms",
-				"pages": [
-					"v1.0.1/api-reference/console-apis/platforms/create-platform",
-					"v1.0.1/api-reference/console-apis/platforms/get-platforms",
-					"v1.0.1/api-reference/console-apis/platforms/verify-platform",
-					"v1.0.1/api-reference/console-apis/platforms/delete-platform"
-				]
-			},
-			{
-				"group": "Console APIs - Clients",
-				"pages": [
-					"v1.0.1/api-reference/console-apis/clients/create-client",
-					"v1.0.1/api-reference/console-apis/clients/get-clients",
-					"v1.0.1/api-reference/console-apis/clients/refresh-client",
-					"v1.0.1/api-reference/console-apis/clients/delete-client"
-				]
-			},
-			{
-				"group": "Console APIs - Talent",
-				"pages": [
-					"v1.0.1/api-reference/console-apis/talent/get-roster",
-					"v1.0.1/api-reference/console-apis/talent/invite-talent",
-					"v1.0.1/api-reference/console-apis/talent/search-talent",
-					"v1.0.1/api-reference/console-apis/talent/get-licenses",
-					"v1.0.1/api-reference/console-apis/talent/create-license",
-					"v1.0.1/api-reference/console-apis/talent/add-license-images",
-					"v1.0.1/api-reference/console-apis/talent/remove-license-image"
-				]
-			},
-			{
-				"group": "Console APIs - Users",
-				"pages": [
-					"v1.0.1/api-reference/console-apis/users/get-profile",
-					"v1.0.1/api-reference/console-apis/users/update-profile",
-					"v1.0.1/api-reference/console-apis/users/change-password"
-				]
-			},
+							{
+								"group": "Console APIs - Organization",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/organization/get-info",
+									"v1.0.1/api-reference/console-apis/organization/update-info",
+									"v1.0.1/api-reference/console-apis/organization/billing-history",
+									"v1.0.1/api-reference/console-apis/organization/subscriptions",
+									"v1.0.1/api-reference/console-apis/organization/subscribe",
+									"v1.0.1/api-reference/console-apis/organization/cards",
+									"v1.0.1/api-reference/console-apis/organization/add-card",
+									"v1.0.1/api-reference/console-apis/organization/delete-card"
+								]
+							},
+							{
+								"group": "Console APIs - Platforms",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/platforms/create-platform",
+									"v1.0.1/api-reference/console-apis/platforms/get-platforms",
+									"v1.0.1/api-reference/console-apis/platforms/verify-platform",
+									"v1.0.1/api-reference/console-apis/platforms/delete-platform",
+									"v1.0.1/api-reference/console-apis/platforms/get-platform-details"
+								]
+							},
+							{
+								"group": "Console APIs - Clients",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/clients/create-client",
+									"v1.0.1/api-reference/console-apis/clients/get-clients",
+									"v1.0.1/api-reference/console-apis/clients/refresh-client",
+									"v1.0.1/api-reference/console-apis/clients/delete-client"
+								]
+							},
+							{
+								"group": "Console APIs - Talent",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/talent/get-roster",
+									"v1.0.1/api-reference/console-apis/talent/invite-talent",
+									"v1.0.1/api-reference/console-apis/talent/search-talent",
+									"v1.0.1/api-reference/console-apis/talent/get-licenses",
+									"v1.0.1/api-reference/console-apis/talent/create-license",
+									"v1.0.1/api-reference/console-apis/talent/add-license-images",
+									"v1.0.1/api-reference/console-apis/talent/remove-license-image",
+									"v1.0.1/api-reference/console-apis/talent/get-talent",
+									"v1.0.1/api-reference/console-apis/talent/get-talent-profile"
+								]
+							},
+							{
+								"group": "Console APIs - Users",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/users/get-profile",
+									"v1.0.1/api-reference/console-apis/users/update-profile",
+									"v1.0.1/api-reference/console-apis/users/change-password"
+								]
+							},
 							{
 								"group": "Console APIs - Teams",
 								"pages": [
@@ -632,68 +312,91 @@
 									"v1.0.1/api-reference/console-apis/teams/delete-team"
 								]
 							},
-			{
-				"group": "Admin APIs - Overview",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/index"
-				]
-			},
-			{
-				"group": "Admin APIs - Authentication",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/auth/authenticate-admin",
-					"v1.0.1/api-reference/admin-apis/auth/login",
-					"v1.0.1/api-reference/admin-apis/auth/refresh-token",
-					"v1.0.1/api-reference/admin-apis/auth/logout"
-				]
-			},
-			{
-				"group": "Admin APIs - User Management",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/users/create-admin",
-					"v1.0.1/api-reference/admin-apis/users/get-members",
-					"v1.0.1/api-reference/admin-apis/users/invite-member"
-				]
-			},
-			{
-				"group": "Admin APIs - System",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/system/get-organizations",
-					"v1.0.1/api-reference/admin-apis/system/get-platforms",
-					"v1.0.1/api-reference/admin-apis/system/get-licenses"
-				]
-			},
-			{
-				"group": "Admin APIs - Mail",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/mail/create-template",
-					"v1.0.1/api-reference/admin-apis/mail/get-templates",
-					"v1.0.1/api-reference/admin-apis/mail/update-template",
-					"v1.0.1/api-reference/admin-apis/mail/delete-template"
-				]
-			},
-			{
-				"group": "Admin APIs - Pods",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/pods/create-pod",
-					"v1.0.1/api-reference/admin-apis/pods/get-pods",
-					"v1.0.1/api-reference/admin-apis/pods/get-pod",
-					"v1.0.1/api-reference/admin-apis/pods/start-pod",
-					"v1.0.1/api-reference/admin-apis/pods/pause-pod",
-					"v1.0.1/api-reference/admin-apis/pods/stop-pod",
-					"v1.0.1/api-reference/admin-apis/pods/start-all-pods",
-					"v1.0.1/api-reference/admin-apis/pods/pause-all-pods",
-					"v1.0.1/api-reference/admin-apis/pods/stop-all-pods"
-				]
-			},
-			{
-				"group": "Admin APIs - Logging",
-				"pages": [
-					"v1.0.1/api-reference/admin-apis/logging/create-log",
-					"v1.0.1/api-reference/admin-apis/logging/search-logs",
-					"v1.0.1/api-reference/admin-apis/logging/get-all-logs"
-				]
-			}
+							{
+								"group": "Admin APIs - Overview",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/index"
+								]
+							},
+							{
+								"group": "Admin APIs - Authentication",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/auth/authenticate-admin",
+									"v1.0.1/api-reference/admin-apis/auth/login",
+									"v1.0.1/api-reference/admin-apis/auth/refresh-token",
+									"v1.0.1/api-reference/admin-apis/auth/logout"
+								]
+							},
+							{
+								"group": "Admin APIs - User Management",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/users/create-admin",
+									"v1.0.1/api-reference/admin-apis/users/get-members",
+									"v1.0.1/api-reference/admin-apis/users/invite-member"
+								]
+							},
+							{
+								"group": "Admin APIs - System",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/system/get-organizations",
+									"v1.0.1/api-reference/admin-apis/system/get-platforms",
+									"v1.0.1/api-reference/admin-apis/system/get-licenses"
+								]
+							},
+							{
+								"group": "Admin APIs - Mail",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/mail/create-template",
+									"v1.0.1/api-reference/admin-apis/mail/get-templates",
+									"v1.0.1/api-reference/admin-apis/mail/update-template",
+									"v1.0.1/api-reference/admin-apis/mail/delete-template"
+								]
+							},
+							{
+								"group": "Admin APIs - Pods",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/pods/create-pod",
+									"v1.0.1/api-reference/admin-apis/pods/get-pods",
+									"v1.0.1/api-reference/admin-apis/pods/get-pod",
+									"v1.0.1/api-reference/admin-apis/pods/start-pod",
+									"v1.0.1/api-reference/admin-apis/pods/pause-pod",
+									"v1.0.1/api-reference/admin-apis/pods/stop-pod",
+									"v1.0.1/api-reference/admin-apis/pods/start-all-pods",
+									"v1.0.1/api-reference/admin-apis/pods/pause-all-pods",
+									"v1.0.1/api-reference/admin-apis/pods/stop-all-pods"
+								]
+							},
+							{
+								"group": "Admin APIs - Logging",
+								"pages": [
+									"v1.0.1/api-reference/admin-apis/logging/create-log",
+									"v1.0.1/api-reference/admin-apis/logging/search-logs",
+									"v1.0.1/api-reference/admin-apis/logging/get-all-logs"
+								]
+							},
+							{
+								"group": "Console APIs - Logs",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/logs/get-logs",
+									"v1.0.1/api-reference/console-apis/logs/get-log-details",
+									"v1.0.1/api-reference/console-apis/logs/export-logs"
+								]
+							},
+							{
+								"group": "Console APIs - Mail",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/mail/send-email",
+									"v1.0.1/api-reference/console-apis/mail/get-email-status"
+								]
+							},
+							{
+								"group": "Console APIs - PAX",
+								"pages": [
+									"v1.0.1/api-reference/console-apis/pax/create-pax",
+									"v1.0.1/api-reference/console-apis/pax/get-pax",
+									"v1.0.1/api-reference/console-apis/pax/get-pax-details"
+								]
+							}
 						]
 					},
 					{

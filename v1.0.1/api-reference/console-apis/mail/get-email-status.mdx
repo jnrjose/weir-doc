@@ -1,0 +1,84 @@
+---
+title: "Get Email Status"
+description: "Check the delivery status of a sent email"
+api: "GET /console/mail/status/:emailId"
+---
+
+# Get Email Status
+
+Check the delivery status and details of a previously sent email.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/console/mail/status/email_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "emailId": "email_123456789",
+    "to": "recipient@example.com",
+    "subject": "Welcome to the team",
+    "status": "delivered",
+    "sentAt": "2024-01-22T15:30:00Z",
+    "deliveredAt": "2024-01-22T15:30:15Z",
+    "opened": true,
+    "openedAt": "2024-01-22T16:00:00Z"
+  },
+  "message": "Email status retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="emailId" type="string" required>
+Unique identifier of the email.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data.status" type="string" required>
+Email delivery status (sent, delivered, bounced, failed).
+</ResponseField>
+
+<ResponseField name="data.opened" type="boolean">
+Whether the email has been opened.
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getEmailStatus = async (emailId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/console/mail/status/${emailId}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_email_status(email_id, access_token):
+    response = requests.get(
+        f'https://api.weir.ai/console/mail/status/{email_id}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

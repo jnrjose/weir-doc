@@ -1,0 +1,99 @@
+---
+title: "Export Logs"
+description: "Export logs to CSV or JSON format"
+api: "POST /console/logs/export"
+---
+
+# Export Logs
+
+Export organization logs to CSV or JSON format for analysis or archival.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/console/logs/export' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "format": "csv",
+    "startDate": "2024-01-01",
+    "endDate": "2024-01-31",
+    "type": "ERROR"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "exportId": "export_123456789",
+    "format": "csv",
+    "status": "processing",
+    "downloadUrl": null,
+    "expiresAt": "2024-01-23T15:30:00Z"
+  },
+  "message": "Log export initiated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="format" type="string" required>
+Export format: "csv" or "json".
+</ParamField>
+
+<ParamField body="startDate" type="string">
+Start date for logs (YYYY-MM-DD).
+</ParamField>
+
+<ParamField body="endDate" type="string">
+End date for logs (YYYY-MM-DD).
+</ParamField>
+
+<ParamField body="type" type="string">
+Filter by log type (INFO, WARNING, ERROR).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const exportLogs = async (exportOptions, accessToken) => {
+  const response = await fetch('https://api.weir.ai/console/logs/export', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(exportOptions)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def export_logs(export_options, access_token):
+    response = requests.post(
+        'https://api.weir.ai/console/logs/export',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=export_options
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Note>
+  Export may take time for large datasets. Check the export status and download when ready.
+</Note>
