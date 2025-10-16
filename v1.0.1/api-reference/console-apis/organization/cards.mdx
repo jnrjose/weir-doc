@@ -1,0 +1,71 @@
+---
+title: "Get Payment Cards"
+description: "Retrieve organization payment cards"
+api: "GET /org/cards"
+---
+
+# Get Payment Cards
+
+Retrieve all payment cards associated with your organization.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/cards' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "cards": [
+      {
+        "cardId": "card_123456789",
+        "last4": "4242",
+        "brand": "Visa",
+        "expiryMonth": 12,
+        "expiryYear": 2025,
+        "isDefault": true,
+        "createdAt": "2024-01-01T00:00:00Z"
+      }
+    ]
+  },
+  "message": "Cards retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getCards = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/cards', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_cards(access_token):
+    response = requests.get(
+        'https://api.weir.ai/org/cards',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

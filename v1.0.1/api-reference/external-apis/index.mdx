@@ -1,0 +1,130 @@
+---
+title: "External APIs"
+description: "Public-facing APIs for third-party integrations and external applications"
+icon: "globe"
+sidebarTitle: "External APIs"
+---
+
+# External APIs
+
+External APIs are designed for third-party integrations and public-facing applications. These APIs provide basic functionality for external developers to integrate with the Weir AI platform.
+
+<Info>
+  **Use Case**: External APIs are perfect for building integrations that will be used by external developers, third-party applications, or public-facing services.
+</Info>
+
+## Authentication
+
+External APIs use basic authentication with client credentials to generate access tokens.
+
+<Steps>
+  <Step title="Get Client Credentials" icon="key">
+    Obtain your `clientId` and `secretKey` from the Weir AI dashboard.
+  </Step>
+  
+  <Step title="Generate Access Token" icon="token">
+    Use basic authentication to generate an access token for API requests.
+  </Step>
+  
+  <Step title="Use Access Token" icon="shield">
+    Include the access token in the Authorization header for all API requests.
+  </Step>
+</Steps>
+
+## Available Endpoints
+
+<CardGroup cols={1}>
+  <Card title="Generate Access Token" icon="key" href="/api-reference/external-apis/generate-access-token">
+    Generate access tokens for external API authentication using client credentials.
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+External APIs have the following rate limits:
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    - **Token Generation**: 10 requests per minute per client
+    - **Token Refresh**: 20 requests per minute per client
+  </Card>
+  <Card title="API Requests" icon="globe">
+    - **General Endpoints**: 100 requests per minute per client
+    - **Burst Limit**: 200 requests per 5-minute window
+  </Card>
+</CardGroup>
+
+## Error Handling
+
+External APIs return standard HTTP status codes and error responses:
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    Invalid request parameters or malformed requests.
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized" icon="ban">
+    Invalid or missing authentication credentials.
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="lock">
+    Valid credentials but insufficient permissions for the requested resource.
+  </Accordion>
+  
+  <Accordion title="429 Too Many Requests" icon="clock">
+    Rate limit exceeded. Check rate limit headers for retry information.
+  </Accordion>
+  
+  <Accordion title="500 Internal Server Error" icon="server">
+    Server-side error. Contact support if the issue persists.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Token Management" icon="key">
+    - Store access tokens securely and never expose them in client-side code
+    - Implement automatic token refresh before expiration
+    - Use different tokens for different environments
+    - Monitor token usage and implement proper error handling
+  </Accordion>
+  
+  <Accordion title="Request Optimization" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use appropriate HTTP methods for different operations
+    - Implement retry logic with exponential backoff
+    - Monitor rate limit headers to avoid hitting limits
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS for all API requests
+    - Validate and sanitize all input parameters
+    - Implement proper error handling without exposing sensitive information
+    - Use secure storage for client credentials and tokens
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="Obtain Credentials" icon="key">
+    Get your client credentials from the Weir AI dashboard.
+  </Step>
+  
+  <Step title="Generate Token" icon="token">
+    Use the Generate Access Token endpoint to get your first access token.
+  </Step>
+  
+  <Step title="Make Requests" icon="play">
+    Use the access token to make authenticated API requests.
+  </Step>
+  
+  <Step title="Handle Responses" icon="check">
+    Implement proper response handling and error management.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: Start with the Generate Access Token endpoint to understand the authentication flow, then explore other endpoints based on your integration needs.
+</Tip>

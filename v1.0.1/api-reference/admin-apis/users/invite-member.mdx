@@ -1,0 +1,91 @@
+---
+title: "Invite Admin User"
+description: "Invite a new admin user"
+api: "POST /admin/member/invite"
+---
+
+# Invite Admin User
+
+Send an invitation to a user to join as an admin.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/admin/member/invite' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "newadmin@weir.ai",
+    "fullname": "New Admin",
+    "role": "Admin"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "invitationId": "inv_admin_123456789",
+    "email": "newadmin@weir.ai",
+    "role": "Admin",
+    "status": "pending",
+    "expiresAt": "2024-01-29T15:30:00Z"
+  },
+  "message": "Admin invitation sent successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="email" type="string" required>
+Email address of the admin to invite.
+</ParamField>
+
+<ParamField body="fullname" type="string" required>
+Full name of the admin.
+</ParamField>
+
+<ParamField body="role" type="string">
+Admin role (Admin, Support_Admin). Defaults to Admin.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const inviteAdmin = async (inviteData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/admin/member/invite', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(inviteData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def invite_admin(invite_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/admin/member/invite',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        },
+        json=invite_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Warning>
+  **Super Admin Only**: Only Super_Admin users can invite new admins.
+</Warning>

@@ -1,0 +1,82 @@
+---
+title: "Admin Login"
+description: "Admin user login with username and password"
+api: "POST /auth/login"
+---
+
+# Admin Login
+
+Authenticate admin users with username and password to access admin APIs.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "admin@weir.ai",
+    "password": "SecureAdminPass123!"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "admin_refresh_123456789",
+    "expiresIn": 3600,
+    "user": {
+      "id": "admin_123456789",
+      "fullname": "Admin User",
+      "email": "admin@weir.ai",
+      "role": "Super_Admin"
+    }
+  },
+  "message": "Login successful",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="username" type="string" required>
+Admin username or email.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+Admin password.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const adminLogin = async (username, password) => {
+  const response = await fetch('https://api.weir.ai/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def admin_login(username, password):
+    response = requests.post(
+        'https://api.weir.ai/auth/login',
+        json={'username': username, 'password': password}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Note>
+  Admin login uses the same endpoint as regular user login but with admin credentials.
+</Note>

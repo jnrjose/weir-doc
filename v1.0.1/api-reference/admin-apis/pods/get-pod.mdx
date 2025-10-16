@@ -1,0 +1,71 @@
+---
+title: "Get Pod Details"
+description: "Retrieve specific pod information"
+api: "GET /pax/pod/:podId"
+---
+
+# Get Pod Details
+
+Retrieve detailed information about a specific pod.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/pax/pod/pod_123456789' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podId": "pod_123456789",
+    "platformId": "platform_123456789",
+    "platformName": "My Platform",
+    "status": "running",
+    "scopes": ["read", "write", "crawl"],
+    "metrics": {
+      "uptime": 86400,
+      "requestCount": 15000,
+      "errorRate": 0.01
+    },
+    "createdAt": "2024-01-15T10:30:00Z",
+    "lastStarted": "2024-01-22T14:00:00Z"
+  },
+  "message": "Pod details retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="podId" type="string" required>
+Unique pod identifier.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getPod = async (podId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/pax/pod/${podId}`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_pod(pod_id, access_token):
+    response = requests.get(
+        f'https://api.weir.ai/pax/pod/{pod_id}',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

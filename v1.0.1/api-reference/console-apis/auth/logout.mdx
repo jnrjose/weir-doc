@@ -1,0 +1,360 @@
+---
+title: "User Logout"
+description: "Logout users and invalidate their refresh tokens"
+api: "POST /auth/logout"
+---
+
+# User Logout
+
+Logout users and invalidate their refresh tokens to ensure secure session termination.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/logout' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "refreshToken": "refresh_token_123456789"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "message": "Logout successful",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+This endpoint does not require authentication as it's used to terminate the user session.
+
+## Request Body
+
+<ParamField body="refreshToken" type="string" required>
+The refresh token to invalidate during logout.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="message" type="string" required>
+Human-readable message describing the result of the operation.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+Operation status. Always "success" for successful logout.
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    ```json
+    {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "refreshToken": "Refresh token is required"
+        }
+      },
+      "status": "error"
+    }
+    ```
+    
+    **Causes**:
+    - Missing refresh token
+    - Invalid request format
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized" icon="ban">
+    ```json
+    {
+      "error": {
+        "code": "INVALID_REFRESH_TOKEN",
+        "message": "Invalid refresh token",
+        "details": "The provided refresh token is invalid or already expired"
+      },
+      "status": "error"
+    }
+    ```
+    
+    **Causes**:
+    - Invalid refresh token
+    - Already expired refresh token
+    - Token already invalidated
+  </Accordion>
+  
+  <Accordion title="429 Too Many Requests" icon="clock">
+    ```json
+    {
+      "error": {
+        "code": "RATE_LIMIT_EXCEEDED",
+        "message": "Too many logout requests",
+        "details": "Rate limit of 10 logout requests per minute exceeded"
+      },
+      "status": "error"
+    }
+    ```
+    
+    **Solution**: Wait for the rate limit window to reset before making another logout request.
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const logout = async (refreshToken) => {
+  try {
+    const response = await fetch('https://api.weir.ai/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ refreshToken })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    // Clear stored tokens
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('tokenExpiresAt');
+    
+    return data;
+  } catch (error) {
+    console.error('Logout error:', error);
+    // Still clear local tokens even if server request fails
+    localStorage.clear();
+    throw error;
+  }
+};
+
+// Usage
+await logout('refresh_token_123456789');
+console.log('User logged out successfully');
+```
+
+```python Python
+import requests
+
+def logout(refresh_token):
+    try:
+        response = requests.post(
+            'https://api.weir.ai/auth/logout',
+            json={'refreshToken': refresh_token}
+        )
+        response.raise_for_status()
+        
+        data = response.json()
+        
+        # Clear stored tokens (implement based on your storage mechanism)
+        # session.clear() or similar
+        
+        return data
+    except requests.exceptions.RequestException as e:
+        print(f'Logout error: {e}')
+        # Still clear local tokens even if server request fails
+        # session.clear()
+        raise
+
+# Usage
+logout('refresh_token_123456789')
+print('User logged out successfully')
+```
+
+```php PHP
+function logout($refreshToken) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.weir.ai/auth/logout');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'refreshToken' => $refreshToken
+    ]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        // Still clear local tokens even if server request fails
+        unset($_SESSION['accessToken']);
+        unset($_SESSION['refreshToken']);
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    $data = json_decode($response, true);
+    
+    // Clear stored tokens
+    unset($_SESSION['accessToken']);
+    unset($_SESSION['refreshToken']);
+    
+    return $data;
+}
+
+// Usage
+logout('refresh_token_123456789');
+echo "User logged out successfully";
+```
+</CodeGroup>
+
+## Complete Logout Implementation
+
+<AccordionGroup>
+  <Accordion title="Client-Side Logout" icon="desktop">
+    ```javascript
+    class AuthManager {
+      constructor() {
+        this.accessToken = localStorage.getItem('accessToken');
+        this.refreshToken = localStorage.getItem('refreshToken');
+      }
+      
+      async logout() {
+        try {
+          // Call logout endpoint to invalidate server-side tokens
+          if (this.refreshToken) {
+            await fetch('https://api.weir.ai/auth/logout', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken: this.refreshToken })
+            });
+          }
+        } catch (error) {
+          console.warn('Server logout failed:', error);
+          // Continue with client-side cleanup
+        } finally {
+          // Always clear client-side tokens
+          this.clearTokens();
+          this.redirectToLogin();
+        }
+      }
+      
+      clearTokens() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('tokenExpiresAt');
+        this.accessToken = null;
+        this.refreshToken = null;
+      }
+      
+      redirectToLogin() {
+        window.location.href = '/login';
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Server-Side Logout" icon="server">
+    ```javascript
+    // Express.js example
+    app.post('/logout', async (req, res) => {
+      try {
+        const { refreshToken } = req.body;
+        
+        // Call Weir AI logout endpoint
+        await fetch('https://api.weir.ai/auth/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken })
+        });
+        
+        // Clear server-side session
+        req.session.destroy();
+        
+        res.json({ message: 'Logout successful', status: 'success' });
+      } catch (error) {
+        console.error('Logout error:', error);
+        res.status(500).json({ error: 'Logout failed' });
+      }
+    });
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Rate Limits
+
+- **Rate Limit**: 10 requests per minute per user
+- **Burst Limit**: 20 requests per 5-minute window
+
+## Security Considerations
+
+<AccordionGroup>
+  <Accordion title="Token Invalidation" icon="ban">
+    - Refresh tokens are immediately invalidated on the server
+    - Access tokens become invalid when they expire (no immediate invalidation)
+    - Implement client-side token cleanup for immediate effect
+  </Accordion>
+  
+  <Accordion title="Session Security" icon="shield">
+    - Clear all client-side stored tokens and session data
+    - Implement proper session cleanup on the server side
+    - Redirect users to login page after logout
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Always clear client-side tokens even if server logout fails
+    - Implement graceful degradation for network failures
+    - Log logout events for security monitoring
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Server-Side Invalidation" icon="server">
+    Call the logout endpoint to invalidate refresh tokens on the server.
+  </Step>
+  
+  <Step title="Client-Side Cleanup" icon="desktop">
+    Clear all stored tokens and session data from the client.
+  </Step>
+  
+  <Step title="Session Termination" icon="sign-out-alt">
+    Terminate any active sessions and redirect to login page.
+  </Step>
+  
+  <Step title="Error Handling" icon="exclamation-triangle">
+    Implement proper error handling to ensure cleanup happens even if server request fails.
+  </Step>
+</Steps>
+
+## Integration with Authentication Flow
+
+<AccordionGroup>
+  <Accordion title="Login/Logout Cycle" icon="refresh">
+    1. **Login**: User authenticates and receives access/refresh tokens
+    2. **API Usage**: Access token used for authenticated requests
+    3. **Token Refresh**: Refresh token used to get new access tokens
+    4. **Logout**: Refresh token invalidated, user session terminated
+  </Accordion>
+  
+  <Accordion title="Automatic Logout" icon="clock">
+    ```javascript
+    // Auto-logout on token expiration
+    function setupAutoLogout() {
+      const tokenExpiresAt = localStorage.getItem('tokenExpiresAt');
+      if (tokenExpiresAt) {
+        const timeUntilExpiry = tokenExpiresAt - Date.now();
+        if (timeUntilExpiry > 0) {
+          setTimeout(() => {
+            authManager.logout();
+          }, timeUntilExpiry);
+        }
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Pro Tip**: Implement a comprehensive logout flow that handles both server-side token invalidation and client-side cleanup to ensure complete session termination.
+</Tip>

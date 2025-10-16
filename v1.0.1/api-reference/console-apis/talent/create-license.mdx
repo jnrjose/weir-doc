@@ -1,0 +1,142 @@
+---
+title: "Create License"
+description: "Create a new NIL license for talent"
+api: "POST /org/talent/license/:talentId"
+---
+
+# Create License
+
+Create a new NIL (Name, Image, Likeness) license for a talent in your agency.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/talent/license/talent_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console' \
+  -F 'name=Social Media Campaign' \
+  -F 'type=social_media' \
+  -F 'description=License for social media usage' \
+  -F 'appearanceFee=5000' \
+  -F 'canCrawl=true' \
+  -F 'images=@image1.jpg' \
+  -F 'images=@image2.jpg'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "licenseId": "lic_123456789",
+    "talentId": "talent_123456789",
+    "name": "Social Media Campaign",
+    "type": "social_media",
+    "appearanceFee": 5000.00,
+    "canCrawl": true,
+    "imageCount": 2,
+    "status": "active",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "License created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="talentId" type="string" required>
+Unique identifier of the talent.
+</ParamField>
+
+## Request Body (multipart/form-data)
+
+<ParamField body="name" type="string" required>
+License name.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+License type (social_media, advertising, endorsement).
+</ParamField>
+
+<ParamField body="description" type="string">
+License description.
+</ParamField>
+
+<ParamField body="appearanceFee" type="number">
+Appearance fee amount.
+</ParamField>
+
+<ParamField body="canCrawl" type="boolean">
+Whether automated content crawling is allowed.
+</ParamField>
+
+<ParamField body="images" type="file[]">
+Array of image files to include in the license.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createLicense = async (talentId, licenseData, accessToken) => {
+  const formData = new FormData();
+  formData.append('name', licenseData.name);
+  formData.append('type', licenseData.type);
+  formData.append('description', licenseData.description);
+  formData.append('appearanceFee', licenseData.appearanceFee);
+  formData.append('canCrawl', licenseData.canCrawl);
+  
+  // Add images
+  licenseData.images?.forEach(image => {
+    formData.append('images', image);
+  });
+  
+  const response = await fetch(`https://api.weir.ai/org/talent/license/${talentId}`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+      // Don't set Content-Type - browser sets it with boundary for FormData
+    },
+    body: formData
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_license(talent_id, license_data, access_token):
+    files = []
+    if 'images' in license_data:
+        for image in license_data['images']:
+            files.append(('images', open(image, 'rb')))
+    
+    data = {
+        'name': license_data['name'],
+        'type': license_data['type'],
+        'description': license_data.get('description', ''),
+        'appearanceFee': license_data.get('appearanceFee', 0),
+        'canCrawl': license_data.get('canCrawl', False)
+    }
+    
+    response = requests.post(
+        f'https://api.weir.ai/org/talent/license/{talent_id}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        },
+        data=data,
+        files=files
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Note>
+  This endpoint accepts multipart/form-data for file uploads.
+</Note>

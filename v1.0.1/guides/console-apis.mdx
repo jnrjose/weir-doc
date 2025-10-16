@@ -1,0 +1,1270 @@
+---
+title: "Console API Integration"
+description: "Complete guide to integrating with Console APIs for organization management, team collaboration, and platform administration"
+icon: "desktop"
+sidebarTitle: "Console APIs"
+---
+
+# Console API Integration
+
+Console APIs provide comprehensive functionality for organization management, team collaboration, and platform administration. This guide covers integration patterns, best practices, and real-world examples for building management tools and administrative interfaces.
+
+<Info>
+  **Use Case**: Console APIs are perfect for building internal management tools, organization administration features, and team collaboration platforms.
+</Info>
+
+## Integration Overview
+
+Console APIs enable you to build powerful management tools that can:
+
+<CardGroup cols={2}>
+  <Card title="Team Management" icon="users">
+    Create and manage teams with role-based access control and member collaboration.
+  </Card>
+  <Card title="Platform Administration" icon="server">
+    Create, configure, and manage platforms with domain verification and client management.
+  </Card>
+  <Card title="User Management" icon="user">
+    Handle user registration, authentication, and profile management.
+  </Card>
+  <Card title="Organization Control" icon="building">
+    Manage organization settings, billing, and subscription information.
+  </Card>
+</CardGroup>
+
+## Authentication Setup
+
+### Step 1: User Registration and Login
+
+<Steps>
+  <Step title="Register User Account" icon="user-plus">
+    Create a new user account with organization information.
+    
+    <RequestExample>
+      ```bash Registration
+      curl -X POST 'https://api.weir.ai/auth/register' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "fullname": "John Doe",
+          "email": "john@example.com",
+          "password": "securePassword123",
+          "organization": {
+            "name": "My Company",
+            "type": "Platform",
+            "description": "A business platform"
+          }
+        }'
+      ```
+    </RequestExample>
+  </Step>
+  
+  <Step title="Validate Registration" icon="check">
+    If required, validate the registration with OTP.
+    
+    <RequestExample>
+      ```bash OTP Validation
+      curl -X POST 'https://api.weir.ai/auth/validate/registration' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "otpSession": "otp_session_123456789",
+          "otp": "123456"
+        }'
+      ```
+    </RequestExample>
+  </Step>
+  
+  <Step title="Login and Get Tokens" icon="sign-in">
+    Login to get access and refresh tokens.
+    
+    <RequestExample>
+      ```bash Login
+      curl -X POST 'https://api.weir.ai/auth/login' \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "username": "John Doe",
+          "password": "securePassword123"
+        }'
+      ```
+    </RequestExample>
+  </Step>
+</Steps>
+
+### Step 2: Token Management
+
+<CodeGroup>
+```javascript JavaScript
+class ConsoleAPIClient {
+  constructor() {
+    this.baseURL = 'https://api.weir.ai';
+    this.accessToken = null;
+    this.refreshToken = null;
+  }
+  
+  async login(username, password) {
+    const response = await fetch(`${this.baseURL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    
+    const data = await response.json();
+    this.accessToken = data.data.accessToken;
+    this.refreshToken = data.data.refreshToken;
+    
+    return data;
+  }
+  
+  async refreshAccessToken() {
+    const response = await fetch(`${this.baseURL}/auth/refresh/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken: this.refreshToken })
+    });
+    
+    const data = await response.json();
+    this.accessToken = data.data.accessToken;
+    this.refreshToken = data.data.refreshToken;
+    
+    return data;
+  }
+  
+  getHeaders() {
+    return {
+      'Authorization': `Bearer ${this.accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    };
+  }
+}
+```
+
+```python Python
+import requests
+import time
+
+class ConsoleAPIClient:
+    def __init__(self):
+        self.base_url = 'https://api.weir.ai'
+        self.access_token = None
+        self.refresh_token = None
+        self.token_expires_at = None
+    
+    def login(self, username, password):
+        response = requests.post(
+            f'{self.base_url}/auth/login',
+            json={'username': username, 'password': password}
+        )
+        response.raise_for_status()
+        
+        data = response.json()
+        self.access_token = data['data']['accessToken']
+        self.refresh_token = data['data']['refreshToken']
+        self.token_expires_at = time.time() + data['data']['expiresIn']
+        
+        return data
+    
+    def refresh_access_token(self):
+        response = requests.post(
+            f'{self.base_url}/auth/refresh/token',
+            json={'refreshToken': self.refresh_token}
+        )
+        response.raise_for_status()
+        
+        data = response.json()
+        self.access_token = data['data']['accessToken']
+        self.refresh_token = data['data']['refreshToken']
+        self.token_expires_at = time.time() + data['data']['expiresIn']
+        
+        return data
+    
+    def get_headers(self):
+        if self.token_expires_at and time.time() >= self.token_expires_at - 300:
+            self.refresh_access_token()
+        
+        return {
+            'Authorization': f'Bearer {self.access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        }
+```
+</CodeGroup>
+
+## Team Management Integration
+
+### Building a Team Management Interface
+
+<Steps>
+  <Step title="Create Team Management Class" icon="code">
+    Build a comprehensive team management class.
+    
+    <CodeGroup>
+      ```javascript JavaScript
+      class TeamManager {
+        constructor(apiClient) {
+          this.api = apiClient;
+        }
+        
+        async createTeam(name) {
+          const response = await fetch(`${this.api.baseURL}/org/create/team`, {
+            method: 'POST',
+            headers: this.api.getHeaders(),
+            body: JSON.stringify({ name })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to create team: ${response.status}`);
+          }
+          
+          return await response.json();
+        }
+        
+        async getTeams(page = 1, limit = 10) {
+          const response = await fetch(
+            `${this.api.baseURL}/org/teams?page=${page}&limit=${limit}`,
+            { headers: this.api.getHeaders() }
+          );
+          
+          return await response.json();
+        }
+        
+        async inviteMember(teamId, memberData) {
+          const response = await fetch(
+            `${this.api.baseURL}/org/invite/team/member/${teamId}`,
+            {
+              method: 'POST',
+              headers: this.api.getHeaders(),
+              body: JSON.stringify(memberData)
+            }
+          );
+          
+          return await response.json();
+        }
+        
+        async getTeamMembers(teamId) {
+          const response = await fetch(
+            `${this.api.baseURL}/org/team/members/${teamId}`,
+            { headers: this.api.getHeaders() }
+          );
+          
+          return await response.json();
+        }
+        
+        async updateMemberRole(teamId, memberId, role) {
+          const response = await fetch(
+            `${this.api.baseURL}/org/team/${teamId}/member/${memberId}`,
+            {
+              method: 'PATCH',
+              headers: this.api.getHeaders(),
+              body: JSON.stringify({ role })
+            }
+          );
+          
+          return await response.json();
+        }
+      }
+      ```
+      
+      ```python Python
+      class TeamManager:
+          def __init__(self, api_client):
+              self.api = api_client
+          
+          def create_team(self, name):
+              response = requests.post(
+                  f'{self.api.base_url}/org/create/team',
+                  headers=self.api.get_headers(),
+                  json={'name': name}
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def get_teams(self, page=1, limit=10):
+              response = requests.get(
+                  f'{self.api.base_url}/org/teams',
+                  headers=self.api.get_headers(),
+                  params={'page': page, 'limit': limit}
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def invite_member(self, team_id, member_data):
+              response = requests.post(
+                  f'{self.api.base_url}/org/invite/team/member/{team_id}',
+                  headers=self.api.get_headers(),
+                  json=member_data
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def get_team_members(self, team_id):
+              response = requests.get(
+                  f'{self.api.base_url}/org/team/members/{team_id}',
+                  headers=self.api.get_headers()
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def update_member_role(self, team_id, member_id, role):
+              response = requests.patch(
+                  f'{self.api.base_url}/org/team/{team_id}/member/{member_id}',
+                  headers=self.api.get_headers(),
+                  json={'role': role}
+              )
+              response.raise_for_status()
+              return response.json()
+      ```
+    </CodeGroup>
+  </Step>
+  
+  <Step title="Implement Team Dashboard" icon="chart-line">
+    Create a team dashboard with real-time updates.
+    
+    ```javascript
+    class TeamDashboard {
+      constructor(teamManager) {
+        this.teamManager = teamManager;
+        this.teams = [];
+        this.currentTeam = null;
+      }
+      
+      async loadTeams() {
+        try {
+          const response = await this.teamManager.getTeams();
+          this.teams = response.data.teams;
+          this.renderTeams();
+        } catch (error) {
+          console.error('Failed to load teams:', error);
+        }
+      }
+      
+      async createTeam(name) {
+        try {
+          const response = await this.teamManager.createTeam(name);
+          this.teams.push(response.data);
+          this.renderTeams();
+          return response;
+        } catch (error) {
+          console.error('Failed to create team:', error);
+          throw error;
+        }
+      }
+      
+      async inviteMember(teamId, memberData) {
+        try {
+          const response = await this.teamManager.inviteMember(teamId, memberData);
+          await this.loadTeamMembers(teamId);
+          return response;
+        } catch (error) {
+          console.error('Failed to invite member:', error);
+          throw error;
+        }
+      }
+      
+      renderTeams() {
+        const container = document.getElementById('teams-container');
+        container.innerHTML = this.teams.map(team => `
+          <div class="team-card" data-team-id="${team.teamId}">
+            <h3>${team.name}</h3>
+            <p>Members: ${team.memberCount}</p>
+            <p>Created: ${new Date(team.createdAt).toLocaleDateString()}</p>
+            <button onclick="dashboard.selectTeam('${team.teamId}')">
+              Manage Team
+            </button>
+          </div>
+        `).join('');
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+## Platform Management Integration
+
+### Building a Platform Administration Tool
+
+<Steps>
+  <Step title="Create Platform Manager" icon="server">
+    Build a platform management class.
+    
+    <CodeGroup>
+      ```javascript JavaScript
+      class PlatformManager {
+        constructor(apiClient) {
+          this.api = apiClient;
+        }
+        
+        async createPlatform(platformData) {
+          const response = await fetch(`${this.api.baseURL}/org/create/platform`, {
+            method: 'POST',
+            headers: this.api.getHeaders(),
+            body: JSON.stringify(platformData)
+          });
+          
+          return await response.json();
+        }
+        
+        async getPlatforms() {
+          const response = await fetch(
+            `${this.api.baseURL}/org/platforms`,
+            { headers: this.api.getHeaders() }
+          );
+          
+          return await response.json();
+        }
+        
+        async verifyPlatform(platformId) {
+          const response = await fetch(
+            `${this.api.baseURL}/org/verify/platform/${platformId}`,
+            { headers: this.api.getHeaders() }
+          );
+          
+          return await response.json();
+        }
+        
+        async createClient(platformId, clientData) {
+          const response = await fetch(`${this.api.baseURL}/org/create/client`, {
+            method: 'POST',
+            headers: this.api.getHeaders(),
+            body: JSON.stringify(clientData)
+          });
+          
+          return await response.json();
+        }
+      }
+      ```
+      
+      ```python Python
+      class PlatformManager:
+          def __init__(self, api_client):
+              self.api = api_client
+          
+          def create_platform(self, platform_data):
+              response = requests.post(
+                  f'{self.api.base_url}/org/create/platform',
+                  headers=self.api.get_headers(),
+                  json=platform_data
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def get_platforms(self):
+              response = requests.get(
+                  f'{self.api.base_url}/org/platforms',
+                  headers=self.api.get_headers()
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def verify_platform(self, platform_id):
+              response = requests.get(
+                  f'{self.api.base_url}/org/verify/platform/{platform_id}',
+                  headers=self.api.get_headers()
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def create_client(self, client_data):
+              response = requests.post(
+                  f'{self.api.base_url}/org/create/client',
+                  headers=self.api.get_headers(),
+                  json=client_data
+              )
+              response.raise_for_status()
+              return response.json()
+      ```
+    </CodeGroup>
+  </Step>
+  
+  <Step title="Implement Platform Dashboard" icon="tachometer-alt">
+    Create a platform administration dashboard.
+    
+    ```javascript
+    class PlatformDashboard {
+      constructor(platformManager) {
+        this.platformManager = platformManager;
+        this.platforms = [];
+      }
+      
+      async loadPlatforms() {
+        try {
+          const response = await this.platformManager.getPlatforms();
+          this.platforms = response.data;
+          this.renderPlatforms();
+        } catch (error) {
+          console.error('Failed to load platforms:', error);
+        }
+      }
+      
+      async createPlatform(platformData) {
+        try {
+          const response = await this.platformManager.createPlatform(platformData);
+          this.platforms.push(response.data);
+          this.renderPlatforms();
+          return response;
+        } catch (error) {
+          console.error('Failed to create platform:', error);
+          throw error;
+        }
+      }
+      
+      async verifyPlatform(platformId) {
+        try {
+          const response = await this.platformManager.verifyPlatform(platformId);
+          await this.loadPlatforms(); // Refresh to get updated status
+          return response;
+        } catch (error) {
+          console.error('Failed to verify platform:', error);
+          throw error;
+        }
+      }
+      
+      renderPlatforms() {
+        const container = document.getElementById('platforms-container');
+        container.innerHTML = this.platforms.map(platform => `
+          <div class="platform-card" data-platform-id="${platform.platformId}">
+            <h3>${platform.name}</h3>
+            <p>Type: ${platform.type}</p>
+            <p>Domain: ${platform.domain}</p>
+            <p>Status: ${platform.status}</p>
+            <p>Team: ${platform.teamId}</p>
+            <div class="platform-actions">
+              <button onclick="dashboard.verifyPlatform('${platform.platformId}')">
+                Verify Platform
+              </button>
+              <button onclick="dashboard.manageClients('${platform.platformId}')">
+                Manage Clients
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+## User Management Integration
+
+### Building a User Administration System
+
+<Steps>
+  <Step title="Create User Manager" icon="user">
+    Build a user management class.
+    
+    <CodeGroup>
+      ```javascript JavaScript
+      class UserManager {
+        constructor(apiClient) {
+          this.api = apiClient;
+        }
+        
+        async updateProfile(profileData) {
+          const response = await fetch(`${this.api.baseURL}/user/profile`, {
+            method: 'PATCH',
+            headers: this.api.getHeaders(),
+            body: JSON.stringify(profileData)
+          });
+          
+          return await response.json();
+        }
+        
+        async changePassword(passwordData) {
+          const response = await fetch(`${this.api.baseURL}/user/change/password`, {
+            method: 'PATCH',
+            headers: this.api.getHeaders(),
+            body: JSON.stringify(passwordData)
+          });
+          
+          return await response.json();
+        }
+        
+        async getProfile() {
+          const response = await fetch(
+            `${this.api.baseURL}/user/profile`,
+            { headers: this.api.getHeaders() }
+          );
+          
+          return await response.json();
+        }
+      }
+      ```
+      
+      ```python Python
+      class UserManager:
+          def __init__(self, api_client):
+              self.api = api_client
+          
+          def update_profile(self, profile_data):
+              response = requests.patch(
+                  f'{self.api.base_url}/user/profile',
+                  headers=self.api.get_headers(),
+                  json=profile_data
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def change_password(self, password_data):
+              response = requests.patch(
+                  f'{self.api.base_url}/user/change/password',
+                  headers=self.api.get_headers(),
+                  json=password_data
+              )
+              response.raise_for_status()
+              return response.json()
+          
+          def get_profile(self):
+              response = requests.get(
+                  f'{self.api.base_url}/user/profile',
+                  headers=self.api.get_headers()
+              )
+              response.raise_for_status()
+              return response.json()
+      ```
+    </CodeGroup>
+  </Step>
+  
+  <Step title="Implement User Profile Interface" icon="user-edit">
+    Create a user profile management interface.
+    
+    ```javascript
+    class UserProfileManager {
+      constructor(userManager) {
+        this.userManager = userManager;
+        this.currentUser = null;
+      }
+      
+      async loadProfile() {
+        try {
+          const response = await this.userManager.getProfile();
+          this.currentUser = response.data;
+          this.renderProfile();
+        } catch (error) {
+          console.error('Failed to load profile:', error);
+        }
+      }
+      
+      async updateProfile(profileData) {
+        try {
+          const response = await this.userManager.updateProfile(profileData);
+          this.currentUser = { ...this.currentUser, ...response.data };
+          this.renderProfile();
+          return response;
+        } catch (error) {
+          console.error('Failed to update profile:', error);
+          throw error;
+        }
+      }
+      
+      async changePassword(passwordData) {
+        try {
+          const response = await this.userManager.changePassword(passwordData);
+          return response;
+        } catch (error) {
+          console.error('Failed to change password:', error);
+          throw error;
+        }
+      }
+      
+      renderProfile() {
+        if (!this.currentUser) return;
+        
+        const container = document.getElementById('profile-container');
+        container.innerHTML = `
+          <div class="profile-form">
+            <h2>User Profile</h2>
+            <form id="profile-form">
+              <div class="form-group">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" value="${this.currentUser.firstname || ''}" />
+              </div>
+              <div class="form-group">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" value="${this.currentUser.lastname || ''}" />
+              </div>
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" value="${this.currentUser.email || ''}" />
+              </div>
+              <div class="form-group">
+                <label for="bio">Bio:</label>
+                <textarea id="bio">${this.currentUser.bio || ''}</textarea>
+              </div>
+              <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" value="${this.currentUser.location || ''}" />
+              </div>
+              <button type="submit">Update Profile</button>
+            </form>
+          </div>
+        `;
+        
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const formData = {
+            firstname: document.getElementById('firstname').value,
+            lastname: document.getElementById('lastname').value,
+            email: document.getElementById('email').value,
+            bio: document.getElementById('bio').value,
+            location: document.getElementById('location').value
+          };
+          
+          try {
+            await this.updateProfile(formData);
+            alert('Profile updated successfully!');
+          } catch (error) {
+            alert('Failed to update profile. Please try again.');
+          }
+        });
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+## Error Handling and Best Practices
+
+### Comprehensive Error Handling
+
+<CodeGroup>
+```javascript JavaScript
+class ConsoleAPIError extends Error {
+  constructor(message, code, details, status) {
+    super(message);
+    this.name = 'ConsoleAPIError';
+    this.code = code;
+    this.details = details;
+    this.status = status;
+  }
+}
+
+class ConsoleAPIClient {
+  async makeRequest(url, options = {}) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...this.getHeaders(),
+          ...options.headers
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new ConsoleAPIError(
+          errorData.error?.message || 'API request failed',
+          errorData.error?.code || 'UNKNOWN_ERROR',
+          errorData.error?.details,
+          response.status
+        );
+      }
+      
+      return await response.json();
+    } catch (error) {
+      if (error instanceof ConsoleAPIError) {
+        throw error;
+      }
+      
+      // Handle network errors
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new ConsoleAPIError(
+          'Network error: Unable to connect to API',
+          'NETWORK_ERROR',
+          null,
+          0
+        );
+      }
+      
+      throw new ConsoleAPIError(
+        'Unexpected error occurred',
+        'UNEXPECTED_ERROR',
+        error.message,
+        0
+      );
+    }
+  }
+}
+```
+
+```python Python
+class ConsoleAPIError(Exception):
+    def __init__(self, message, code, details=None, status=None):
+        super().__init__(message)
+        self.code = code
+        self.details = details
+        self.status = status
+
+class ConsoleAPIClient:
+    def make_request(self, method, url, **kwargs):
+        try:
+            response = requests.request(
+                method, 
+                url, 
+                headers=self.get_headers(),
+                **kwargs
+            )
+            
+            if not response.ok:
+                try:
+                    error_data = response.json()
+                    raise ConsoleAPIError(
+                        error_data.get('error', {}).get('message', 'API request failed'),
+                        error_data.get('error', {}).get('code', 'UNKNOWN_ERROR'),
+                        error_data.get('error', {}).get('details'),
+                        response.status_code
+                    )
+                except ValueError:
+                    raise ConsoleAPIError(
+                        f'HTTP {response.status_code}: {response.text}',
+                        'HTTP_ERROR',
+                        None,
+                        response.status_code
+                    )
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            raise ConsoleAPIError(
+                f'Network error: {str(e)}',
+                'NETWORK_ERROR',
+                None,
+                0
+            )
+        except Exception as e:
+            raise ConsoleAPIError(
+                f'Unexpected error: {str(e)}',
+                'UNEXPECTED_ERROR',
+                None,
+                0
+            )
+```
+</CodeGroup>
+
+### Rate Limiting and Retry Logic
+
+<CodeGroup>
+```javascript JavaScript
+class RateLimitedClient {
+  constructor(apiClient, requestsPerMinute = 200) {
+    this.apiClient = apiClient;
+    this.requestsPerMinute = requestsPerMinute;
+    this.requestQueue = [];
+    this.requestCount = 0;
+    this.windowStart = Date.now();
+    
+    setInterval(() => {
+      this.requestCount = 0;
+      this.windowStart = Date.now();
+      this.processQueue();
+    }, 60000);
+  }
+  
+  async makeRequest(url, options = {}) {
+    return new Promise((resolve, reject) => {
+      this.requestQueue.push({ url, options, resolve, reject });
+      this.processQueue();
+    });
+  }
+  
+  async processQueue() {
+    if (this.requestQueue.length === 0 || this.requestCount >= this.requestsPerMinute) {
+      return;
+    }
+    
+    const request = this.requestQueue.shift();
+    this.requestCount++;
+    
+    try {
+      const result = await this.apiClient.makeRequest(request.url, request.options);
+      request.resolve(result);
+    } catch (error) {
+      if (error.status === 429) {
+        // Rate limited, put request back in queue
+        this.requestQueue.unshift(request);
+        setTimeout(() => this.processQueue(), 60000);
+      } else {
+        request.reject(error);
+      }
+    }
+  }
+}
+```
+
+```python Python
+import time
+import asyncio
+from collections import deque
+
+class RateLimitedClient:
+    def __init__(self, api_client, requests_per_minute=200):
+        self.api_client = api_client
+        self.requests_per_minute = requests_per_minute
+        self.request_queue = deque()
+        self.request_count = 0
+        self.window_start = time.time()
+        
+    async def make_request(self, method, url, **kwargs):
+        while self.request_count >= self.requests_per_minute:
+            await asyncio.sleep(1)
+            if time.time() - self.window_start >= 60:
+                self.request_count = 0
+                self.window_start = time.time()
+        
+        try:
+            self.request_count += 1
+            return self.api_client.make_request(method, url, **kwargs)
+        except ConsoleAPIError as e:
+            if e.status == 429:
+                await asyncio.sleep(60)
+                return await self.make_request(method, url, **kwargs)
+            raise
+```
+</CodeGroup>
+
+## Integration Examples
+
+### Complete Management Dashboard
+
+<CodeGroup>
+```javascript JavaScript
+class ManagementDashboard {
+  constructor() {
+    this.apiClient = new ConsoleAPIClient();
+    this.teamManager = new TeamManager(this.apiClient);
+    this.platformManager = new PlatformManager(this.apiClient);
+    this.userManager = new UserManager(this.apiClient);
+    
+    this.teamDashboard = new TeamDashboard(this.teamManager);
+    this.platformDashboard = new PlatformDashboard(this.platformManager);
+    this.userProfileManager = new UserProfileManager(this.userManager);
+  }
+  
+  async initialize() {
+    try {
+      // Load initial data
+      await Promise.all([
+        this.teamDashboard.loadTeams(),
+        this.platformDashboard.loadPlatforms(),
+        this.userProfileManager.loadProfile()
+      ]);
+      
+      this.setupEventListeners();
+    } catch (error) {
+      console.error('Failed to initialize dashboard:', error);
+    }
+  }
+  
+  setupEventListeners() {
+    // Setup navigation and form handlers
+    document.getElementById('create-team-btn').addEventListener('click', () => {
+      this.showCreateTeamModal();
+    });
+    
+    document.getElementById('create-platform-btn').addEventListener('click', () => {
+      this.showCreatePlatformModal();
+    });
+  }
+  
+  showCreateTeamModal() {
+    const modal = document.getElementById('create-team-modal');
+    modal.style.display = 'block';
+    
+    document.getElementById('team-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('team-name').value;
+      
+      try {
+        await this.teamDashboard.createTeam(name);
+        modal.style.display = 'none';
+        document.getElementById('team-form').reset();
+      } catch (error) {
+        alert('Failed to create team. Please try again.');
+      }
+    });
+  }
+  
+  showCreatePlatformModal() {
+    const modal = document.getElementById('create-platform-modal');
+    modal.style.display = 'block';
+    
+    document.getElementById('platform-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const platformData = {
+        name: document.getElementById('platform-name').value,
+        teamId: document.getElementById('team-id').value,
+        description: document.getElementById('platform-description').value,
+        type: document.getElementById('platform-type').value,
+        domain: document.getElementById('platform-domain').value
+      };
+      
+      try {
+        await this.platformDashboard.createPlatform(platformData);
+        modal.style.display = 'none';
+        document.getElementById('platform-form').reset();
+      } catch (error) {
+        alert('Failed to create platform. Please try again.');
+      }
+    });
+  }
+}
+
+// Initialize dashboard when page loads
+document.addEventListener('DOMContentLoaded', async () => {
+  const dashboard = new ManagementDashboard();
+  await dashboard.initialize();
+});
+```
+
+```python Python
+import tkinter as tk
+from tkinter import ttk, messagebox
+import asyncio
+
+class ManagementDashboard:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Weir AI Management Dashboard")
+        self.root.geometry("1200x800")
+        
+        self.api_client = ConsoleAPIClient()
+        self.team_manager = TeamManager(self.api_client)
+        self.platform_manager = PlatformManager(self.api_client)
+        self.user_manager = UserManager(self.api_client)
+        
+        self.setup_ui()
+    
+    def setup_ui(self):
+        # Create notebook for tabs
+        notebook = ttk.Notebook(self.root)
+        notebook.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Teams tab
+        teams_frame = ttk.Frame(notebook)
+        notebook.add(teams_frame, text="Teams")
+        self.setup_teams_tab(teams_frame)
+        
+        # Platforms tab
+        platforms_frame = ttk.Frame(notebook)
+        notebook.add(platforms_frame, text="Platforms")
+        self.setup_platforms_tab(platforms_frame)
+        
+        # Profile tab
+        profile_frame = ttk.Frame(notebook)
+        notebook.add(profile_frame, text="Profile")
+        self.setup_profile_tab(profile_frame)
+    
+    def setup_teams_tab(self, parent):
+        # Teams list
+        teams_frame = ttk.LabelFrame(parent, text="Teams")
+        teams_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Create team button
+        ttk.Button(teams_frame, text="Create Team", 
+                  command=self.show_create_team_dialog).pack(pady=5)
+        
+        # Teams treeview
+        columns = ('Name', 'Members', 'Created')
+        self.teams_tree = ttk.Treeview(teams_frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.teams_tree.heading(col, text=col)
+            self.teams_tree.column(col, width=150)
+        
+        self.teams_tree.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Load teams
+        self.load_teams()
+    
+    def setup_platforms_tab(self, parent):
+        # Platforms list
+        platforms_frame = ttk.LabelFrame(parent, text="Platforms")
+        platforms_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Create platform button
+        ttk.Button(platforms_frame, text="Create Platform", 
+                  command=self.show_create_platform_dialog).pack(pady=5)
+        
+        # Platforms treeview
+        columns = ('Name', 'Type', 'Domain', 'Status')
+        self.platforms_tree = ttk.Treeview(platforms_frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.platforms_tree.heading(col, text=col)
+            self.platforms_tree.column(col, width=150)
+        
+        self.platforms_tree.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Load platforms
+        self.load_platforms()
+    
+    def setup_profile_tab(self, parent):
+        # Profile form
+        profile_frame = ttk.LabelFrame(parent, text="User Profile")
+        profile_frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Form fields
+        ttk.Label(profile_frame, text="First Name:").grid(row=0, column=0, sticky='w', padx=5, pady=5)
+        self.firstname_var = tk.StringVar()
+        ttk.Entry(profile_frame, textvariable=self.firstname_var).grid(row=0, column=1, padx=5, pady=5)
+        
+        ttk.Label(profile_frame, text="Last Name:").grid(row=1, column=0, sticky='w', padx=5, pady=5)
+        self.lastname_var = tk.StringVar()
+        ttk.Entry(profile_frame, textvariable=self.lastname_var).grid(row=1, column=1, padx=5, pady=5)
+        
+        ttk.Label(profile_frame, text="Email:").grid(row=2, column=0, sticky='w', padx=5, pady=5)
+        self.email_var = tk.StringVar()
+        ttk.Entry(profile_frame, textvariable=self.email_var).grid(row=2, column=1, padx=5, pady=5)
+        
+        # Update button
+        ttk.Button(profile_frame, text="Update Profile", 
+                  command=self.update_profile).grid(row=3, column=0, columnspan=2, pady=10)
+        
+        # Load profile
+        self.load_profile()
+    
+    def load_teams(self):
+        try:
+            response = self.team_manager.get_teams()
+            for team in response['data']['teams']:
+                self.teams_tree.insert('', 'end', values=(
+                    team['name'],
+                    team['memberCount'],
+                    team['createdAt'][:10]
+                ))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load teams: {str(e)}")
+    
+    def load_platforms(self):
+        try:
+            response = self.platform_manager.get_platforms()
+            for platform in response['data']:
+                self.platforms_tree.insert('', 'end', values=(
+                    platform['name'],
+                    platform['type'],
+                    platform['domain'],
+                    platform['status']
+                ))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load platforms: {str(e)}")
+    
+    def load_profile(self):
+        try:
+            response = self.user_manager.get_profile()
+            user = response['data']
+            self.firstname_var.set(user.get('firstname', ''))
+            self.lastname_var.set(user.get('lastname', ''))
+            self.email_var.set(user.get('email', ''))
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load profile: {str(e)}")
+    
+    def show_create_team_dialog(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Create Team")
+        dialog.geometry("300x150")
+        
+        ttk.Label(dialog, text="Team Name:").pack(pady=5)
+        name_var = tk.StringVar()
+        ttk.Entry(dialog, textvariable=name_var).pack(pady=5)
+        
+        def create_team():
+            try:
+                self.team_manager.create_team(name_var.get())
+                dialog.destroy()
+                self.load_teams()
+                messagebox.showinfo("Success", "Team created successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to create team: {str(e)}")
+        
+        ttk.Button(dialog, text="Create", command=create_team).pack(pady=10)
+    
+    def show_create_platform_dialog(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Create Platform")
+        dialog.geometry("400x300")
+        
+        # Platform form fields
+        ttk.Label(dialog, text="Platform Name:").pack(pady=5)
+        name_var = tk.StringVar()
+        ttk.Entry(dialog, textvariable=name_var).pack(pady=5)
+        
+        ttk.Label(dialog, text="Description:").pack(pady=5)
+        desc_var = tk.StringVar()
+        ttk.Entry(dialog, textvariable=desc_var).pack(pady=5)
+        
+        ttk.Label(dialog, text="Domain:").pack(pady=5)
+        domain_var = tk.StringVar()
+        ttk.Entry(dialog, textvariable=domain_var).pack(pady=5)
+        
+        def create_platform():
+            try:
+                platform_data = {
+                    'name': name_var.get(),
+                    'description': desc_var.get(),
+                    'domain': domain_var.get(),
+                    'type': 'Forum/Community'
+                }
+                self.platform_manager.create_platform(platform_data)
+                dialog.destroy()
+                self.load_platforms()
+                messagebox.showinfo("Success", "Platform created successfully!")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to create platform: {str(e)}")
+        
+        ttk.Button(dialog, text="Create", command=create_platform).pack(pady=10)
+    
+    def update_profile(self):
+        try:
+            profile_data = {
+                'firstname': self.firstname_var.get(),
+                'lastname': self.lastname_var.get(),
+                'email': self.email_var.get()
+            }
+            self.user_manager.update_profile(profile_data)
+            messagebox.showinfo("Success", "Profile updated successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update profile: {str(e)}")
+    
+    def run(self):
+        self.root.mainloop()
+
+# Run the dashboard
+if __name__ == "__main__":
+    dashboard = ManagementDashboard()
+    dashboard.run()
+```
+</CodeGroup>
+
+## Best Practices Summary
+
+<AccordionGroup>
+  <Accordion title="Authentication Management" icon="key">
+    - Implement automatic token refresh before expiration
+    - Store tokens securely and never expose them in client-side code
+    - Handle authentication errors gracefully with proper user feedback
+    - Use different tokens for different environments
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling for all API operations
+    - Provide clear error messages to users
+    - Log errors for debugging without exposing sensitive information
+    - Handle network failures and timeouts gracefully
+  </Accordion>
+  
+  <Accordion title="Performance Optimization" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use pagination for large datasets
+    - Implement retry logic with exponential backoff
+    - Monitor rate limit headers to avoid hitting limits
+  </Accordion>
+  
+  <Accordion title="User Experience" icon="user">
+    - Provide loading states and progress indicators
+    - Implement optimistic updates for better responsiveness
+    - Use proper form validation and error display
+    - Provide clear feedback for all user actions
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Pro Tip**: Start with the Team Management APIs to set up your organization structure, then use Platform Management APIs to create and configure your platforms. The User Management APIs will help you build comprehensive user administration features.
+</Tip>

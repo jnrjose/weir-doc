@@ -1,0 +1,64 @@
+---
+title: "Get Mail Templates"
+description: "Retrieve all email templates"
+api: "GET /mail/templates"
+---
+
+# Get Mail Templates
+
+Retrieve all email templates in the system.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/mail/templates' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "templates": [
+      {
+        "templateId": "tpl_123456789",
+        "name": "Welcome Email",
+        "subject": "Welcome to Weir AI",
+        "type": "system",
+        "createdAt": "2024-01-15T10:30:00Z",
+        "updatedAt": "2024-01-22T15:30:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "Templates retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getMailTemplates = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/mail/templates', {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_mail_templates(access_token):
+    response = requests.get(
+        'https://api.weir.ai/mail/templates',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

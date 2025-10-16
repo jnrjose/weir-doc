@@ -1,0 +1,62 @@
+---
+title: "Admin Logout"
+description: "Logout admin user and invalidate tokens"
+api: "POST /auth/logout"
+---
+
+# Admin Logout
+
+Logout admin user and invalidate refresh tokens.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/logout' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "refreshToken": "admin_refresh_123456789"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "message": "Logout successful",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="refreshToken" type="string" required>
+Admin refresh token to invalidate.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const adminLogout = async (refreshToken) => {
+  const response = await fetch('https://api.weir.ai/auth/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken })
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def admin_logout(refresh_token):
+    response = requests.post(
+        'https://api.weir.ai/auth/logout',
+        json={'refreshToken': refresh_token}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

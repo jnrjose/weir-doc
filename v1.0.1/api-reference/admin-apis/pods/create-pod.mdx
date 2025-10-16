@@ -1,0 +1,84 @@
+---
+title: "Create Pod"
+description: "Create a new system pod"
+api: "POST /pax/pod"
+---
+
+# Create Pod
+
+Create a new system pod for platform operations.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/pax/pod' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "platform": {
+      "platformId": "platform_123456789"
+    },
+    "scopes": ["read", "write", "crawl"]
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podId": "pod_123456789",
+    "platformId": "platform_123456789",
+    "scopes": ["read", "write", "crawl"],
+    "status": "created",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Pod created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="platform" type="object" required>
+Platform information.
+</ParamField>
+
+<ParamField body="scopes" type="array" required>
+Array of permission scopes for the pod.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createPod = async (podData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/pax/pod', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(podData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_pod(pod_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/pax/pod',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        },
+        json=pod_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

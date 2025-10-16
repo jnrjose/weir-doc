@@ -1,0 +1,320 @@
+---
+title: "Resources"
+description: "Additional resources, concepts, and reference materials for Weir AI API v1.0.1"
+icon: "bookmark"
+sidebarTitle: "Resources"
+---
+
+# Resources
+
+Additional resources, concepts, and reference materials to help you get the most out of the Weir AI API v1.0.1.
+
+<CardGroup cols={2}>
+  <Card title="Core Concepts" icon="lightbulb" href="/resources/concepts">
+    Understanding the fundamental concepts and design principles of the Weir AI API.
+  </Card>
+  <Card title="Changelog" icon="list-ul" href="/resources/changelog">
+    Complete changelog for v1.0.1 with all new features, improvements, and breaking changes.
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle" href="/resources/error-codes">
+    Comprehensive error code reference and troubleshooting guide.
+  </Card>
+</CardGroup>
+
+## Quick Reference
+
+### API Categories
+
+<AccordionGroup>
+  <Accordion title="External APIs" icon="globe" defaultOpen={true}>
+    **Purpose**: Public-facing APIs for third-party integrations
+    
+    **Authentication**: Basic Authentication with client credentials
+    **Rate Limits**: 100 requests/minute per client
+    **Use Cases**: Third-party integrations, public API access
+    
+    **Key Endpoints**:
+    - `POST /auth/token` - Generate access token
+  </Accordion>
+  
+  <Accordion title="Console APIs" icon="desktop">
+    **Purpose**: Organization management and internal operations
+    
+    **Authentication**: Bearer Token with x-source header
+    **Rate Limits**: 200 requests/minute per user
+    **Use Cases**: Internal management tools, organization administration
+    
+    **Key Endpoints**:
+    - `POST /auth/login` - User login
+    - `POST /org/create/team` - Create team
+    - `GET /org/teams` - Get teams
+    - `POST /org/create/platform` - Create platform
+  </Accordion>
+  
+  <Accordion title="Admin APIs" icon="shield">
+    **Purpose**: Platform administration and system management
+    
+    **Authentication**: Bearer Token with admin privileges
+    **Rate Limits**: 500 requests/minute per admin
+    **Use Cases**: System administration, platform monitoring
+    
+    **Key Endpoints**:
+    - `POST /auth/authenticateAdmin` - Admin authentication
+    - `GET /admin/organizations` - Get organizations
+    - `POST /pax/pod` - Create pod
+    - `GET /logs/all` - Get logs
+  </Accordion>
+</AccordionGroup>
+
+### Common Response Format
+
+```json
+{
+  "data": {
+    // Response data object
+  },
+  "message": "Human-readable message",
+  "status": "success"
+}
+```
+
+### Error Response Format
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details"
+  },
+  "status": "error"
+}
+```
+
+## HTTP Status Codes
+
+<CardGroup cols={2}>
+  <Card title="Success Codes" icon="check">
+    - **200 OK**: Successful GET, PUT, PATCH requests
+    - **201 Created**: Successful POST requests
+    - **204 No Content**: Successful DELETE requests
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle">
+    - **400 Bad Request**: Invalid request parameters
+    - **401 Unauthorized**: Authentication required
+    - **403 Forbidden**: Insufficient permissions
+    - **404 Not Found**: Resource not found
+    - **429 Too Many Requests**: Rate limit exceeded
+    - **500 Internal Server Error**: Server error
+  </Card>
+</CardGroup>
+
+## Rate Limiting
+
+All APIs implement rate limiting with the following headers:
+
+<ResponseField name="X-RateLimit-Limit" type="string">
+Maximum number of requests allowed per time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Remaining" type="string">
+Number of requests remaining in the current time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Reset" type="string">
+Unix timestamp when the rate limit window resets.
+</ResponseField>
+
+## Authentication Methods
+
+<AccordionGroup>
+  <Accordion title="Basic Authentication" icon="key">
+    **Used by**: External APIs
+    
+    ```bash
+    curl -X POST 'https://api.weir.ai/auth/token' \
+      -H 'Authorization: Basic base64(client_id:secret_key)'
+    ```
+  </Accordion>
+  
+  <Accordion title="Bearer Token" icon="shield">
+    **Used by**: Console APIs, Admin APIs
+    
+    ```bash
+    curl -X GET 'https://api.weir.ai/org/teams' \
+      -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+      -H 'x-source: console'
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Pagination
+
+Many endpoints support pagination for large datasets:
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+Number of items per page. Range: 1-100.
+</ParamField>
+
+### Pagination Response Format
+
+```json
+{
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+}
+```
+
+## Common Error Codes
+
+<AccordionGroup>
+  <Accordion title="Authentication Errors" icon="key">
+    - **UNAUTHORIZED**: Invalid or expired authentication token
+    - **INVALID_CREDENTIALS**: Invalid client credentials or user credentials
+    - **TOKEN_EXPIRED**: Access token has expired
+  </Accordion>
+  
+  <Accordion title="Permission Errors" icon="lock">
+    - **FORBIDDEN**: Valid authentication but insufficient permissions
+    - **ACCESS_DENIED**: Access denied to requested resource
+    - **INSUFFICIENT_PERMISSIONS**: User lacks required permissions
+  </Accordion>
+  
+  <Accordion title="Validation Errors" icon="exclamation-triangle">
+    - **VALIDATION_ERROR**: Invalid request parameters
+    - **MISSING_REQUIRED_FIELD**: Required field is missing
+    - **INVALID_FORMAT**: Invalid data format
+  </Accordion>
+  
+  <Accordion title="Resource Errors" icon="search">
+    - **NOT_FOUND**: Requested resource not found
+    - **RESOURCE_EXISTS**: Resource already exists
+    - **RESOURCE_CONFLICT**: Resource conflict
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    - **RATE_LIMIT_EXCEEDED**: Too many requests in time window
+    - **QUOTA_EXCEEDED**: API quota exceeded
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Store credentials securely in environment variables
+    - Implement automatic token refresh before expiration
+    - Handle authentication errors gracefully
+    - Use different credentials for different environments
+    - Never expose tokens in client-side code
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling for all API operations
+    - Provide clear error messages to users
+    - Log errors for debugging without exposing sensitive information
+    - Handle network failures and timeouts gracefully
+    - Implement retry logic with exponential backoff
+  </Accordion>
+  
+  <Accordion title="Performance" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use pagination for large datasets
+    - Monitor rate limit headers to avoid hitting limits
+    - Implement request queuing for high-volume applications
+    - Use appropriate HTTP methods for different operations
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS for all API requests
+    - Validate and sanitize all input parameters
+    - Implement proper CORS policies for web applications
+    - Follow OWASP security guidelines
+    - Use secure storage for authentication tokens
+  </Accordion>
+</AccordionGroup>
+
+## Development Workflow
+
+<Steps>
+  <Step title="Environment Setup" icon="gear">
+    Set up development, staging, and production environments with appropriate API credentials.
+  </Step>
+  
+  <Step title="API Testing" icon="play">
+    Use the API playground and testing tools to verify endpoint functionality.
+  </Step>
+  
+  <Step title="Integration Development" icon="code">
+    Develop your integration following best practices and error handling patterns.
+  </Step>
+  
+  <Step title="Testing and Validation" icon="check">
+    Test your integration thoroughly with various scenarios and edge cases.
+  </Step>
+  
+  <Step title="Deployment and Monitoring" icon="chart-line">
+    Deploy to production and monitor API usage, performance, and errors.
+  </Step>
+</Steps>
+
+## Support and Community
+
+<CardGroup cols={2}>
+  <Card title="API Playground" icon="play" href="/api-playground">
+    Test endpoints directly in your browser with our interactive API playground.
+  </Card>
+  <Card title="Integration Guides" icon="puzzle-piece" href="/guides">
+    Detailed guides for building specific types of integrations.
+  </Card>
+  <Card title="Code Examples" icon="code" href="/examples">
+    Ready-to-use code examples in multiple programming languages.
+  </Card>
+  <Card title="Best Practices" icon="star" href="/resources/concepts">
+    Proven patterns and recommendations for building robust integrations.
+  </Card>
+</CardGroup>
+
+## Versioning and Compatibility
+
+### API Versioning
+
+The Weir AI API uses URL-based versioning:
+
+- **Current Version**: v1.0.1
+- **Version Format**: `/v{major}.{minor}.{patch}`
+- **Backward Compatibility**: Minor and patch versions maintain backward compatibility
+- **Breaking Changes**: Only major version changes introduce breaking changes
+
+### Migration Guidelines
+
+<AccordionGroup>
+  <Accordion title="Version Updates" icon="arrow-up">
+    - Review changelog for new features and changes
+    - Test new endpoints in staging environment
+    - Update client code to handle new response formats
+    - Monitor for deprecated endpoints and plan migration
+  </Accordion>
+  
+  <Accordion title="Breaking Changes" icon="exclamation-triangle">
+    - Major version updates may introduce breaking changes
+    - Review migration guides for detailed instructions
+    - Plan migration timeline and testing strategy
+    - Update documentation and client code accordingly
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Pro Tip**: Bookmark this resources page for quick reference. The core concepts guide provides essential background knowledge, while the changelog keeps you updated on new features and changes.
+</Tip>

@@ -1,0 +1,67 @@
+---
+title: "Admin Refresh Token"
+description: "Refresh admin access token"
+api: "POST /auth/refresh/token"
+---
+
+# Admin Refresh Token
+
+Refresh expired admin access tokens using a refresh token.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/refresh/token' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "refreshToken": "admin_refresh_123456789"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "new_admin_refresh_987654321",
+    "expiresIn": 3600
+  },
+  "message": "Token refreshed successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="refreshToken" type="string" required>
+Admin refresh token from login.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const refreshAdminToken = async (refreshToken) => {
+  const response = await fetch('https://api.weir.ai/auth/refresh/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken })
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def refresh_admin_token(refresh_token):
+    response = requests.post(
+        'https://api.weir.ai/auth/refresh/token',
+        json={'refreshToken': refresh_token}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

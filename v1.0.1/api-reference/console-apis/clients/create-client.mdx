@@ -1,0 +1,124 @@
+---
+title: "Create API Client"
+description: "Create a new API client for external access"
+api: "POST /org/create/client"
+---
+
+# Create API Client
+
+Create a new API client with credentials for external API access.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/create/client' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "name": "Production API Client",
+    "environment": "production"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "clientId": "cli_123456789",
+    "name": "Production API Client",
+    "environment": "production",
+    "credentials": {
+      "clientId": "V2ndYYV7PMQVjqyTsk2QkokCv",
+      "secretKey": "gMZUzD9fcn6Imd28Hi9rvZeZkhqSClMN4TjCLhc654UeBU9Uxj"
+    },
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Client created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+Client name for identification.
+</ParamField>
+
+<ParamField body="environment" type="string" required>
+Environment type: "production", "staging", or "development".
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data.clientId" type="string" required>
+Unique client identifier.
+</ResponseField>
+
+<ResponseField name="data.credentials" type="object" required>
+Client credentials for API access.
+
+<Expandable title="Credentials">
+  <ResponseField name="credentials.clientId" type="string" required>
+  Client ID for authentication.
+  </ResponseField>
+  
+  <ResponseField name="credentials.secretKey" type="string" required>
+  Secret key for authentication. Store securely - shown only once.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<Warning>
+  **Important**: The secret key is shown only once. Store it securely immediately.
+</Warning>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createClient = async (clientData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/create/client', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(clientData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  const data = await response.json();
+  
+  // Store credentials securely
+  console.warn('Store these credentials securely - they will not be shown again');
+  return data;
+};
+```
+
+```python Python
+import requests
+
+def create_client(client_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/org/create/client',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=client_data
+    )
+    response.raise_for_status()
+    data = response.json()
+    
+    # Store credentials securely
+    print('Warning: Store these credentials securely - they will not be shown again')
+    return data
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Create separate clients for different environments (production, staging, development) for better security and tracking.
+</Tip>

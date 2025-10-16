@@ -1,0 +1,220 @@
+---
+title: "Integration Guides"
+description: "Comprehensive guides for building specific types of integrations with Weir AI API v1.0.1"
+icon: "puzzle-piece"
+sidebarTitle: "Guides"
+---
+
+# Integration Guides
+
+These comprehensive guides will help you build specific types of integrations with the Weir AI API v1.0.1. Each guide focuses on a particular use case and provides step-by-step instructions with code examples.
+
+<CardGroup cols={2}>
+  <Card title="Team Management" icon="users" href="/guides/team-management">
+    Build team collaboration tools with role-based access control and member management.
+  </Card>
+  <Card title="Platform Management" icon="server" href="/guides/platform-management">
+    Create platform administration tools for managing multiple platforms and clients.
+  </Card>
+  <Card title="User Management" icon="user" href="/guides/user-management">
+    Build user administration systems with profile management and authentication.
+  </Card>
+  <Card title="Admin Operations" icon="shield" href="/guides/admin-operations">
+    Create administrative tools for system management and monitoring.
+  </Card>
+  <Card title="Console API Integration" icon="desktop" href="/guides/console-apis">
+    Complete guide to integrating with Console APIs for organization management.
+  </Card>
+</CardGroup>
+
+## Choose Your Integration Type
+
+<AccordionGroup>
+  <Accordion title="Team Collaboration Tools" icon="users" defaultOpen={true}>
+    **Best for**: Building team management interfaces, collaboration platforms, and organization tools.
+    
+    **Key Features**:
+    - Team creation and management
+    - Member invitations and role management
+    - Role-based access control
+    - Team organization and structure
+    
+    **Start with**: [Team Management Guide](/guides/team-management)
+  </Accordion>
+  
+  <Accordion title="Platform Administration" icon="server">
+    **Best for**: Building platform management dashboards, client administration, and platform monitoring.
+    
+    **Key Features**:
+    - Platform creation and configuration
+    - Client management and credentials
+    - Domain verification and management
+    - Platform monitoring and analytics
+    
+    **Start with**: [Platform Management Guide](/guides/platform-management)
+  </Accordion>
+  
+  <Accordion title="User Administration" icon="user">
+    **Best for**: Building user management systems, profile management, and authentication flows.
+    
+    **Key Features**:
+    - User registration and authentication
+    - Profile management and updates
+    - Password management and security
+    - User role and permission management
+    
+    **Start with**: [User Management Guide](/guides/user-management)
+  </Accordion>
+  
+  <Accordion title="System Administration" icon="shield">
+    **Best for**: Building administrative dashboards, system monitoring, and platform administration tools.
+    
+    **Key Features**:
+    - System-wide user management
+    - Platform and organization administration
+    - Pod management and system control
+    - Logging and monitoring systems
+    
+    **Start with**: [Admin Operations Guide](/guides/admin-operations)
+  </Accordion>
+</AccordionGroup>
+
+## Integration Patterns
+
+### Common Integration Patterns
+
+<CardGroup cols={2}>
+  <Card title="Dashboard Applications" icon="tachometer-alt">
+    Build comprehensive dashboards for managing teams, platforms, and users within your organization.
+  </Card>
+  <Card title="Collaboration Tools" icon="users">
+    Create team collaboration platforms with role-based access control and member management.
+  </Card>
+  <Card title="Administrative Interfaces" icon="cog">
+    Build administrative interfaces for managing multiple platforms and their configurations.
+  </Card>
+  <Card title="Client Management Systems" icon="desktop">
+    Create systems for managing API clients, credentials, and access control.
+  </Card>
+</CardGroup>
+
+### Technology Stack Examples
+
+<AccordionGroup>
+  <Accordion title="Web Applications" icon="globe">
+    **Frontend**: React, Vue.js, Angular, or vanilla JavaScript
+    **Backend**: Node.js, Python, PHP, or any backend framework
+    **Authentication**: JWT tokens with automatic refresh
+    **State Management**: Redux, Vuex, or similar for complex applications
+  </Accordion>
+  
+  <Accordion title="Mobile Applications" icon="mobile">
+    **iOS**: Swift with URLSession or Alamofire
+    **Android**: Kotlin/Java with Retrofit or OkHttp
+    **Cross-platform**: React Native, Flutter, or Xamarin
+    **Authentication**: Secure token storage with automatic refresh
+  </Accordion>
+  
+  <Accordion title="Desktop Applications" icon="desktop">
+    **Windows**: C# with HttpClient or Python with requests
+    **macOS**: Swift with URLSession or Python with requests
+    **Cross-platform**: Electron, Python with tkinter, or Java with Swing
+    **Authentication**: Secure credential storage
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Authentication Management" icon="key">
+    - Implement automatic token refresh before expiration
+    - Store tokens securely and never expose them in client-side code
+    - Handle authentication errors gracefully with proper user feedback
+    - Use different tokens for different environments
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling for all API operations
+    - Provide clear error messages to users
+    - Log errors for debugging without exposing sensitive information
+    - Handle network failures and timeouts gracefully
+  </Accordion>
+  
+  <Accordion title="Performance Optimization" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use pagination for large datasets
+    - Implement retry logic with exponential backoff
+    - Monitor rate limit headers to avoid hitting limits
+  </Accordion>
+  
+  <Accordion title="User Experience" icon="user">
+    - Provide loading states and progress indicators
+    - Implement optimistic updates for better responsiveness
+    - Use proper form validation and error display
+    - Provide clear feedback for all user actions
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose Your Integration Type" icon="route">
+    Select the integration type that best matches your use case and requirements.
+  </Step>
+  
+  <Step title="Review the Guide" icon="book">
+    Read through the relevant integration guide to understand the approach and requirements.
+  </Step>
+  
+  <Step title="Set Up Your Environment" icon="gear">
+    Configure your development environment and obtain the necessary API credentials.
+  </Step>
+  
+  <Step title="Follow the Examples" icon="code">
+    Use the provided code examples as a starting point for your implementation.
+  </Step>
+  
+  <Step title="Test and Iterate" icon="play">
+    Test your integration thoroughly and iterate based on your specific requirements.
+  </Step>
+</Steps>
+
+## Code Examples
+
+Each guide includes comprehensive code examples in multiple programming languages:
+
+<CardGroup cols={2}>
+  <Card title="JavaScript/Node.js" icon="js">
+    Modern JavaScript examples with async/await and fetch API
+  </Card>
+  <Card title="Python" icon="python">
+    Python examples with requests library and error handling
+  </Card>
+  <Card title="PHP" icon="php">
+    PHP examples with cURL and proper error handling
+  </Card>
+  <Card title="cURL" icon="terminal">
+    Command-line examples for testing and automation
+  </Card>
+</CardGroup>
+
+## Support and Resources
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Complete reference documentation for all endpoints
+  </Card>
+  <Card title="Code Examples" icon="code" href="/examples">
+    Ready-to-use code examples in multiple programming languages
+  </Card>
+  <Card title="Best Practices" icon="star" href="/resources/concepts">
+    Proven patterns and recommendations for building robust integrations
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle" href="/resources/error-codes">
+    Comprehensive error code reference and troubleshooting guide
+  </Card>
+</CardGroup>
+
+<Tip>
+  **Pro Tip**: Start with the integration guide that best matches your use case, then explore the API reference for specific endpoint details. The code examples provide a solid foundation for your implementation.
+</Tip>

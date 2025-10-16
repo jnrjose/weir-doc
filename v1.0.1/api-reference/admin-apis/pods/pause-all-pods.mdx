@@ -1,0 +1,56 @@
+---
+title: "Pause All Pods"
+description: "Pause all running pods"
+api: "POST /pax/pause/pods"
+---
+
+# Pause All Pods
+
+Pause all running pods in the system.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/pax/pause/pods' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podsPaused": 5,
+    "pausedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "All pods paused successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const pauseAllPods = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/pax/pause/pods', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def pause_all_pods(access_token):
+    response = requests.post(
+        'https://api.weir.ai/pax/pause/pods',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

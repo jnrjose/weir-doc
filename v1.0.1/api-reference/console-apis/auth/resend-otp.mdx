@@ -1,0 +1,164 @@
+---
+title: "Resend OTP"
+description: "Resend OTP for email verification"
+api: "PUT /auth/resend/otp/:session"
+---
+
+# Resend OTP
+
+Resend OTP code for email verification if the previous code expired or wasn't received.
+
+<RequestExample>
+```bash cURL
+curl -X PUT 'https://api.weir.ai/auth/resend/otp/otp_session_123456789' \
+  -H 'Content-Type: application/json'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "otpSession": "otp_session_123456789",
+    "email": "john.doe@example.com",
+    "expiresIn": 300
+  },
+  "message": "OTP resent successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+This endpoint does not require authentication.
+
+## Path Parameters
+
+<ParamField path="session" type="string" required>
+OTP session identifier from the registration endpoint.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+OTP resend data object.
+
+<Expandable title="OTP Data Properties">
+  <ResponseField name="data.otpSession" type="string" required>
+  OTP session identifier (same as the request parameter).
+  </ResponseField>
+  
+  <ResponseField name="data.email" type="string" required>
+  Email address where the new OTP was sent.
+  </ResponseField>
+  
+  <ResponseField name="data.expiresIn" type="integer" required>
+  New OTP expiration time in seconds. Always 300 (5 minutes).
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    ```json
+    {
+      "error": {
+        "code": "INVALID_SESSION",
+        "message": "Invalid OTP session",
+        "details": "The provided OTP session is invalid or has been verified"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="429 Too Many Requests" icon="clock">
+    ```json
+    {
+      "error": {
+        "code": "RATE_LIMIT_EXCEEDED",
+        "message": "Too many OTP requests",
+        "details": "Please wait before requesting another OTP"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const resendOTP = async (otpSession) => {
+  try {
+    const response = await fetch(`https://api.weir.ai/auth/resend/otp/${otpSession}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Resend OTP error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const otpData = await resendOTP('otp_session_123456789');
+console.log('OTP resent to:', otpData.email);
+```
+
+```python Python
+import requests
+
+def resend_otp(otp_session):
+    try:
+        response = requests.put(
+            f'https://api.weir.ai/auth/resend/otp/{otp_session}',
+            headers={'Content-Type': 'application/json'}
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Resend OTP error: {e}')
+        raise
+
+# Usage
+otp_data = resend_otp('otp_session_123456789')
+print(f'OTP resent to: {otp_data["email"]}')
+```
+
+```php PHP
+function resendOTP($otpSession) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.weir.ai/auth/resend/otp/$otpSession");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    $data = json_decode($response, true);
+    return $data['data'];
+}
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Implement a countdown timer to prevent users from requesting OTP too frequently. Wait at least 60 seconds between requests.
+</Tip>

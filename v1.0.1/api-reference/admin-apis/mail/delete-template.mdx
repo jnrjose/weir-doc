@@ -1,0 +1,62 @@
+---
+title: "Delete Mail Template"
+description: "Delete an email template"
+api: "DELETE /mail/template/:id"
+---
+
+# Delete Mail Template
+
+Delete an email template from the system.
+
+<Warning>
+  **Caution**: This action cannot be undone. Ensure no active processes depend on this template.
+</Warning>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://api.weir.ai/mail/template/tpl_123456789' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "message": "Template deleted successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+Template ID to delete.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const deleteMailTemplate = async (templateId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/mail/template/${templateId}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def delete_mail_template(template_id, access_token):
+    response = requests.delete(
+        f'https://api.weir.ai/mail/template/{template_id}',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

@@ -1,0 +1,362 @@
+---
+title: "Mobile Registration"
+description: "Simplified registration endpoint for mobile applications"
+api: "POST /auth/m/register"
+---
+
+# Mobile Registration
+
+Simplified registration endpoint designed specifically for mobile applications without organization creation.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/m/register' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "fullname": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "password": "SecurePassword123!"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "otpSession": "otp_session_987654321",
+    "email": "jane.smith@example.com",
+    "expiresIn": 300
+  },
+  "message": "Registration successful. Please verify your email with the OTP sent.",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+This endpoint does not require authentication as it's used for new user registration.
+
+## Request Body
+
+<ParamField body="fullname" type="string" required>
+User's full name. Must be between 2-100 characters.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+User's email address. Must be a valid email format and unique in the system.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+User's password. Must meet security requirements (min 8 characters, uppercase, lowercase, number, special character).
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+Registration data object containing OTP session information.
+
+<Expandable title="Registration Data Properties">
+  <ResponseField name="data.otpSession" type="string" required>
+  OTP session identifier used for email verification. Valid for 5 minutes.
+  </ResponseField>
+  
+  <ResponseField name="data.email" type="string" required>
+  Email address where the OTP was sent.
+  </ResponseField>
+  
+  <ResponseField name="data.expiresIn" type="integer" required>
+  OTP expiration time in seconds. Always 300 (5 minutes).
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+Human-readable message describing the result of the operation.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+Operation status. Always "success" for successful registration.
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    ```json
+    {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "email": "Invalid email format",
+          "password": "Password must be at least 8 characters"
+        }
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="409 Conflict" icon="exclamation">
+    ```json
+    {
+      "error": {
+        "code": "EMAIL_EXISTS",
+        "message": "Email already registered",
+        "details": "An account with this email already exists"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const mobileRegister = async (fullname, email, password) => {
+  try {
+    const response = await fetch('https://api.weir.ai/auth/m/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ fullname, email, password })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Mobile registration error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const registrationData = await mobileRegister(
+  'Jane Smith',
+  'jane.smith@example.com',
+  'SecurePassword123!'
+);
+console.log('OTP Session:', registrationData.otpSession);
+```
+
+```python Python
+import requests
+
+def mobile_register(fullname, email, password):
+    try:
+        response = requests.post(
+            'https://api.weir.ai/auth/m/register',
+            json={
+                'fullname': fullname,
+                'email': email,
+                'password': password
+            }
+        )
+        response.raise_for_status()
+        
+        data = response.json()
+        return data['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Mobile registration error: {e}')
+        raise
+
+# Usage
+registration_data = mobile_register(
+    'Jane Smith',
+    'jane.smith@example.com',
+    'SecurePassword123!'
+)
+print(f'OTP Session: {registration_data["otpSession"]}')
+```
+
+```swift Swift (iOS)
+func mobileRegister(fullname: String, email: String, password: String) async throws -> RegistrationData {
+    let url = URL(string: "https://api.weir.ai/auth/m/register")!
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let body = [
+        "fullname": fullname,
+        "email": email,
+        "password": password
+    ]
+    request.httpBody = try JSONSerialization.data(withJSONObject: body)
+    
+    let (data, response) = try await URLSession.shared.data(for: request)
+    
+    guard let httpResponse = response as? HTTPURLResponse,
+          httpResponse.statusCode == 200 else {
+        throw RegistrationError.requestFailed
+    }
+    
+    let result = try JSONDecoder().decode(APIResponse<RegistrationData>.self, from: data)
+    return result.data
+}
+
+// Usage
+Task {
+    do {
+        let registrationData = try await mobileRegister(
+            fullname: "Jane Smith",
+            email: "jane.smith@example.com",
+            password: "SecurePassword123!"
+        )
+        print("OTP Session: \(registrationData.otpSession)")
+    } catch {
+        print("Registration error: \(error)")
+    }
+}
+```
+
+```kotlin Kotlin (Android)
+suspend fun mobileRegister(
+    fullname: String,
+    email: String,
+    password: String
+): RegistrationData = withContext(Dispatchers.IO) {
+    val client = OkHttpClient()
+    val json = JSONObject().apply {
+        put("fullname", fullname)
+        put("email", email)
+        put("password", password)
+    }
+    
+    val requestBody = json.toString()
+        .toRequestBody("application/json".toMediaType())
+    
+    val request = Request.Builder()
+        .url("https://api.weir.ai/auth/m/register")
+        .post(requestBody)
+        .build()
+    
+    val response = client.newCall(request).execute()
+    
+    if (!response.isSuccessful) {
+        throw IOException("HTTP error: ${response.code}")
+    }
+    
+    val responseData = response.body?.string() ?: throw IOException("Empty response")
+    val jsonResponse = JSONObject(responseData)
+    val data = jsonResponse.getJSONObject("data")
+    
+    return@withContext RegistrationData(
+        otpSession = data.getString("otpSession"),
+        email = data.getString("email"),
+        expiresIn = data.getInt("expiresIn")
+    )
+}
+
+// Usage
+lifecycleScope.launch {
+    try {
+        val registrationData = mobileRegister(
+            "Jane Smith",
+            "jane.smith@example.com",
+            "SecurePassword123!"
+        )
+        println("OTP Session: ${registrationData.otpSession}")
+    } catch (e: Exception) {
+        println("Registration error: ${e.message}")
+    }
+}
+```
+</CodeGroup>
+
+## Mobile Registration Flow
+
+<Steps>
+  <Step title="User Input" icon="mobile">
+    Collect user's fullname, email, and password through mobile UI.
+  </Step>
+  
+  <Step title="Register" icon="user-plus">
+    Submit registration data to mobile registration endpoint.
+  </Step>
+  
+  <Step title="OTP Verification" icon="envelope">
+    Guide user to enter OTP received via email.
+  </Step>
+  
+  <Step title="Complete Setup" icon="check">
+    After verification, user can complete profile and join/create organization.
+  </Step>
+</Steps>
+
+## Differences from Standard Registration
+
+<AccordionGroup>
+  <Accordion title="No Organization Creation" icon="building">
+    Mobile registration doesn't create an organization. Users can join existing organizations or create one later.
+  </Accordion>
+  
+  <Accordion title="Simplified Flow" icon="mobile">
+    Streamlined for mobile UX with fewer required fields.
+  </Accordion>
+  
+  <Accordion title="Same Verification" icon="check">
+    Uses the same OTP verification process as standard registration.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices for Mobile Apps
+
+<AccordionGroup>
+  <Accordion title="Input Validation" icon="check">
+    - Validate email format before submission
+    - Show password strength indicator
+    - Provide real-time validation feedback
+    - Disable submit button until all fields are valid
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Display user-friendly error messages
+    - Handle network failures gracefully
+    - Implement retry logic for transient failures
+    - Provide offline state handling
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Store OTP session securely in device keychain
+    - Clear sensitive data from memory after use
+    - Implement certificate pinning for API calls
+    - Use secure storage for user credentials
+  </Accordion>
+  
+  <Accordion title="User Experience" icon="user">
+    - Auto-focus on email field
+    - Show loading indicators during API calls
+    - Provide clear next steps after registration
+    - Implement email verification reminders
+  </Accordion>
+</AccordionGroup>
+
+## Related Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Validate Registration" icon="check" href="/api-reference/console-apis/auth/validate-registration">
+    Verify email with OTP to activate account.
+  </Card>
+  <Card title="Resend OTP" icon="refresh" href="/api-reference/console-apis/auth/resend-otp">
+    Resend OTP if it expires or wasn't received.
+  </Card>
+  <Card title="Standard Registration" icon="user-plus" href="/api-reference/console-apis/auth/register">
+    Full registration with organization creation.
+  </Card>
+  <Card title="Login" icon="sign-in-alt" href="/api-reference/console-apis/auth/login">
+    Login after successful registration and verification.
+  </Card>
+</CardGroup>
+
+<Tip>
+  **Pro Tip**: For mobile apps, implement a seamless flow from registration to OTP verification within the same screen sequence for better user experience.
+</Tip>

@@ -1,0 +1,60 @@
+---
+title: "Stop All Pods"
+description: "Stop all pods in the system"
+api: "POST /pax/stop/pods"
+---
+
+# Stop All Pods
+
+Stop all pods in the system completely.
+
+<Warning>
+  **Critical**: This will stop all platform operations. Use with extreme caution.
+</Warning>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/pax/stop/pods' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podsStopped": 5,
+    "stoppedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "All pods stopped successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const stopAllPods = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/pax/stop/pods', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def stop_all_pods(access_token):
+    response = requests.post(
+        'https://api.weir.ai/pax/stop/pods',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

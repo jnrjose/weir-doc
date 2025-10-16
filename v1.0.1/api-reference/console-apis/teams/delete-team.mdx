@@ -1,0 +1,185 @@
+---
+title: "Delete Team"
+description: "Delete a team from your organization"
+api: "DELETE /org/team/:teamId"
+---
+
+# Delete Team
+
+Permanently delete a team from your organization. This action cannot be undone.
+
+<Warning>
+  **Caution**: Deleting a team is permanent and cannot be undone. All team data and member associations will be removed.
+</Warning>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://api.weir.ai/org/team/team_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "message": "Team deleted successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+Requires Console API authentication with bearer token and `x-source: console` header.
+
+## Path Parameters
+
+<ParamField path="teamId" type="string" required>
+Unique identifier of the team to delete.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="message" type="string" required>
+Human-readable message confirming the deletion.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+Operation status. Always "success" for successful deletion.
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="404 Not Found" icon="search">
+    ```json
+    {
+      "error": {
+        "code": "TEAM_NOT_FOUND",
+        "message": "Team not found",
+        "details": "The specified team does not exist or you do not have access"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="lock">
+    ```json
+    {
+      "error": {
+        "code": "INSUFFICIENT_PERMISSIONS",
+        "message": "Insufficient permissions",
+        "details": "You do not have permission to delete this team"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const deleteTeam = async (teamId, accessToken) => {
+  try {
+    const response = await fetch(`https://api.weir.ai/org/team/${teamId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'x-source': 'console'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Delete team error:', error);
+    throw error;
+  }
+};
+
+// Usage with confirmation
+if (confirm('Are you sure you want to delete this team?')) {
+  await deleteTeam('team_123456789', 'your_access_token');
+  console.log('Team deleted successfully');
+}
+```
+
+```python Python
+import requests
+
+def delete_team(team_id, access_token):
+    try:
+        response = requests.delete(
+            f'https://api.weir.ai/org/team/{team_id}',
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'x-source': 'console'
+            }
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Delete team error: {e}')
+        raise
+
+# Usage with confirmation
+confirmation = input('Are you sure you want to delete this team? (yes/no): ')
+if confirmation.lower() == 'yes':
+    delete_team('team_123456789', 'your_access_token')
+    print('Team deleted successfully')
+```
+
+```php PHP
+function deleteTeam($teamId, $accessToken) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.weir.ai/org/team/$teamId");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken,
+        'x-source: console'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    return json_decode($response, true);
+}
+```
+</CodeGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Confirm Action" icon="exclamation-triangle">
+    Always implement confirmation dialogs before deleting teams.
+  </Step>
+  
+  <Step title="Check Dependencies" icon="link">
+    Verify that no critical resources depend on this team.
+  </Step>
+  
+  <Step title="Notify Members" icon="bell">
+    Notify team members before deletion if possible.
+  </Step>
+  
+  <Step title="Archive Option" icon="archive">
+    Consider implementing an archive feature instead of permanent deletion.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: Consider implementing a soft delete mechanism where teams are marked as inactive rather than permanently deleted, allowing for potential recovery.
+</Tip>

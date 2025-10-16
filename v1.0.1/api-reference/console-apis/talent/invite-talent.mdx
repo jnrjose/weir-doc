@@ -1,0 +1,101 @@
+---
+title: "Invite Talent to Agency"
+description: "Invite talent to join your agency roster"
+api: "POST /org/invite/talent"
+---
+
+# Invite Talent to Agency
+
+Send an invitation to a talent to join your agency's roster.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/invite/talent' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "email": "talent@athlete.com"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "invitationId": "inv_talent_123456789",
+    "email": "talent@athlete.com",
+    "status": "pending",
+    "expiresAt": "2024-01-29T15:30:00Z"
+  },
+  "message": "Talent invitation sent successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="email" type="string" required>
+Email address of the talent to invite.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data.invitationId" type="string" required>
+Unique invitation identifier.
+</ResponseField>
+
+<ResponseField name="data.email" type="string" required>
+Email address where invitation was sent.
+</ResponseField>
+
+<ResponseField name="data.status" type="string" required>
+Invitation status (pending, accepted, expired).
+</ResponseField>
+
+<ResponseField name="data.expiresAt" type="timestamp" required>
+Invitation expiration timestamp.
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const inviteTalent = async (email, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/invite/talent', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify({ email })
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def invite_talent(email, access_token):
+    response = requests.post(
+        'https://api.weir.ai/org/invite/talent',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json={'email': email}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Invitations expire in 7 days. Send reminders to increase acceptance rates.
+</Tip>

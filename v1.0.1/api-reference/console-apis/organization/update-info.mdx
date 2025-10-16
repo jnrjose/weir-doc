@@ -1,0 +1,116 @@
+---
+title: "Update Organization Information"
+description: "Update organization details and settings"
+api: "PATCH /org/information"
+---
+
+# Update Organization Information
+
+Update your organization's information including basic details, address, contact, and tax information.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://api.weir.ai/org/information' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "basicInfo": {
+      "website": "https://acmecorp.com",
+      "industry": "TECHNOLOGY",
+      "companySize": "MEDIUM",
+      "founded": "2020",
+      "description": "An innovative technology platform"
+    },
+    "address": {
+      "address1": "123 Main St",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94105",
+      "country": "USA"
+    },
+    "contact": {
+      "phone": "+1-415-555-0100",
+      "email": "contact@acmecorp.com"
+    },
+    "taxInfo": {
+      "taxId": "12-3456789",
+      "taxOrgType": "CORPORATION"
+    }
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "organizationId": "org_123456789",
+    "updatedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Organization information updated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="basicInfo" type="object">
+Basic organization information to update.
+</ParamField>
+
+<ParamField body="address" type="object">
+Organization address information.
+</ParamField>
+
+<ParamField body="contact" type="object">
+Contact information.
+</ParamField>
+
+<ParamField body="taxInfo" type="object">
+Tax information.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const updateOrganizationInfo = async (updateData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/information', {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(updateData)
+  });
+  
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def update_organization_info(update_data, access_token):
+    response = requests.patch(
+        'https://api.weir.ai/org/information',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=update_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Only include fields you want to update in the request body. All fields are optional.
+</Tip>

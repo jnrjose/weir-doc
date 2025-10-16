@@ -1,0 +1,63 @@
+---
+title: "Start Pod"
+description: "Start a specific pod"
+api: "POST /pax/start/pod/:podId"
+---
+
+# Start Pod
+
+Start a specific pod to begin operations.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/pax/start/pod/pod_123456789' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podId": "pod_123456789",
+    "status": "running",
+    "startedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Pod started successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="podId" type="string" required>
+Unique pod identifier.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const startPod = async (podId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/pax/start/pod/${podId}`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def start_pod(pod_id, access_token):
+    response = requests.post(
+        f'https://api.weir.ai/pax/start/pod/{pod_id}',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

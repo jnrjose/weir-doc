@@ -1,0 +1,234 @@
+---
+title: "Changelog - v1.0.1"
+description: "Complete changelog for Weir AI API v1.0.1 with all new features, improvements, and breaking changes."
+icon: "list-ul"
+sidebarTitle: "Changelog"
+---
+
+# Weir AI API Changelog
+
+<Update label="Version 1.0.1" description="Released October 2025">
+## 🚀 New Features
+
+### Team Management System
+- **Create Team**: New endpoint to create teams with custom names and configurations
+- **Invite Team Members**: Send invitations to team members with specific roles
+- **Get Teams**: Retrieve all teams with pagination support
+- **Delete Team**: Remove teams and clean up associated resources
+- **Get Team Members**: List all members of a specific team
+- **Update Team Member Role**: Modify member roles and permissions
+
+### Enhanced Authentication
+- **Mobile Registration**: New mobile-specific registration endpoint (`/auth/m/register`)
+- **Resend Registration OTP**: Ability to resend OTP for registration validation
+- **Validate Registration**: Enhanced registration validation with OTP verification
+- **Improved Token Management**: Better refresh token handling and automatic token updates
+
+### Platform Management
+- **Create Platform**: Enhanced platform creation with team association
+- **Get Platforms**: Retrieve all platforms with filtering options
+- **Delete Platform**: Remove platforms and associated resources
+- **Verify Platform**: New platform verification endpoint for domain validation
+
+### Client Management
+- **Create Client**: Enhanced client creation with environment specification
+- **Get Clients**: Retrieve all clients with proper authentication
+- **Refresh Client**: Regenerate client credentials and tokens
+- **Delete Client**: Remove clients and clean up associated resources
+
+### Talent and License Management
+- **Get Agency Talent Roster**: Retrieve all talent associated with an agency
+- **Invite Talent to Agency**: Send invitations to talent for agency collaboration
+- **Search Agency Talent**: Advanced search functionality for talent discovery
+- **Get Talent Licenses**: Retrieve all licenses for talent management
+- **Create License by Agency**: Create licenses for talent with image upload support
+- **Add Images to License**: Upload and manage license images
+- **Remove Image from License**: Delete specific images from licenses
+
+### Administrative Features
+- **Pod Management**: Complete lifecycle management for pods
+  - Create, Get, Start, Pause, Stop individual pods
+  - Bulk operations for starting, pausing, and stopping all pods
+- **Mail Template System**: Full CRUD operations for email templates
+  - Create, Get, Update, Delete mail templates
+- **Enhanced Logging**: Advanced logging capabilities
+  - Create log entries with different types and schemes
+  - Search logs with filtering and pagination
+  - Get all logs with comprehensive filtering options
+
+### User Management
+- **Update User Profile**: Enhanced profile management with comprehensive fields
+- **User Change Password**: Secure password change functionality
+- **Get User Profile**: Retrieve complete user profile information
+
+## 🔧 Improvements
+
+### API Enhancements
+- **Better Error Handling**: More descriptive error messages and proper HTTP status codes
+- **Enhanced Security**: Improved authentication mechanisms and token validation
+- **Rate Limiting**: Better rate limiting with clearer documentation and headers
+- **Response Formatting**: Consistent response structures across all endpoints
+- **Request Validation**: Enhanced input validation with better error reporting
+
+### Documentation
+- **Comprehensive Examples**: Complete code examples for all new endpoints
+- **Interactive Playground**: Updated API playground with all new endpoints
+- **Migration Guide**: Detailed migration instructions from v1.0.0
+- **Best Practices**: Updated best practices for new features
+
+### Performance
+- **Optimized Queries**: Improved database queries for better performance
+- **Caching**: Enhanced caching mechanisms for frequently accessed data
+- **Pagination**: Better pagination support for large datasets
+- **Response Times**: Reduced response times for most endpoints
+
+## 🛠️ Technical Changes
+
+### New Endpoints Added
+
+#### External APIs
+- `POST /auth/token` - Generate access token with basic authentication
+
+#### Console APIs
+- `POST /org/create/team` - Create new team
+- `POST /org/invite/team/member/:teamId` - Invite team member
+- `GET /org/teams` - Get all teams
+- `DELETE /org/team/:teamId` - Delete team
+- `GET /org/team/members/:teamId` - Get team members
+- `PATCH /org/team/:teamId/member/:memberId` - Update team member role
+- `POST /auth/m/register` - Mobile registration
+- `PUT /auth/resend/otp/:session` - Resend registration OTP
+- `POST /auth/validate/registration` - Validate registration
+- `POST /org/create/platform` - Create platform
+- `GET /org/platforms` - Get platforms
+- `DELETE /org/platform/:platformId` - Delete platform
+- `GET /org/verify/platform/:platformId` - Verify platform
+- `POST /org/create/client` - Create client
+- `GET /org/clients` - Get clients
+- `PATCH /org/refresh/client` - Refresh client
+- `DELETE /org/client/:clientId` - Delete client
+- `GET /org/talent/roster` - Get agency talent roster
+- `POST /org/invite/talent` - Invite talent to agency
+- `GET /org/talent/name/search` - Search agency talent
+- `GET /org/licenses` - Get talent licenses
+- `POST /org/talent/license/:talentId` - Create license by agency
+- `PATCH /org/talent/license/:licenseId/image` - Add images to license
+- `DELETE /org/talent/license/{licenseId}/image/{imageId}` - Remove image from license
+- `PATCH /user/profile` - Update user profile
+- `PATCH /user/change/password` - Change user password
+- `GET /user/profile` - Get user profile
+
+#### Admin APIs
+- `POST /auth/authenticateAdmin` - Authenticate admin
+- `GET /admin/members` - Get admin members
+- `POST /admin/member/invite` - Invite admin user
+- `GET /admin/licenses` - Get admin licenses
+- `GET /admin/organizations` - Get organizations
+- `GET /admin/platforms` - Get platforms
+- `POST /mail/create/template` - Create mail template
+- `GET /mail/templates` - Get mail templates
+- `PUT /mail/template/:id` - Update mail template
+- `DELETE /mail/template/:id` - Delete mail template
+- `POST /pax/pod` - Create pod
+- `GET /pax/pods` - Get pods
+- `GET /pax/pod/:podId` - Get pod
+- `POST /pax/start/pod/:podId` - Start pod
+- `POST /pax/pause/pod/:podId` - Pause pod
+- `POST /pax/stop/pod/:podId` - Stop pod
+- `POST /pax/start/pods` - Start all pods
+- `POST /pax/pause/pods` - Pause all pods
+- `POST /pax/stop/pods` - Stop all pods
+- `POST /logs/log` - Create log entry
+- `GET /logs/search` - Search log entries
+- `GET /logs/all` - Get all log entries
+
+### Updated Endpoints
+- Enhanced authentication endpoints with better token management
+- Improved organization management with team integration
+- Updated platform management with verification capabilities
+- Enhanced client management with refresh functionality
+
+## 🔄 Breaking Changes
+
+<Warning>
+  **Important**: The following changes may require updates to your existing integrations.
+</Warning>
+
+### Authentication Changes
+- **Token Format**: Access tokens now include additional metadata for better security
+- **Refresh Token**: Refresh token expiration has been updated to 30 days (previously 7 days)
+- **Header Requirements**: Some endpoints now require the `x-source` header to specify the API call type
+
+### Response Format Changes
+- **Team Management**: Team-related responses now include additional metadata fields
+- **Platform Management**: Platform responses include verification status and team association
+- **Client Management**: Client responses include environment information and creation timestamps
+- **Error Responses**: Error responses now include more detailed error codes and descriptions
+
+### Parameter Changes
+- **Team Creation**: Team creation now requires a `name` parameter
+- **Platform Creation**: Platform creation now includes `teamId` and `type` parameters
+- **Client Creation**: Client creation now includes `environment` parameter
+- **License Creation**: License creation now supports file uploads for images
+
+## 🐛 Bug Fixes
+
+- Fixed authentication token refresh issues
+- Resolved pagination problems with large datasets
+- Fixed team member role update functionality
+- Corrected platform verification endpoint responses
+- Resolved client refresh token generation issues
+- Fixed talent search functionality
+- Corrected license image upload handling
+- Resolved admin authentication flow issues
+- Fixed pod management state transitions
+- Corrected log entry creation timestamps
+
+## 📚 Documentation Updates
+
+- Added comprehensive documentation for all new endpoints
+- Updated authentication guides with new token management
+- Enhanced team management documentation
+- Added platform verification guides
+- Updated client management documentation
+- Enhanced talent and license management guides
+- Added administrative operation guides
+- Updated error handling documentation
+- Enhanced best practices guides
+
+## 🔒 Security Enhancements
+
+- Improved token validation and expiration handling
+- Enhanced input validation for all new endpoints
+- Better error message sanitization
+- Improved rate limiting implementation
+- Enhanced audit logging for administrative operations
+- Better handling of sensitive data in responses
+
+## 📊 Performance Improvements
+
+- Optimized database queries for team management
+- Improved caching for platform and client data
+- Enhanced pagination performance
+- Reduced response times for authentication endpoints
+- Optimized talent search functionality
+- Improved license management performance
+
+## 🧪 Testing and Quality Assurance
+
+- Added comprehensive test coverage for all new endpoints
+- Enhanced integration testing for team management
+- Improved error handling testing
+- Added performance testing for new features
+- Enhanced security testing for authentication flows
+- Added load testing for administrative operations
+
+---
+
+<Info>
+  **Migration Support**: If you need help migrating from v1.0.0 to v1.0.1, please refer to our migration guide.
+</Info>
+
+<Tip>
+  **Stay Updated**: Subscribe to our API changelog to receive notifications about future updates and new features.
+</Tip>

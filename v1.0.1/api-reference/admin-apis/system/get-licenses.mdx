@@ -1,0 +1,67 @@
+---
+title: "Get All Licenses"
+description: "Retrieve all licenses in the system"
+api: "GET /admin/licenses"
+---
+
+# Get All Licenses
+
+Retrieve a list of all NIL licenses across all organizations (admin only).
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/admin/licenses' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "licenses": [
+      {
+        "licenseId": "lic_123456789",
+        "talentId": "talent_123456789",
+        "talentName": "John Athlete",
+        "organizationId": "org_123456789",
+        "organizationName": "Acme Agency",
+        "name": "Social Media Campaign",
+        "type": "social_media",
+        "status": "active",
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "Licenses retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getAllLicenses = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/admin/licenses', {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_all_licenses(access_token):
+    response = requests.get(
+        'https://api.weir.ai/admin/licenses',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

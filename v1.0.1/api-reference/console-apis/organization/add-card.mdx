@@ -1,0 +1,80 @@
+---
+title: "Add Payment Card"
+description: "Add a new payment card"
+api: "POST /org/card"
+---
+
+# Add Payment Card
+
+Add a new payment card to your organization using a payment token.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/card' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "token": "tok_1N3T00LkdIwHu7ixt44h1F8k"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "cardId": "card_123456789",
+    "last4": "4242",
+    "brand": "Visa",
+    "expiryMonth": 12,
+    "expiryYear": 2025
+  },
+  "message": "Card added successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="token" type="string" required>
+Payment token from payment processor (e.g., Stripe token).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const addCard = async (token, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/card', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify({ token })
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def add_card(token, access_token):
+    response = requests.post(
+        'https://api.weir.ai/org/card',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json={'token': token}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

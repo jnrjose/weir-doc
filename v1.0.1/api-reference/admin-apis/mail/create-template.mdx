@@ -1,0 +1,91 @@
+---
+title: "Create Mail Template"
+description: "Create a new email template"
+api: "POST /mail/create/template"
+---
+
+# Create Mail Template
+
+Create a new email template for system notifications.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/mail/create/template' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Welcome Email",
+    "subject": "Welcome to Weir AI",
+    "body": "<html>...</html>",
+    "type": "system"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "templateId": "tpl_123456789",
+    "name": "Welcome Email",
+    "type": "system",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Template created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+Template name.
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+Email subject line.
+</ParamField>
+
+<ParamField body="body" type="string" required>
+HTML email body.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+Template type (system, marketing, transactional).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createMailTemplate = async (templateData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/mail/create/template', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(templateData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_mail_template(template_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/mail/create/template',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        },
+        json=template_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

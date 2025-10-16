@@ -1,0 +1,126 @@
+---
+title: "Search Log Entries"
+description: "Search system logs with filters"
+api: "GET /logs/search"
+---
+
+# Search Log Entries
+
+Search and filter log entries based on various criteria.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/logs/search?type=ERROR&scheme=admin&searchTerm=failed&page=1&limit=10&startDate=2024-01-01&endDate=2024-01-31' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "logs": [
+      {
+        "logId": "log_123456789",
+        "type": "ERROR",
+        "message": "Operation failed: Connection timeout",
+        "timestamp": "2024-01-22T15:30:00Z",
+        "scheme": "admin",
+        "metadata": {
+          "userId": "user_123",
+          "endpoint": "/api/endpoint"
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 1,
+      "totalPages": 1
+    }
+  },
+  "message": "Logs retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Query Parameters
+
+<ParamField query="type" type="string">
+Log type filter (INFO, WARNING, ERROR, DEBUG).
+</ParamField>
+
+<ParamField query="scheme" type="string" required>
+Log scheme (admin, console, external).
+</ParamField>
+
+<ParamField query="searchTerm" type="string" required>
+Search term to match in log messages.
+</ParamField>
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+Number of logs per page (1-100).
+</ParamField>
+
+<ParamField query="startDate" type="string">
+Start date for filtering (YYYY-MM-DD format).
+</ParamField>
+
+<ParamField query="endDate" type="string">
+End date for filtering (YYYY-MM-DD format).
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const searchLogs = async (filters, accessToken) => {
+  const params = new URLSearchParams(filters);
+  const response = await fetch(`https://api.weir.ai/logs/search?${params}`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+
+// Usage
+const logs = await searchLogs({
+  type: 'ERROR',
+  scheme: 'admin',
+  searchTerm: 'failed',
+  page: 1,
+  limit: 20,
+  startDate: '2024-01-01',
+  endDate: '2024-01-31'
+}, 'your_access_token');
+```
+
+```python Python
+import requests
+
+def search_logs(filters, access_token):
+    response = requests.get(
+        'https://api.weir.ai/logs/search',
+        params=filters,
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+
+# Usage
+logs = search_logs({
+    'type': 'ERROR',
+    'scheme': 'admin',
+    'searchTerm': 'failed',
+    'page': 1,
+    'limit': 20,
+    'startDate': '2024-01-01',
+    'endDate': '2024-01-31'
+}, 'your_access_token')
+```
+</CodeGroup>

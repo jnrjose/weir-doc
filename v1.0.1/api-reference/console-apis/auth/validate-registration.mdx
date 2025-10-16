@@ -1,0 +1,197 @@
+---
+title: "Validate Registration"
+description: "Verify email with OTP to activate user account"
+api: "POST /auth/validate/registration"
+---
+
+# Validate Registration
+
+Verify user's email address using OTP to activate the account after registration.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/validate/registration' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "otpSession": "otp_session_123456789",
+    "otp": "123456"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "userId": "user_123456789",
+    "email": "john.doe@example.com",
+    "verified": true
+  },
+  "message": "Email verified successfully. You can now login.",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+This endpoint does not require authentication.
+
+## Request Body
+
+<ParamField body="otpSession" type="string" required>
+OTP session identifier received from registration endpoint.
+</ParamField>
+
+<ParamField body="otp" type="string" required>
+6-digit OTP code received via email.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+Verification data object.
+
+<Expandable title="Verification Data Properties">
+  <ResponseField name="data.userId" type="string" required>
+  Unique identifier for the verified user.
+  </ResponseField>
+  
+  <ResponseField name="data.email" type="string" required>
+  Verified email address.
+  </ResponseField>
+  
+  <ResponseField name="data.verified" type="boolean" required>
+  Email verification status. Always true for successful verification.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    ```json
+    {
+      "error": {
+        "code": "INVALID_OTP",
+        "message": "Invalid OTP code",
+        "details": "The provided OTP is incorrect"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized" icon="ban">
+    ```json
+    {
+      "error": {
+        "code": "OTP_EXPIRED",
+        "message": "OTP has expired",
+        "details": "Please request a new OTP"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const validateRegistration = async (otpSession, otp) => {
+  try {
+    const response = await fetch('https://api.weir.ai/auth/validate/registration', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ otpSession, otp })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Validation error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const verificationData = await validateRegistration('otp_session_123456789', '123456');
+console.log('User verified:', verificationData.userId);
+```
+
+```python Python
+import requests
+
+def validate_registration(otp_session, otp):
+    try:
+        response = requests.post(
+            'https://api.weir.ai/auth/validate/registration',
+            json={'otpSession': otp_session, 'otp': otp}
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Validation error: {e}')
+        raise
+
+# Usage
+verification_data = validate_registration('otp_session_123456789', '123456')
+print(f'User verified: {verification_data["userId"]}')
+```
+
+```php PHP
+function validateRegistration($otpSession, $otp) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.weir.ai/auth/validate/registration');
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+        'otpSession' => $otpSession,
+        'otp' => $otp
+    ]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    $data = json_decode($response, true);
+    return $data['data'];
+}
+```
+</CodeGroup>
+
+## Verification Flow
+
+<Steps>
+  <Step title="Registration" icon="user-plus">
+    User registers and receives OTP session ID.
+  </Step>
+  
+  <Step title="Email Check" icon="envelope">
+    User checks email for 6-digit OTP code.
+  </Step>
+  
+  <Step title="OTP Submission" icon="keyboard">
+    User enters OTP code with session ID.
+  </Step>
+  
+  <Step title="Account Activated" icon="check">
+    Account is activated and user can now login.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: The OTP is valid for 5 minutes. If it expires, use the resend OTP endpoint to get a new code.
+</Tip>

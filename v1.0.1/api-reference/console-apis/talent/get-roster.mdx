@@ -1,0 +1,103 @@
+---
+title: "Get Talent Roster"
+description: "Retrieve agency talent roster"
+api: "GET /org/talent/roster"
+---
+
+# Get Talent Roster
+
+Retrieve the complete roster of talent managed by your agency.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/talent/roster' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "talents": [
+      {
+        "talentId": "talent_123456789",
+        "fullname": "John Athlete",
+        "email": "john@athlete.com",
+        "status": "active",
+        "licenseCount": 5,
+        "joinedAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "Talent roster retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+<ResponseField name="data.talents" type="array" required>
+Array of talent objects.
+
+<Expandable title="Talent Properties">
+  <ResponseField name="talentId" type="string" required>
+  Unique talent identifier.
+  </ResponseField>
+  
+  <ResponseField name="fullname" type="string" required>
+  Talent's full name.
+  </ResponseField>
+  
+  <ResponseField name="email" type="string" required>
+  Talent's email address.
+  </ResponseField>
+  
+  <ResponseField name="status" type="string" required>
+  Talent status (active, inactive, pending).
+  </ResponseField>
+  
+  <ResponseField name="licenseCount" type="integer">
+  Number of active licenses.
+  </ResponseField>
+  
+  <ResponseField name="joinedAt" type="timestamp" required>
+  Join timestamp.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getTalentRoster = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/talent/roster', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_talent_roster(access_token):
+    response = requests.get(
+        'https://api.weir.ai/org/talent/roster',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

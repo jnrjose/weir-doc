@@ -1,0 +1,101 @@
+---
+title: "Create Platform"
+description: "Create a new platform"
+api: "POST /org/create/platform"
+---
+
+# Create Platform
+
+Create a new platform within your organization for content management and NIL tracking.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/create/platform' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "name": "My Platform",
+    "teamId": "team_123456789",
+    "description": "A content platform",
+    "type": "Forum/Community",
+    "domain": "myplatform.com"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "platformId": "platform_123456789",
+    "name": "My Platform",
+    "type": "Forum/Community",
+    "domain": "myplatform.com",
+    "status": "pending_verification",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Platform created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+Platform name.
+</ParamField>
+
+<ParamField body="teamId" type="string" required>
+Team ID to assign the platform to.
+</ParamField>
+
+<ParamField body="description" type="string">
+Platform description.
+</ParamField>
+
+<ParamField body="type" type="string" required>
+Platform type (e.g., "Forum/Community", "Social Media", "E-commerce").
+</ParamField>
+
+<ParamField body="domain" type="string" required>
+Platform domain name.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createPlatform = async (platformData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/create/platform', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(platformData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_platform(platform_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/org/create/platform',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=platform_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

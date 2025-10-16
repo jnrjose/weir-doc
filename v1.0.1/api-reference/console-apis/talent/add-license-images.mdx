@@ -1,0 +1,87 @@
+---
+title: "Add License Images"
+description: "Add images to an existing license"
+api: "PATCH /org/talent/license/:licenseId/image"
+---
+
+# Add License Images
+
+Add additional images to an existing talent license.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://api.weir.ai/org/talent/license/lic_123456789/image' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console' \
+  -F 'images=@image3.jpg' \
+  -F 'images=@image4.jpg'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "licenseId": "lic_123456789",
+    "imagesAdded": 2,
+    "totalImages": 12
+  },
+  "message": "Images added to license successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="licenseId" type="string" required>
+Unique identifier of the license.
+</ParamField>
+
+## Request Body (multipart/form-data)
+
+<ParamField body="images" type="file[]" required>
+Array of image files to add to the license.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const addLicenseImages = async (licenseId, images, accessToken) => {
+  const formData = new FormData();
+  images.forEach(image => {
+    formData.append('images', image);
+  });
+  
+  const response = await fetch(`https://api.weir.ai/org/talent/license/${licenseId}/image`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    },
+    body: formData
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def add_license_images(license_id, image_paths, access_token):
+    files = [('images', open(img, 'rb')) for img in image_paths]
+    
+    response = requests.patch(
+        f'https://api.weir.ai/org/talent/license/{license_id}/image',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        },
+        files=files
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

@@ -1,0 +1,318 @@
+---
+title: "API Reference"
+description: "Complete reference documentation for all Weir AI API v1.0.1 endpoints"
+icon: "book"
+sidebarTitle: "API Reference"
+---
+
+# API Reference
+
+Complete reference documentation for all Weir AI API v1.0.1 endpoints. This section provides detailed information about every endpoint, including parameters, response formats, and code examples.
+
+<CardGroup cols={3}>
+  <Card title="External APIs" icon="globe" href="/api-reference/external-apis">
+    Public-facing APIs for third-party integrations and external applications.
+  </Card>
+  <Card title="Console APIs" icon="desktop" href="/api-reference/console-apis">
+    Organization management APIs for internal operations and team collaboration.
+  </Card>
+  <Card title="Admin APIs" icon="shield" href="/api-reference/admin-apis">
+    Administrative APIs for platform administration and system management.
+  </Card>
+</CardGroup>
+
+## API Categories Overview
+
+### External APIs
+**Purpose**: Public-facing APIs for third-party integrations
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Basic authentication with client credentials
+    - Access token generation for external applications
+    - Limited scope for public integrations
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="globe">
+    - Third-party application integrations
+    - Public API access for external developers
+    - Limited functionality for security
+    - Client credential-based authentication
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 100 requests per minute per client
+    - 10 token generation requests per minute
+    - Burst limit of 200 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+### Console APIs
+**Purpose**: Organization management and internal operations
+
+<AccordionGroup>
+  <Accordion title="Features" icon="desktop">
+    - Team management and member invitations
+    - Platform creation and management
+    - Client and talent roster management
+    - User profile and authentication management
+    - Subscription and billing management
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="building">
+    - Internal management tools
+    - Organization administration
+    - Team collaboration platforms
+    - Platform management interfaces
+    - User management systems
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 200 requests per minute per user
+    - 5 login requests per minute per IP
+    - Burst limit of 500 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+### Admin APIs
+**Purpose**: Platform administration and system management
+
+<AccordionGroup>
+  <Accordion title="Features" icon="shield">
+    - Administrative user management
+    - System-wide platform and organization management
+    - Pod management and system control
+    - Mail template management
+    - Comprehensive logging and monitoring
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="cog">
+    - System administration dashboards
+    - Platform monitoring and management
+    - User administration tools
+    - System maintenance and operations
+    - Audit and compliance tools
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 500 requests per minute per admin
+    - 10 admin login requests per minute per IP
+    - Burst limit of 1000 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+## Common Response Format
+
+All Weir AI API responses follow a consistent format:
+
+### Success Response Structure
+
+```json
+{
+  "data": {
+    // Response data object
+  },
+  "message": "Human-readable message",
+  "status": "success"
+}
+```
+
+### Error Response Structure
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details"
+  },
+  "status": "error"
+}
+```
+
+## HTTP Status Codes
+
+<CardGroup cols={2}>
+  <Card title="Success Codes" icon="check">
+    - **200 OK**: Successful GET, PUT, PATCH requests
+    - **201 Created**: Successful POST requests
+    - **204 No Content**: Successful DELETE requests
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle">
+    - **400 Bad Request**: Invalid request parameters
+    - **401 Unauthorized**: Authentication required
+    - **403 Forbidden**: Insufficient permissions
+    - **404 Not Found**: Resource not found
+    - **429 Too Many Requests**: Rate limit exceeded
+    - **500 Internal Server Error**: Server error
+  </Card>
+</CardGroup>
+
+## Authentication
+
+Different API categories use different authentication methods:
+
+<AccordionGroup>
+  <Accordion title="External APIs" icon="globe">
+    **Method**: Basic Authentication
+    
+    ```bash
+    curl -X POST 'https://api.weir.ai/auth/token' \
+      -H 'Authorization: Basic base64(client_id:secret_key)'
+    ```
+  </Accordion>
+  
+  <Accordion title="Console APIs" icon="desktop">
+    **Method**: Bearer Token with x-source header
+    
+    ```bash
+    curl -X GET 'https://api.weir.ai/org/teams' \
+      -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+      -H 'x-source: console'
+    ```
+  </Accordion>
+  
+  <Accordion title="Admin APIs" icon="shield">
+    **Method**: Bearer Token with admin privileges
+    
+    ```bash
+    curl -X GET 'https://api.weir.ai/admin/organizations' \
+      -H 'Authorization: Bearer YOUR_ADMIN_TOKEN'
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Rate Limiting
+
+All APIs implement rate limiting with the following headers in responses:
+
+<ResponseField name="X-RateLimit-Limit" type="string">
+Maximum number of requests allowed per time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Remaining" type="string">
+Number of requests remaining in the current time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Reset" type="string">
+Unix timestamp when the rate limit window resets.
+</ResponseField>
+
+## Error Handling
+
+<AccordionGroup>
+  <Accordion title="Common Error Codes" icon="exclamation-triangle">
+    - **UNAUTHORIZED**: Invalid or expired authentication token
+    - **FORBIDDEN**: Valid authentication but insufficient permissions
+    - **NOT_FOUND**: Requested resource does not exist
+    - **VALIDATION_ERROR**: Invalid request parameters
+    - **RATE_LIMIT_EXCEEDED**: Too many requests in time window
+  </Accordion>
+  
+  <Accordion title="Error Response Format" icon="code">
+    ```json
+    {
+      "error": {
+        "code": "ERROR_CODE",
+        "message": "Human-readable error message",
+        "details": "Additional error details or validation errors"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Pagination
+
+Many endpoints support pagination for large datasets:
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination. Must be a positive integer.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+Number of items per page. Range: 1-100.
+</ParamField>
+
+### Pagination Response Format
+
+```json
+{
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+}
+```
+
+## Code Examples
+
+Each endpoint documentation includes code examples in multiple languages:
+
+<CardGroup cols={2}>
+  <Card title="cURL" icon="terminal">
+    Command-line examples for testing and automation
+  </Card>
+  <Card title="JavaScript" icon="js">
+    Modern JavaScript examples with fetch API
+  </Card>
+  <Card title="Python" icon="python">
+    Python examples with requests library
+  </Card>
+  <Card title="PHP" icon="php">
+    PHP examples with cURL
+  </Card>
+</CardGroup>
+
+## Interactive API Playground
+
+<Card title="Try the API Playground" icon="play" href="/api-playground">
+Test endpoints directly in your browser with our interactive API playground. No external tools required.
+</Card>
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose Your API Category" icon="route">
+    Select the API category that best matches your use case.
+  </Step>
+  
+  <Step title="Review Authentication" icon="key">
+    Understand the authentication method for your chosen API category.
+  </Step>
+  
+  <Step title="Explore Endpoints" icon="search">
+    Browse the available endpoints and their documentation.
+  </Step>
+  
+  <Step title="Test with Examples" icon="play">
+    Use the provided code examples to test the endpoints.
+  </Step>
+</Steps>
+
+## Support and Resources
+
+<CardGroup cols={2}>
+  <Card title="Integration Guides" icon="puzzle-piece" href="/guides">
+    Detailed guides for building specific types of integrations
+  </Card>
+  <Card title="Code Examples" icon="code" href="/examples">
+    Ready-to-use code examples in multiple programming languages
+  </Card>
+  <Card title="Best Practices" icon="star" href="/resources/concepts">
+    Proven patterns and recommendations for building robust integrations
+  </Card>
+  <Card title="Error Reference" icon="exclamation-triangle" href="/resources/error-codes">
+    Comprehensive error code reference and troubleshooting guide
+  </Card>
+</CardGroup>
+
+<Tip>
+  **Pro Tip**: Start with the API category that matches your use case, then explore the specific endpoints you need. Use the interactive playground to test endpoints before implementing them in your code.
+</Tip>

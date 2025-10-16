@@ -1,0 +1,96 @@
+---
+title: "Create Admin User"
+description: "Register a new admin user"
+api: "POST /auth/register"
+---
+
+# Create Admin User
+
+Create a new admin user account with admin privileges.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/auth/register' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "fullname": "New Admin",
+    "email": "newadmin@weir.ai",
+    "password": "SecureAdminPass123!",
+    "role": "Admin"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "adminId": "admin_987654321",
+    "fullname": "New Admin",
+    "email": "newadmin@weir.ai",
+    "role": "Admin",
+    "createdAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Admin user created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="fullname" type="string" required>
+Admin's full name.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+Admin's email address.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+Admin password (must meet security requirements).
+</ParamField>
+
+<ParamField body="role" type="string">
+Admin role (Super_Admin, Admin, Support_Admin). Defaults to Admin.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const createAdmin = async (adminData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/auth/register', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(adminData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def create_admin(admin_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/auth/register',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        },
+        json=admin_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Warning>
+  **Super Admin Only**: Only Super_Admin users can create new admin accounts.
+</Warning>

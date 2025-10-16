@@ -1,0 +1,181 @@
+---
+title: "Update Team Member Role"
+description: "Update the role of a team member"
+api: "PATCH /org/team/:teamId/member/:memberId"
+---
+
+# Update Team Member Role
+
+Update the role of an existing team member to change their permissions and responsibilities.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://api.weir.ai/org/team/team_123456789/member/user_987654321' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "role": "Team_Lead"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "userId": "user_987654321",
+    "teamId": "team_123456789",
+    "role": "Team_Lead",
+    "updatedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Member role updated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+Requires Console API authentication with bearer token and `x-source: console` header.
+
+## Path Parameters
+
+<ParamField path="teamId" type="string" required>
+Unique identifier of the team.
+</ParamField>
+
+<ParamField path="memberId" type="string" required>
+Unique identifier of the member whose role is being updated.
+</ParamField>
+
+## Request Body
+
+<ParamField body="role" type="string" required>
+New role to assign to the member. Must be one of: "Organization_Admin", "Organization_User", "Team_Lead", "Team_Member".
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+Updated member data object.
+
+<Expandable title="Updated Member Properties">
+  <ResponseField name="data.userId" type="string" required>
+  Unique identifier for the user.
+  </ResponseField>
+  
+  <ResponseField name="data.teamId" type="string" required>
+  Team identifier.
+  </ResponseField>
+  
+  <ResponseField name="data.role" type="string" required>
+  Updated role of the member.
+  </ResponseField>
+  
+  <ResponseField name="data.updatedAt" type="timestamp" required>
+  ISO 8601 formatted timestamp when the role was updated.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const updateMemberRole = async (teamId, memberId, newRole, accessToken) => {
+  try {
+    const response = await fetch(
+      `https://api.weir.ai/org/team/${teamId}/member/${memberId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'x-source': 'console'
+        },
+        body: JSON.stringify({ role: newRole })
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Update member role error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const updatedMember = await updateMemberRole(
+  'team_123456789',
+  'user_987654321',
+  'Team_Lead',
+  'your_access_token'
+);
+console.log('Role updated to:', updatedMember.role);
+```
+
+```python Python
+import requests
+
+def update_member_role(team_id, member_id, new_role, access_token):
+    try:
+        response = requests.patch(
+            f'https://api.weir.ai/org/team/{team_id}/member/{member_id}',
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json',
+                'x-source': 'console'
+            },
+            json={'role': new_role}
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Update member role error: {e}')
+        raise
+
+# Usage
+updated_member = update_member_role(
+    'team_123456789',
+    'user_987654321',
+    'Team_Lead',
+    'your_access_token'
+)
+print(f'Role updated to: {updated_member["role"]}')
+```
+
+```php PHP
+function updateMemberRole($teamId, $memberId, $newRole, $accessToken) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.weir.ai/org/team/$teamId/member/$memberId");
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken,
+        'Content-Type: application/json',
+        'x-source: console'
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['role' => $newRole]));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    return json_decode($response, true)['data'];
+}
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Implement proper authorization checks to ensure only team leads and organization admins can update member roles.
+</Tip>

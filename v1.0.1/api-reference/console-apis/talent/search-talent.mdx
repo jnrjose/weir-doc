@@ -1,0 +1,77 @@
+---
+title: "Search Agency Talent"
+description: "Search for talent in your agency roster"
+api: "GET /org/talent/name/search"
+---
+
+# Search Agency Talent
+
+Search for talent in your agency roster by name.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/talent/name/search?search=John' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "results": [
+      {
+        "talentId": "talent_123456789",
+        "fullname": "John Athlete",
+        "email": "john@athlete.com",
+        "status": "active",
+        "licenseCount": 5
+      }
+    ],
+    "total": 1
+  },
+  "message": "Search completed successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Query Parameters
+
+<ParamField query="search" type="string" required>
+Search term to match against talent names.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const searchTalent = async (searchTerm, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/org/talent/name/search?search=${encodeURIComponent(searchTerm)}`, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def search_talent(search_term, access_token):
+    response = requests.get(
+        f'https://api.weir.ai/org/talent/name/search',
+        params={'search': search_term},
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

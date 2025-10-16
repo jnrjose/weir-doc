@@ -1,0 +1,120 @@
+---
+title: "Get Talent Licenses"
+description: "Retrieve talent licenses for your agency"
+api: "GET /org/licenses"
+---
+
+# Get Talent Licenses
+
+Retrieve all NIL licenses managed by your agency.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/licenses' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "licenses": [
+      {
+        "licenseId": "lic_123456789",
+        "talentId": "talent_123456789",
+        "talentName": "John Athlete",
+        "name": "Social Media Campaign License",
+        "type": "social_media",
+        "description": "License for social media campaigns",
+        "appearanceFee": 5000.00,
+        "canCrawl": true,
+        "imageCount": 10,
+        "status": "active",
+        "createdAt": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "Licenses retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+<ResponseField name="data.licenses" type="array" required>
+Array of license objects.
+
+<Expandable title="License Properties">
+  <ResponseField name="licenseId" type="string" required>
+  Unique license identifier.
+  </ResponseField>
+  
+  <ResponseField name="talentId" type="string" required>
+  Associated talent ID.
+  </ResponseField>
+  
+  <ResponseField name="talentName" type="string" required>
+  Talent's name.
+  </ResponseField>
+  
+  <ResponseField name="name" type="string" required>
+  License name.
+  </ResponseField>
+  
+  <ResponseField name="type" type="string" required>
+  License type.
+  </ResponseField>
+  
+  <ResponseField name="appearanceFee" type="number">
+  Appearance fee amount.
+  </ResponseField>
+  
+  <ResponseField name="canCrawl" type="boolean">
+  Whether the license allows automated content crawling.
+  </ResponseField>
+  
+  <ResponseField name="imageCount" type="integer">
+  Number of images included in the license.
+  </ResponseField>
+  
+  <ResponseField name="status" type="string" required>
+  License status (active, inactive, expired).
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getTalentLicenses = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/licenses', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_talent_licenses(access_token):
+    response = requests.get(
+        'https://api.weir.ai/org/licenses',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

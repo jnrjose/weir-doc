@@ -1,0 +1,89 @@
+---
+title: "Get All Pods"
+description: "Retrieve all system pods"
+api: "GET /pax/pods"
+---
+
+# Get All Pods
+
+Retrieve a list of all system pods.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/pax/pods' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "pods": [
+      {
+        "podId": "pod_123456789",
+        "platformId": "platform_123456789",
+        "platformName": "My Platform",
+        "status": "running",
+        "scopes": ["read", "write", "crawl"],
+        "createdAt": "2024-01-15T10:30:00Z",
+        "lastStarted": "2024-01-22T14:00:00Z"
+      }
+    ],
+    "total": 1
+  },
+  "message": "Pods retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Response Fields
+
+<ResponseField name="data.pods" type="array" required>
+Array of pod objects.
+
+<Expandable title="Pod Properties">
+  <ResponseField name="podId" type="string" required>
+  Unique pod identifier.
+  </ResponseField>
+  
+  <ResponseField name="platformId" type="string" required>
+  Associated platform ID.
+  </ResponseField>
+  
+  <ResponseField name="status" type="string" required>
+  Pod status (running, paused, stopped).
+  </ResponseField>
+  
+  <ResponseField name="scopes" type="array" required>
+  Pod permission scopes.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getPods = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/pax/pods', {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_pods(access_token):
+    response = requests.get(
+        'https://api.weir.ai/pax/pods',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

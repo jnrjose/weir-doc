@@ -1,0 +1,69 @@
+---
+title: "Delete Platform"
+description: "Delete a platform from your organization"
+api: "DELETE /org/platform/:platformId"
+---
+
+# Delete Platform
+
+Permanently delete a platform from your organization.
+
+<Warning>
+  **Caution**: This action is irreversible. All platform data will be permanently deleted.
+</Warning>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://api.weir.ai/org/platform/platform_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "message": "Platform deleted successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="platformId" type="string" required>
+Unique identifier of the platform to delete.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const deletePlatform = async (platformId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/org/platform/${platformId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def delete_platform(platform_id, access_token):
+    response = requests.delete(
+        f'https://api.weir.ai/org/platform/{platform_id}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

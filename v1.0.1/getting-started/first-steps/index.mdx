@@ -1,0 +1,337 @@
+---
+title: "Your First API Call"
+description: "Learn how to make your first API call and understand the response format"
+icon: "play"
+sidebarTitle: "First API Call"
+---
+
+# Your First API Call
+
+This guide will walk you through making your first API call to the Weir AI API v1.0.1. We'll cover different scenarios based on your chosen API category.
+
+## Prerequisites
+
+Before making your first API call, ensure you have:
+
+<CardGroup cols={2}>
+  <Card title="API Credentials" icon="key">
+    Your client credentials (External APIs) or user account (Console APIs)
+  </Card>
+  <Card title="Access Token" icon="token">
+    A valid access token for authentication
+  </Card>
+  <Card title="HTTP Client" icon="globe">
+    curl, Postman, or your preferred HTTP client
+  </Card>
+  <Card title="Base URL" icon="link">
+    The Weir AI API base URL: `https://api.weir.ai`
+  </Card>
+</CardGroup>
+
+## External API - First Call
+
+### Step 1: Generate Access Token
+
+<RequestExample>
+```bash Generate Access Token
+curl -X POST 'https://api.weir.ai/auth/token' \
+  -H 'Content-Type: application/json' \
+  -u 'your_client_id:your_secret_key'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "expiresIn": 3600,
+    "tokenType": "Bearer"
+  },
+  "message": "Access token generated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+### Step 2: Use the Access Token
+
+<RequestExample>
+```bash Make Authenticated Request
+curl -X GET 'https://api.weir.ai/external/endpoint' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json'
+```
+</RequestExample>
+
+## Console API - First Call
+
+### Step 1: Login and Get Tokens
+
+<RequestExample>
+```bash Login
+curl -X POST 'https://api.weir.ai/auth/login' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "John Doe",
+    "password": "securePassword123"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "refresh_token_123456789",
+    "expiresIn": 3600,
+    "user": {
+      "id": "user_123456789",
+      "fullname": "John Doe",
+      "email": "john@example.com",
+      "role": "Organization_Admin"
+    }
+  },
+  "message": "Login successful",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+### Step 2: Create Your First Team
+
+<RequestExample>
+```bash Create Team
+curl -X POST 'https://api.weir.ai/org/create/team' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "name": "My First Team"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "teamId": "team_123456789",
+    "name": "My First Team",
+    "createdAt": "2025-01-15T10:30:00Z",
+    "memberCount": 1,
+    "status": "active"
+  },
+  "message": "Team created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Understanding the Response Format
+
+All Weir AI API responses follow a consistent format:
+
+### Success Response Structure
+
+```json
+{
+  "data": {
+    // Response data object
+  },
+  "message": "Human-readable message",
+  "status": "success"
+}
+```
+
+### Error Response Structure
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details"
+  },
+  "status": "error"
+}
+```
+
+## Common Response Fields
+
+<AccordionGroup>
+  <Accordion title="Success Responses" icon="check">
+    - **data**: Contains the actual response data
+    - **message**: Human-readable success message
+    - **status**: Always "success" for successful requests
+  </Accordion>
+  
+  <Accordion title="Error Responses" icon="exclamation-triangle">
+    - **error.code**: Machine-readable error code
+    - **error.message**: Human-readable error message
+    - **error.details**: Additional error information
+    - **status**: Always "error" for failed requests
+  </Accordion>
+</AccordionGroup>
+
+## HTTP Status Codes
+
+<CardGroup cols={2}>
+  <Card title="Success Codes" icon="check">
+    - **200 OK**: Successful GET, PUT, PATCH requests
+    - **201 Created**: Successful POST requests
+    - **204 No Content**: Successful DELETE requests
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle">
+    - **400 Bad Request**: Invalid request parameters
+    - **401 Unauthorized**: Authentication required
+    - **403 Forbidden**: Insufficient permissions
+    - **404 Not Found**: Resource not found
+    - **429 Too Many Requests**: Rate limit exceeded
+  </Card>
+</CardGroup>
+
+## Testing Your Setup
+
+<Steps>
+  <Step title="Verify Authentication" icon="key">
+    Make sure your authentication is working by generating a token or logging in successfully.
+  </Step>
+  
+  <Step title="Test Basic Endpoint" icon="play">
+    Try a simple GET request to verify your setup is working correctly.
+  </Step>
+  
+  <Step title="Check Response Format" icon="eye">
+    Verify that you're receiving responses in the expected format.
+  </Step>
+  
+  <Step title="Handle Errors" icon="exclamation-triangle">
+    Test error scenarios to ensure your error handling is working properly.
+  </Step>
+</Steps>
+
+## Code Examples
+
+<CodeGroup>
+```javascript JavaScript
+// External API Example
+const response = await fetch('https://api.weir.ai/auth/token', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Basic ' + btoa('client_id:secret_key'),
+    'Content-Type': 'application/json'
+  }
+});
+
+const data = await response.json();
+console.log('Access Token:', data.data.accessToken);
+
+// Use the token for subsequent requests
+const apiResponse = await fetch('https://api.weir.ai/external/endpoint', {
+  headers: {
+    'Authorization': `Bearer ${data.data.accessToken}`,
+    'Content-Type': 'application/json'
+  }
+});
+```
+
+```python Python
+import requests
+import base64
+
+# External API Example
+credentials = base64.b64encode(b'client_id:secret_key').decode()
+response = requests.post(
+    'https://api.weir.ai/auth/token',
+    headers={'Authorization': f'Basic {credentials}'}
+)
+
+data = response.json()
+access_token = data['data']['accessToken']
+
+# Use the token for subsequent requests
+api_response = requests.get(
+    'https://api.weir.ai/external/endpoint',
+    headers={'Authorization': f'Bearer {access_token}'}
+)
+```
+
+```php PHP
+// External API Example
+$credentials = base64_encode('client_id:secret_key');
+$response = file_get_contents('https://api.weir.ai/auth/token', false, stream_context_create([
+    'http' => [
+        'method' => 'POST',
+        'header' => "Authorization: Basic $credentials\r\nContent-Type: application/json"
+    ]
+]));
+
+$data = json_decode($response, true);
+$access_token = $data['data']['accessToken'];
+
+// Use the token for subsequent requests
+$context = stream_context_create([
+    'http' => [
+        'header' => "Authorization: Bearer $access_token\r\nContent-Type: application/json"
+    ]
+]);
+$api_response = file_get_contents('https://api.weir.ai/external/endpoint', false, $context);
+```
+</CodeGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Authentication Issues" icon="key">
+    **Problem**: Getting 401 Unauthorized errors
+    
+    **Solutions**:
+    - Check your credentials are correct
+    - Ensure you're using the right authentication method
+    - Verify your access token hasn't expired
+    - Check the Authorization header format
+  </Accordion>
+  
+  <Accordion title="Request Format Issues" icon="exclamation-triangle">
+    **Problem**: Getting 400 Bad Request errors
+    
+    **Solutions**:
+    - Verify your request body is valid JSON
+    - Check required parameters are included
+    - Ensure parameter types are correct
+    - Validate request headers
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    **Problem**: Getting 429 Too Many Requests errors
+    
+    **Solutions**:
+    - Check rate limit headers in responses
+    - Implement exponential backoff
+    - Reduce request frequency
+    - Cache responses when possible
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Explore API Reference" icon="book" href="/api-reference">
+    Dive into the complete API reference for all available endpoints
+  </Card>
+  <Card title="Try Integration Guides" icon="puzzle-piece" href="/guides">
+    Follow detailed guides for building specific types of integrations
+  </Card>
+  <Card title="Check Code Examples" icon="code" href="/examples">
+    Browse ready-to-use code examples in multiple languages
+  </Card>
+  <Card title="Learn Best Practices" icon="star" href="/resources/concepts">
+    Understand best practices for building robust integrations
+  </Card>
+</CardGroup>
+
+<Check>
+  **Congratulations!** You've successfully made your first API call to the Weir AI API v1.0.1. You're now ready to build powerful integrations with our platform.
+</Check>

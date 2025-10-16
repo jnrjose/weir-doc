@@ -1,0 +1,255 @@
+---
+title: "Admin APIs"
+description: "Administrative APIs for platform administration and system management"
+icon: "shield"
+sidebarTitle: "Admin APIs"
+---
+
+# Admin APIs
+
+Admin APIs are designed for platform administration and system management. These APIs provide comprehensive functionality for managing the entire Weir AI platform, including organizations, users, platforms, and system-wide operations.
+
+<Warning>
+  **Admin Access Required**: These APIs require administrative privileges and should only be used by authorized system administrators.
+</Warning>
+
+## Authentication
+
+Admin APIs use bearer token authentication with admin privileges.
+
+<Steps>
+  <Step title="Admin Authentication" icon="shield">
+    Authenticate with admin credentials to get admin access tokens.
+  </Step>
+  
+  <Step title="Use Admin Token" icon="key">
+    Include the admin access token in the Authorization header for all requests.
+  </Step>
+  
+  <Step title="Manage System" icon="cog">
+    Use admin tokens to perform system-wide administrative operations.
+  </Step>
+</Steps>
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    - **Admin Login**: Administrative user authentication
+    - **Token Management**: Admin token generation and refresh
+  </Card>
+  <Card title="Organization Management" icon="building">
+    - **Get Organizations**: Retrieve all organizations
+    - **Organization Details**: Get detailed organization information
+    - **Organization Settings**: Manage organization configurations
+  </Card>
+  <Card title="User Administration" icon="users-cog">
+    - **User Management**: System-wide user administration
+    - **User Roles**: Manage user roles and permissions
+    - **User Settings**: Configure user preferences and settings
+  </Card>
+  <Card title="Platform Administration" icon="server">
+    - **Platform Management**: System-wide platform administration
+    - **Platform Settings**: Manage platform configurations
+    - **Platform Monitoring**: Monitor platform performance and usage
+  </Card>
+  <Card title="System Management" icon="cog">
+    - **Pod Management**: Create and manage system pods
+    - **System Settings**: Configure system-wide settings
+    - **System Monitoring**: Monitor system performance and health
+  </Card>
+  <Card title="Logging & Monitoring" icon="chart-line">
+    - **System Logs**: Access comprehensive system logs
+    - **Audit Logs**: Review audit trails and system activities
+    - **Performance Metrics**: Monitor system performance and usage
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+Admin APIs have the following rate limits:
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    - **Admin Login**: 10 requests per minute per IP
+    - **Token Refresh**: 30 requests per minute per admin
+    - **Token Management**: 50 requests per minute per admin
+  </Card>
+  <Card title="API Requests" icon="shield">
+    - **General Endpoints**: 500 requests per minute per admin
+    - **Burst Limit**: 1000 requests per 5-minute window
+  </Card>
+</CardGroup>
+
+## Common Headers
+
+All Admin API requests require these headers:
+
+<ParamField header="Authorization" type="string" required>
+Bearer token for admin authentication. Format: `Bearer YOUR_ADMIN_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="Content-Type" type="string" default="application/json">
+Content type for request body. Use `application/json` for JSON payloads.
+</ParamField>
+
+## Error Handling
+
+Admin APIs return standard HTTP status codes and error responses:
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    Invalid request parameters, missing required fields, or validation errors.
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized" icon="ban">
+    Invalid, expired, or missing admin access token.
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="lock">
+    Valid authentication but insufficient admin permissions.
+  </Accordion>
+  
+  <Accordion title="404 Not Found" icon="search">
+    Requested resource not found or admin doesn't have access to it.
+  </Accordion>
+  
+  <Accordion title="409 Conflict" icon="exclamation">
+    Resource conflict, such as trying to create a duplicate resource.
+  </Accordion>
+  
+  <Accordion title="429 Too Many Requests" icon="clock">
+    Rate limit exceeded. Check rate limit headers for retry information.
+  </Accordion>
+  
+  <Accordion title="500 Internal Server Error" icon="server">
+    Server-side error. Contact support if the issue persists.
+  </Accordion>
+</AccordionGroup>
+
+## Security Considerations
+
+<Warning>
+  **High Security Requirements**: Admin APIs have access to sensitive system data and operations. Implement additional security measures.
+</Warning>
+
+<AccordionGroup>
+  <Accordion title="Access Control" icon="lock">
+    - Implement multi-factor authentication for admin access
+    - Use role-based access control for different admin functions
+    - Regularly audit admin access and permissions
+    - Implement session timeout for admin sessions
+  </Accordion>
+  
+  <Accordion title="Data Protection" icon="shield">
+    - Encrypt sensitive data in transit and at rest
+    - Implement data masking for sensitive information
+    - Use secure logging practices
+    - Implement data retention policies
+  </Accordion>
+  
+  <Accordion title="Audit & Monitoring" icon="eye">
+    - Log all admin operations and access
+    - Monitor for suspicious admin activities
+    - Implement real-time alerting for critical operations
+    - Regular security audits and penetration testing
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Token Management" icon="key">
+    - Implement automatic token refresh before expiration
+    - Store admin tokens securely with additional encryption
+    - Use different admin tokens for different environments
+    - Implement token rotation for enhanced security
+  </Accordion>
+  
+  <Accordion title="Request Optimization" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use pagination for large datasets
+    - Implement retry logic with exponential backoff
+    - Monitor rate limit headers to avoid hitting limits
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling for all admin operations
+    - Provide clear error messages to administrators
+    - Log errors for debugging without exposing sensitive information
+    - Handle network failures and timeouts gracefully
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS for all admin API requests
+    - Validate and sanitize all input parameters
+    - Implement proper CORS policies for admin interfaces
+    - Use secure storage for admin authentication tokens
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="Admin Authentication" icon="shield">
+    Use the admin authentication endpoint to get admin access tokens.
+  </Step>
+  
+  <Step title="Explore Endpoints" icon="search">
+    Browse the available admin endpoints based on your administrative needs.
+  </Step>
+  
+  <Step title="Test Operations" icon="play">
+    Use the provided examples to test your admin operations.
+  </Step>
+  
+  <Step title="Implement Security" icon="lock">
+    Implement proper security measures and access controls.
+  </Step>
+</Steps>
+
+## Integration Examples
+
+<CardGroup cols={2}>
+  <Card title="Admin Operations" icon="cog" href="/guides/admin-operations">
+    Build administrative tools for system management and monitoring.
+  </Card>
+  <Card title="System Monitoring" icon="chart-line">
+    Create system monitoring dashboards and alerting systems.
+  </Card>
+  <Card title="User Administration" icon="users-cog">
+    Build user administration interfaces for system-wide user management.
+  </Card>
+  <Card title="Platform Management" icon="server">
+    Create platform administration tools for system-wide platform management.
+  </Card>
+</CardGroup>
+
+## Compliance and Auditing
+
+<AccordionGroup>
+  <Accordion title="Audit Logging" icon="clipboard-list">
+    - Log all admin operations with timestamps and user information
+    - Implement comprehensive audit trails for compliance
+    - Monitor and alert on critical administrative actions
+    - Regular audit log review and analysis
+  </Accordion>
+  
+  <Accordion title="Data Privacy" icon="user-shield">
+    - Implement data privacy controls and access restrictions
+    - Use data masking for sensitive information
+    - Implement data retention and deletion policies
+    - Regular privacy impact assessments
+  </Accordion>
+  
+  <Accordion title="Security Compliance" icon="shield">
+    - Implement security controls and monitoring
+    - Regular security assessments and penetration testing
+    - Compliance with industry security standards
+    - Incident response and security breach procedures
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Pro Tip**: Admin APIs provide powerful system management capabilities. Always implement proper security measures, audit logging, and access controls when building administrative interfaces.
+</Tip>

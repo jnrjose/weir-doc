@@ -1,0 +1,90 @@
+---
+title: "Update Mail Template"
+description: "Update an existing email template"
+api: "PUT /mail/template/:id"
+---
+
+# Update Mail Template
+
+Update an existing email template.
+
+<RequestExample>
+```bash cURL
+curl -X PUT 'https://api.weir.ai/mail/template/tpl_123456789' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Updated Welcome Email",
+    "subject": "Welcome to Weir AI Platform",
+    "body": "<html>Updated content...</html>"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "templateId": "tpl_123456789",
+    "updatedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Template updated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="id" type="string" required>
+Template ID to update.
+</ParamField>
+
+## Request Body
+
+<ParamField body="name" type="string">
+Updated template name.
+</ParamField>
+
+<ParamField body="subject" type="string">
+Updated email subject.
+</ParamField>
+
+<ParamField body="body" type="string">
+Updated HTML email body.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const updateMailTemplate = async (templateId, updateData, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/mail/template/${templateId}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updateData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def update_mail_template(template_id, update_data, access_token):
+    response = requests.put(
+        f'https://api.weir.ai/mail/template/{template_id}',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json'
+        },
+        json=update_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

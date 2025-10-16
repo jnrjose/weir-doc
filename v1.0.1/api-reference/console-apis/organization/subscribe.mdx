@@ -1,0 +1,92 @@
+---
+title: "Subscribe to Plan"
+description: "Subscribe to a subscription plan"
+api: "POST /org/subscribe"
+---
+
+# Subscribe to Plan
+
+Subscribe your organization to a subscription plan using a payment method.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/subscribe' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "cardId": "card_123456789",
+    "amount": 99.99,
+    "subscriptionId": "sub_plan_123"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "subscriptionId": "sub_123456789",
+    "planId": "sub_plan_123",
+    "status": "active",
+    "startDate": "2024-01-22T00:00:00Z",
+    "nextBillingDate": "2024-02-22T00:00:00Z",
+    "amount": 99.99,
+    "currency": "USD"
+  },
+  "message": "Subscription created successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="cardId" type="string" required>
+Payment card ID to use for the subscription.
+</ParamField>
+
+<ParamField body="amount" type="number" required>
+Subscription amount.
+</ParamField>
+
+<ParamField body="subscriptionId" type="string" required>
+Subscription plan ID to subscribe to.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const subscribe = async (subscriptionData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/subscribe', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(subscriptionData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def subscribe(subscription_data, access_token):
+    response = requests.post(
+        'https://api.weir.ai/org/subscribe',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=subscription_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

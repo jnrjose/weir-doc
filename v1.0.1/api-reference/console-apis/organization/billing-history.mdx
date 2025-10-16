@@ -1,0 +1,78 @@
+---
+title: "Get Billing History"
+description: "Retrieve organization billing history"
+api: "GET /org/bill/history"
+---
+
+# Get Billing History
+
+Retrieve the billing history for your organization including invoices and payment records.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/bill/history' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "bills": [
+      {
+        "billId": "bill_123456789",
+        "amount": 99.99,
+        "currency": "USD",
+        "status": "paid",
+        "billingDate": "2024-01-01T00:00:00Z",
+        "dueDate": "2024-01-15T00:00:00Z",
+        "paidDate": "2024-01-10T00:00:00Z",
+        "description": "Monthly subscription"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 1,
+      "totalPages": 1
+    }
+  },
+  "message": "Billing history retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getBillingHistory = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/bill/history', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_billing_history(access_token):
+    response = requests.get(
+        'https://api.weir.ai/org/bill/history',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

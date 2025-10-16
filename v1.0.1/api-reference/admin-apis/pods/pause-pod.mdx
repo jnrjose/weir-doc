@@ -1,0 +1,63 @@
+---
+title: "Pause Pod"
+description: "Pause a running pod"
+api: "POST /pax/pause/pod/:podId"
+---
+
+# Pause Pod
+
+Pause a running pod to temporarily suspend operations.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/pax/pause/pod/pod_123456789' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "podId": "pod_123456789",
+    "status": "paused",
+    "pausedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Pod paused successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Path Parameters
+
+<ParamField path="podId" type="string" required>
+Unique pod identifier.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const pausePod = async (podId, accessToken) => {
+  const response = await fetch(`https://api.weir.ai/pax/pause/pod/${podId}`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def pause_pod(pod_id, access_token):
+    response = requests.post(
+        f'https://api.weir.ai/pax/pause/pod/{pod_id}',
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>

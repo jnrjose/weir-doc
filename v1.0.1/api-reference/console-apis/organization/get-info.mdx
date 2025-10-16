@@ -1,0 +1,201 @@
+---
+title: "Get Organization Information"
+description: "Retrieve detailed information about your organization"
+api: "GET /org/information"
+---
+
+# Get Organization Information
+
+Retrieve comprehensive information about your organization including basic details, contact information, and settings.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/information' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "organizationId": "org_123456789",
+    "name": "Acme Corporation",
+    "type": "Platform",
+    "basicInfo": {
+      "website": "https://acmecorp.com",
+      "industry": "TECHNOLOGY",
+      "companySize": "MEDIUM",
+      "founded": "2020",
+      "description": "A leading technology platform"
+    },
+    "address": {
+      "address1": "123 Main St",
+      "address2": "Suite 100",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94105",
+      "country": "USA"
+    },
+    "contact": {
+      "phone": "+1-415-555-0100",
+      "email": "contact@acmecorp.com"
+    },
+    "taxInfo": {
+      "taxId": "12-3456789",
+      "taxOrgType": "CORPORATION"
+    },
+    "createdAt": "2024-01-01T00:00:00Z",
+    "status": "active"
+  },
+  "message": "Organization information retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+Requires Console API authentication with bearer token and `x-source: console` header.
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+Organization data object containing all organization information.
+
+<Expandable title="Organization Properties">
+  <ResponseField name="data.organizationId" type="string" required>
+  Unique identifier for the organization.
+  </ResponseField>
+  
+  <ResponseField name="data.name" type="string" required>
+  Organization name.
+  </ResponseField>
+  
+  <ResponseField name="data.type" type="string" required>
+  Organization type ("Platform", "Agency", "Brand").
+  </ResponseField>
+  
+  <ResponseField name="data.basicInfo" type="object">
+  Basic organization information.
+  
+  <Expandable title="Basic Info Properties">
+    <ResponseField name="data.basicInfo.website" type="string">
+    Organization website URL.
+    </ResponseField>
+    
+    <ResponseField name="data.basicInfo.industry" type="string">
+    Industry sector.
+    </ResponseField>
+    
+    <ResponseField name="data.basicInfo.companySize" type="string">
+    Company size category.
+    </ResponseField>
+    
+    <ResponseField name="data.basicInfo.founded" type="string">
+    Year founded.
+    </ResponseField>
+    
+    <ResponseField name="data.basicInfo.description" type="string">
+    Organization description.
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  
+  <ResponseField name="data.address" type="object">
+  Organization address information.
+  </ResponseField>
+  
+  <ResponseField name="data.contact" type="object">
+  Contact information.
+  </ResponseField>
+  
+  <ResponseField name="data.taxInfo" type="object">
+  Tax information.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getOrganizationInfo = async (accessToken) => {
+  try {
+    const response = await fetch('https://api.weir.ai/org/information', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'x-source': 'console'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Get organization info error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const orgInfo = await getOrganizationInfo('your_access_token');
+console.log('Organization:', orgInfo.name);
+console.log('Type:', orgInfo.type);
+```
+
+```python Python
+import requests
+
+def get_organization_info(access_token):
+    try:
+        response = requests.get(
+            'https://api.weir.ai/org/information',
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'x-source': 'console'
+            }
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Get organization info error: {e}')
+        raise
+
+# Usage
+org_info = get_organization_info('your_access_token')
+print(f'Organization: {org_info["name"]}')
+print(f'Type: {org_info["type"]}')
+```
+
+```php PHP
+function getOrganizationInfo($accessToken) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.weir.ai/org/information');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken,
+        'x-source: console'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    return json_decode($response, true)['data'];
+}
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Cache organization information and refresh periodically to reduce API calls.
+</Tip>

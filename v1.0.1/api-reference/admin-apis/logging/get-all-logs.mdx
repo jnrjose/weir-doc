@@ -1,0 +1,227 @@
+---
+title: "Get All Log Entries"
+description: "Retrieve all log entries with filtering"
+api: "GET /logs/all"
+---
+
+# Get All Log Entries
+
+Retrieve all log entries from the system with optional filtering.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/logs/all?type=ERROR&scheme=admin&page=1&limit=10&startDate=2024-01-01&endDate=2024-01-31' \
+  -H 'Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "logs": [
+      {
+        "logId": "log_123456789",
+        "type": "ERROR",
+        "message": "Database connection failed",
+        "timestamp": "2024-01-22T15:30:00Z",
+        "scheme": "admin",
+        "severity": "high",
+        "metadata": {
+          "source": "database",
+          "retryAttempts": 3
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 150,
+      "totalPages": 15
+    }
+  },
+  "message": "Logs retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Query Parameters
+
+<ParamField query="type" type="string">
+Log type filter (INFO, WARNING, ERROR, DEBUG).
+</ParamField>
+
+<ParamField query="scheme" type="string" required>
+Log scheme (admin, console, external).
+</ParamField>
+
+<ParamField query="page" type="integer" default="1">
+Page number for pagination.
+</ParamField>
+
+<ParamField query="limit" type="integer" default="10">
+Number of logs per page (1-100).
+</ParamField>
+
+<ParamField query="startDate" type="string">
+Start date in ISO format (YYYY-MM-DD).
+</ParamField>
+
+<ParamField query="endDate" type="string">
+End date in ISO format (YYYY-MM-DD).
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data.logs" type="array" required>
+Array of log entry objects.
+
+<Expandable title="Log Properties">
+  <ResponseField name="logId" type="string" required>
+  Unique log identifier.
+  </ResponseField>
+  
+  <ResponseField name="type" type="string" required>
+  Log type (INFO, WARNING, ERROR, DEBUG).
+  </ResponseField>
+  
+  <ResponseField name="message" type="string" required>
+  Log message content.
+  </ResponseField>
+  
+  <ResponseField name="timestamp" type="timestamp" required>
+  Log creation timestamp.
+  </ResponseField>
+  
+  <ResponseField name="scheme" type="string" required>
+  Log scheme (admin, console, external).
+  </ResponseField>
+  
+  <ResponseField name="severity" type="string">
+  Log severity level (low, medium, high, critical).
+  </ResponseField>
+  
+  <ResponseField name="metadata" type="object">
+  Additional log metadata.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getAllLogs = async (filters, accessToken) => {
+  const params = new URLSearchParams(filters);
+  const response = await fetch(`https://api.weir.ai/logs/all?${params}`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+
+// Usage
+const logs = await getAllLogs({
+  type: 'ERROR',
+  scheme: 'admin',
+  page: 1,
+  limit: 50,
+  startDate: '2024-01-01',
+  endDate: '2024-01-31'
+}, 'your_access_token');
+```
+
+```python Python
+import requests
+
+def get_all_logs(filters, access_token):
+    response = requests.get(
+        'https://api.weir.ai/logs/all',
+        params=filters,
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+    response.raise_for_status()
+    return response.json()
+
+# Usage
+logs = get_all_logs({
+    'type': 'ERROR',
+    'scheme': 'admin',
+    'page': 1,
+    'limit': 50,
+    'startDate': '2024-01-01',
+    'endDate': '2024-01-31'
+}, 'your_access_token')
+```
+
+```php PHP
+function getAllLogs($filters, $accessToken) {
+    $queryString = http_build_query($filters);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.weir.ai/logs/all?$queryString");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
+
+// Usage
+$logs = getAllLogs([
+    'type' => 'ERROR',
+    'scheme' => 'admin',
+    'page' => 1,
+    'limit' => 50,
+    'startDate' => '2024-01-01',
+    'endDate' => '2024-01-31'
+], 'your_access_token');
+```
+</CodeGroup>
+
+## Log Types
+
+<AccordionGroup>
+  <Accordion title="INFO" icon="info-circle">
+    Informational messages about normal system operations.
+  </Accordion>
+  
+  <Accordion title="WARNING" icon="exclamation-triangle">
+    Warning messages about potentially problematic situations.
+  </Accordion>
+  
+  <Accordion title="ERROR" icon="times-circle">
+    Error messages about failures and exceptions.
+  </Accordion>
+  
+  <Accordion title="DEBUG" icon="bug">
+    Detailed debugging information for development.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Filter by Date Range" icon="calendar">
+    Use startDate and endDate to limit results to relevant time periods.
+  </Step>
+  
+  <Step title="Use Appropriate Page Size" icon="list">
+    Use reasonable page sizes (10-50) for better performance.
+  </Step>
+  
+  <Step title="Filter by Type" icon="filter">
+    Filter by log type to focus on specific issues (e.g., only ERRORs).
+  </Step>
+  
+  <Step title="Monitor Regularly" icon="eye">
+    Regularly review logs for system health and security monitoring.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: Use ERROR and WARNING filters to quickly identify and address system issues. Set up automated monitoring for critical log types.
+</Tip>

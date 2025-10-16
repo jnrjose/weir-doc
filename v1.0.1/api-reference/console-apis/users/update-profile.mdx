@@ -1,0 +1,106 @@
+---
+title: "Update User Profile"
+description: "Update user profile information"
+api: "PATCH /user/profile"
+---
+
+# Update User Profile
+
+Update the authenticated user's profile information.
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://api.weir.ai/user/profile' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "firstname": "John",
+    "lastname": "Doe",
+    "username": "johndoe123",
+    "email": "john.doe@example.com",
+    "bio": "Software engineer from SF",
+    "location": "San Francisco, CA"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "userId": "user_123456789",
+    "updatedAt": "2024-01-22T15:30:00Z"
+  },
+  "message": "Profile updated successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Request Body
+
+<ParamField body="firstname" type="string">
+First name.
+</ParamField>
+
+<ParamField body="lastname" type="string">
+Last name.
+</ParamField>
+
+<ParamField body="username" type="string">
+Username (must be unique).
+</ParamField>
+
+<ParamField body="email" type="string">
+Email address (must be unique and valid).
+</ParamField>
+
+<ParamField body="bio" type="string">
+User biography (max 500 characters).
+</ParamField>
+
+<ParamField body="location" type="string">
+User location.
+</ParamField>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const updateUserProfile = async (profileData, accessToken) => {
+  const response = await fetch('https://api.weir.ai/user/profile', {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'x-source': 'console'
+    },
+    body: JSON.stringify(profileData)
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def update_user_profile(profile_data, access_token):
+    response = requests.patch(
+        'https://api.weir.ai/user/profile',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'Content-Type': 'application/json',
+            'x-source': 'console'
+        },
+        json=profile_data
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
+
+<Tip>
+  **Pro Tip**: Only include fields you want to update. All fields are optional.
+</Tip>

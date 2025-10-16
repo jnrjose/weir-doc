@@ -1,0 +1,473 @@
+---
+title: "Core API Concepts"
+description: "Understanding the fundamental concepts and design principles of Weir AI API v1.0.1"
+icon: "lightbulb"
+sidebarTitle: "Core Concepts"
+---
+
+# Core API Concepts
+
+This section covers the fundamental concepts and design principles that underpin the Weir AI API v1.0.1. Understanding these concepts will help you build more effective and reliable integrations.
+
+## API Architecture Overview
+
+The Weir AI API v1.0.1 follows a modern, RESTful architecture designed for scalability, security, and ease of use.
+
+<CardGroup cols={1}>
+  <Card title="RESTful Design" icon="globe">
+    All endpoints follow REST principles with clear resource-based URLs, standard HTTP methods, and consistent response formats.
+  </Card>
+  <Card title="Multi-Tenant Architecture" icon="building">
+    Support for multiple organizations, teams, and platforms with proper isolation and access control.
+  </Card>
+  <Card title="Role-Based Access Control" icon="user-shield">
+    Different API categories (External, Console, Admin) with appropriate permissions and authentication methods.
+  </Card>
+  <Card title="Scalable Infrastructure" icon="server">
+    Built to handle high-volume requests with proper rate limiting and monitoring capabilities.
+  </Card>
+</CardGroup>
+
+## API Categories and Use Cases
+
+The Weir AI API is organized into three main categories, each serving specific use cases:
+
+### External APIs
+**Purpose**: Public-facing APIs for third-party integrations
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Basic authentication with client credentials
+    - Access token generation for external applications
+    - Limited scope for public integrations
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="globe">
+    - Third-party application integrations
+    - Public API access for external developers
+    - Limited functionality for security
+    - Client credential-based authentication
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 100 requests per minute per client
+    - 10 token generation requests per minute
+    - Burst limit of 200 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+### Console APIs
+**Purpose**: Organization management and internal operations
+
+<AccordionGroup>
+  <Accordion title="Features" icon="desktop">
+    - Team management and member invitations
+    - Platform creation and management
+    - Client and talent roster management
+    - User profile and authentication management
+    - Subscription and billing management
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="building">
+    - Internal management tools
+    - Organization administration
+    - Team collaboration platforms
+    - Platform management interfaces
+    - User management systems
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 200 requests per minute per user
+    - 5 login requests per minute per IP
+    - Burst limit of 500 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+### Admin APIs
+**Purpose**: Platform administration and system management
+
+<AccordionGroup>
+  <Accordion title="Features" icon="shield">
+    - Administrative user management
+    - System-wide platform and organization management
+    - Pod management and system control
+    - Mail template management
+    - Comprehensive logging and monitoring
+  </Accordion>
+  
+  <Accordion title="Use Cases" icon="cog">
+    - System administration dashboards
+    - Platform monitoring and management
+    - User administration tools
+    - System maintenance and operations
+    - Audit and compliance tools
+  </Accordion>
+  
+  <Accordion title="Rate Limits" icon="clock">
+    - 500 requests per minute per admin
+    - 10 admin login requests per minute per IP
+    - Burst limit of 1000 requests per 5-minute window
+  </Accordion>
+</AccordionGroup>
+
+## Authentication and Security
+
+### Authentication Methods
+
+<CardGroup cols={3}>
+  <Card title="Basic Authentication" icon="key">
+    Used for External APIs with client credentials to generate access tokens.
+  </Card>
+  <Card title="Bearer Token" icon="shield">
+    Used for authenticated requests with access tokens across all API categories.
+  </Card>
+  <Card title="Session-based" icon="user">
+    Used for Console and Admin APIs with username/password authentication.
+  </Card>
+</CardGroup>
+
+### Security Features
+
+<AccordionGroup>
+  <Accordion title="Token Management" icon="token">
+    - JWT-based access tokens with 1-hour expiration
+    - Refresh tokens with 30-day expiration
+    - Automatic token refresh capabilities
+    - Secure token storage recommendations
+  </Accordion>
+  
+  <Accordion title="Rate Limiting" icon="clock">
+    - Category-specific rate limits
+    - Burst protection with sliding windows
+    - Rate limit headers in responses
+    - Exponential backoff recommendations
+  </Accordion>
+  
+  <Accordion title="Input Validation" icon="check">
+    - Comprehensive parameter validation
+    - SQL injection prevention
+    - XSS protection
+    - CSRF protection for web applications
+  </Accordion>
+</AccordionGroup>
+
+## Data Models and Relationships
+
+### Core Entities
+
+<AccordionGroup>
+  <Accordion title="Organizations" icon="building">
+    **Purpose**: Top-level entities representing companies or institutions
+    
+    **Properties**:
+    - Unique organization ID
+    - Organization name and details
+    - Subscription and billing information
+    - Contact information and settings
+    
+    **Relationships**:
+    - Contains multiple teams
+    - Owns multiple platforms
+    - Has multiple users
+    - Manages multiple clients
+  </Accordion>
+  
+  <Accordion title="Teams" icon="users">
+    **Purpose**: Groups of users within an organization
+    
+    **Properties**:
+    - Unique team ID
+    - Team name and description
+    - Creation timestamp
+    - Member count and status
+    
+    **Relationships**:
+    - Belongs to an organization
+    - Contains multiple members
+    - Associated with platforms
+    - Has role-based permissions
+  </Accordion>
+  
+  <Accordion title="Users" icon="user">
+    **Purpose**: Individual users within the system
+    
+    **Properties**:
+    - Unique user ID
+    - Personal information (name, email)
+    - Authentication credentials
+    - Role and permissions
+    
+    **Relationships**:
+    - Belongs to an organization
+    - Member of multiple teams
+    - Has specific roles and permissions
+    - Associated with user profile
+  </Accordion>
+  
+  <Accordion title="Platforms" icon="server">
+    **Purpose**: Applications or services within an organization
+    
+    **Properties**:
+    - Unique platform ID
+    - Platform name and type
+    - Domain and verification status
+    - Team association
+    
+    **Relationships**:
+    - Belongs to an organization
+    - Associated with a team
+    - Has multiple clients
+    - Contains talent rosters
+  </Accordion>
+  
+  <Accordion title="Clients" icon="desktop">
+    **Purpose**: API clients for platforms
+    
+    **Properties**:
+    - Unique client ID
+    - Client name and environment
+    - API credentials
+    - Creation and refresh timestamps
+    
+    **Relationships**:
+    - Belongs to a platform
+    - Has API credentials
+    - Associated with environment (production/staging)
+  </Accordion>
+</AccordionGroup>
+
+### Data Flow
+
+<Steps>
+  <Step title="Organization Setup" icon="building">
+    Organizations are created with basic information and subscription details.
+  </Step>
+  
+  <Step title="Team Creation" icon="users">
+    Teams are created within organizations to group users and manage permissions.
+  </Step>
+  
+  <Step title="User Management" icon="user">
+    Users are invited to teams with specific roles and permissions.
+  </Step>
+  
+  <Step title="Platform Development" icon="server">
+    Platforms are created and associated with teams for development and management.
+  </Step>
+  
+  <Step title="Client Configuration" icon="desktop">
+    API clients are created for platforms to enable external integrations.
+  </Step>
+</Steps>
+
+## Error Handling and Response Formats
+
+### Standard Response Format
+
+All API responses follow a consistent format:
+
+```json
+{
+  "data": {
+    // Response data object
+  },
+  "message": "Human-readable message",
+  "status": "success|error"
+}
+```
+
+### Error Response Format
+
+Error responses include detailed information:
+
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details or validation errors"
+  },
+  "status": "error"
+}
+```
+
+### HTTP Status Codes
+
+<CardGroup cols={2}>
+  <Card title="Success Codes" icon="check">
+    - **200 OK**: Successful GET, PUT, PATCH requests
+    - **201 Created**: Successful POST requests
+    - **204 No Content**: Successful DELETE requests
+  </Card>
+  <Card title="Error Codes" icon="exclamation-triangle">
+    - **400 Bad Request**: Invalid request parameters
+    - **401 Unauthorized**: Authentication required
+    - **403 Forbidden**: Insufficient permissions
+    - **404 Not Found**: Resource not found
+    - **429 Too Many Requests**: Rate limit exceeded
+    - **500 Internal Server Error**: Server error
+  </Card>
+</CardGroup>
+
+## Rate Limiting and Throttling
+
+### Rate Limit Headers
+
+All API responses include rate limiting information:
+
+<ResponseField name="X-RateLimit-Limit" type="string">
+Maximum number of requests allowed per time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Remaining" type="string">
+Number of requests remaining in the current time window.
+</ResponseField>
+
+<ResponseField name="X-RateLimit-Reset" type="string">
+Unix timestamp when the rate limit window resets.
+</ResponseField>
+
+### Rate Limit Strategies
+
+<AccordionGroup>
+  <Accordion title="Exponential Backoff" icon="clock">
+    Implement exponential backoff with jitter when rate limits are hit:
+    
+    ```javascript
+    const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+    const jitter = Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay + jitter));
+    ```
+  </Accordion>
+  
+  <Accordion title="Request Queuing" icon="list">
+    Queue requests to stay within rate limits:
+    
+    ```javascript
+    class RateLimitedQueue {
+      constructor(requestsPerMinute) {
+        this.queue = [];
+        this.interval = 60000 / requestsPerMinute;
+        this.processQueue();
+      }
+      
+      async add(request) {
+        return new Promise((resolve) => {
+          this.queue.push({ request, resolve });
+        });
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Caching" icon="database">
+    Cache responses to reduce API calls:
+    
+    ```javascript
+    const cache = new Map();
+    const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+    
+    async function getCachedData(key, fetchFunction) {
+      const cached = cache.get(key);
+      if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+        return cached.data;
+      }
+      
+      const data = await fetchFunction();
+      cache.set(key, { data, timestamp: Date.now() });
+      return data;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+### API Integration
+
+<AccordionGroup>
+  <Accordion title="Authentication" icon="key">
+    - Store credentials securely in environment variables
+    - Implement automatic token refresh
+    - Handle authentication errors gracefully
+    - Use different credentials for different environments
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling
+    - Provide clear error messages to users
+    - Log errors for debugging
+    - Handle network failures gracefully
+  </Accordion>
+  
+  <Accordion title="Performance" icon="rocket">
+    - Cache responses when possible
+    - Use pagination for large datasets
+    - Implement retry logic with backoff
+    - Monitor rate limit headers
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS
+    - Validate and sanitize input
+    - Implement proper CORS policies
+    - Follow OWASP security guidelines
+  </Accordion>
+</AccordionGroup>
+
+### Development Workflow
+
+<Steps>
+  <Step title="Environment Setup" icon="gear">
+    Set up development, staging, and production environments with appropriate API credentials.
+  </Step>
+  
+  <Step title="API Testing" icon="play">
+    Use the API playground and testing tools to verify endpoint functionality.
+  </Step>
+  
+  <Step title="Integration Development" icon="code">
+    Develop your integration following best practices and error handling patterns.
+  </Step>
+  
+  <Step title="Testing and Validation" icon="check">
+    Test your integration thoroughly with various scenarios and edge cases.
+  </Step>
+  
+  <Step title="Deployment and Monitoring" icon="chart-line">
+    Deploy to production and monitor API usage, performance, and errors.
+  </Step>
+</Steps>
+
+## Versioning and Compatibility
+
+### API Versioning
+
+The Weir AI API uses URL-based versioning:
+
+- **Current Version**: v1.0.1
+- **Version Format**: `/v{major}.{minor}.{patch}`
+- **Backward Compatibility**: Minor and patch versions maintain backward compatibility
+- **Breaking Changes**: Only major version changes introduce breaking changes
+
+### Migration Guidelines
+
+<AccordionGroup>
+  <Accordion title="Version Updates" icon="arrow-up">
+    - Review changelog for new features and changes
+    - Test new endpoints in staging environment
+    - Update client code to handle new response formats
+    - Monitor for deprecated endpoints and plan migration
+  </Accordion>
+  
+  <Accordion title="Breaking Changes" icon="exclamation-triangle">
+    - Major version updates may introduce breaking changes
+    - Review migration guides for detailed instructions
+    - Plan migration timeline and testing strategy
+    - Update documentation and client code accordingly
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  **Pro Tip**: Start with the External APIs for simple integrations, use Console APIs for organization management, and only use Admin APIs for system administration tasks.
+</Tip>

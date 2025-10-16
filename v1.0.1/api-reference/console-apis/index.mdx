@@ -1,0 +1,192 @@
+---
+title: "Console APIs"
+description: "Organization management APIs for internal operations and team collaboration"
+icon: "desktop"
+sidebarTitle: "Console APIs"
+---
+
+# Console APIs
+
+Console APIs are designed for organization management and internal operations. These APIs provide comprehensive functionality for managing teams, platforms, users, and organizational resources within the Weir AI platform.
+
+<Info>
+  **Use Case**: Console APIs are perfect for building internal management tools, organization administration interfaces, and team collaboration platforms.
+</Info>
+
+## Authentication
+
+Console APIs use bearer token authentication with the `x-source: console` header.
+
+<Steps>
+  <Step title="User Login" icon="sign-in-alt">
+    Authenticate with username and password to get access and refresh tokens.
+  </Step>
+  
+  <Step title="Use Access Token" icon="shield">
+    Include the access token in the Authorization header with `x-source: console`.
+  </Step>
+  
+  <Step title="Refresh Token" icon="refresh">
+    Use the refresh token to get new access tokens when they expire.
+  </Step>
+</Steps>
+
+## Available Endpoints
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    - **Login**: User authentication with username/password
+    - **Refresh Token**: Refresh expired access tokens
+    - **Logout**: Invalidate user session
+  </Card>
+  <Card title="Team Management" icon="users">
+    - **Create Team**: Create new teams within organization
+    - **Get Teams**: Retrieve organization teams
+    - **Team Members**: Manage team membership
+  </Card>
+  <Card title="Platform Management" icon="server">
+    - **Create Platform**: Create new platforms
+    - **Get Platforms**: Retrieve organization platforms
+    - **Platform Settings**: Manage platform configurations
+  </Card>
+  <Card title="User Management" icon="user">
+    - **User Profile**: Manage user profiles and settings
+    - **Password Management**: Update passwords and security
+    - **User Settings**: Configure user preferences
+  </Card>
+</CardGroup>
+
+## Rate Limits
+
+Console APIs have the following rate limits:
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key">
+    - **Login Requests**: 5 requests per minute per IP
+    - **Token Refresh**: 20 requests per minute per user
+    - **Logout Requests**: 10 requests per minute per user
+  </Card>
+  <Card title="API Requests" icon="desktop">
+    - **General Endpoints**: 200 requests per minute per user
+    - **Burst Limit**: 500 requests per 5-minute window
+  </Card>
+</CardGroup>
+
+## Common Headers
+
+All Console API requests require these headers:
+
+<ParamField header="Authorization" type="string" required>
+Bearer token for authentication. Format: `Bearer YOUR_ACCESS_TOKEN`
+</ParamField>
+
+<ParamField header="x-source" type="string" required>
+Source identifier. Must be set to `console` for all Console API requests.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" default="application/json">
+Content type for request body. Use `application/json` for JSON payloads.
+</ParamField>
+
+## Error Handling
+
+Console APIs return standard HTTP status codes and error responses:
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    Invalid request parameters, missing required fields, or validation errors.
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized" icon="ban">
+    Invalid, expired, or missing access token.
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="lock">
+    Valid authentication but insufficient permissions for the requested resource.
+  </Accordion>
+  
+  <Accordion title="404 Not Found" icon="search">
+    Requested resource not found or user doesn't have access to it.
+  </Accordion>
+  
+  <Accordion title="409 Conflict" icon="exclamation">
+    Resource conflict, such as trying to create a duplicate resource.
+  </Accordion>
+  
+  <Accordion title="429 Too Many Requests" icon="clock">
+    Rate limit exceeded. Check rate limit headers for retry information.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Token Management" icon="key">
+    - Implement automatic token refresh before expiration
+    - Store tokens securely and never expose them in client-side code
+    - Handle authentication errors gracefully with proper user feedback
+    - Use different tokens for different environments
+  </Accordion>
+  
+  <Accordion title="Request Optimization" icon="rocket">
+    - Cache responses when possible to reduce API calls
+    - Use pagination for large datasets
+    - Implement retry logic with exponential backoff
+    - Monitor rate limit headers to avoid hitting limits
+  </Accordion>
+  
+  <Accordion title="Error Handling" icon="exclamation-triangle">
+    - Implement comprehensive error handling for all API operations
+    - Provide clear error messages to users
+    - Log errors for debugging without exposing sensitive information
+    - Handle network failures and timeouts gracefully
+  </Accordion>
+  
+  <Accordion title="Security" icon="shield">
+    - Always use HTTPS for all API requests
+    - Validate and sanitize all input parameters
+    - Implement proper CORS policies for web applications
+    - Use secure storage for authentication tokens
+  </Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="User Authentication" icon="sign-in-alt">
+    Use the login endpoint to authenticate and get access tokens.
+  </Step>
+  
+  <Step title="Explore Endpoints" icon="search">
+    Browse the available endpoints based on your use case.
+  </Step>
+  
+  <Step title="Test Integration" icon="play">
+    Use the provided examples to test your integration.
+  </Step>
+  
+  <Step title="Handle Errors" icon="exclamation-triangle">
+    Implement proper error handling and user feedback.
+  </Step>
+</Steps>
+
+## Integration Examples
+
+<CardGroup cols={2}>
+  <Card title="Team Management" icon="users" href="/guides/team-management">
+    Build team collaboration tools with role-based access control.
+  </Card>
+  <Card title="Platform Administration" icon="server" href="/guides/platform-management">
+    Create platform management interfaces for organization administration.
+  </Card>
+  <Card title="User Management" icon="user" href="/guides/user-management">
+    Build user administration systems with profile management.
+  </Card>
+  <Card title="Console Integration" icon="desktop" href="/guides/console-apis">
+    Complete guide to integrating with Console APIs.
+  </Card>
+</CardGroup>
+
+<Tip>
+  **Pro Tip**: Start with the authentication flow to understand token management, then explore the specific endpoints you need for your use case. Use the integration guides for complete implementation examples.
+</Tip>

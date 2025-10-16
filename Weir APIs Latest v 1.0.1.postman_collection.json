@@ -1,0 +1,3235 @@
+{
+	"info": {
+		"_postman_id": "2a0892ee-5146-47aa-9980-5e7ace8bbf8c",
+		"name": "Weir APIs Latest v 1.0.1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44582596",
+		"_collection_link": "https://cimpledev.postman.co/workspace/WeirAI~075e4024-cce8-474a-8809-aa77b3321f0b/collection/44872412-2a0892ee-5146-47aa-9980-5e7ace8bbf8c?action=share&source=collection_link&creator=44582596"
+	},
+	"item": [
+		{
+			"name": "External",
+			"item": [
+				{
+					"name": "Generate Access Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var response = pm.response.json()",
+									"",
+									"pm.environment.set('apiAccessToken', response.data.accessToken)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{secretKey}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{clientId}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{apiBaseUrl}}/auth/token",
+							"host": [
+								"{{apiBaseUrl}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{externalToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Console",
+			"item": [
+				{
+					"name": "Team Management",
+					"item": [
+						{
+							"name": "Create Team",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/org/create/team",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"create",
+										"team"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invite Team Member",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstname\": \"Oladeji\",\n    \"lastname\": \"Frosh\",\n    \"email\": \"fh@mailinator.com\",\n    \"role\": \"Organization_User\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/org/invite/team/member/:teamId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"invite",
+										"team",
+										"member",
+										":teamId"
+									],
+									"variable": [
+										{
+											"key": "teamId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Teams",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/org/teams?page&limit",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"teams"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": null
+										},
+										{
+											"key": "limit",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete team",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/org/team/:teamId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"team",
+										":teamId"
+									],
+									"variable": [
+										{
+											"key": "teamId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Team Members",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstname\": \"Oladeji\",\n    \"lastname\": \"Frosh\",\n    \"email\": \"fh@mailinator.com\",\n    \"role\": \"Organization_User\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/org/team/members/:teamId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"team",
+										"members",
+										":teamId"
+									],
+									"variable": [
+										{
+											"key": "teamId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Team Member Role",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/org/team/:teamId/member/:memberId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"team",
+										":teamId",
+										"member",
+										":memberId"
+									],
+									"variable": [
+										{
+											"key": "teamId",
+											"value": ""
+										},
+										{
+											"key": "memberId",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Log out",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Refresh Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var response = pm.response.json()",
+											"",
+											"pm.collectionVariables.set('accessToken', response.data.accessToken)",
+											"pm.collectionVariables.set('refreshToken', response.data.refreshToken)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/refresh/token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"refresh",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var response = pm.response.json()",
+											"",
+											"pm.collectionVariables.set('accessToken', response.data.accessToken)",
+											"pm.collectionVariables.set('refreshToken', response.data.refreshToken)"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"Jane Doe\",\n  \"password\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Resend Registration OTP",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/resend/otp/:session",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"resend",
+										"otp",
+										":session"
+									],
+									"variable": [
+										{
+											"key": "session",
+											"value": "",
+											"description": "otpSession"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate Registration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"otpSession\": \"\",\n    \"otp\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/validate/registration",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"validate",
+										"registration"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register (mobile)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"fullname\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/m/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"m",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"fullname\": \"string\",\n  \"email\": \"string\",\n  \"password\": \"string\",\n  \"organization\": {\n    \"name\": \"string\",\n    \"type\": \"Platform\",\n    \"description\": \"A business platform\"\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Org Mgmt",
+					"item": [
+						{
+							"name": "Get Org Info",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/org/information",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"information"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Bill History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-source",
+								"value": "console",
+								"description": "Type of api call - UI or 3rd api"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/org/bill/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"bill",
+								"history"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-source",
+										"value": "console",
+										"description": "Type of api call - UI or 3rd api"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"description": "Added as a part of security scheme: bearer"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/org/bill/history",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"bill",
+										"history"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Subscribe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-source",
+								"value": "console",
+								"description": "Type of api call - UI or 3rd api"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cardId\": \"string\",\n  \"amount\": 0,\n  \"subscriptionId\": \"string\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/subscribe",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"subscribe"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-source",
+										"value": "console",
+										"description": "Type of api call - UI or 3rd api"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"description": "Added as a part of security scheme: bearer"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"cardId\": \"string\",\n  \"amount\": 0,\n  \"subscriptionId\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/org/subscribe",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"subscribe"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Subscription Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-source",
+								"value": "console",
+								"description": "Type of api call - UI or 3rd api"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/org/subscriptions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"subscriptions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-source",
+										"value": "console",
+										"description": "Type of api call - UI or 3rd api"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"description": "Added as a part of security scheme: bearer"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/org/subscriptions",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"org",
+										"subscriptions"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Update Org Info",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"basicInfo\": {\n    \"website\": \"https://examplecompany.com\",\n    \"industry\": \"TECHNOLOGY\",\n    \"companySize\": \"SMALL\",\n    \"founded\": \"2010\",\n    \"description\": \"A software development company specializing in enterprise solutions.\"\n  },\n  \"address\": {\n    \"address1\": \"123 Main Street\",\n    \"address2\": \"Suite 400\",\n    \"city\": \"Lagos\",\n    \"state\": \"Lagos State\",\n    \"postalCode\": \"100001\",\n    \"country\": \"Nigeria\"\n  },\n  \"taxInfo\": {\n    \"taxId\": \"TIN12345678\",\n    \"taxOrgType\": \"GOVERNMENT_AGENCY\"\n  },\n  \"contact\": {\n    \"phone\": \"+2348012345678\",\n    \"email\": \"info@examplecompany.com\"\n  }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/information",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/cards",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"tok_1N3T00LkdIwHu7ixt44h1F8k\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/card",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"card"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Card",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cardNumber\": \"1234-5678-9012-3456\",\n    \"type\": \"Visa\",\n    \"expiry\": \"12/25\",\n    \"description\": \"Company corporate card\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/card/:cardId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"card",
+								":cardId"
+							],
+							"variable": [
+								{
+									"key": "cardId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Platform",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"string\",\n    \"teamId\": \"\",\n    \"description\": \"string\",\n    \"type\": \"Forum/Community\",\n    \"domain\": \"string\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/create/platform",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"create",
+								"platform"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Platforms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/platforms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"platforms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Platform",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"string\",\n    \"teamId\": \"\",\n    \"description\": \"string\",\n    \"type\": \"Forum/Community\",\n    \"domain\": \"string\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/platform/:platformId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"platform",
+								":platformId"
+							],
+							"variable": [
+								{
+									"key": "platformId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify platform",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/verify/platform/:platformId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"verify",
+								"platform",
+								":platformId"
+							],
+							"variable": [
+								{
+									"key": "platformId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lekan Client\",\n    \"environment\": \"production\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/create/client",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"create",
+								"client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Clients",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/clients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Client",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/refresh/client?clientId=",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"refresh",
+								"client"
+							],
+							"query": [
+								{
+									"key": "clientId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/client/:clientId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"client",
+								":clientId"
+							],
+							"variable": [
+								{
+									"key": "clientId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Agency Talent Roster",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/talent/roster",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"talent",
+								"roster"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invite Talent to Agency",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"talent@string.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/invite/talent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"invite",
+								"talent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for Agency Talent",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/talent/name/search?search",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"talent",
+								"name",
+								"search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Talent Licenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/org/licenses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"licenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create License by Agency",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "appearanceFee",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "canCrawl",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/talent/license/:talentId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"talent",
+								"license",
+								":talentId"
+							],
+							"variable": [
+								{
+									"key": "talentId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Images to License (Agency)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/talent/license/:licenseId/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"talent",
+								"license",
+								":licenseId",
+								"image"
+							],
+							"variable": [
+								{
+									"key": "licenseId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove image from license (Agency)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/org/talent/license/{licenseId}/image/{imageId}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"org",
+								"talent",
+								"license",
+								"{licenseId}",
+								"image",
+								"{imageId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-source",
+								"value": "console",
+								"description": "Type of api call - UI or 3rd api"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"Doe\",\n  \"username\": \"johndoe123\",\n  \"email\": \"john.doe@example.com\",\n  \"bio\": \"Software engineer from NY.\",\n  \"location\": \"New York, USA\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-source",
+										"value": "console",
+										"description": "Type of api call - UI or 3rd api"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"description": "Added as a part of security scheme: bearer"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"firstname\": \"John\",\n  \"lastname\": \"Doe\",\n  \"username\": \"johndoe123\",\n  \"email\": \"john.doe@example.com\",\n  \"bio\": \"Software engineer from NY.\",\n  \"location\": \"New York, USA\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/profile",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "User change Password",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "x-source",
+								"value": "console",
+								"description": "Type of api call - UI or 3rd api"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"oldPassword123\",\n  \"newPassword\": \"newPassword456\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/change/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"change",
+								"password"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "x-source",
+										"value": "console",
+										"description": "Type of api call - UI or 3rd api"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer <token>",
+										"description": "Added as a part of security scheme: bearer"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"oldPassword123\",\n  \"newPassword\": \"newPassword456\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/change/password",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"change",
+										"password"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{consoleToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"pm.request.headers.upsert({key: 'x-source', value: 'console'});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "User Management",
+					"item": [
+						{
+							"name": "Create admin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/auth/register",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/auth/register",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"auth",
+												"register"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Get Admin Members",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/members",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"members"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/admin/members",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"members"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Invite Admin User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/admin/member/invite",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"member",
+										"invite"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/admin/member/invite",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"member",
+												"invite"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "Authenticate Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"token\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/authenticateAdmin",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"authenticateAdmin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"Jane Doe\",\n  \"password\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"username\": \"Jane Doe\",\n  \"password\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/auth/login",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"auth",
+												"login"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Refresh token",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/refresh/token",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"refresh",
+										"token"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"refreshToken\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/auth/refresh/token",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"auth",
+												"refresh",
+												"token"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Logout",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"refreshToken\": \"string\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/logout",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"refreshToken\": \"string\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/auth/logout",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"auth",
+												"logout"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Licenses",
+					"item": [
+						{
+							"name": "Get Licenses",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/licenses",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"licenses"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Untitled Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/admin/licenses",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"admin",
+												"licenses"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get Organizations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/organizations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"organizations"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/organizations",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"organizations"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Platforms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/admin/platforms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admin",
+								"platforms"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/admin/platforms",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"admin",
+										"platforms"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Create Mail Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mail/create/template",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mail",
+								"create",
+								"template"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/mail/create/template",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"mail",
+										"create",
+										"template"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Mail Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mail/templates",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mail",
+								"templates"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/mail/templates",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"mail",
+										"templates"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Update Mail Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mail/template/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mail",
+								"template",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/mail/template/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"mail",
+										"template",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Delete Mail Template",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mail/template/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mail",
+								"template",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/mail/template/:id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"mail",
+										"template",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Create Pod",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"platform\": {},\n  \"scopes\": [\n    \"string\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/pax/pod",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"pod"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"platform\": {},\n  \"scopes\": [\n    \"string\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/pax/pod",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"pod"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Pods",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/pods",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"pods"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/pods",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"pods"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Pod",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/pod/:podId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"pod",
+								":podId"
+							],
+							"variable": [
+								{
+									"key": "podId",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/pod/:podId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"pod",
+										":podId"
+									],
+									"variable": [
+										{
+											"key": "podId"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Start Pod",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/start/pod/:podId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"start",
+								"pod",
+								":podId"
+							],
+							"variable": [
+								{
+									"key": "podId",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/start/pod/:podId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"start",
+										"pod",
+										":podId"
+									],
+									"variable": [
+										{
+											"key": "podId"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Pause Pod",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/pause/pod/:podId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"pause",
+								"pod",
+								":podId"
+							],
+							"variable": [
+								{
+									"key": "podId",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/pause/pod/:podId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"pause",
+										"pod",
+										":podId"
+									],
+									"variable": [
+										{
+											"key": "podId"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Stop Pod",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/stop/pod/:podId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"stop",
+								"pod",
+								":podId"
+							],
+							"variable": [
+								{
+									"key": "podId",
+									"value": "string",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/stop/pod/:podId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"stop",
+										"pod",
+										":podId"
+									],
+									"variable": [
+										{
+											"key": "podId"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Start All Pods",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/start/pods",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"start",
+								"pods"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/start/pods",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"start",
+										"pods"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Pause All Pods",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/pause/pods",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"pause",
+								"pods"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/pause/pods",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"pause",
+										"pods"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Stop All Pods",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/pax/stop/pods",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"pax",
+								"stop",
+								"pods"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/pax/stop/pods",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"pax",
+										"stop",
+										"pods"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Create Log Entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"INFO\",\n  \"message\": \"This is a log message\",\n  \"dateTime\": \"2025-09-04T11:28:14.670Z\"\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/logs/log?scheme=admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logs",
+								"log"
+							],
+							"query": [
+								{
+									"key": "scheme",
+									"value": "admin",
+									"description": "(Required) The log scheme type"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"type\": \"INFO\",\n  \"message\": \"This is a log message\",\n  \"dateTime\": \"2025-09-04T11:28:14.670Z\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/logs/log?scheme=admin",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"logs",
+										"log"
+									],
+									"query": [
+										{
+											"key": "scheme",
+											"value": "admin",
+											"description": "(Required) The log scheme type"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Search Log Entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logs/search?type=ERROR&scheme=admin&searchTerm=string&page=1&limit=10&startDate=2025-08-29&endDate=2025-09-30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logs",
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ERROR",
+									"description": "The log type"
+								},
+								{
+									"key": "scheme",
+									"value": "admin",
+									"description": "(Required) The log scheme type"
+								},
+								{
+									"key": "searchTerm",
+									"value": "string",
+									"description": "(Required) "
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-08-29",
+									"description": "Start date in ISO format (YYYY-MM-DD)"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-09-30",
+									"description": "End date in ISO format (YYYY-MM-DD)"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/logs/search?type=ERROR&scheme=admin&searchTerm=string&page=1&limit=10&startDate=2025-08-29&endDate=2025-09-30",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"logs",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "ERROR",
+											"description": "The log type"
+										},
+										{
+											"key": "scheme",
+											"value": "admin",
+											"description": "(Required) The log scheme type"
+										},
+										{
+											"key": "searchTerm",
+											"value": "string",
+											"description": "(Required) "
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "startDate",
+											"value": "2025-08-29",
+											"description": "Start date in ISO format (YYYY-MM-DD)"
+										},
+										{
+											"key": "endDate",
+											"value": "2025-09-30",
+											"description": "End date in ISO format (YYYY-MM-DD)"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Log Entries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/logs/all?type=ERROR&scheme=admin&page=1&limit=10&startDate=2025-08-29&endDate=2025-09-30",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"logs",
+								"all"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "ERROR",
+									"description": "The log type"
+								},
+								{
+									"key": "scheme",
+									"value": "admin",
+									"description": "(Required) The log scheme type"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-08-29",
+									"description": "Start date in ISO format (YYYY-MM-DD)"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-09-30",
+									"description": "End date in ISO format (YYYY-MM-DD)"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/logs/all?type=ERROR&scheme=admin&page=1&limit=10&startDate=2025-08-29&endDate=2025-09-30",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"logs",
+										"all"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "ERROR",
+											"description": "The log type"
+										},
+										{
+											"key": "scheme",
+											"value": "admin",
+											"description": "(Required) The log scheme type"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "startDate",
+											"value": "2025-08-29",
+											"description": "Start date in ISO format (YYYY-MM-DD)"
+										},
+										{
+											"key": "endDate",
+											"value": "2025-09-30",
+											"description": "End date in ISO format (YYYY-MM-DD)"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gMZUzD9fcn6Imd28Hi9rvZeZkhqSClMN4TjCLhc654UeBU9Uxj",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "V2ndYYV7PMQVjqyTsk2QkokCv",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.x.com/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"api",
+						"x",
+						"com"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AAAAAAAAAAAAAAAAAAAAAKj02gEAAAAAbsi1GsO7YBOFHvQGmoTqNmIA5UI%3D7Wuq4sIvOhYJ3Sx0mO4XZ1laYFaNumrwc4MGnHXsXrozHXk1RF",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.x.com/2/tweets/search/recent?query=lebron&expansions=attachments.media_keys&media.fields=url,type,alt_text,height,width",
+					"protocol": "https",
+					"host": [
+						"api",
+						"x",
+						"com"
+					],
+					"path": [
+						"2",
+						"tweets",
+						"search",
+						"recent"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "lebron"
+						},
+						{
+							"key": "expansions",
+							"value": "attachments.media_keys"
+						},
+						{
+							"key": "media.fields",
+							"value": "url,type,alt_text,height,width"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "externalToken",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "consoleToken",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "clientId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "baseUrl",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

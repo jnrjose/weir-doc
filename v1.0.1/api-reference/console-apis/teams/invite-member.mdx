@@ -1,0 +1,272 @@
+---
+title: "Invite Team Member"
+description: "Invite a new member to join a team"
+api: "POST /org/invite/team/member/:teamId"
+---
+
+# Invite Team Member
+
+Send an invitation to a user to join a specific team in your organization.
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.weir.ai/org/invite/team/member/team_123456789' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'Content-Type: application/json' \
+  -H 'x-source: console' \
+  -d '{
+    "firstname": "John",
+    "lastname": "Doe",
+    "email": "john.doe@example.com",
+    "role": "Organization_User"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "invitationId": "inv_123456789",
+    "email": "john.doe@example.com",
+    "teamId": "team_123456789",
+    "role": "Organization_User",
+    "status": "pending",
+    "expiresAt": "2024-01-22T10:30:00Z"
+  },
+  "message": "Invitation sent successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Authentication
+
+Requires Console API authentication with bearer token and `x-source: console` header.
+
+## Path Parameters
+
+<ParamField path="teamId" type="string" required>
+Unique identifier of the team to invite the member to.
+</ParamField>
+
+## Request Body
+
+<ParamField body="firstname" type="string" required>
+First name of the person being invited.
+</ParamField>
+
+<ParamField body="lastname" type="string" required>
+Last name of the person being invited.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+Email address of the person being invited. Must be a valid email format.
+</ParamField>
+
+<ParamField body="role" type="string" required>
+Role to assign to the invited member. Must be one of: "Organization_Admin", "Organization_User", "Team_Lead", "Team_Member".
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="data" type="object" required>
+Invitation data object.
+
+<Expandable title="Invitation Properties">
+  <ResponseField name="data.invitationId" type="string" required>
+  Unique identifier for the invitation.
+  </ResponseField>
+  
+  <ResponseField name="data.email" type="string" required>
+  Email address where the invitation was sent.
+  </ResponseField>
+  
+  <ResponseField name="data.teamId" type="string" required>
+  Team identifier for the invitation.
+  </ResponseField>
+  
+  <ResponseField name="data.role" type="string" required>
+  Role assigned to the invited member.
+  </ResponseField>
+  
+  <ResponseField name="data.status" type="string" required>
+  Invitation status. Always "pending" for new invitations.
+  </ResponseField>
+  
+  <ResponseField name="data.expiresAt" type="timestamp" required>
+  ISO 8601 formatted timestamp when the invitation expires.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+## Error Responses
+
+<AccordionGroup>
+  <Accordion title="400 Bad Request" icon="exclamation-triangle">
+    ```json
+    {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid request parameters",
+        "details": {
+          "email": "Invalid email format",
+          "role": "Invalid role specified"
+        }
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="409 Conflict" icon="exclamation">
+    ```json
+    {
+      "error": {
+        "code": "MEMBER_EXISTS",
+        "message": "User is already a team member",
+        "details": "This user is already a member of the team"
+      },
+      "status": "error"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const inviteTeamMember = async (teamId, memberData, accessToken) => {
+  try {
+    const response = await fetch(`https://api.weir.ai/org/invite/team/member/${teamId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'x-source': 'console'
+      },
+      body: JSON.stringify(memberData)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Invite member error:', error);
+    throw error;
+  }
+};
+
+// Usage
+const invitation = await inviteTeamMember('team_123456789', {
+  firstname: 'John',
+  lastname: 'Doe',
+  email: 'john.doe@example.com',
+  role: 'Organization_User'
+}, 'your_access_token');
+console.log('Invitation sent:', invitation.invitationId);
+```
+
+```python Python
+import requests
+
+def invite_team_member(team_id, member_data, access_token):
+    try:
+        response = requests.post(
+            f'https://api.weir.ai/org/invite/team/member/{team_id}',
+            headers={
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json',
+                'x-source': 'console'
+            },
+            json=member_data
+        )
+        response.raise_for_status()
+        return response.json()['data']
+    except requests.exceptions.RequestException as e:
+        print(f'Invite member error: {e}')
+        raise
+
+# Usage
+invitation = invite_team_member('team_123456789', {
+    'firstname': 'John',
+    'lastname': 'Doe',
+    'email': 'john.doe@example.com',
+    'role': 'Organization_User'
+}, 'your_access_token')
+print(f'Invitation sent: {invitation["invitationId"]}')
+```
+
+```php PHP
+function inviteTeamMember($teamId, $memberData, $accessToken) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.weir.ai/org/invite/team/member/$teamId");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $accessToken,
+        'Content-Type: application/json',
+        'x-source: console'
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($memberData));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 201) {
+        throw new Exception("HTTP error: $httpCode");
+    }
+    
+    return json_decode($response, true)['data'];
+}
+```
+</CodeGroup>
+
+## Available Roles
+
+<AccordionGroup>
+  <Accordion title="Organization_Admin" icon="shield">
+    Full administrative access to the organization and all teams.
+  </Accordion>
+  
+  <Accordion title="Organization_User" icon="user">
+    Standard user access with team-specific permissions.
+  </Accordion>
+  
+  <Accordion title="Team_Lead" icon="users-cog">
+    Lead role with team management capabilities.
+  </Accordion>
+  
+  <Accordion title="Team_Member" icon="user">
+    Basic team member with limited permissions.
+  </Accordion>
+</AccordionGroup>
+
+## Best Practices
+
+<Steps>
+  <Step title="Validate Email" icon="check">
+    Validate email format before sending invitations.
+  </Step>
+  
+  <Step title="Check Existing Members" icon="search">
+    Verify the user isn't already a team member.
+  </Step>
+  
+  <Step title="Set Appropriate Role" icon="user-cog">
+    Assign roles based on the member's responsibilities.
+  </Step>
+  
+  <Step title="Track Invitations" icon="list">
+    Monitor invitation status and send reminders if needed.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: Invitations typically expire in 7 days. Implement email reminders for pending invitations to increase acceptance rates.
+</Tip>

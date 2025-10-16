@@ -1,0 +1,80 @@
+---
+title: "Get Subscription Plans"
+description: "Retrieve available subscription plans"
+api: "GET /org/subscriptions"
+---
+
+# Get Subscription Plans
+
+Retrieve all available subscription plans for your organization.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.weir.ai/org/subscriptions' \
+  -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'x-source: console'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success Response
+{
+  "data": {
+    "plans": [
+      {
+        "planId": "plan_starter",
+        "name": "Starter Plan",
+        "description": "Perfect for small teams",
+        "price": 49.99,
+        "currency": "USD",
+        "billingPeriod": "monthly",
+        "features": ["Feature 1", "Feature 2"]
+      },
+      {
+        "planId": "plan_pro",
+        "name": "Pro Plan",
+        "description": "For growing organizations",
+        "price": 99.99,
+        "currency": "USD",
+        "billingPeriod": "monthly",
+        "features": ["All Starter features", "Feature 3", "Feature 4"]
+      }
+    ]
+  },
+  "message": "Subscription plans retrieved successfully",
+  "status": "success"
+}
+```
+</ResponseExample>
+
+## Usage Examples
+
+<CodeGroup>
+```javascript JavaScript
+const getSubscriptionPlans = async (accessToken) => {
+  const response = await fetch('https://api.weir.ai/org/subscriptions', {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'x-source': 'console'
+    }
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  return await response.json();
+};
+```
+
+```python Python
+import requests
+
+def get_subscription_plans(access_token):
+    response = requests.get(
+        'https://api.weir.ai/org/subscriptions',
+        headers={
+            'Authorization': f'Bearer {access_token}',
+            'x-source': 'console'
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+</CodeGroup>
