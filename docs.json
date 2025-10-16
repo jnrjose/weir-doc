@@ -169,6 +169,12 @@
 						"tab": "Getting Started",
 						"groups": [
 							{
+								"group": "API Playground",
+								"pages": [
+									"v1.0.1/api-playground"
+								]
+							},
+							{
 								"group": "Start Here",
 								"pages": [
 									"v1.0.1/index",

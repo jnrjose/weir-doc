@@ -1,0 +1,285 @@
+---
+title: "API Playground"
+description: "Interactive API playground to test Weir AI API endpoints directly in your browser"
+icon: "play"
+---
+
+# API Playground
+
+Test Weir AI API endpoints directly in your browser with our interactive API playground. No external tools or setup required.
+
+<Info>
+  **Interactive Testing**: The API playground allows you to make real API calls directly from this documentation, making it easy to test endpoints and see responses in real-time.
+</Info>
+
+## Getting Started with the Playground
+
+<Steps>
+  <Step title="Choose an Endpoint" icon="list">
+    Navigate to any API endpoint in the reference section. Each endpoint page includes an interactive playground.
+  </Step>
+  
+  <Step title="Set Up Authentication" icon="key">
+    Configure your authentication credentials (API key, access token, or client credentials).
+  </Step>
+  
+  <Step title="Customize Parameters" icon="sliders">
+    Modify request parameters, headers, and body to match your testing needs.
+  </Step>
+  
+  <Step title="Execute Request" icon="play">
+    Click the "Send" button to execute the API call and view the response.
+  </Step>
+</Steps>
+
+## How to Use the Playground
+
+### Authentication Setup
+
+Different API categories require different authentication methods:
+
+<AccordionGroup>
+  <Accordion title="External APIs" icon="globe">
+    **Authentication Method**: Basic Authentication or Bearer Token
+    
+    1. For token generation: Use Basic Auth with your client credentials
+    2. For other endpoints: Use Bearer token from the generated access token
+    
+    ```
+    Authorization: Basic base64(clientId:secretKey)
+    // or
+    Authorization: Bearer YOUR_ACCESS_TOKEN
+    ```
+  </Accordion>
+  
+  <Accordion title="Console APIs" icon="desktop">
+    **Authentication Method**: Bearer Token + x-source header
+    
+    1. Login to get access token
+    2. Add Bearer token to Authorization header
+    3. Add `x-source: console` header
+    
+    ```
+    Authorization: Bearer YOUR_ACCESS_TOKEN
+    x-source: console
+    ```
+  </Accordion>
+  
+  <Accordion title="Admin APIs" icon="shield">
+    **Authentication Method**: Admin Bearer Token
+    
+    1. Authenticate as admin to get admin access token
+    2. Add Bearer token to Authorization header
+    
+    ```
+    Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Playground Features
+
+<CardGroup cols={2}>
+  <Card title="Real-Time Testing" icon="bolt">
+    Execute actual API calls against the live API and see real responses immediately.
+  </Card>
+  
+  <Card title="Parameter Editing" icon="edit">
+    Modify all request parameters, headers, and body content before sending requests.
+  </Card>
+  
+  <Card title="Response Inspection" icon="search">
+    View formatted response bodies, status codes, and headers for each request.
+  </Card>
+  
+  <Card title="Code Generation" icon="code">
+    Generate code snippets in multiple languages based on your playground configuration.
+  </Card>
+  
+  <Card title="Error Handling" icon="exclamation-triangle">
+    See detailed error messages and responses to help debug integration issues.
+  </Card>
+  
+  <Card title="History Tracking" icon="history">
+    Keep track of your recent API calls for easy reference and comparison.
+  </Card>
+</CardGroup>
+
+## Quick Start Examples
+
+### Testing External APIs
+
+<Steps>
+  <Step title="Generate Access Token">
+    Navigate to the [Generate Access Token](/v1.0.1/api-reference/external-apis/generate-access-token) endpoint.
+  </Step>
+  
+  <Step title="Configure Basic Auth">
+    Set up Basic Authentication with your client credentials.
+  </Step>
+  
+  <Step title="Execute Request">
+    Click "Send" to generate an access token.
+  </Step>
+  
+  <Step title="Use Token">
+    Copy the access token and use it for other external API requests.
+  </Step>
+</Steps>
+
+### Testing Console APIs
+
+<Steps>
+  <Step title="Login First">
+    Navigate to the [Login](/v1.0.1/api-reference/console-apis/auth/login) endpoint.
+  </Step>
+  
+  <Step title="Get Access Token">
+    Login to receive your access token and refresh token.
+  </Step>
+  
+  <Step title="Test Other Endpoints">
+    Use the access token with `x-source: console` header for other console endpoints.
+  </Step>
+</Steps>
+
+### Testing Admin APIs
+
+<Steps>
+  <Step title="Admin Authentication">
+    Navigate to the [Admin Login](/v1.0.1/api-reference/admin-apis/auth/login) endpoint.
+  </Step>
+  
+  <Step title="Get Admin Token">
+    Authenticate to receive admin access token.
+  </Step>
+  
+  <Step title="Test Admin Endpoints">
+    Use the admin token for administrative operations.
+  </Step>
+</Steps>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use Test Data" icon="database">
+    - Always use test data in the playground
+    - Don't use production credentials
+    - Create test accounts and resources for playground testing
+  </Accordion>
+  
+  <Accordion title="Understand Rate Limits" icon="clock">
+    - Be aware of API rate limits while testing
+    - Avoid rapid successive calls that might trigger rate limiting
+    - Monitor rate limit headers in responses
+  </Accordion>
+  
+  <Accordion title="Secure Your Credentials" icon="lock">
+    - Never share your API credentials publicly
+    - Use environment-specific credentials (dev/staging)
+    - Rotate credentials if accidentally exposed
+  </Accordion>
+  
+  <Accordion title="Save Your Configuration" icon="save">
+    - Export your playground configuration for reuse
+    - Save successful request configurations
+    - Document working examples for your team
+  </Accordion>
+</AccordionGroup>
+
+## Supported Endpoints
+
+The playground is available for all API endpoints:
+
+<CardGroup cols={3}>
+  <Card title="External APIs" icon="globe" href="/v1.0.1/api-reference/external-apis">
+    2 endpoints available for testing
+  </Card>
+  
+  <Card title="Console APIs" icon="desktop" href="/v1.0.1/api-reference/console-apis">
+    51 endpoints available for testing
+  </Card>
+  
+  <Card title="Admin APIs" icon="shield" href="/v1.0.1/api-reference/admin-apis">
+    26 endpoints available for testing
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized Errors" icon="ban">
+    **Problem**: Getting unauthorized errors in playground
+    
+    **Solutions**:
+    - Verify your authentication credentials are correct
+    - Check token hasn't expired
+    - Ensure proper header format (Bearer token, x-source, etc.)
+    - Generate new token if needed
+  </Accordion>
+  
+  <Accordion title="CORS Issues" icon="globe">
+    **Problem**: CORS errors when testing from browser
+    
+    **Solutions**:
+    - The playground should handle CORS automatically
+    - If issues persist, try using a different browser
+    - Check that you're on the official documentation domain
+  </Accordion>
+  
+  <Accordion title="Invalid Request Format" icon="exclamation-triangle">
+    **Problem**: Getting 400 Bad Request errors
+    
+    **Solutions**:
+    - Verify request body is valid JSON
+    - Check all required parameters are provided
+    - Ensure parameter types match expectations
+    - Review the endpoint documentation for requirements
+  </Accordion>
+</AccordionGroup>
+
+## Alternative Testing Tools
+
+If you prefer external tools, you can also test the API using:
+
+<CardGroup cols={2}>
+  <Card title="cURL" icon="terminal">
+    Copy code examples directly from endpoint documentation
+  </Card>
+  
+  <Card title="Postman" icon="paper-plane">
+    Import the Postman collection for comprehensive testing
+  </Card>
+  
+  <Card title="Insomnia" icon="moon">
+    Use Insomnia REST client with our API examples
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/v1.0.1/examples">
+    Use ready-to-run code examples in your preferred language
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+<Steps>
+  <Step title="Explore Endpoints" icon="search">
+    Browse the API reference to find endpoints relevant to your use case.
+  </Step>
+  
+  <Step title="Test Authentication" icon="key">
+    Start with authentication endpoints to get your access tokens.
+  </Step>
+  
+  <Step title="Try Core Features" icon="play">
+    Test team, organization, and platform management endpoints.
+  </Step>
+  
+  <Step title="Integrate Into Code" icon="code">
+    Once tested, use the code examples to integrate into your application.
+  </Step>
+</Steps>
+
+<Tip>
+  **Pro Tip**: The playground is perfect for quick testing and exploration. Use the "Generate Code" feature to get working code snippets for your preferred programming language.
+</Tip>
